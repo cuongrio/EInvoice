@@ -4,8 +4,19 @@
 
 .slim-navbar {
   padding: 15px 0;
-  background-color: #fff;
-  border-bottom: 1px solid $gray-400;
+  border-top: 0;
+  align-items: center;
+  -webkit-transition-duration: 3s;
+  -moz-transition-duration: 3s;
+  -o-transition-duration: 3s;
+  transition-duration: 3s;
+  -webkit-transition-property: position, left, right, top, z-index;
+  -moz-transition-property: position, left, right, top, z-index;
+  -o-transition-property: position, left, right, top, z-index;
+  transition-property: position, left, right, top, z-index;
+  box-shadow: 0 19px 34px -15px #d2d2f2;
+  -webkit-box-shadow: 0 19px 34px -15px #d2d2f2;
+  -moz-box-shadow: 0 19px 34px -15px #d2d2f2;
 
   .container {
     position: relative;
@@ -33,14 +44,8 @@
 
     &.active {
       .nav-link {
-        background-color: theme-color("primary");
-        @include gradient-x($blue, lighten($darkblue, 15%));
-        border-width: 0;
-        color: #fff;
-
-        .icon {
-          color: #fff;
-        }
+        border: 2px solid theme-color("primary");
+        color: #343a40;
       }
 
       + .nav-item {

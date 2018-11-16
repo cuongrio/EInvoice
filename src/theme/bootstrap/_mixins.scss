@@ -76,7 +76,6 @@
       color: $hover-color;
       background-color: $hover-bg-color;
     }
-
     &.active {
       &,
       &:hover,
@@ -87,19 +86,16 @@
     }
   }
 }
-
 @mixin nav-outline-variant($color, $hover-color, $active-color: $hover-color) {
   .nav-link {
     color: $color;
     &::before {
       border-color: $active-color;
     }
-
     &:hover,
     &:focus {
       color: $hover-color;
     }
-
     &.active {
       &,
       &:hover,
@@ -109,7 +105,6 @@
     }
   }
 }
-
 @mixin nav-outline-active-variant($color) {
   .nav-link.active {
     &,
@@ -122,7 +117,6 @@
     }
   }
 }
-
 @mixin pagination-variant(
   $active-bg-color,
   $active-color: #fff,
@@ -132,14 +126,12 @@
 ) {
   .page-link {
     color: $text-color;
-
     &:hover,
     &:focus {
       color: $hover-text-color;
       background-color: $hover-bg-color;
     }
   }
-
   .active {
     .page-link {
       &,
@@ -161,7 +153,6 @@
     }
   }
 }
-
 // ICON
 @mixin iconwrap-size($padding, $icon-size) {
   padding: $padding;
@@ -172,7 +163,6 @@
     height: $icon-size;
   }
 }
-
 // TABLE HEAD VARIATIONS
 @mixin table-head-variant($color, $text-color: #fff) {
   > tr > th,
@@ -182,7 +172,6 @@
     border-color: rgba(#fff, 0.5);
   }
 }
-
 @mixin full-table-variant($head-color, $body-color, $head-text-color: #fff) {
   background-color: $body-color;
   thead,
@@ -200,28 +189,24 @@
     background-color: $color;
     color: $text-color;
   }
-
   &.bs-tooltip-top,
   &.bs-tooltip-auto[x-placement^="top"] {
     .arrow::before {
       border-top-color: $color;
     }
   }
-
   &.bs-tooltip-bottom,
   &.bs-tooltip-auto[x-placement^="bottom"] {
     .arrow::before {
       border-bottom-color: $color;
     }
   }
-
   &.bs-tooltip-left,
   &.bs-tooltip-auto[x-placement^="left"] {
     .arrow::before {
       border-left-color: $color;
     }
   }
-
   &.bs-tooltip-right,
   &.bs-tooltip-auto[x-placement^="right"] {
     .arrow::before {
@@ -229,13 +214,11 @@
     }
   }
 }
-
 @mixin popover-title-variant($color, $text-color: #fff) {
   .popover-header {
     color: $text-color;
     background-color: $color;
   }
-
   &.bs-popover-bottom,
   &.bs-popover-auto[x-placement^="bottom"] {
     .arrow::after {
@@ -243,31 +226,26 @@
     }
   }
 }
-
 @mixin popover-full-color($color) {
   background-color: $color;
-
   &.bs-popover-top,
   &.bs-popover-auto[x-placement^="top"] {
     .arrow::after {
       border-top-color: $color;
     }
   }
-
   &.bs-popover-bottom,
   &.bs-popover-auto[x-placement^="bottom"] {
     .arrow::after {
       border-bottom-color: $color;
     }
   }
-
   &.bs-popover-left,
   &.bs-popover-auto[x-placement^="left"] {
     .arrow::after {
       border-left-color: $color;
     }
   }
-
   &.bs-popover-right,
   &.bs-popover-auto[x-placement^="right"] {
     .arrow::after {
@@ -275,7 +253,6 @@
     }
   }
 }
-
 @mixin rdiobox-color-variant($color) {
   input[type="radio"]:checked {
     + span:before {
