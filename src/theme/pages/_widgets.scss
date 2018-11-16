@@ -347,7 +347,7 @@
 .card-quick-post {
   padding: 25px;
 
-  .slim-card-title {
+  .einvoice-card-title {
     margin-bottom: 25px;
   }
 
@@ -381,7 +381,7 @@
     background-color: transparent;
     border-bottom: 1px solid $gray-300;
 
-    .slim-card-title {
+    .einvoice-card-title {
       margin-bottom: 0;
     }
   }
@@ -571,7 +571,7 @@
   }
 
   .card-activities {
-    .slim-card-title {
+    .einvoice-card-title {
       &,
       + p {
         text-align: right;

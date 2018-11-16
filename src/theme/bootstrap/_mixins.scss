@@ -143,7 +143,6 @@
       }
     }
   }
-
   &.pagination-dark {
     .active {
       .page-link {
@@ -183,7 +182,6 @@
     }
   }
 }
-
 @mixin tooltip-variant($color, $text-color: #fff) {
   .tooltip-inner {
     background-color: $color;

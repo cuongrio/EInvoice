@@ -23,7 +23,7 @@
   }
 }
 
-.card-slim-md {
+.card-einvoice-md {
   .card-body {
     padding: 40px;
   }
@@ -32,7 +32,7 @@
   }
 }
 
-.slim-card-title {
+.einvoice-card-title {
   text-transform: uppercase;
   font-weight: 700;
   font-size: 13px;
@@ -158,8 +158,8 @@
 }
 
 /***** STICKY HEADER *****/
-.slim-sticky-header {
-  .slim-header {
+.einvoice-sticky-header {
+  .einvoice-header {
     position: fixed;
     top: 0;
     left: 0;
@@ -167,9 +167,9 @@
     z-index: 1000;
   }
 
-  .slim-navbar {
+  .einvoice-navbar {
     position: fixed;
-    top: $slim-header-height;
+    top: $einvoice-header-height;
     left: 0;
     width: 100%;
     z-index: 1000;
@@ -185,7 +185,8 @@
     }
   }
 
-  .slim-mainpanel {
-    margin-top: $slim-header-height + 77px;
+  .einvoice-mainpanel {
+    margin-top: $einvoice-header-height + 77px;
+    min-height: 100%;
   }
 }

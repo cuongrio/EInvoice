@@ -2,9 +2,9 @@
 /* ############### HEADER PANEL ############### */
 /* -------------------------------------------- */
 
-.slim-header {
+.einvoice-header {
   width: 100%;
-  height: $slim-header-height;
+  height: $einvoice-header-height;
   display: flex;
   align-items: center;
   background-color: theme-color("primary");
@@ -16,7 +16,7 @@
   }
 }
 
-.slim-logo {
+.einvoice-logo {
   margin-bottom: 0;
   color: #f0fff0;
   font-size: 20px;
@@ -64,17 +64,17 @@
     height: 32px;
     @include border-radius(100%);
     border: 0;
-    background-color: $slim-primary;
+    background-color: $einvoice-primary;
   }
 }
 
-.slim-header-left,
-.slim-header-right {
+.einvoice-header-left,
+.einvoice-header-right {
   display: flex;
   align-items: center;
 }
 
-.slim-header-right {
+.einvoice-header-right {
   .dropdown-menu {
     border-top: 0;
     margin-top: 18px;
@@ -301,7 +301,7 @@
 /*****************************************/
 
 [dir="rtl"] {
-  .slim-logo {
+  .einvoice-logo {
     @include media-breakpoint-up(lg) {
       margin-right: 0;
       margin-left: 60px;
@@ -315,7 +315,7 @@
     }
   }
 
-  .slim-header-right {
+  .einvoice-header-right {
     .dropdown-menu {
       margin-right: 0;
       margin-left: -15px;

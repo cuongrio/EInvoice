@@ -2,12 +2,12 @@
 /* ############### FULL WIDTH ############### */
 /* ------------------------------------------ */
 
-.slim-full-width {
+.einvoice-full-width {
   .container {
     max-width: none;
   }
 
-  .slim-navbar .sub-item {
+  .einvoice-navbar .sub-item {
     @include media-breakpoint-up(xl) {
       width: 100%;
     }

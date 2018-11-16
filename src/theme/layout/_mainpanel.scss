@@ -2,24 +2,24 @@
 /* ############### MAIN PANEL ############### */
 /* ------------------------------------------ */
 
-.slim-pageheader {
+.einvoice-pageheader {
   padding: 15px 0;
 
   @include media-breakpoint-up(sm) {
-    padding: 25px 0;
-    display: flex;
+    padding: 25px 0 15px;
+    margin-top: 15px;
     align-items: center;
     justify-content: space-between;
     flex-direction: row-reverse;
   }
 }
 
-.slim-pagetitle {
+.einvoice-pagetitle {
   margin-top: 15px;
   margin-bottom: 10px;
   color: $gray-800;
   padding-left: 10px;
-  border-left: 4px solid $slim-primary;
+  border-left: 4px solid $einvoice-primary;
   text-transform: uppercase;
   font-weight: 700;
   font-size: 18px;
@@ -32,7 +32,7 @@
   }
 }
 
-.slim-breadcrumb {
+.einvoice-breadcrumb {
   margin-bottom: 0;
   padding: 0;
   background-color: transparent;
@@ -53,10 +53,10 @@
 /********** RTL SUPPORT **********/
 
 [dir="rtl"] {
-  .slim-pagetitle {
+  .einvoice-pagetitle {
     padding-left: 0;
     padding-right: 10px;
     border-left: 0;
-    border-right: 4px solid $slim-primary;
+    border-right: 4px solid $einvoice-primary;
   }
 }

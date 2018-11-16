@@ -3,22 +3,22 @@
 /* --------------------------------------------- */
 
 .sticky-header {
-  .slim-header {
+  .einvoice-header {
     position: fixed;
     top: 0;
     left: 0;
     z-index: 1010;
   }
 
-  .slim-navbar {
+  .einvoice-navbar {
     position: fixed;
-    top: $slim-header-height;
+    top: $einvoice-header-height;
     left: 0;
     width: 100%;
     z-index: 1000;
   }
 
-  .slim-mainpanel {
+  .einvoice-mainpanel {
     padding-top: 160px;
     min-height: 100vh;
   }

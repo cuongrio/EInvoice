@@ -2,8 +2,8 @@
 /* ############### FOOTER ############### */
 /* -------------------------------------- */
 
-.slim-footer {
-  border-top: 1px solid $gray-400;
+.einvoice-footer {
+  border-top: 3px solid theme-color("primary");
   margin-top: 30px;
   padding: 15px 0;
 
@@ -13,10 +13,8 @@
   }
 
   .container {
-    font-size: 13px;
-
     @include media-breakpoint-up(md) {
-      height: 60px;
+      padding: 15px 10px 30px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -24,6 +22,8 @@
 
     p {
       margin-bottom: 0;
+      font-size: 15px;
+
       &:last-child {
         margin-top: 5px;
       }

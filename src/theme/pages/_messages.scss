@@ -27,10 +27,6 @@
     width: 1110px;
     margin-left: -(1110px / 2);
   }
-
-  .slim-pageheader {
-    flex-direction: row;
-  }
 }
 
 .messages-left {
@@ -42,18 +38,6 @@
 
   @include media-breakpoint-up(lg) {
     width: 350px;
-  }
-
-  .slim-pageheader {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 15px;
-
-    @include media-breakpoint-up(sm) {
-      padding-left: 0;
-      padding-right: 0;
-    }
   }
 }
 
@@ -321,7 +305,7 @@
       }
       p {
         padding: 12px 15px;
-        background-color: $slim-primary;
+        background-color: $einvoice-primary;
         color: #fff;
         display: inline-block;
         margin-bottom: 0;

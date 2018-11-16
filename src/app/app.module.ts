@@ -9,12 +9,18 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from '@env/environment';
 import { CoreModule } from '@app/core';
 import { SharedModule } from '@app/shared';
-import { HomeModule } from './home/home.module';
 import { ShellModule } from './shell/shell.module';
-import { AboutModule } from './about/about.module';
-import { LoginModule } from './login/login.module';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
+
+import { HomeModule } from './home/home.module';
+import { AboutModule } from './about/about.module';
+import { LoginModule } from './login/login.module';
+import { CustomersModule } from './customers/customers.module';
+import { GoodsModule } from './goods/goods.module';
+import { InvoicesModule } from './invoices/invoices.module';
+import { Page404Component } from './page404/page404.component';
+import { Page500Component } from './page500/page500.component';
 
 @NgModule({
   imports: [
@@ -27,12 +33,17 @@ import { AppRoutingModule } from './app-routing.module';
     CoreModule,
     SharedModule,
     ShellModule,
+
     HomeModule,
     AboutModule,
     LoginModule,
-    AppRoutingModule // must be imported as the last module as it contains the fallback route
+    CustomersModule,
+    GoodsModule,
+    InvoicesModule,
+
+    AppRoutingModule
   ],
-  declarations: [AppComponent],
+  declarations: [AppComponent, Page404Component, Page500Component],
   providers: [],
   bootstrap: [AppComponent]
 })

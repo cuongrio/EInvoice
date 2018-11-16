@@ -2,7 +2,7 @@
 /* ############### TEMPLATE NAVBAR STYLES ############### */
 /* ------------------------------------------------------ */
 
-.slim-navbar {
+.einvoice-navbar {
   padding: 15px 0;
   border-top: 0;
   align-items: center;
@@ -17,6 +17,7 @@
   box-shadow: 0 19px 34px -15px #d2d2f2;
   -webkit-box-shadow: 0 19px 34px -15px #d2d2f2;
   -moz-box-shadow: 0 19px 34px -15px #d2d2f2;
+  border-bottom: 2px solid #d2d2f2;
 
   .container {
     position: relative;
@@ -48,9 +49,9 @@
         color: #343a40;
       }
 
-      + .nav-item {
+      &:last-child {
         .nav-link {
-          border-left-width: 0;
+          border-right-width: 2px;
         }
       }
     }
@@ -92,7 +93,7 @@
     letter-spacing: 0.7px;
     font-weight: 500;
     color: darken($gray-600, 3%);
-    height: $slim-navbar-height;
+    height: $einvoice-navbar-height;
     padding: 0;
     display: flex;
     align-items: center;
@@ -172,7 +173,7 @@
   .sub-item {
     background-color: #fff;
     position: absolute;
-    top: $slim-navbar-height;
+    top: $einvoice-navbar-height;
     left: 0;
     border: 1px solid $gray-400;
     border-top: 0;
@@ -257,7 +258,7 @@
 /************ RTL SUPPORT ************/
 
 [dir="rtl"] {
-  .slim-navbar {
+  .einvoice-navbar {
     .nav-item {
       &.active {
         + .nav-item {

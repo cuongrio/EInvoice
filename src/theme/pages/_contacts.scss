@@ -15,15 +15,14 @@
     justify-content: space-between;
   }
 
-  .slim-pageheader {
+  .einvoice-pageheader {
     display: block;
     @include media-breakpoint-up(xl) {
-      display: flex;
       justify-content: space-between;
     }
   }
 
-  .slim-pagetitle {
+  .einvoice-pagetitle {
     margin-top: 10px;
     @include media-breakpoint-up(xl) {
       margin-top: 0;

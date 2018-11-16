@@ -4,7 +4,13 @@ import { Routes, RouterModule } from '@angular/router';
 import { extract } from '@app/core';
 import { LoginComponent } from './login.component';
 
-const routes: Routes = [{ path: 'login', component: LoginComponent, data: { title: extract('Login') } }];
+const routes: Routes = [
+  {
+    path: 'login',
+    component: LoginComponent,
+    data: { title: extract('Thông tin Đăng nhập') }
+  }
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

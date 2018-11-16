@@ -13,12 +13,12 @@
 $color-primary: #367ec1;
 $color-secondary: #191f25;
 
-.slim-header {
+.einvoice-header {
   background-color: $color-primary;
   border-bottom-width: 0;
 }
 
-.slim-logo a {
+.einvoice-logo a {
   color: #fff;
   font-weight: 500;
 }
@@ -59,7 +59,7 @@ $color-secondary: #191f25;
   }
 }
 
-.slim-header-right {
+.einvoice-header-right {
   .dropdown-a,
   .dropdown-b {
     &.show > a {
@@ -78,7 +78,7 @@ $color-secondary: #191f25;
   }
 }
 
-.slim-navbar {
+.einvoice-navbar {
   background-color: $color-secondary;
   border-bottom-width: 0;
 

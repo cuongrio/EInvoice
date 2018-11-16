@@ -1,7 +1,15 @@
 /* ------------------------------------------ */
 /* ############### DataTables ############### */
 /* ------------------------------------------ */
-
+.table-wrapper {
+  .table-navigation {
+    padding: 10px 0px;
+    margin-bottom: 15px;
+    background: #fafbfc;
+    border-top: 1px solid #d2d2f2;
+    border-bottom: 1px solid #d2d2f2;
+  }
+}
 table.dataTable {
   border: 1px solid $gray-300;
   margin-bottom: 15px;
@@ -12,6 +20,7 @@ table.dataTable {
       padding: 0.75rem;
       border-bottom: 1px solid $gray-300;
       position: relative;
+      background: #dee2e6;
 
       &.sorting,
       &.sorting_asc,
@@ -98,13 +107,11 @@ table.dataTable {
   .paginate_button {
     padding-top: 0.54rem;
     padding-bottom: 0.54rem;
-    background-color: $gray-200;
     border-color: transparent;
     border-radius: 0;
 
     &:hover,
     &:focus {
-      background-color: $gray-400;
       background-image: none;
       border-color: transparent;
       color: $gray-800 !important;
@@ -129,7 +136,6 @@ table.dataTable {
       &,
       &:hover,
       &:focus {
-        background-color: $gray-200;
         color: $gray-500 !important;
       }
     }
@@ -176,4 +182,12 @@ table.dataTable {
     padding-right: 0;
     padding-left: 5px;
   }
+}
+
+td.details-control {
+  background: url("./assets/images/details_open.png") no-repeat center center;
+  cursor: pointer;
+}
+tr.shown td.details-control {
+  background: url("./assets/images/details_close.png") no-repeat center center;
 }

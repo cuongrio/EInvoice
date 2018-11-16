@@ -39,7 +39,7 @@
   @include button-variant($teal, darken($teal, 5%));
 }
 .btn-slim {
-  @include button-variant($slim-primary, darken($slim-primary, 5%));
+  @include button-variant($einvoice-primary, darken($einvoice-primary, 5%));
 }
 
 .btn-outline-light {

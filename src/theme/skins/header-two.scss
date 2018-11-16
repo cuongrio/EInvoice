@@ -9,12 +9,12 @@
 // Custom mixins for bootstrap
 @import "../bootstrap/mixins";
 
-.slim-header {
+.einvoice-header {
   background-color: $gray-900;
   border-bottom-width: 0;
 }
 
-.slim-logo a {
+.einvoice-logo a {
   color: #fff;
   font-weight: 500;
 }
@@ -55,7 +55,7 @@
   }
 }
 
-.slim-header-right {
+.einvoice-header-right {
   .dropdown-a,
   .dropdown-b {
     &.show > a {
@@ -74,7 +74,7 @@
   }
 }
 
-.slim-navbar {
+.einvoice-navbar {
   .nav-item {
     .nav-link {
       .icon {

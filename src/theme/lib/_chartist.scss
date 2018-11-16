@@ -26,8 +26,8 @@ $color-e: #ec7a9c;
 }
 
 // Styles
-.slim-chartist,
-.slim-chartist-dark {
+.einvoice-chartist,
+.einvoice-chartist-dark {
   .ct-label {
     font-size: 11px;
   }
@@ -47,8 +47,8 @@ $color-e: #ec7a9c;
   }
 }
 
-.slim-chartist,
-.slim-chartist-dark {
+.einvoice-chartist,
+.einvoice-chartist-dark {
   .ct-series-a {
     @include set-series-color($color-a);
   }
@@ -66,7 +66,7 @@ $color-e: #ec7a9c;
   }
 }
 
-.slim-chartist-dark {
+.einvoice-chartist-dark {
   .ct-grid {
     stroke: rgba(#fff, 0.15);
   }
