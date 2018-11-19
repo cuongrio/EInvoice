@@ -1,7 +1,10 @@
 {
-  "name": "einvoice-contentgate",
-  "version": "1.0.0",
+  "name": "EInvoice",
+  "version": "1.0.1",
   "private": true,
+  "engines": {
+    "node": "10.13.0"
+  },
   "scripts": {
     "ng": "ng",
     "build": "ng build --prod",
