@@ -12,19 +12,41 @@ export class APIService {
 
     constructor(private httpClient: HttpClient) { }
 
-    getInvoices(queryObj?: InvoiceParams): Observable<any> {
-        if (queryObj) {
-            const params = new HttpParams();
-            if (queryObj.sort) { params.set('sort', queryObj.sort); }
-            if (queryObj.sortBy) { params.set('sortBy', queryObj.sortBy); }
-            if (queryObj.size) { params.set('size', queryObj.size); }
-            if (queryObj.page) { params.set('page', queryObj.page); }
-            if (queryObj.fromDate) { params.set('fromDate', queryObj.fromDate); }
-            if (queryObj.toDate) { params.set('toDate', queryObj.toDate); }
-            if (queryObj.invoiceNo) { params.set('invoiceNo', queryObj.invoiceNo); }
-            if (queryObj.form) { params.set('form', queryObj.form); }
-            if (queryObj.serial) { params.set('serial', queryObj.serial); }
-            if (queryObj.orgTaxCode) { params.set('orgTaxCode', queryObj.orgTaxCode); }
+    getInvoices(invoiceParams?: InvoiceParams): Observable<any> {
+        console.log('invoiceParams : ' + JSON.stringify(invoiceParams));
+        if (invoiceParams) {
+            let params = new HttpParams();
+
+            if (invoiceParams.sort) {
+                params = params.append('sort', invoiceParams.sort);
+            }
+            if (invoiceParams.sortBy) {
+                params = params.append('sortBy', invoiceParams.sortBy);
+            }
+            if (invoiceParams.size) {
+                params = params.append('size', invoiceParams.size);
+            }
+            if (invoiceParams.page) {
+                params = params.append('page', invoiceParams.page);
+            }
+            if (invoiceParams.fromDate) {
+                params = params.append('fromDate', invoiceParams.fromDate);
+            }
+            if (invoiceParams.toDate) {
+                params = params.append('toDate', invoiceParams.toDate);
+            }
+            if (invoiceParams.invoiceNo) {
+                params = params.append('invoiceNo', invoiceParams.invoiceNo);
+            }
+            if (invoiceParams.form) {
+                params = params.append('form', invoiceParams.form);
+            }
+            if (invoiceParams.serial) {
+                params = params.append('serial', invoiceParams.serial);
+            }
+            if (invoiceParams.orgTaxCode) {
+                params = params.append('orgTaxCode', invoiceParams.orgTaxCode);
+            }
             return this.httpClient.get(`${this.API_URL}/1/invoices`, { params: params });
         }
         return this.httpClient.get(`${this.API_URL}/1/invoices`);

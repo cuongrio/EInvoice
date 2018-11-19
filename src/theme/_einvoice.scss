@@ -2,11 +2,29 @@
   padding: 2rem 2rem !important;
   margin-bottom: 0px !important;
 }
-
-legend.scheduler-border{
-  font-size: 18px;
+.btn-search{
+  height: 40px;
 }
 
+legend.scheduler-border{
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.no-information{
+  font-size: 12px;
+  font-weight: 400;
+}
+.ngb-pagination{ 
+  margin-top: 16px;
+  display: block;
+  position: relative;
+  .page-info{
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+}
 .table-expanded-form{
   display: flex;
 
@@ -16,33 +34,51 @@ legend.scheduler-border{
     }
   }
 }
-table.fixed-table-width{
-  width: 1024px;
 
-  thead th{
-    background: whitesmoke;
-    padding: 8px !important;
+.number-format{
+  float: right;
+}
+
+.scheduler-border{
+  .table{
+    background: aliceblue;
+    td{
+      line-height: 1.4;
+    }
+    thead > tr > th{
+      border-bottom: 1px solid #ddd; 
+    }
+
   }
-  > tr > td{
-    padding: 8px !important;
+}
+
+
+table{
+  th, td{
+    font-size: 13px !important;
+  }
+
+  > tbody > tr > td{
+    padding: 10px !important;
+  }
+  
+  tr.tr-expand + tr {
+    background: aliceblue; 
+    > td{
+      padding: 12px 20px !important;
+    }
   }
 }
 
 .ein-select2-container{
-    display: flex;
-    flex: 1 1 0;
-    min-width: 100%;
-    justify-content: space-between;
+    min-width: 100%; 
 
   .ein-select{
     padding: 0.56rem 0.75rem;
     border: 1px solid #d9d9d9;
-    color: #333;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    width: 100%;
+    color: #333; 
     font-size: 0.7rem;
+    width: 50%;
 
     &:first-child{
       margin-right: 12px;
@@ -67,14 +103,22 @@ table.fixed-table-width{
 }
 
 .table-wrapper{
+  border: 1px solid #dedede;
+
 	.dataTables_info{
 		margin-top: 12px;
 	}
 	.pagination{
 		margin-top: 12px !important;
 	}
+  .dataTables_scrollHead{
+    border-bottom: 2px solid #dedede !important;
+  }
 
 	.dataTables_scrollBody{
+    .dataTable{
+      width: 100% !important;
+    }
 		&::-webkit-scrollbar {
 			width: 6px;
 			opacity: 0.7; 
@@ -86,25 +130,13 @@ table.fixed-table-width{
 		 
 		}
 	}
-	.dataTable{
-    .no-sort{
-      &::after,
-      &::before{
-        visibility: hidden;
-        display: none;
-      }
-    }
-		> thead{
-			> tr > th{
-				border-bottom: 2px solid #eee;
-			}
-		}
+	.dataTable{ 
 		td.details-control {
-			background: url('./assets/images/details_open.png') no-repeat right center;
+			background: url('./assets/images/details_open.png') no-repeat center center;
 			cursor: pointer;
 		}
-		tr.shown td.details-control {
-			background: url('./assets/images/details_close.png') no-repeat right center;
+		tr.tr-expand td.details-control {
+			background: url('./assets/images/details_close.png') no-repeat center center;
 		}
 	}
 }
