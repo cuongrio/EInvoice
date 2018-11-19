@@ -2,6 +2,9 @@
   "name": "einvoice-contentgate",
   "version": "1.0.0",
   "private": true,
+  "engines": {
+    "node": "10.3.0"
+  },
   "scripts": {
     "ng": "ng",
     "build": "ng build --prod",
