@@ -1,0 +1,171 @@
+<!-- partial -->
+<div class="container-fluid page-body-wrapper">
+  <div class="jumbotron jumbotron-fluid">
+    <div class="container">
+      <h1 class="display-4">Quản lý hóa đơn</h1>
+      <p class="lead">Quản lý, thống kê danh mục dải hóa đơn</p>
+    </div>
+  </div>
+
+  <div class="main-panel">
+    <div class="content-wrapper">
+      <div class="content-list">
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-body">
+                <h4 class="card-title">Danh sách hóa đơn</h4>
+                <div class="row grid-margin">
+
+                  <div class="search-box box shadow">
+                    <div class="card shadow-nohover">
+                      <div class="card-body">
+
+                        <form class="form-horizontal" #ngSearchForm="ngForm" [formGroup]="searchForm" (ngSubmit)="onSubmit(searchForm.value)">
+                          <div class="row">
+                            <div class="col-md-3 col-lg-3 col-sm-4">
+                              <div class="form-group">
+                                <label>Mã hóa đơn</label>
+                                <input formControlName="invoiceNo" type="text" class="form-control" placeholder="Mã hóa đơn">
+                              </div>
+                            </div>
+
+                            <div class="col-md-3 col-lg-3 col-sm-4">
+                              <div class="form-group">
+                                <label>Số Serial</label>
+                                <input formControlName="serial" type="text" class="form-control" placeholder="Số Serial">
+                              </div>
+                            </div>
+
+                            <div class="col-md-3 col-lg-3 col-sm-4">
+                              <div class="form-group">
+                                <label>Mã số thuế</label>
+                                <input formControlName="orgTaxCode" type="text" class="form-control" placeholder="Mã số thuế">
+                              </div>
+                            </div>
+
+                            <div class="col-md-3 col-lg-3 col-sm-4">
+                              <div class="form-group">
+                                <label>Kích cỡ</label>
+                                <input formControlName="size" type="text" class="form-control" placeholder="Kích cỡ">
+                              </div>
+                            </div>
+
+                            <div class="col-md-3 col-lg-3 col-sm-4">
+                              <div class="form-group">
+                                <label>Từ ngày</label>
+                                <input formControlName="fromDate" type="text" class="form-control" placeholder="Từ ngày">
+                              </div>
+                            </div>
+
+                            <div class="col-md-3 col-lg-3 col-sm-4">
+                              <div class="form-group">
+                                <label>Đến ngày</label>
+                                <input formControlName="toDate" type="text" class="form-control" placeholder="Đến ngày">
+                              </div>
+                            </div>
+
+                            <div class="col-md-3 col-lg-3 col-sm-4">
+                              <div class="form-group">
+                                <label>Form</label>
+                                <input formControlName="form" type="text" class="form-control" placeholder="Form">
+                              </div>
+                            </div>
+
+                            <div class="col-md-3 col-lg-3 col-sm-4">
+                              <div class="form-group">
+                                <label>Sắp xếp theo</label>
+                                <div class="ein-select2-container">
+                                  <select formControlName="sortBy"  class="ein-select">
+                                    <option value="invoiceNo">Số hóa đơn</option>
+                                    <option value="fromDate">Từ ngày</option>
+                                    <option value="toDate">Đến ngày</option>
+                                    <option value="serial">Số Serial</option>
+                                    <option value="orgTaxCode">Mã số thuế</option>
+                                  </select>
+                                  <select formControlName="sort" class="ein-select">
+                                    <option value="ASC">ASC</option>
+                                    <option value="DESC">DESC</option>
+                                  </select>
+                                </div>
+
+                              </div>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-12">
+                    <div class="template-ein navbar-action">
+                      <button type="button" form="ngForm" class="btn btn-info btn-lg" (click)="ngSearchForm.ngSubmit.emit()"><i
+                          class="icon-magnifier"></i>
+                        Tìm kiếm</button>
+                      <button type="button" class="btn btn-icons btn-inverse-info" data-toggle="tooltip" data-placement="bottom"
+                        title="Tải dữ liệu"><i class="icon-reload"></i>
+                      </button>
+                      <button type="button" class="btn btn-icons btn-inverse-secondary" data-toggle="tooltip"
+                        data-placement="bottom" title="Thêm mới">
+                        <i class="fas fa-plus"></i>
+                      </button>
+                      <button type="button" class="btn btn-icons btn-inverse-success" data-toggle="tooltip"
+                        data-placement="bottom" title="Sửa"><i class="fas fa-edit"></i></button>
+                      <button type="button" class="btn btn-icons btn-inverse-primary" data-toggle="tooltip"
+                        data-placement="bottom" title="Xóa"><i class="fas fa-trash"></i></button>
+                      <button type="button" class="btn btn-icons btn-inverse-primary" data-toggle="tooltip"
+                        data-placement="bottom" title="Sao chép"><i class="fas fa-copy"></i></button>
+                      <button type="button" class="btn btn-icons btn-inverse-primary" data-toggle="tooltip"
+                        data-placement="bottom" title="In"><i class="fas fa-print"></i></button>
+                      <button type="button" class="btn btn-icons btn-inverse-primary" data-toggle="tooltip"
+                        data-placement="bottom" title="Ký hóa đơn"><i class="fas fa-key"></i></button>
+                      <button type="button" class="btn btn-icons btn-inverse-primary" data-toggle="tooltip"
+                        data-placement="bottom" title="Nhận Excel"><i class="fas fa-file-excel"></i></button>
+                      <button type="button" class="btn btn-icons btn-inverse-primary" data-toggle="tooltip"
+                        data-placement="bottom" title="In chuyển đổi"><i class="fas fa-retweet"></i></button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="table-wrapper">
+                  <table id="invoiceTable" class="table dataTable">
+                    <thead>
+                      <tr>
+                        <th class="no-sort"></th>
+                        <th>Số hóa đơn</th>
+                        <th>Form</th>
+                        <th>Số Serial</th>
+                        <th>Ngày hóa đơn</th>
+                        <th>Người bán</th>
+                        <th>Khách hàng</th>
+                        <th>Tiền chưa thuế</th>
+                        <th>Tổng số thuế</th>
+                        <th>Tổng tiền</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tfoot>
+                      <tr>
+                        <th></th>
+                        <th>Số hóa đơn</th>
+                        <th>Form</th>
+                        <th>Số Serial</th>
+                        <th>Ngày hóa đơn</th>
+                        <th>Người bán</th>
+                        <th>Khách hàng</th>
+                        <th>Tiền chưa thuế</th>
+                        <th>Tổng số thuế</th>
+                        <th>Tổng tiền</th>
+                        <th></th>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,43 @@
+<nav class="navbar horizontal-layout col-lg-12 col-12 p-0">
+  <div class="nav-top flex-grow-1">
+    <div class="container d-flex flex-row h-100 align-items-center">
+      <div class="text-center navbar-brand-wrapper d-flex align-items-center">
+        <!-- <a class="navbar-brand brand-logo" href="index.html"><img src="./assets/images/logo.svg" alt="logo" /></a>
+        <a class="navbar-brand brand-logo-mini" href="index.html"><img src="./assets/images/logo-mini.svg" alt="logo" /></a> -->
+      </div>
+      <div class="navbar-menu-wrapper d-flex align-items-center justify-content-between flex-grow-1">  
+        <ul class="navbar-nav navbar-nav-right mr-0 ml-auto">
+          <li class="nav-item nav-profile dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
+              <img src="https://via.placeholder.com/39x39" alt="profile" />
+              <span class="nav-profile-name">Hoai 0101001</span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+              <a class="dropdown-item">
+                <i class="icon-settings text-primary mr-2"></i>
+                Settings
+              </a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item">
+                <i class="icon-logout text-primary mr-2"></i>
+                Logout
+              </a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-bottom">
+    <div class="container">
+      <ul class="nav page-navigation">
+        <li routerLinkActive="active" *ngFor="let menuItem of menuItems" class="nav-item">
+          <a class="nav-link" [routerLink]="[menuItem.path]">
+            <i [class]="menuItem.icon"></i> <span>{{menuItem.title}}</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
