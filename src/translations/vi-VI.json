@@ -1,0 +1,16 @@
+{
+  "APP_NAME": "EInvoice ContentGate",
+  "About": "Thông tin công ty",
+  "Hello world !": "Xin Chào!",
+  "Home": "Trang chủ",
+  "Logged in as": "Đăng nhập tài khoản",
+  "Login": "Đăng nhập",
+  "Logout": "Đăng xuất",
+  "Password": "Mật khẩu",
+  "Password is required": "Mật khẩu không được để trống",
+  "Username": "Tài khoản",
+  "Username is required": "Tài khoản không được để trống",
+  "Username or password incorrect.": "Tài khoản và mật khẩu không đúng",
+  "Remember me": "ghi nhớ",
+  "Version": "Phiên bản"
+}
