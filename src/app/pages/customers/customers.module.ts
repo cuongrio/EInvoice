@@ -5,11 +5,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CustomersRoutes } from './customers.routing';
 
 import { CustomersComponent } from './customers.component';
-import { CustomerSearchComponent } from './components/search.component';
 import { CustomerFormComponent } from './components/form.component';
 
 @NgModule({
   imports: [CommonModule, RouterModule.forChild(CustomersRoutes), FormsModule, ReactiveFormsModule],
-  declarations: [CustomersComponent, CustomerSearchComponent, CustomerFormComponent]
+  declarations: [CustomersComponent, CustomerFormComponent]
 })
 export class CustomersModule {}

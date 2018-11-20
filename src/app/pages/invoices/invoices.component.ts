@@ -27,16 +27,15 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
 
   // expand search
   public expandSearch: boolean;
-
-  private searchForm: FormGroup;
-
+  public searchForm: FormGroup;
+  public page = 1;
   // pagination
-  private itemsPerPage = 20;
-  private totalItems = 0;
-  private totalElements = 0;
-  private page = 1;
+  public itemsPerPage = 20;
+  public totalItems = 0;
+  public totalElements = 0;
+  public totalPages = 0;
+
   private previousPage = 0;
-  private totalPages = 0;
 
   // select option
 
@@ -65,6 +64,24 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
       $(this).tooltip('hide');
     });
     $('.details-control').removeClass('');
+  }
+
+  public expandSearchClicked() {
+    if (this.expandSearch) {
+      this.expandSearch = false;
+    } else {
+      this.expandSearch = true;
+    }
+    localStorage.setItem('expandSearch', JSON.stringify(this.expandSearch));
+  }
+
+  public onSubmit(form: any) {
+    this.page = 1;
+    const invoiceParams: InvoiceParams = this.formatForm(form);
+    invoiceParams.page = JSON.stringify(this.page);
+    localStorage.setItem('userquery', JSON.stringify(invoiceParams));
+    this.router.navigate([], { replaceUrl: true, queryParams: invoiceParams });
+    this.callServiceAndBindTable(invoiceParams);
   }
 
   private initPageHandlerInRouter() {
@@ -148,23 +165,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
     this.searchForm.controls['sortBy'].setValue(this.defaultSortBy, { onlySelf: true });
   }
 
-  private onSubmit(form: any) {
-    this.page = 1;
-    const invoiceParams: InvoiceParams = this.formatForm(form);
-    invoiceParams.page = JSON.stringify(this.page);
-    localStorage.setItem('userquery', JSON.stringify(invoiceParams));
-    this.router.navigate([], { replaceUrl: true, queryParams: invoiceParams });
-    this.callServiceAndBindTable(invoiceParams);
-  }
 
-  private expandSearchClicked() {
-    if (this.expandSearch) {
-      this.expandSearch = false;
-    } else {
-      this.expandSearch = true;
-    }
-    localStorage.setItem('expandSearch', JSON.stringify(this.expandSearch));
-  }
 
   private convertDateToString(myDate: any) {
     const convertedDate = myDate.year + '-' + myDate.month + '-' + myDate.day;

@@ -6,11 +6,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ProductsRoutes } from './products.routing';
 
 import { ProductsComponent } from './products.component';
-import { ProductSearchComponent } from './components/search.component';
 import { ProductFormComponent } from './components/form.component';
 
 @NgModule({
   imports: [CommonModule, RouterModule.forChild(ProductsRoutes), FormsModule, ReactiveFormsModule],
-  declarations: [ProductsComponent, ProductSearchComponent, ProductFormComponent]
+  declarations: [ProductsComponent, ProductFormComponent]
 })
-export class ProductsModule {}
+export class ProductsModule { }

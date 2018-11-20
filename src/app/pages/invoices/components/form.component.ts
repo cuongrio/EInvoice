@@ -7,7 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
   templateUrl: './form.component.html'
 })
 export class InvoiceFormComponent implements OnInit {
-  private addForm: FormGroup;
+  public addForm: FormGroup;
   constructor(private router: Router, private formBuilder: FormBuilder) { }
   ngOnInit() {
     this.createForm();
