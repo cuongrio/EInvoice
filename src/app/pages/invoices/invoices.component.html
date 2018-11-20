@@ -101,10 +101,8 @@
                   <button type="button" form="ngForm" class="btn btn-info btn-search" (click)="ngSearchForm.ngSubmit.emit()"><i
                       class="icon-magnifier"></i>
                     Tìm kiếm</button>
-                  <button type="button" class="btn btn-icons btn-inverse-info" data-toggle="tooltip" data-placement="bottom"
-                    title="Tải dữ liệu"><i class="icon-reload"></i>
-                  </button>
-                  <button type="button" class="btn btn-icons btn-inverse-secondary" data-toggle="tooltip"
+             
+                  <button type="button" routerLink="/invoices/createNew" class="btn btn-icons btn-inverse-secondary" data-toggle="tooltip"
                     data-placement="bottom" title="Thêm mới">
                     <i class="fas fa-plus"></i>
                   </button>
@@ -156,8 +154,10 @@
             </div>
             <div class="ngb-pagination">
               <div class="page-info"> Trang {{page}} | Hiển thị {{itemsPerPage}} đơn | Tổng số {{totalItems}} hóa đơn. </div>
-              <ngb-pagination class="d-flex justify-content-end" [pageSize]="itemsPerPage" [collectionSize]="totalItems"
-                [(page)]="page" (pageChange)="loadPage()" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"></ngb-pagination>
+              <!-- <ngb-pagination class="d-flex justify-content-end" [pageSize]="itemsPerPage" [collectionSize]="totalItems"
+                [(page)]="page" (pageChange)="onPageChange($event)" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"></ngb-pagination> -->
+                <ngb-pagination class="d-flex justify-content-end" [pageSize]="10" [collectionSize]="120"
+                [(page)]="page" (pageChange)="onPageChange($event)" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"></ngb-pagination>
             </div>
           </div>
         </div>
