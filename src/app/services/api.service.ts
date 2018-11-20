@@ -9,10 +9,9 @@ import { InvoiceParams } from './../app.interface';
 export class APIService {
   API_URL = 'http://178.128.123.223:8080';
 
-  constructor(private httpClient: HttpClient) {}
+  constructor(private httpClient: HttpClient) { }
 
   getInvoices(invoiceParams?: InvoiceParams): Observable<any> {
-    console.log('invoiceParams : ' + JSON.stringify(invoiceParams));
     if (invoiceParams) {
       let params = new HttpParams();
 
@@ -26,7 +25,8 @@ export class APIService {
         params = params.append('size', invoiceParams.size);
       }
       if (invoiceParams.page) {
-        params = params.append('page', invoiceParams.page);
+        const currentPage = JSON.stringify((parseInt(invoiceParams.page, 0) - 1));
+        params = params.append('page', currentPage);
       }
       if (invoiceParams.fromDate) {
         params = params.append('fromDate', invoiceParams.fromDate);

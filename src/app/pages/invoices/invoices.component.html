@@ -15,14 +15,14 @@
           <div class="card-body">
             <h4 class="card-title">
               <span class="pull-left">Danh sách hóa đơn</span>
-              <button (click)="expandSearch = !expandSearch" type="button pull-left" class="btn btn-link">
+              <button (click)="expandSearchClicked()" type="button pull-left" class="btn btn-link">
                 <i *ngIf="expandSearch" class="fas fa-chevron-down"></i>
                 <i *ngIf="!expandSearch" class="fas fa-chevron-up"></i>
               </button>
             </h4>
             <div class="row grid-margin">
               <div class="search-box">
-                <div *ngIf="expandSearch" class="card shadow-nohover">
+                <div [hidden]="!expandSearch" class="card shadow-nohover">
                   <div class="card-body">
 
                     <form class="form-horizontal" #ngSearchForm="ngForm" [formGroup]="searchForm" (ngSubmit)="onSubmit(searchForm.value)">
@@ -59,7 +59,7 @@
                           <div class="form-group">
                             <label>Từ ngày</label>
                             <div class="input-group">
-                              <input formControlName="fromDate" class="form-control" placeholder="yyyy-mm-dd" name="dp"
+                              <input formControlName="fromDate" class="form-control" placeholder="dd/MM/yyyy" name="dp"
                                 ngbDatepicker #d="ngbDatepicker">
                               <div class="input-group-append">
                                 <button class="btn btn-outline-light calendar" (click)="d.toggle()" type="button"></button>
@@ -104,7 +104,7 @@
 
               <div class="col-12">
                 <div class="template-ein navbar-action">
-                  <button *ngIf="expandSearch" type="button" form="ngForm" class="btn btn-info btn-search" (click)="ngSearchForm.ngSubmit.emit()"><i
+                  <button [hidden]="!expandSearch" type="button" form="ngForm" class="btn btn-info btn-search" (click)="ngSearchForm.ngSubmit.emit()"><i
                       class="icon-magnifier"></i>
                     Tìm kiếm</button>
 
@@ -159,12 +159,15 @@
               </table>
             </div>
             <div class="ngb-pagination">
-              <div class="page-info"> Trang {{page}} | Hiển thị {{itemsPerPage}} đơn | Tổng số {{totalItems}} hóa đơn.
+              <div class="page-info">
+                Trang {{page}}: {{totalElements}} dòng | Tổng số: {{totalPages}} trang.
               </div>
               <!-- <ngb-pagination class="d-flex justify-content-end" [pageSize]="itemsPerPage" [collectionSize]="totalItems"
                 [(page)]="page" (pageChange)="onPageChange($event)" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"></ngb-pagination> -->
-              <ngb-pagination class="d-flex justify-content-end" [pageSize]="10" [collectionSize]="120" [(page)]="page"
-                (pageChange)="onPageChange($event)" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"></ngb-pagination>
+              <div *ngIf="totalPages > 1">
+                <ngb-pagination class="d-flex justify-content-end" [pageSize]="itemsPerPage" [collectionSize]="totalItems"
+                  [(page)]="page" (pageChange)="onPageChange($event)" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"></ngb-pagination>
+              </div>
             </div>
           </div>
         </div>

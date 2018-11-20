@@ -8,12 +8,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class InvoiceFormComponent implements OnInit {
   private addForm: FormGroup;
-  constructor(
-    private router: Router,
-    private formBuilder: FormBuilder
-  ) {
-
-  }
+  constructor(private router: Router, private formBuilder: FormBuilder) { }
   ngOnInit() {
     this.createForm();
   }
@@ -31,36 +26,39 @@ export class InvoiceFormComponent implements OnInit {
 
   private createForm() {
     this.addForm = this.formBuilder.group({
-      sort: '',
-      sortBy: '',
-      size: '',
-      fromDate: '',
-      toDate: '',
+      invoice_date: '',
       form: '',
       serial: '',
-      orgTaxCode: '',
+      totalBeforeTax: '',
+      total_tax: '',
       seller: this.formBuilder.group({
-        firstName: '',
-        lastName: '',
-        email: '',
+        name: '',
+        address: '',
+        tax_code: '',
         phone: '',
-        taxCode: '',
-        bankCode: '',
-        bank: '',
-        address: ''
+        email: '',
+        bank_account: '',
+        bank: ''
       }),
       customer: this.formBuilder.group({
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        taxCode: '',
-        company: '',
-        bankCode: '',
-        bank: '',
-        address: ''
-      })
+        customer_name: '',
+        org: '',
+        tax_code: '',
+        bank_account: '',
+        bank: ''
+      }),
+      items: this.formBuilder.array([{
+        item_line: '',
+        item_code: '',
+        item_name: '',
+        unit: '',
+        price: '',
+        tax: '',
+        tax_rate: '',
+        price_wt: '',
+        quantity: '',
+        amount: ''
+      }])
     });
   }
-
 }

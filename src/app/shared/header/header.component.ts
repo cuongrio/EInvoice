@@ -24,14 +24,14 @@ export const ROUTES: RouteInfo[] = [
 export class HeaderComponent implements OnInit, AfterViewInit {
   menuItems: any[];
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit() {
     this.menuItems = ROUTES.filter(menuItem => menuItem);
   }
 
   ngAfterViewInit() {
-    $(window).scroll(function () {
+    $(window).scroll(function() {
       if (window.matchMedia('(min-width: 992px)').matches) {
         var header = '.navbar.horizontal-layout';
         if ($(window).scrollTop() >= 70) {
@@ -42,7 +42,6 @@ export class HeaderComponent implements OnInit, AfterViewInit {
       }
     });
   }
-
 
   logoutClicked() {
     console.log('logout');

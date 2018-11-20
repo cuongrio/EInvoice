@@ -21,13 +21,13 @@
       .form-group {
         .input-group {
           .form-control {
-            border: 1px solid darken($border-color,5%);
+            border: 1px solid darken($border-color, 5%);
             border-right: none;
             @include border-radius(6px 0 0 6px);
 
             &:focus {
               border-right: none;
-              border-color: darken($border-color,5%);
+              border-color: darken($border-color, 5%);
             }
           }
 
@@ -37,7 +37,7 @@
             .input-group-text {
               @include border-radius(0 6px 6px 0);
               border-left: none;
-              border-color: darken($border-color,5%);
+              border-color: darken($border-color, 5%);
               color: #b6b6b6;
             }
           }
@@ -157,20 +157,20 @@
 
           .input-group {
             .form-control {
-              border: 1px solid darken($border-color,5%);
+              border: 1px solid darken($border-color, 5%);
               border-left: none;
               @include border-radius(0 6px 6px 0);
 
               &:focus {
                 border-left: none;
-                border-color: darken($border-color,5%);
+                border-color: darken($border-color, 5%);
               }
             }
 
             .input-group-prepend {
               .input-group-text {
                 @include border-radius(6px 0 0 6px);
-                border-color: darken($border-color,5%);
+                border-color: darken($border-color, 5%);
                 border-right: none;
                 color: #dfdfdf;
               }

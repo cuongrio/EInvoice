@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { Routes, RouterModule, ExtraOptions } from '@angular/router';
 
 // import page
 import { PageLayoutComponent } from './pages/page-layout.component';
@@ -7,7 +7,7 @@ import { LoginComponent } from './login/login.component';
 import { LogoutComponent } from './logout/logout.component';
 import { Page404Component } from './page404/page404.component';
 import { RegisterComponent } from './register/register.component';
-import { Exception500Component } from './exception/exception-500.component'; 
+import { Exception500Component } from './exception/exception-500.component';
 
 const routes: Routes = [
   {
@@ -67,15 +67,16 @@ const routes: Routes = [
     path: '500',
     component: Exception500Component,
     data: { title: 'Đã xảy ra lỗi' }
-  },{
+  },
+  {
     path: '**',
     redirectTo: '404'
   }
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' })],
+  imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
   providers: []
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

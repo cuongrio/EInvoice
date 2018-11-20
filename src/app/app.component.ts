@@ -22,10 +22,9 @@ export class AppComponent implements OnInit {
     private titleService: Title,
     private translateService: TranslateService,
     private i18nService: I18nService
-  ) {}
+  ) { }
 
   ngOnInit() {
-    // Setup logger
     if (environment.production) {
       Logger.enableProductionMode();
     }

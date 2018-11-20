@@ -6,15 +6,16 @@
   height: 40px;
 }
 
-button.calendar, button.calendar:active{
+button.calendar,
+button.calendar:active {
   width: 2.75rem;
-  background-image: url(./assets/images/calendar-80.png)!important;
+  background-image: url(./assets/images/calendar-80.png) !important;
   background-repeat: no-repeat;
   background-size: 28px;
   background-position: center;
 }
 
-.bg-primary{
+.bg-primary {
   background: #090e40 !important;
 }
 legend.scheduler-border {

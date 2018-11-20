@@ -9,4 +9,5 @@ export interface InvoiceParams {
   form?: string;
   serial?: string;
   orgTaxCode?: string;
+  expand?: boolean;
 }

@@ -5,6 +5,7 @@ import { AppConfig } from './../../app.config';
 import { APIService } from './../../services/api.service';
 import { InvoiceParams } from '@app/app.interface';
 import { TSImportEqualsDeclaration } from 'babel-types';
+import { DatePipe } from '@angular/common';
 
 declare var $: any;
 
@@ -25,17 +26,17 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
   ];
 
   // expand search
-  public expandSearch = false;
+  public expandSearch: boolean;
 
   private searchForm: FormGroup;
-  private invoiceParams: InvoiceParams;
-
 
   // pagination
   private itemsPerPage = 20;
   private totalItems = 0;
-  private page = 0;
+  private totalElements = 0;
+  private page = 1;
   private previousPage = 0;
+  private totalPages = 0;
 
   // select option
 
@@ -43,6 +44,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
   private defaultSortBy = 'invoiceNo';
 
   constructor(
+    private datePipe: DatePipe,
     private router: Router,
     private activeRouter: ActivatedRoute,
     private apiService: APIService,
@@ -50,63 +52,86 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit() {
-    this.createForm();
-    this.createSelectBox();
-    this.pageHandlerInRouter();
+    this.initDefault();
+    this.initDataTable();
+    this.initForm();
+    this.initSelectBox();
+    this.initPageHandlerInRouter();
   }
 
   ngAfterViewInit() {
     $('[data-toggle="tooltip"]').tooltip({ trigger: 'hover' });
     $('[data-toggle="tooltip"]').on('click', function () {
-      $(this).tooltip('hide')
-    })
+      $(this).tooltip('hide');
+    });
     $('.details-control').removeClass('');
   }
 
-  private pageHandlerInRouter() {
-    let routerParams: InvoiceParams;
+  private initPageHandlerInRouter() {
     if (this.activeRouter.snapshot.queryParams) {
-      routerParams = JSON.parse(JSON.stringify(this.activeRouter.snapshot.queryParams));
-      console.log('invoiceParams: ' + JSON.stringify(routerParams));
+      const routerParams = JSON.parse(JSON.stringify(this.activeRouter.snapshot.queryParams));
       if (routerParams['page']) {
         this.page = +routerParams['page'];
-        this.previousPage = this.page;
+        this.previousPage = +routerParams['page'];
       }
-    }
 
+      // set default value form
+      (<FormGroup>this.searchForm)
+        .patchValue(routerParams, { onlySelf: true });
+    }
+    const invoiceParams: InvoiceParams = { page: JSON.stringify(this.page) };
     // call service
-    this.callServiceAndBindTable(routerParams);
+    this.callServiceAndBindTable(invoiceParams);
   }
 
-  private createSelectBox() {
+  private initDefault() {
+    const expandSearchTmp = localStorage.getItem('expandSearch');
+    if (expandSearchTmp) {
+      this.expandSearch = JSON.parse(expandSearchTmp);
+    } else {
+      this.expandSearch = false;
+    }
+  }
+
+  private initSelectBox() {
     $('select').select2({ minimumResultsForSearch: Infinity });
   }
 
   private onPageChange(page: number) {
+    console.log(this.previousPage + '---' + page);
     if (this.previousPage !== page) {
       this.previousPage = page;
-      if (!this.invoiceParams) {
-        this.invoiceParams = {};
+      const userquery = localStorage.getItem('userquery');
+      let invoiceParams: InvoiceParams;
+      if (userquery) {
+        invoiceParams = JSON.parse(userquery);
+      } else {
+        invoiceParams = {};
       }
-      this.invoiceParams.page = JSON.stringify(this.page);
-      this.router.navigate([], { replaceUrl: false, queryParams: this.invoiceParams });
+
+      invoiceParams.page = JSON.stringify(this.page);
+      console.log('invoiceParams: ' + JSON.stringify(invoiceParams));
+
+      // call service
+      this.router.navigate([], { replaceUrl: true, queryParams: invoiceParams });
+      this.callServiceAndBindTable(invoiceParams);
     }
   }
 
   private callServiceAndBindTable(params: InvoiceParams) {
     this.apiService.getInvoices(params).subscribe(response => {
       if (response && response.contents.length > 0) {
-        if (response.total_elements > 0) {
-          this.itemsPerPage = response.total_elements;
-        }
+        this.totalElements = response.total_elements;
+        this.totalPages = response.total_pages;
         this.totalItems = response.total_pages * this.itemsPerPage;
 
-        this.loadDataTable(response.contents);
+        $('#invoiceTable').dataTable().fnClearTable();
+        $('#invoiceTable').dataTable().fnAddData(response.contents);
       }
     });
   }
 
-  private createForm() {
+  private initForm() {
     this.searchForm = this.formBuilder.group({
       sort: '',
       sortBy: '',
@@ -124,18 +149,31 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
   }
 
   private onSubmit(form: any) {
-    this.invoiceParams = this.formatForm(form);
-    this.invoiceParams.page = JSON.stringify(this.page);
-    this.router.navigate([], { replaceUrl: true, queryParams: this.invoiceParams });
+    this.page = 1;
+    const invoiceParams: InvoiceParams = this.formatForm(form);
+    invoiceParams.page = JSON.stringify(this.page);
+    localStorage.setItem('userquery', JSON.stringify(invoiceParams));
+    this.router.navigate([], { replaceUrl: true, queryParams: invoiceParams });
+    this.callServiceAndBindTable(invoiceParams);
   }
 
-  private loadDataTable(results?: any) {
-    if (!results) {
-      return;
+  private expandSearchClicked() {
+    if (this.expandSearch) {
+      this.expandSearch = false;
+    } else {
+      this.expandSearch = true;
     }
+    localStorage.setItem('expandSearch', JSON.stringify(this.expandSearch));
+  }
+
+  private convertDateToString(myDate: any) {
+    const convertedDate = myDate.year + '-' + myDate.month + '-' + myDate.day;
+    return convertedDate;
+  }
+
+  private initDataTable() {
     const $data_table = $('#invoiceTable');
     const table = $data_table.DataTable({
-      data: results,
       paging: false,
       searching: false,
       retrieve: true,
@@ -380,37 +418,35 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
     });
   }
 
-  private formatForm(invoiceParams: InvoiceParams) {
+  private formatForm(form: any) {
     const invoiceParamsForamat: InvoiceParams = {};
-    if (invoiceParams.sort) {
-      invoiceParamsForamat.sort = invoiceParams.sort;
+    if (form.sort) {
+      invoiceParamsForamat.sort = form.sort;
     }
-    if (invoiceParams.sortBy) {
-      invoiceParamsForamat.sortBy = invoiceParams.sortBy;
+    if (form.sortBy) {
+      invoiceParamsForamat.sortBy = form.sortBy;
     }
-    if (invoiceParams.size) {
-      invoiceParamsForamat.size = invoiceParams.size;
+    if (form.size) {
+      invoiceParamsForamat.size = form.size;
     }
-    if (invoiceParams.page) {
-      invoiceParamsForamat.page = invoiceParams.page;
+
+    if (form.fromDate) {
+      invoiceParamsForamat.fromDate = this.convertDateToString(form.fromDate);
     }
-    if (invoiceParams.fromDate) {
-      invoiceParamsForamat.fromDate = invoiceParams.fromDate;
+    if (form.toDate) {
+      invoiceParamsForamat.toDate = this.convertDateToString(form.toDate);
     }
-    if (invoiceParams.toDate) {
-      invoiceParamsForamat.toDate = invoiceParams.toDate;
+    if (form.invoiceNo) {
+      invoiceParamsForamat.invoiceNo = form.invoiceNo;
     }
-    if (invoiceParams.invoiceNo) {
-      invoiceParamsForamat.invoiceNo = invoiceParams.invoiceNo;
+    if (form.form) {
+      invoiceParamsForamat.form = form.form;
     }
-    if (invoiceParams.form) {
-      invoiceParamsForamat.form = invoiceParams.form;
+    if (form.serial) {
+      invoiceParamsForamat.serial = form.serial;
     }
-    if (invoiceParams.serial) {
-      invoiceParamsForamat.serial = invoiceParams.serial;
-    }
-    if (invoiceParams.orgTaxCode) {
-      invoiceParamsForamat.orgTaxCode = invoiceParams.orgTaxCode;
+    if (form.orgTaxCode) {
+      invoiceParamsForamat.orgTaxCode = form.orgTaxCode;
     }
     return invoiceParamsForamat;
   }

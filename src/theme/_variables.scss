@@ -59,22 +59,16 @@ $text-muted: #959595;
 $body-color: $black;
 $title-color: #000000;
 // //////// FONT VARIABLES //////////
-
 // /////// HORIZONTAL MENU /////////
-
 $navbar-brand-wrapper-mini-width: 70px;
 $menu-break-point: 1020px;
 $horizontal-navbar-height: 135px;
 $horizontal-top-menu-bg: theme-color(dark);
 $horizontal-menu-padding: 0 1rem;
-
 $horizontal-menu-height: 57px;
-
 $horizontal-menu-color: #242425;
-
 $horizontal-top-menu-item-color: #c7c7c7;
 $horizontal-bottom-bg: $white;
-
 $horizontal-bottom-menu-item-color: $horizontal-menu-color;
 $horizontal-bottom-menu-item-icon-color: $horizontal-menu-color;
 $horizontal-bottom-menu-item-active-color: theme-color(primary);
@@ -89,17 +83,15 @@ $horizontal-menu-submenu-item-padding: 0.85rem 0;
 // /////// NAVBAR ////////
 $navbar-height: 60px;
 $navbar-light-color: #202339;
-
 $navbar-font-size: 14px;
-
 $navbar-icon-font-size: 1rem;
 // /////// NAVBAR ////////
 // /////// BUTTONS ////////
+
 $button-fixed-width: 120px;
 
 $btn-padding-y: 0.56rem;
 $btn-padding-x: 1.375rem;
-
 $btn-line-height: 1;
 $btn-padding-y-xs: 0.5rem;
 $btn-padding-x-xs: 0.75rem;
@@ -116,19 +108,14 @@ $btn-border-radius-xs: 0.1875rem;
 $btn-border-radius-sm: 0.1875rem;
 $btn-border-radius-lg: 0.1875rem;
 $social-btn-padding: 13px;
-
 $social-btn-icon-size: 1rem;
-
 // /////// BUTTONS ////////
 // ///////  FORMS /////////
 $input-bg: color(white);
 $input-border-radius: 2px;
 $input-placeholder-color: #c9c8c8;
-
 $input-font-size: 0.75rem;
-
 $input-padding-y: 0.56rem;
-
 $input-padding-x: 1.375rem;
 $input-line-height: 1;
 $input-padding-y-sm: 0.5rem;
@@ -139,7 +126,6 @@ $input-padding-x-lg: 1.94rem;
 $input-line-height-lg: 1;
 // /////// FORMS /////////
 // //////  DROPDOWNS ///////
-
 $dropdown-border-color: $border-color;
 $dropdown-divider-bg: $border-color;
 $dropdown-link-color: $body-color;
@@ -151,7 +137,6 @@ $table-hover-bg: $content-bg;
 $table-border-color: $border-color;
 $table-inverse-bg: #2a2b32;
 $table-inverse-color: color(white);
-
 // ////// TABLES ////////
 
 // //////// MEASUREMENT AND PROPERTY VARIABLES //////////
@@ -160,9 +145,9 @@ $border-property: 1px solid $border-color;
 $card-spacing-y: 0.75rem;
 $card-padding-y: 30px;
 $card-padding-x: 30px;
-
 $card-border-color: $border-color;
 $card-border-radius: 1px;
+
 $grid-gutter-width: 12px;
 $action-transition-duration: 0.25s;
 $action-transition-timing-function: ease;
@@ -176,6 +161,7 @@ $breadcrumb-item-padding: 0.5rem;
 $breadcrumb-margin-bottom: 1rem;
 $breadcrumb-font-size: $default-font-size;
 $breadcrumb-bg: transparent;
+
 $breadcrumb-border-color: $border-color;
 $breadcrumb-divider-color: $gray-600;
 $breadcrumb-active-color: $gray-700;
@@ -185,11 +171,8 @@ $breadcrumb-custom-padding-y: 0;
 $breadcrumb-custom-padding-x: 0;
 $breadcrumb-custom-item-padding-y: 0.56rem;
 $breadcrumb-custom-item-padding-x: 10px;
-
 $breadcrumb-custom-item-color: $black;
-
 $breadcrumb-item-bg: #dbe3e6;
-
 // //////// BREAD CRUMBS VARIABLES //////////
 // //////// MODALS VARIABLES //////////
 $modal-inner-padding: 15px;
@@ -200,11 +183,8 @@ $modal-content-bg: $content-bg;
 $modal-content-box-shadow-xs: 0 3px 9px rgba($black, 0.5);
 $modal-content-box-shadow-sm-up: 0 5px 15px rgba($black, 0.5);
 $modal-backdrop-bg: $black;
-
 $modal-backdrop-opacity: 0.5;
-
 $modal-header-border-color: $border-color;
-
 $modal-content-border-color: $border-color;
 $modal-footer-border-color: $border-color;
 $modal-header-border-width: $border-width;
@@ -220,11 +200,9 @@ $modal-lg: 90%;
 $modal-md: 500px;
 $modal-sm: 300px;
 $modal-transition: transform 0.4s ease;
-
 // //////// MODALS VARIABLES //////////
 
 // //////// TOOLTIP VARIABLES //////////
-
 // default styles
 $tooltip-font-size: 0.75rem;
 $tooltip-padding-y: 0.4rem;
@@ -237,6 +215,7 @@ $tooltip-arrow-color: $tooltip-bg;
 // default styles
 $popover-bg: #f1f6ff;
 $popover-text-color: $black;
+
 $popover-border-color: $border-color;
 $popover-arrow-color: $popover-bg;
 $popover-arrow-outer-color: $popover-border-color;

@@ -108,7 +108,7 @@
                 top: calc(#{$navbar-height} - 30px);
                 right: 0;
                 left: auto;
-                border: 0; 
+                border: 0;
                 min-width: 100%;
                 @include border-radius(4px);
                 @extend .dropdownAnimation;
@@ -142,10 +142,10 @@
                   margin-bottom: 0;
                   padding: 10px 25px;
 
-                  &:hover, &:focus{
+                  &:hover,
+                  &:focus {
                     cursor: pointer;
                   }
-                  
 
                   i {
                     font-size: 17px;

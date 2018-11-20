@@ -37,23 +37,16 @@
 
                     <div class="col-md-4 col-lg-4 col-sm-6">
                       <div class="form-group">
-                        <label>Mã số thuế</label>
-                        <input formControlName="orgTaxCode" type="text" class="form-control" placeholder="Mã số thuế">
+                        <label>Số Form</label>
+                        <input formControlName="size" type="text" class="form-control" placeholder="Số Form">
                       </div>
                     </div>
 
                     <div class="col-md-4 col-lg-4 col-sm-6">
                       <div class="form-group">
-                        <label>Kích cỡ</label>
-                        <input formControlName="size" type="text" class="form-control" placeholder="Kích cỡ">
-                      </div>
-                    </div>
-
-                    <div class="col-md-4 col-lg-4 col-sm-6">
-                      <div class="form-group">
-                        <label>Từ ngày</label>
+                        <label>Ngày lập đơn</label>
                         <div class="input-group">
-                          <input formControlName="fromDate" class="form-control" placeholder="yyyy-mm-dd" name="dp"
+                          <input formControlName="invoice_date" class="form-control" placeholder="dd-mm-yyyy" name="dp"
                             ngbDatepicker #d="ngbDatepicker">
                           <div class="input-group-append">
                             <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button"></button>
@@ -64,15 +57,22 @@
 
                     <div class="col-md-4 col-lg-4 col-sm-6">
                       <div class="form-group">
-                        <label>Đến ngày</label>
-                        <input formControlName="toDate" type="text" class="form-control" placeholder="Đến ngày">
+                        <label>Tổng tiền trước thuế</label>
+                        <input formControlName="totalBeforeTax" type="text" class="form-control" placeholder="Tổng tiền trước thuế">
                       </div>
                     </div>
 
                     <div class="col-md-4 col-lg-4 col-sm-6">
                       <div class="form-group">
-                        <label>Form</label>
-                        <input formControlName="form" type="text" class="form-control" placeholder="Form">
+                        <label>Tổng số thuế</label>
+                        <input formControlName="total_tax" type="text" class="form-control" placeholder="Tổng số thuế">
+                      </div>
+                    </div>
+
+                    <div class="col-md-4 col-lg-4 col-sm-6">
+                      <div class="form-group">
+                        <label>Tổng số tiền</label>
+                        <input formControlName="total" type="text" class="form-control" placeholder="Tổng số tiền">
                       </div>
                     </div>
                   </div>
@@ -87,17 +87,10 @@
               <div class="card">
                 <div class="card-body">
                   <h4 class="card-title">Thông tin Người bán</h4>
-
                   <div formGroupName="seller" class="seller-group">
-                    <div class="form-group row">
-                      <div class="col">
-                        <label>Họ:</label>
-                        <input formControlName="firstName" class="form-control" name="seller_firstname" type="text">
-                      </div>
-                      <div class="col">
-                        <label>Tên:</label>
-                        <input formControlName="lastName" class="form-control" name="seller_lastname" type="text">
-                      </div>
+                    <div class="form-group">
+                      <label>Họ tên:</label>
+                      <input formControlName="name" class="form-control" name="seller_name" type="text">
                     </div>
 
                     <div class="form-group">
@@ -106,27 +99,26 @@
                     </div>
 
                     <div class="form-group row">
-                      <div class="col">
+                      <div class="col-md-6 col-lg-6 col-sm-12">
                         <label>Số Điện thoại:</label>
                         <input formControlName="phone" class="form-control" name="seller_phone" data-inputmask="'alias': 'phonebe'">
                       </div>
-                      <div class="col">
+                      <div class="col-md-6 col-lg-6 col-sm-12">
                         <label>Mã số thuế:</label>
-                        <input formControlName="taxCode" class="form-control" name="seller_orgTaxCode">
+                        <input formControlName="tax_code" class="form-control" name="seller_tax_code">
                       </div>
                     </div>
 
                     <div class="form-group row">
-                      <div class="col">
+                      <div class="col-md-6 col-lg-6 col-sm-12">
                         <label>Số tài khoản:</label>
-                        <input formControlName="bankCode" class="form-control" name="seller_bankCode" type="text">
-                      </div>
-                      <div class="col">
-                        <label>Ngân hàng:</label>
-                        <input formControlName="bank" class="form-control" name="seller_bank" type="text">
+                        <input formControlName="bank_account" class="form-control" name="seller_bank_account" type="text">
                       </div>
                     </div>
-
+                    <div class="form-group">
+                      <label>Ngân hàng:</label>
+                      <input formControlName="bank" class="form-control" name="seller_bank" type="text">
+                    </div>
                     <div class="form-group">
                       <label>Địa chỉ:</label>
                       <textarea formControlName="address" class="form-control" name="seller_address" type="text"></textarea>
@@ -142,50 +134,32 @@
                 <div class="card-body">
                   <h4 class="card-title">Thông tin khách hàng</h4>
                   <div formGroupName="customer" class="customer-group">
-                    <div class="form-group row">
-                      <div class="col">
-                        <label>Họ:</label>
-                        <input formControlName="firstName" class="form-control" name="customer_firstname" type="text">
-                      </div>
-                      <div class="col">
-                        <label>Tên:</label>
-                        <input formControlName="lastName" class="form-control" name="customer_lastname" type="text">
-                      </div>
-                    </div>
-
                     <div class="form-group">
-                      <label>Email:</label>
-                      <input formControlName="email" class="form-control" name="customer_email" data-inputmask="'alias': 'email'">
-                    </div>
-                    <div class="form-group row">
-                      <div class="col">
-                        <label>Số Điện thoại:</label>
-                        <input formControlName="phone" class="form-control" name="customer_phone" data-inputmask="'alias': 'phonebe'">
-                      </div>
-                      <div class="col">
-                        <label>Mã số thuế:</label>
-                        <input formControlName="taxCode" class="form-control" name="customer_orgTaxCode">
-                      </div>
-                    </div>
-                    <div class="form-group row">
-                      <div class="col">
-                        <label>Số tài khoản:</label>
-                        <input formControlName="bankCode" class="form-control" name="customer_bankCode" type="text">
-                      </div>
-                      <div class="col">
-                        <label>Ngân hàng:</label>
-                        <input formControlName="bank" class="form-control" name="customer_bank" type="text">
-                      </div>
+                      <label>Họ Tên:</label>
+                      <input formControlName="name" class="form-control" name="customer_name" type="text">
                     </div>
 
                     <div class="form-group">
                       <label>Công ty:</label>
-                      <input formControlName="company" class="form-control">
+                      <input formControlName="org" class="form-control" name="customer_org">
                     </div>
 
+                    <div class="form-group row">
+                      <div class="col-md-6 col-lg-6 col-sm-12">
+                        <label>Mã số thuế:</label>
+                        <input formControlName="tax_code" class="form-control" name="customer_tax_code">
+                      </div>
+                    </div>
+
+                    <div class="form-group row">
+                      <div class="col-md-6 col-lg-6 col-sm-12">
+                        <label>Số tài khoản:</label>
+                        <input formControlName="bank_account" class="form-control" name="seller_bank_account" type="text">
+                      </div>
+                    </div>
                     <div class="form-group">
-                      <label>Địa chỉ:</label>
-                      <textarea formControlName="address" class="form-control" name="customer_address" type="text"></textarea>
+                      <label>Ngân hàng:</label>
+                      <input formControlName="bank" class="form-control" name="seller_bank" type="text">
                     </div>
                   </div>
                 </div>
