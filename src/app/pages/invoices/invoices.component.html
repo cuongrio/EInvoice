@@ -13,10 +13,16 @@
 
         <div class="card">
           <div class="card-body">
-            <h4 class="card-title">Danh sách hóa đơn</h4>
+            <h4 class="card-title">
+              <span class="pull-left">Danh sách hóa đơn</span>
+              <button (click)="expandSearch = !expandSearch" type="button pull-left" class="btn btn-link">
+                <i *ngIf="expandSearch" class="fas fa-chevron-down"></i>
+                <i *ngIf="!expandSearch" class="fas fa-chevron-up"></i>
+              </button>
+            </h4>
             <div class="row grid-margin">
               <div class="search-box">
-                <div class="card shadow-nohover">
+                <div *ngIf="expandSearch" class="card shadow-nohover">
                   <div class="card-body">
 
                     <form class="form-horizontal" #ngSearchForm="ngForm" [formGroup]="searchForm" (ngSubmit)="onSubmit(searchForm.value)">
@@ -56,7 +62,7 @@
                               <input formControlName="fromDate" class="form-control" placeholder="yyyy-mm-dd" name="dp"
                                 ngbDatepicker #d="ngbDatepicker">
                               <div class="input-group-append">
-                                <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button"></button>
+                                <button class="btn btn-outline-light calendar" (click)="d.toggle()" type="button"></button>
                               </div>
                             </div>
                           </div>
@@ -98,28 +104,28 @@
 
               <div class="col-12">
                 <div class="template-ein navbar-action">
-                  <button type="button" form="ngForm" class="btn btn-info btn-search" (click)="ngSearchForm.ngSubmit.emit()"><i
+                  <button *ngIf="expandSearch" type="button" form="ngForm" class="btn btn-info btn-search" (click)="ngSearchForm.ngSubmit.emit()"><i
                       class="icon-magnifier"></i>
                     Tìm kiếm</button>
-             
-                  <button type="button" routerLink="/invoices/createNew" class="btn btn-icons btn-inverse-secondary" data-toggle="tooltip"
-                    data-placement="bottom" title="Thêm mới">
+
+                  <button type="button" routerLink="/invoices/createNew" class="btn btn-icons btn-inverse-secondary"
+                    data-toggle="tooltip" trigger="hover" data-placement="bottom" title="Thêm mới">
                     <i class="fas fa-plus"></i>
                   </button>
-                  <button type="button" class="btn btn-icons btn-inverse-success" data-toggle="tooltip" data-placement="bottom"
-                    title="Sửa"><i class="fas fa-edit"></i></button>
-                  <button type="button" class="btn btn-icons btn-inverse-primary" data-toggle="tooltip" data-placement="bottom"
-                    title="Xóa"><i class="fas fa-trash"></i></button>
-                  <button type="button" class="btn btn-icons btn-inverse-primary" data-toggle="tooltip" data-placement="bottom"
-                    title="Sao chép"><i class="fas fa-copy"></i></button>
-                  <button type="button" class="btn btn-icons btn-inverse-primary" data-toggle="tooltip" data-placement="bottom"
-                    title="In"><i class="fas fa-print"></i></button>
-                  <button type="button" class="btn btn-icons btn-inverse-primary" data-toggle="tooltip" data-placement="bottom"
-                    title="Ký hóa đơn"><i class="fas fa-key"></i></button>
-                  <button type="button" class="btn btn-icons btn-inverse-primary" data-toggle="tooltip" data-placement="bottom"
-                    title="Nhận Excel"><i class="fas fa-file-excel"></i></button>
-                  <button type="button" class="btn btn-icons btn-inverse-primary" data-toggle="tooltip" data-placement="bottom"
-                    title="In chuyển đổi"><i class="fas fa-retweet"></i></button>
+                  <button type="button" routerLink="/invoices/edit/1" class="btn btn-icons btn-inverse-success"
+                    data-toggle="tooltip" trigger="hover" data-placement="bottom" title="Sửa"><i class="fas fa-edit"></i></button>
+                  <button type="button" class="btn btn-icons btn-inverse-primary" trigger="hover" data-toggle="tooltip"
+                    data-placement="bottom" title="Xóa"><i class="fas fa-trash"></i></button>
+                  <button type="button" class="btn btn-icons btn-inverse-primary" trigger="hover" data-toggle="tooltip"
+                    data-placement="bottom" title="Sao chép"><i class="fas fa-copy"></i></button>
+                  <button type="button" class="btn btn-icons btn-inverse-primary" trigger="hover" data-toggle="tooltip"
+                    data-placement="bottom" title="In"><i class="fas fa-print"></i></button>
+                  <button type="button" class="btn btn-icons btn-inverse-primary" trigger="hover" data-toggle="tooltip"
+                    data-placement="bottom" title="Ký hóa đơn"><i class="fas fa-key"></i></button>
+                  <button type="button" class="btn btn-icons btn-inverse-primary" trigger="hover" data-toggle="tooltip"
+                    data-placement="bottom" title="Nhận Excel"><i class="fas fa-file-excel"></i></button>
+                  <button type="button" class="btn btn-icons btn-inverse-primary" trigger="hover" data-toggle="tooltip"
+                    data-placement="bottom" title="In chuyển đổi"><i class="fas fa-retweet"></i></button>
                 </div>
               </div>
             </div>
@@ -153,11 +159,12 @@
               </table>
             </div>
             <div class="ngb-pagination">
-              <div class="page-info"> Trang {{page}} | Hiển thị {{itemsPerPage}} đơn | Tổng số {{totalItems}} hóa đơn. </div>
+              <div class="page-info"> Trang {{page}} | Hiển thị {{itemsPerPage}} đơn | Tổng số {{totalItems}} hóa đơn.
+              </div>
               <!-- <ngb-pagination class="d-flex justify-content-end" [pageSize]="itemsPerPage" [collectionSize]="totalItems"
                 [(page)]="page" (pageChange)="onPageChange($event)" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"></ngb-pagination> -->
-                <ngb-pagination class="d-flex justify-content-end" [pageSize]="10" [collectionSize]="120"
-                [(page)]="page" (pageChange)="onPageChange($event)" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"></ngb-pagination>
+              <ngb-pagination class="d-flex justify-content-end" [pageSize]="10" [collectionSize]="120" [(page)]="page"
+                (pageChange)="onPageChange($event)" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"></ngb-pagination>
             </div>
           </div>
         </div>

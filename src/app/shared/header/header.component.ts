@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
+
+declare var $: any;
 
 declare interface RouteInfo {
   path: string;
@@ -19,12 +21,30 @@ export const ROUTES: RouteInfo[] = [
   selector: 'app-header',
   templateUrl: './header.component.html'
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, AfterViewInit {
   menuItems: any[];
 
-  constructor() {}
+  constructor() { }
 
   ngOnInit() {
     this.menuItems = ROUTES.filter(menuItem => menuItem);
+  }
+
+  ngAfterViewInit() {
+    $(window).scroll(function () {
+      if (window.matchMedia('(min-width: 992px)').matches) {
+        var header = '.navbar.horizontal-layout';
+        if ($(window).scrollTop() >= 70) {
+          $(header).addClass('fixed-on-scroll');
+        } else {
+          $(header).removeClass('fixed-on-scroll');
+        }
+      }
+    });
+  }
+
+
+  logoutClicked() {
+    console.log('logout');
   }
 }

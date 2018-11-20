@@ -2,12 +2,12 @@
 .auth {
   min-height: 100vh;
   &.auth-bg-1 {
-    background: url("https://via.placeholder.com/400x400");
+    background: url("./assets/images/auth/login_1.jpg");
     background-size: cover;
   }
 
   &.register-bg-1 {
-    background: url("https://via.placeholder.com/400x400") center center no-repeat;
+    background: url("./assets/images/auth/register.jpg") center center no-repeat;
     background-size: cover;
   }
 
@@ -21,13 +21,13 @@
       .form-group {
         .input-group {
           .form-control {
-            border: 1px solid darken($border-color, 5%);
+            border: 1px solid darken($border-color,5%);
             border-right: none;
             @include border-radius(6px 0 0 6px);
 
             &:focus {
               border-right: none;
-              border-color: darken($border-color, 5%);
+              border-color: darken($border-color,5%);
             }
           }
 
@@ -37,7 +37,7 @@
             .input-group-text {
               @include border-radius(0 6px 6px 0);
               border-left: none;
-              border-color: darken($border-color, 5%);
+              border-color: darken($border-color,5%);
               color: #b6b6b6;
             }
           }
@@ -157,20 +157,20 @@
 
           .input-group {
             .form-control {
-              border: 1px solid darken($border-color, 5%);
+              border: 1px solid darken($border-color,5%);
               border-left: none;
               @include border-radius(0 6px 6px 0);
 
               &:focus {
                 border-left: none;
-                border-color: darken($border-color, 5%);
+                border-color: darken($border-color,5%);
               }
             }
 
             .input-group-prepend {
               .input-group-text {
                 @include border-radius(6px 0 0 6px);
-                border-color: darken($border-color, 5%);
+                border-color: darken($border-color,5%);
                 border-right: none;
                 color: #dfdfdf;
               }
@@ -228,12 +228,12 @@
         width: 100%;
 
         &.bg-1 {
-          background: url("https://via.placeholder.com/400x400") no-repeat center center;
+          background: url("./assets/images/auth/login_2.jpg") no-repeat center center;
           background-size: cover;
         }
 
         &.bg-2 {
-          background: url("https://via.placeholder.com/400x400") no-repeat center center;
+          background: url("./assets/images/auth/register_2.jpg") no-repeat center center;
           background-size: cover;
         }
       }
@@ -242,6 +242,6 @@
 }
 
 .lock-full-bg {
-  background: url("https://via.placeholder.com/400x400");
+  background: url("./assets/images/auth/login_1.jpg");
   background-size: cover;
 }

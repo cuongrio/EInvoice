@@ -22,8 +22,7 @@ import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/login.component';
 import { LogoutComponent } from './logout/logout.component';
 import { Page404Component } from './page404/page404.component';
-import { Exception500Component } from './exception/exception-500.component';
-import { MaintenanceComponent } from './maintenance/maintenance.component';
+import { Exception500Component } from './exception/exception-500.component'; 
 
 @NgModule({
   declarations: [
@@ -33,8 +32,7 @@ import { MaintenanceComponent } from './maintenance/maintenance.component';
     RegisterComponent,
     LogoutComponent,
     Page404Component,
-    Exception500Component,
-    MaintenanceComponent
+    Exception500Component
   ],
   imports: [
     BrowserModule,

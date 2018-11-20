@@ -7,8 +7,7 @@ import { LoginComponent } from './login/login.component';
 import { LogoutComponent } from './logout/logout.component';
 import { Page404Component } from './page404/page404.component';
 import { RegisterComponent } from './register/register.component';
-import { Exception500Component } from './exception/exception-500.component';
-import { MaintenanceComponent } from './maintenance/maintenance.component';
+import { Exception500Component } from './exception/exception-500.component'; 
 
 const routes: Routes = [
   {
@@ -65,16 +64,10 @@ const routes: Routes = [
     data: { title: 'Trang không tồn tại' }
   },
   {
-    path: 'exception500',
+    path: '500',
     component: Exception500Component,
     data: { title: 'Đã xảy ra lỗi' }
-  },
-  {
-    path: 'maintain',
-    component: MaintenanceComponent,
-    data: { title: 'Website đang bảo trì' }
-  },
-  {
+  },{
     path: '**',
     redirectTo: '404'
   }

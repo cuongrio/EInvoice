@@ -14,17 +14,20 @@ export class InvoiceFormComponent implements OnInit {
   ) {
 
   }
-  ngOnInit() { 
+  ngOnInit() {
     this.createForm();
   }
 
-  cancelClicked(){
+  cancelClicked() {
     this.addForm.reset();
     this.router.navigate(['/invoices']);
   }
 
-  onSubmit(form: any){
+  onSubmit(form: any) {
+    console.log(JSON.stringify(form));
   }
+
+  // https://www.concretepage.com/angular-2/angular-2-4-formbuilder-example
 
   private createForm() {
     this.addForm = this.formBuilder.group({
@@ -33,10 +36,30 @@ export class InvoiceFormComponent implements OnInit {
       size: '',
       fromDate: '',
       toDate: '',
-      invoiceNo: '',
       form: '',
       serial: '',
-      orgTaxCode: ''
+      orgTaxCode: '',
+      seller: this.formBuilder.group({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        taxCode: '',
+        bankCode: '',
+        bank: '',
+        address: ''
+      }),
+      customer: this.formBuilder.group({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        taxCode: '',
+        company: '',
+        bankCode: '',
+        bank: '',
+        address: ''
+      })
     });
   }
 

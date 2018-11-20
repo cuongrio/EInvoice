@@ -24,8 +24,12 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
     { value: 'orgTaxCode', text: 'Mã số thuế' }
   ];
 
+  // expand search
+  public expandSearch = false;
+
   private searchForm: FormGroup;
   private invoiceParams: InvoiceParams;
+
 
   // pagination
   private itemsPerPage = 20;
@@ -52,7 +56,10 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-toggle="tooltip"]').tooltip({ trigger: 'hover' });
+    $('[data-toggle="tooltip"]').on('click', function () {
+      $(this).tooltip('hide')
+    })
     $('.details-control').removeClass('');
   }
 
@@ -301,7 +308,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
               <th>Họ tên</th>
               <th>Địa chỉ</th>
               <th>Phone</th>
-              <th> Email</th>
+              <th>Email</th>
               <th>MST</th>
               <th>Tài khoản</th>
               <th>Ngân hàng</th>
