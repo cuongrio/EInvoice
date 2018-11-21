@@ -3,6 +3,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+
 import { RouterModule } from '@angular/router';
 import { AppRoutingModule } from './app.routing';
 import { CoreModule } from '@app/core';
@@ -24,6 +26,11 @@ import { LogoutComponent } from './logout/logout.component';
 import { Page404Component } from './page404/page404.component';
 import { Exception500Component } from './exception/exception-500.component';
 
+import { JwtInterceptor, ErrorInterceptor } from './_helpers';
+
+// used to create fake backend
+import { fakeBackendProvider } from './_helpers';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -39,6 +46,7 @@ import { Exception500Component } from './exception/exception-500.component';
     FormsModule,
     ReactiveFormsModule,
     HttpModule,
+    HttpClientModule,
     RouterModule,
     AppRoutingModule,
     NgProgressModule,
@@ -51,7 +59,13 @@ import { Exception500Component } from './exception/exception-500.component';
     NgProgressHttpModule.forRoot()
   ],
 
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+
+    // provider used to create fake backend
+    fakeBackendProvider
+  ],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { InvoiceParams } from './../app.interface';
+import { InvoiceParams } from './../_models';
 
 @Injectable({
   providedIn: 'root'
@@ -50,20 +50,4 @@ export class APIService {
     }
     return this.httpClient.get(`${this.API_URL}/1/invoices`);
   }
-
-  // createContact(contact) {
-  //     return this.httpClient.post(`${this.API_URL}/contacts/`, contact);
-  // }
-  // updateContact(contact) {
-  //     return this.httpClient.put(`${this.API_URL}/contacts/`, contact);
-  // }
-  // deleteContact(contact) {
-  //     return this.httpClient.delete(`${this.API_URL}/contacts/${contact.pk}`);
-  // }
-  // getLeads() {
-  //     return this.httpClient.get(`${this.API_URL}/leads`);
-  // }
-  // getOpportunities() {
-  //     return this.httpClient.get(`${this.API_URL}/opportunities`);
-  // }
 }

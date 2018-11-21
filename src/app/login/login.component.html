@@ -12,7 +12,7 @@
                             <p>Bạn chưa có tài khoản?</p>
                             <a routerLink="/register" class="btn get-started-btn">ĐĂNG KÝ</a>
                         </div>
-                        <form action="#">
+                        <form class="loginForm" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
                             <h3 class="mr-auto">Đăng nhập tài khoản</h3>
                             <p class="mb-5 mr-auto">Vui lòng nhập thông tin bên dưới.</p>
                             <div class="form-group">
@@ -20,19 +20,31 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="icon-user"></i></span>
                                     </div>
-                                    <input type="text" class="form-control" placeholder="Username">
+                                    <input type="text" placeholder="Tài khoản" formControlName="username" class="form-control"
+                                        [ngClass]="{ 'is-invalid': submitted && f.username.errors }" />
+                                </div>
+                                <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
+                                    <div *ngIf="f.username.errors.required">Tài khoản không được để trống</div>
                                 </div>
                             </div>
+
+
                             <div class="form-group">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="icon-lock"></i></span>
                                     </div>
-                                    <input type="password" class="form-control" placeholder="Password">
+                                    <input type="password" placeholder="Mật khẩu" formControlName="password" class="form-control"
+                                        [ngClass]="{ 'is-invalid': submitted && f.password.errors }" />
+                                </div>
+                                <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+                                    <div *ngIf="f.password.errors.required">Mật khẩu không được để trống</div>
                                 </div>
                             </div>
+
                             <div class="form-group">
-                                <button class="btn btn-primary submit-btn">Đăng nhập</button>
+                                <button [disabled]="loading" type="submit" class="btn btn-primary submit-btn">Đăng nhập</button>
+                                <img *ngIf="loading" class="pl-3" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
                             </div>
                             <div class="wrapper mt-5 text-gray">
                                 <p class="footer-text">Copyright © 2018 EInvoice System. All rights reserved.</p>

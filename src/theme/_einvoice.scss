@@ -335,3 +335,11 @@ table {
   width: 100%;
   height: 500px;
 }
+
+/***LOGIN FORM***/
+.loginForm{
+  .input-group-text, 
+  .form-control{
+    border-radius: 0 !important;
+  }
+}

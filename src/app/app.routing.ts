@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule, ExtraOptions } from '@angular/router';
+import { Routes, RouterModule } from '@angular/router';
 
 // import page
 import { PageLayoutComponent } from './pages/page-layout.component';
@@ -8,6 +8,8 @@ import { LogoutComponent } from './logout/logout.component';
 import { Page404Component } from './page404/page404.component';
 import { RegisterComponent } from './register/register.component';
 import { Exception500Component } from './exception/exception-500.component';
+
+import { AuthGuard } from './_guards';
 
 const routes: Routes = [
   {
@@ -18,8 +20,8 @@ const routes: Routes = [
   {
     path: '',
     component: PageLayoutComponent,
-    // canActivate: [AuthGuard],
-    // canActivateChild: [AuthGuard],
+    canActivate: [AuthGuard],
+    canActivateChild: [AuthGuard],
     children: [
       {
         path: 'dashboard',

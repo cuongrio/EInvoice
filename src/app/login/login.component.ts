@@ -1,34 +1,72 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { finalize } from 'rxjs/operators';
+import { AlertService, AuthenticationService } from '@app/_services';
+import { first } from 'rxjs/operators';
 
-import { environment } from '@env/environment';
-import { Logger, I18nService, AuthenticationService } from '@app/core';
-
-const log = new Logger('Login');
+// http://jasonwatmore.com/post/2018/10/29/angular-7-user-registration-and-login-example-tutorial
+// https://github.com/cornflourblue/angular-7-registration-login-example
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html'
 })
 export class LoginComponent implements OnInit {
-  version: string = environment.version;
-  error: string;
   loginForm: FormGroup;
-  isLoading = false;
+  loading = false;
+  submitted = false;
+  returnUrl: string;
 
   constructor(
-    private router: Router,
-    private route: ActivatedRoute,
     private formBuilder: FormBuilder,
-    private i18nService: I18nService,
-    private authenticationService: AuthenticationService
-  ) {}
+    private route: ActivatedRoute,
+    private router: Router,
+    private authenticationService: AuthenticationService,
+    private alertService: AlertService
+  ) {
+    // redirect to home if already logged in
+    if (this.authenticationService.currentUserValue) {
+      this.router.navigate(['/']);
+    }
+  }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.createForm();
 
-  login() {}
+    // get return url from route parameters or default to '/'
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+  }
 
-  setLanguage(language: string) {}
+  // convenience getter for easy access to form fields
+  get f() { return this.loginForm.controls; }
+
+  onSubmit() {
+    this.submitted = true;
+
+    // stop here if form is invalid
+    if (this.loginForm.invalid) {
+      return;
+    }
+
+    this.loading = true;
+    this.authenticationService.login(this.f.username.value, this.f.password.value)
+      .pipe(first())
+      .subscribe(
+        data => {
+          this.router.navigate([this.returnUrl]);
+        },
+        error => {
+          this.alertService.error(error);
+          this.loading = false;
+        });
+  }
+
+
+  private createForm() {
+    this.loginForm = this.formBuilder.group({
+      username: ['', Validators.required],
+      password: ['', Validators.required]
+    });
+
+  }
 }

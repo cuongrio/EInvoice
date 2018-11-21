@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormArray, Validators, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ProductItem} from './../../../_models';
 
 @Component({
   selector: 'app-invoice-form',
@@ -28,26 +29,11 @@ export class InvoiceFormComponent implements OnInit {
   }
 
   addMoreItem() {
-    let fg = this.formBuilder.group(this.emptyItem());
+    let fg = this.formBuilder.group(new ProductItem());
     this.itemFormArray.push(fg);
   }
   deleteItem(idx: number) {
     this.itemFormArray.removeAt(idx);
-  }
-
-  private emptyItem() {
-    return {
-      item_line: '',
-      item_code: '',
-      item_name: '',
-      unit: '',
-      price: '',
-      tax: '',
-      tax_rate: '',
-      price_wt: '',
-      quantity: '',
-      amount: ''
-    };
   }
 
   // https://www.concretepage.com/angular-2/angular-2-4-formbuilder-example

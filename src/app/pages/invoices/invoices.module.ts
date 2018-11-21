@@ -7,7 +7,7 @@ import { InvoicesRoutes } from './invoices.routing';
 import { DatePipe } from '@angular/common';
 import { InvoicesComponent } from './invoices.component';
 import { InvoiceFormComponent } from './components/form.component';
-import { APIService } from '@app/services/api.service';
+import { APIService } from './../../_services';
 import { AppConfig } from './../../app.config';
 import { InvoiceDetailComponent } from './components/detail.component';
 

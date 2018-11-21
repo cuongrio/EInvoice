@@ -1,10 +1,8 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { AppConfig } from './../../app.config';
-import { APIService } from './../../services/api.service';
-import { InvoiceParams } from '@app/app.interface';
-import { TSImportEqualsDeclaration } from 'babel-types';
+import { ActivatedRoute, Router } from '@angular/router'; 
+import { APIService } from './../../_services/api.service'; 
+import { InvoiceParams} from './../../_models';
 import { DatePipe } from '@angular/common';
 
 declare var $: any;

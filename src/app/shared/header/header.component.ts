@@ -1,4 +1,6 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { AuthenticationService } from './../../_services';
+import { Router} from '@angular/router';
 
 declare var $: any;
 
@@ -24,7 +26,10 @@ export const ROUTES: RouteInfo[] = [
 export class HeaderComponent implements OnInit, AfterViewInit {
   menuItems: any[];
 
-  constructor() {}
+  constructor(
+    private router: Router,
+    private authenticationService: AuthenticationService
+  ) {}
 
   ngOnInit() {
     this.menuItems = ROUTES.filter(menuItem => menuItem);
@@ -44,6 +49,7 @@ export class HeaderComponent implements OnInit, AfterViewInit {
   }
 
   logoutClicked() {
-    console.log('logout');
+    this.authenticationService.logout();
+    this.router.navigate(['/login']);
   }
 }
