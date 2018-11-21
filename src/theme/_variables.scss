@@ -87,9 +87,7 @@ $navbar-font-size: 14px;
 $navbar-icon-font-size: 1rem;
 // /////// NAVBAR ////////
 // /////// BUTTONS ////////
-
 $button-fixed-width: 120px;
-
 $btn-padding-y: 0.56rem;
 $btn-padding-x: 1.375rem;
 $btn-line-height: 1;
@@ -124,8 +122,10 @@ $input-line-height-sm: 1;
 $input-padding-y-lg: 0.94rem;
 $input-padding-x-lg: 1.94rem;
 $input-line-height-lg: 1;
+
 // /////// FORMS /////////
 // //////  DROPDOWNS ///////
+
 $dropdown-border-color: $border-color;
 $dropdown-divider-bg: $border-color;
 $dropdown-link-color: $body-color;
@@ -138,7 +138,6 @@ $table-border-color: $border-color;
 $table-inverse-bg: #2a2b32;
 $table-inverse-color: color(white);
 // ////// TABLES ////////
-
 // //////// MEASUREMENT AND PROPERTY VARIABLES //////////
 $boxed-container-width: 1200px;
 $border-property: 1px solid $border-color;
@@ -147,7 +146,6 @@ $card-padding-y: 30px;
 $card-padding-x: 30px;
 $card-border-color: $border-color;
 $card-border-radius: 1px;
-
 $grid-gutter-width: 12px;
 $action-transition-duration: 0.25s;
 $action-transition-timing-function: ease;
@@ -161,7 +159,6 @@ $breadcrumb-item-padding: 0.5rem;
 $breadcrumb-margin-bottom: 1rem;
 $breadcrumb-font-size: $default-font-size;
 $breadcrumb-bg: transparent;
-
 $breadcrumb-border-color: $border-color;
 $breadcrumb-divider-color: $gray-600;
 $breadcrumb-active-color: $gray-700;
@@ -201,7 +198,6 @@ $modal-md: 500px;
 $modal-sm: 300px;
 $modal-transition: transform 0.4s ease;
 // //////// MODALS VARIABLES //////////
-
 // //////// TOOLTIP VARIABLES //////////
 // default styles
 $tooltip-font-size: 0.75rem;
@@ -215,7 +211,6 @@ $tooltip-arrow-color: $tooltip-bg;
 // default styles
 $popover-bg: #f1f6ff;
 $popover-text-color: $black;
-
 $popover-border-color: $border-color;
 $popover-arrow-color: $popover-bg;
 $popover-arrow-outer-color: $popover-border-color;

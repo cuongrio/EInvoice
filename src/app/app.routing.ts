@@ -40,6 +40,10 @@ const routes: Routes = [
       {
         path: 'info',
         loadChildren: './pages/info/info.module#InfoModule'
+      },
+      {
+        path: 'report',
+        loadChildren: './pages/report/report.module#ReportModule'
       }
     ]
   },
@@ -79,4 +83,4 @@ const routes: Routes = [
   exports: [RouterModule],
   providers: []
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

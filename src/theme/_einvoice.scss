@@ -1,9 +1,33 @@
 .jumbotron {
-  padding: 2rem 2rem !important;
+  padding: 5px !important;
   margin-bottom: 0px !important;
+  background: #e4e7ec;
+  .breadcrumb{
+    border: 0 !important;
+    margin-bottom: 0;
+  }
 }
 .btn-search {
   height: 40px;
+}
+
+.product-item{
+  .product-item__title{
+    border-bottom: 1px dashed #a4a4a4;
+    padding: 10px 0px;
+    margin-bottom: 25px;
+
+    span{
+      font-weight: 500; 
+    }
+
+    a{
+      margin-left: 16px;
+      &:hover, &:focus{
+        cursor: pointer;
+      }
+    }
+  }
 }
 
 button.calendar,

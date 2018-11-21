@@ -2,8 +2,13 @@
 <div class="container-fluid page-body-wrapper">
   <div class="jumbotron jumbotron-fluid">
     <div class="container">
-      <h1 class="display-4">Quản lý hóa đơn</h1>
-      <p class="lead">Quản lý, thống kê danh mục dải hóa đơn</p>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a routerLink="/">Trang chủ</a></li>
+          <li class="breadcrumb-item"><a routerLink="/invoices">Dải hóa đơn</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Tạo hóa đơn</li>
+        </ol>
+      </nav>
     </div>
   </div>
 
@@ -12,11 +17,11 @@
       <div class="content-list">
 
         <div class="template-ein navbar-action">
-          <button (click)="cancelClicked()" type="button" class="btn btn-inverse-info" data-toggle="tooltip"
-            data-placement="bottom" title="Reset Form"><i class="fas fa-times"></i> Hủy bỏ
+          <button (click)="cancelClicked()" type="button" class="btn btn-inverse-info btn-fw">
+            <i class="fas fa-times"></i> Hủy bỏ
           </button>
-          <button (click)="ngAddForm.ngSubmit.emit()" type="button" class="btn btn-inverse-secondary" data-toggle="tooltip"
-            data-placement="bottom" title="Lưu lại">
+
+          <button (click)="ngAddForm.ngSubmit.emit()" type="button" class="btn btn-success btn-fw">
             <i class="fas fa-save"></i> Lưu lại
           </button>
         </div>
@@ -38,7 +43,7 @@
                     <div class="col-md-4 col-lg-4 col-sm-6">
                       <div class="form-group">
                         <label>Số Form</label>
-                        <input formControlName="size" type="text" class="form-control" placeholder="Số Form">
+                        <input formControlName="form" type="text" class="form-control" placeholder="Số Form">
                       </div>
                     </div>
 
@@ -49,7 +54,7 @@
                           <input formControlName="invoice_date" class="form-control" placeholder="dd-mm-yyyy" name="dp"
                             ngbDatepicker #d="ngbDatepicker">
                           <div class="input-group-append">
-                            <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button"></button>
+                            <button class="btn btn-outline-light calendar" (click)="d.toggle()" type="button"></button>
                           </div>
                         </div>
                       </div>
@@ -136,7 +141,7 @@
                   <div formGroupName="customer" class="customer-group">
                     <div class="form-group">
                       <label>Họ Tên:</label>
-                      <input formControlName="name" class="form-control" name="customer_name" type="text">
+                      <input formControlName="customer_name" class="form-control" name="customer_name" type="text">
                     </div>
 
                     <div class="form-group">
@@ -167,14 +172,89 @@
               <!--form mask ends-->
             </div>
           </div>
+
+          <div class="row grid-margin">
+            <div class="col-lg-12">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Thông tin sản phẩm</h4>
+                  <div formArrayName="items">
+                    <div *ngFor="let item of itemFormArray.controls; let idx = index" [formGroupName]="idx" class="product-item">
+                      <div class="product-item__title">
+                        <span>Dòng hàng : {{idx + 1}}</span>
+                        <a (click)="deleteItem(idx)">
+                          <div class="badge badge-danger">
+                            Xóa dòng
+                          </div>
+                        </a>
+                      </div>
+                      <div class="form-group row">
+                        <div class="col-md-4 col-lg-4 col-sm-6">
+                          <label>item_line:</label>
+                          <input formControlName="item_line" class="form-control" name="item_item_line" type="text">
+                        </div>
+                        <div class="col-md-4 col-lg-4 col-sm-6">
+                          <label>item_code:</label>
+                          <input formControlName="item_code" class="form-control" name="item_item_code" type="text">
+                        </div>
+                        <div class="col-md-4 col-lg-4 col-sm-6">
+                          <label>Đơn vị:</label>
+                          <input formControlName="unit" class="form-control" name="item_unit" type="text">
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <label>Tên sản phẩm:</label>
+                        <input formControlName="item_name" class="form-control" name="item_item_name" type="text">
+                      </div>
+
+                      <div class="form-group row">
+                        <div class="col-md-4 col-lg-4 col-sm-6">
+                          <label>price:</label>
+                          <input formControlName="price" class="form-control" name="item_price" type="text">
+                        </div>
+                        <div class="col-md-4 col-lg-4 col-sm-6">
+                          <label>price_wt:</label>
+                          <input formControlName="price_wt" class="form-control" name="item_price_wt" type="text">
+                        </div>
+                        <div class="col-md-4 col-lg-4 col-sm-6">
+                          <label>quantity:</label>
+                          <input formControlName="quantity" class="form-control" name="item_quantity" type="text">
+                        </div>
+                      </div>
+
+                      <div class="form-group row">
+                        <div class="col-md-4 col-lg-4 col-sm-6">
+                          <label>amount:</label>
+                          <input formControlName="amount" class="form-control" name="item_amount" type="text">
+                        </div>
+                        <div class="col-md-4 col-lg-4 col-sm-6">
+                          <label>tax:</label>
+                          <input formControlName="tax" class="form-control" name="item_tax" type="text">
+                        </div>
+                        <div class="col-md-4 col-lg-4 col-sm-6">
+                          <label>tax_rate:</label>
+                          <input formControlName="tax_rate" class="form-control" name="item_tax_rate" type="text">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <button (click)="addMoreItem()" type="button" class="btn btn-primary btn-fw">
+                    <i class="fas fa-plus"></i>
+                    Thêm dòng hàng
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </form>
 
         <div class="template-ein navbar-action">
-          <button (click)="cancelClicked()" type="button" class="btn btn-inverse-info" data-toggle="tooltip"
-            data-placement="bottom" title="Reset Form"><i class="fas fa-times"></i> Hủy bỏ
+          <button (click)="cancelClicked()" type="button" class="btn btn-inverse-info btn-fw">
+            <i class="fas fa-times"></i> Hủy bỏ
           </button>
-          <button (click)="ngAddForm.ngSubmit.emit()" type="button" class="btn btn-success btn-inverse-secondary"
-            data-toggle="tooltip" data-placement="bottom" title="Lưu lại">
+
+          <button (click)="ngAddForm.ngSubmit.emit()" type="button" class="btn btn-success btn-fw">
             <i class="fas fa-save"></i> Lưu lại
           </button>
         </div>

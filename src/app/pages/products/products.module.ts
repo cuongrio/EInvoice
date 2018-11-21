@@ -12,4 +12,4 @@ import { ProductFormComponent } from './components/form.component';
   imports: [CommonModule, RouterModule.forChild(ProductsRoutes), FormsModule, ReactiveFormsModule],
   declarations: [ProductsComponent, ProductFormComponent]
 })
-export class ProductsModule { }
+export class ProductsModule {}

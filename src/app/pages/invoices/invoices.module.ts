@@ -9,16 +9,11 @@ import { InvoicesComponent } from './invoices.component';
 import { InvoiceFormComponent } from './components/form.component';
 import { APIService } from '@app/services/api.service';
 import { AppConfig } from './../../app.config';
+import { InvoiceDetailComponent } from './components/detail.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    RouterModule.forChild(InvoicesRoutes),
-    NgbModule,
-    FormsModule,
-    ReactiveFormsModule
-  ],
-  declarations: [InvoicesComponent, InvoiceFormComponent],
+  imports: [CommonModule, RouterModule.forChild(InvoicesRoutes), NgbModule, FormsModule, ReactiveFormsModule],
+  declarations: [InvoicesComponent, InvoiceDetailComponent, InvoiceFormComponent],
   providers: [APIService, DatePipe, AppConfig]
 })
-export class InvoicesModule { }
+export class InvoicesModule {}

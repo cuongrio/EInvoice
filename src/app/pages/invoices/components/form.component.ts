@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, FormArray, Validators, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
@@ -10,7 +10,8 @@ export class InvoiceFormComponent implements OnInit {
   public addForm: FormGroup;
   constructor(private router: Router, private formBuilder: FormBuilder) { }
   ngOnInit() {
-    this.createForm();
+    this.createItemsForm();
+    this.addMoreItem();
   }
 
   cancelClicked() {
@@ -22,15 +23,43 @@ export class InvoiceFormComponent implements OnInit {
     console.log(JSON.stringify(form));
   }
 
+  get itemFormArray(): FormArray {
+    return this.addForm.get('items') as FormArray;
+  }
+
+  addMoreItem() {
+    let fg = this.formBuilder.group(this.emptyItem());
+    this.itemFormArray.push(fg);
+  }
+  deleteItem(idx: number) {
+    this.itemFormArray.removeAt(idx);
+  }
+
+  private emptyItem() {
+    return {
+      item_line: '',
+      item_code: '',
+      item_name: '',
+      unit: '',
+      price: '',
+      tax: '',
+      tax_rate: '',
+      price_wt: '',
+      quantity: '',
+      amount: ''
+    };
+  }
+
   // https://www.concretepage.com/angular-2/angular-2-4-formbuilder-example
 
-  private createForm() {
+  private createItemsForm() {
     this.addForm = this.formBuilder.group({
       invoice_date: '',
       form: '',
       serial: '',
       totalBeforeTax: '',
       total_tax: '',
+      total: '',
       seller: this.formBuilder.group({
         name: '',
         address: '',
@@ -47,18 +76,7 @@ export class InvoiceFormComponent implements OnInit {
         bank_account: '',
         bank: ''
       }),
-      items: this.formBuilder.array([{
-        item_line: '',
-        item_code: '',
-        item_name: '',
-        unit: '',
-        price: '',
-        tax: '',
-        tax_rate: '',
-        price_wt: '',
-        quantity: '',
-        amount: ''
-      }])
+      items: this.formBuilder.array([])
     });
   }
 }

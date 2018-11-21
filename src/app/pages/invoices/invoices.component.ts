@@ -48,7 +48,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
     private activeRouter: ActivatedRoute,
     private apiService: APIService,
     private formBuilder: FormBuilder
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.initDefault();
@@ -60,7 +60,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     $('[data-toggle="tooltip"]').tooltip({ trigger: 'hover' });
-    $('[data-toggle="tooltip"]').on('click', function () {
+    $('[data-toggle="tooltip"]').on('click', function() {
       $(this).tooltip('hide');
     });
     $('.details-control').removeClass('');
@@ -93,8 +93,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
       }
 
       // set default value form
-      (<FormGroup>this.searchForm)
-        .patchValue(routerParams, { onlySelf: true });
+      (<FormGroup>this.searchForm).patchValue(routerParams, { onlySelf: true });
     }
     const invoiceParams: InvoiceParams = { page: JSON.stringify(this.page) };
     // call service
@@ -142,8 +141,12 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
         this.totalPages = response.total_pages;
         this.totalItems = response.total_pages * this.itemsPerPage;
 
-        $('#invoiceTable').dataTable().fnClearTable();
-        $('#invoiceTable').dataTable().fnAddData(response.contents);
+        $('#invoiceTable')
+          .dataTable()
+          .fnClearTable();
+        $('#invoiceTable')
+          .dataTable()
+          .fnAddData(response.contents);
       }
     });
   }
@@ -164,8 +167,6 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
     this.searchForm.controls['sort'].setValue(this.defaultSort, { onlySelf: true });
     this.searchForm.controls['sortBy'].setValue(this.defaultSortBy, { onlySelf: true });
   }
-
-
 
   private convertDateToString(myDate: any) {
     const convertedDate = myDate.year + '-' + myDate.month + '-' + myDate.day;
@@ -205,14 +206,14 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
         {
           width: '100px',
           targets: 1,
-          render: function (data: any) {
+          render: function(data: any) {
             return '<label class="badge badge-info">' + data + '</label>';
           }
         },
         {
           width: '70px',
           targets: 5,
-          render: function (data: any) {
+          render: function(data: any) {
             if (data && data !== 'null') {
               return '<span class="number-format">' + data + '</span>';
             } else {
@@ -223,7 +224,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
         {
           width: '70px',
           targets: 6,
-          render: function (data: any) {
+          render: function(data: any) {
             if (data && data !== 'null') {
               return '<span class="number-format">' + data + '</span>';
             } else {
@@ -234,7 +235,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
         {
           width: '70px',
           targets: 7,
-          render: function (data: any) {
+          render: function(data: any) {
             if (data && data !== 'null') {
               return '<span class="number-format">' + data + '</span>';
             } else {
@@ -253,7 +254,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
         { data: 'invoice_no' },
         { data: 'invoice_date' },
         {
-          data: function (row: any, type: any) {
+          data: function(row: any, type: any) {
             if (type === 'display' && row.seller && row.seller !== 'null') {
               return row.seller.name;
             } else {
@@ -262,7 +263,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
           }
         },
         {
-          data: function (row: any, type: any) {
+          data: function(row: any, type: any) {
             if (type === 'display' && row.customer && row.customer !== 'null') {
               return row.customer.customer_name;
             } else {
@@ -275,7 +276,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
         { data: 'total' }
       ],
       order: [[2, 'desc']],
-      drawCallback: function () {
+      drawCallback: function() {
         const pagination = $(this)
           .closest('.dataTables_wrapper')
           .find('.dataTables_paginate');
@@ -404,7 +405,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
       );
     }
     // Add event listener for opening and closing details
-    $('#invoiceTable tbody').on('click', 'td.details-control', function () {
+    $('#invoiceTable tbody').on('click', 'td.details-control', function() {
       const tr = $(this).closest('tr');
 
       const row = table.row(tr);
