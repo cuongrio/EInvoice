@@ -20,8 +20,8 @@ const routes: Routes = [
   {
     path: '',
     component: PageLayoutComponent,
-    canActivate: [AuthGuard],
-    canActivateChild: [AuthGuard],
+    // canActivate: [AuthGuard],
+    // canActivateChild: [AuthGuard],
     children: [
       {
         path: 'dashboard',

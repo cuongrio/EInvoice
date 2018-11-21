@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormArray, Validators, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ProductItem} from './../../../_models';
+import { ProductItem } from './../../../_models';
 
 @Component({
   selector: 'app-invoice-form',
@@ -29,7 +29,7 @@ export class InvoiceFormComponent implements OnInit {
   }
 
   addMoreItem() {
-    let fg = this.formBuilder.group(new ProductItem());
+    const fg = this.formBuilder.group(new ProductItem());
     this.itemFormArray.push(fg);
   }
   deleteItem(idx: number) {

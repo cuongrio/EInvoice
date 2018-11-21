@@ -7,6 +7,12 @@
     margin-bottom: 0;
   }
 }
+.error.text-danger{
+  width: 100%;
+  background: antiquewhite;
+  padding: 7px;
+}
+
 .btn-search {
   height: 40px;
 }
@@ -45,6 +51,7 @@ button.calendar:active {
 legend.scheduler-border {
   font-size: 13px;
   font-weight: 600;
+  text-transform: uppercase;
 }
 
 .no-information {
@@ -55,6 +62,8 @@ legend.scheduler-border {
   margin-top: 16px;
   display: block;
   position: relative;
+  min-height: 55px;
+
   .page-info {
     position: absolute;
     top: 0;

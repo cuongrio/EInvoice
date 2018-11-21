@@ -28,8 +28,7 @@ import { Exception500Component } from './exception/exception-500.component';
 
 import { JwtInterceptor, ErrorInterceptor } from './_helpers';
 
-// used to create fake backend
-import { fakeBackendProvider } from './_helpers';
+import { ValidationService } from './_services/validator.service';
 
 @NgModule({
   declarations: [
@@ -60,11 +59,9 @@ import { fakeBackendProvider } from './_helpers';
   ],
 
   providers: [
+    ValidationService,
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-
-    // provider used to create fake backend
-    fakeBackendProvider
   ],
   bootstrap: [AppComponent]
 })

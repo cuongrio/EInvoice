@@ -1,5 +1,17 @@
 <!-- partial -->
 <div class="container-fluid page-body-wrapper">
+  <div class="jumbotron jumbotron-fluid">
+    <div class="container">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a routerLink="/">Trang chủ</a></li>
+          <li class="breadcrumb-item"><a routerLink="/invoices">Dải hóa đơn</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Chi tiết hóa đơn</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+
   <div class="main-panel">
     <div class="content-wrapper">
       <div class="row">
@@ -7,25 +19,48 @@
           <div class="card px-2">
             <div class="card-body">
               <div class="container-fluid">
-                <h3 class="text-right mb-4">Invoice&nbsp;&nbsp;#INV-17</h3>
+                <h3 class="text-right mb-4">Số đơn hàng: &nbsp;&nbsp;#{{invoiceDetail.invoice_no}}</h3>
                 <hr>
               </div>
               <div class="container-fluid d-flex justify-content-between">
                 <div class="col-lg-3 pl-0">
-                  <p class="mt-2 mb-2"><b>CloudUi</b></p>
-                  <p>104,<br>Minare SK,<br>Canada, K1A 0G9.</p>
+                  <p class="mt-2 mb-4"><b>Thông tin đơn hàng</b></p>
+                  <div class="invoice-detail__info">
+                    <label>Số form:</label>&nbsp;<small class="text-muted"><b>{{invoiceDetail.form}}</b></small><br />
+                    <label>Số Serial:</label>&nbsp;<small class="text-muted"><b>{{invoiceDetail.serial}}</b></small><br />
+                    <label>Trạng thái:</label>&nbsp;<small class="text-muted">
+                      <b>
+                        <div class="badge badge-danger">{{invoiceDetail.status}}</div>
+                      </b></small><br />
+                    <label>Ngày hóa đơn: </label>&nbsp;<small class="text-muted"><b>{{invoiceDetail.invoice_date}}</b></small><br />
+                  </div>
+                </div>
+                <div class="col-lg-3 pl-0">
+                  <p class="mt-2 mb-4"><b>Thông tin Khách hàng</b></p>
+                  <div class="invoice-detail__customer">
+                    <label>Số form:</label>&nbsp;<small class="text-muted"><b>{{invoiceDetail.form}}</b></small><br />
+                    <label>Số Serial:</label>&nbsp;<small class="text-muted"><b>{{invoiceDetail.serial}}</b></small><br />
+                    <label>Trạng thái:</label>&nbsp;<small class="text-muted">
+                      <b>
+                        <div class="badge badge-danger">{{invoiceDetail.status}}</div>
+                      </b></small><br />
+                    <label>Ngày hóa đơn: </label>&nbsp;<small class="text-muted"><b>{{invoiceDetail.invoice_date}}</b></small><br />
+                  </div>
                 </div>
                 <div class="col-lg-3 pr-0">
-                  <p class="mt-2 mb-2 text-right"><b>Invoice to</b></p>
-                  <p class="text-right">Gaala & Sons,<br> C-201, Beykoz-34800,<br> Canada, K1A 0G9.</p>
+                  <p class="mt-2 mb-4 text-right"><b>Thông tin Người bán</b></p>
+                  <div class="invoice-detail__seller text-right">
+                    <label>Số form:</label>&nbsp;<small class="text-muted"><b>{{invoiceDetail.form}}</b></small><br />
+                    <label>Số Serial:</label>&nbsp;<small class="text-muted"><b>{{invoiceDetail.serial}}</b></small><br />
+                    <label>Trạng thái:</label>&nbsp;<small class="text-muted">
+                      <b>
+                        <div class="badge badge-danger">{{invoiceDetail.status}}</div>
+                      </b></small><br />
+                    <label>Ngày hóa đơn: </label>&nbsp;<small class="text-muted"><b>{{invoiceDetail.invoice_date}}</b></small><br />
+                  </div>
                 </div>
               </div>
-              <div class="container-fluid d-flex justify-content-between">
-                <div class="col-lg-3 pl-0">
-                  <p class="mb-0 mt-2">Invoice Date : 23rd Jan 2016</p>
-                  <p>Due Date : 25th Jan 2017</p>
-                </div>
-              </div>
+
               <div class="container-fluid mt-2 d-flex justify-content-center w-100">
                 <div class="table-responsive w-100">
                   <table class="table">

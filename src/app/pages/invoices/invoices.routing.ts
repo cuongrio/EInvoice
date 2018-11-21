@@ -15,11 +15,11 @@ export const InvoicesRoutes: Routes = [
     path: 'createNew',
     component: InvoiceFormComponent,
     data: { title: 'Tạo mới hóa đơn' }
-  },{
+  }, {
     path: 'edit/:id',
     component: InvoiceFormComponent,
     data: { title: 'Chỉnh sửa hóa đơn' }
-  },{
+  }, {
     path: 'retrieve/:id',
     component: InvoiceDetailComponent,
     data: { title: 'Chi tiết hóa đơn' }

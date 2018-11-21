@@ -3,6 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AlertService, AuthenticationService } from '@app/_services';
 import { first } from 'rxjs/operators';
+import { ValidationService } from './../_services/validator.service';
 
 // http://jasonwatmore.com/post/2018/10/29/angular-7-user-registration-and-login-example-tutorial
 // https://github.com/cornflourblue/angular-7-registration-login-example
@@ -22,7 +23,8 @@ export class LoginComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private authenticationService: AuthenticationService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private validationService: ValidationService
   ) {
     // redirect to home if already logged in
     if (this.authenticationService.currentUserValue) {
@@ -49,23 +51,31 @@ export class LoginComponent implements OnInit {
     }
 
     this.loading = true;
-    this.authenticationService.login(this.f.username.value, this.f.password.value)
-      .pipe(first())
-      .subscribe(
-        data => {
-          this.router.navigate([this.returnUrl]);
-        },
-        error => {
-          this.alertService.error(error);
-          this.loading = false;
-        });
+    // this.authenticationService.login(this.f.username.value, this.f.password.value)
+    //   .pipe(first())
+    //   .subscribe(
+    //     data => {
+    //       this.router.navigate([this.returnUrl]);
+    //     },
+    //     error => {
+    //       this.alertService.error(error);
+    //       this.loading = false;
+    //     });
+    this.router.navigate([this.returnUrl]);
+    this.loading = false;
   }
 
 
   private createForm() {
     this.loginForm = this.formBuilder.group({
-      username: ['', Validators.required],
-      password: ['', Validators.required]
+      username: ['', Validators.compose([
+        Validators.required,
+        this.validationService.emailValidator]
+      )],
+      password: ['', Validators.compose([
+        Validators.required,
+        this.validationService.passwordValidator
+      ])]
     });
 
   }

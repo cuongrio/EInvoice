@@ -1,5 +1,28 @@
 # E-INVOICE
+CREATED = Lập mới
+SIGNED = Đã ký
+APPROVED = Duyệt
+DISPOSED = Xóa bỏ
 
+định dạng date
+22/08/2018
+
+tiền
+1.000.000
+1.230
+
+----
+form add invoiceNo
+-Tổng số tiền, Tổng số thuế, Tổng tiền trước thuế
+
+search: 
+bỏ column người bán,
+thêm thông tin cột KH: MST, Địa chỉ
+thêm cột: %VAT
+
+expand: Hiển thị hết thông tin sản phẩm
+
+ctr+F : mở cái form search.
 
 
 ### DEPLOYMENT CONFIG

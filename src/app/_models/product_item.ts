@@ -8,5 +8,5 @@
     tax_rate: string;
     price_wt: string;
     quantity: string;
-    amount: string
+    amount: string;
 }
