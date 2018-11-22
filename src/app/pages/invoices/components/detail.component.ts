@@ -23,9 +23,9 @@ export class InvoiceDetailComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.subscription = this.activatedRoute.params.subscribe((params: any) => {
       if (params.id) {
-        this.retrieveById(params.id);
+        // this.retrieveById(params.id);
       } else {
-        this.router.navigate(['/404']);
+        // this.router.navigate(['/404']);
       }
     });
   }

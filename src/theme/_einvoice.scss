@@ -7,6 +7,11 @@
     margin-bottom: 0;
   }
 }
+
+.text-bold{
+  font-weight: 600;
+}
+
 .error.text-danger{
   width: 100%;
   background: antiquewhite;
@@ -350,5 +355,84 @@ table {
   .input-group-text, 
   .form-control{
     border-radius: 0 !important;
+  }
+}
+
+/***INVOICE FORM***/
+.invoice__wrapper{
+  &.card-body{
+    padding: 80px 30px !important;
+  }
+
+  .navbar-action{
+    margin-top: 20px;
+  }
+
+  .invoice__form{
+    .form-group, .row{
+      margin-bottom: 4px !important;
+    }
+    
+    .invoice-form__heading{
+      .form__title{
+        font-weight: 600;
+        font-size: 18px;
+      }
+    }
+
+    .invoice__body{
+      margin-top: 40px;
+      padding-bottom: 80px;
+      border-bottom: 1px solid #eee;
+
+      .customer-group{
+        .form-group{
+          margin-bottom: 1rem !important;
+        }
+      }
+      
+      .customer-group__detail{
+        .form-group{
+          margin-bottom: 0 !important;
+        }
+      }
+
+      
+    }
+
+    .product-item__wrapper{
+      margin-top: 40px;
+
+      .product-line > td.no-padding{
+        padding: 0px !important;
+        input.form-control{
+          border: 0 !important;
+          padding-left: 5px;
+        }
+
+        .popover{
+          .popover-header{
+            font-size: 13px !important;
+          }
+          .popover-body{
+            padding: 5px !important;
+          }
+        }
+      }
+
+      .btn-bg-add{
+        padding: 10px !important;
+        display: block;
+        background: url("./assets/images/details_open.png") no-repeat center center;
+        cursor: pointer;
+      }
+
+      .btn-bg-remove{
+        padding: 10px !important;
+        display: block;
+        background: url("./assets/images/details_close.png") no-repeat center center;
+        cursor: pointer;
+      }
+    }
   }
 }

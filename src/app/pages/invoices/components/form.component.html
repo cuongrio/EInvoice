@@ -1,5 +1,289 @@
-<!-- partial -->
 <div class="container-fluid page-body-wrapper">
+  <div class="jumbotron jumbotron-fluid">
+    <div class="container">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a routerLink="/">Trang chủ</a></li>
+          <li class="breadcrumb-item"><a routerLink="/invoices">Dải hóa đơn</a></li>
+          <li *ngIf="invoiceItem.invoice_id" class="breadcrumb-item active" aria-current="page">Sửa hóa đơn</li>
+          <li *ngIf="!invoiceItem.invoice_id" class="breadcrumb-item active" aria-current="page">Lập hóa đơn</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+
+  <div class="main-panel">
+    <div class="content-wrapper">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card px-2">
+            <div class="card-body invoice__wrapper">
+              <form class="invoice__form" #ngAddForm="ngForm" [formGroup]="addForm" (ngSubmit)="onSubmit(addForm.value)">
+                <div class="container-fluid">
+                  <!--ROW HEADING-->
+                  <div class="invoice-form__heading">
+                    <div class="row">
+                      <div class="col-md-3 col-lg-3 col-sm-3">
+                        <div class="form-group">
+                          <label class="text-bold col-sm-6 col-form-label">
+                            <div *ngIf="invoiceItem.invoice_id; else createNew">
+                              Sửa
+                            </div>
+
+                            <ng-template #createNew>Lập</ng-template>
+                          </label>
+                        </div>
+                      </div>
+                      <div class="col-md-6 text-center col-lg-6 col-sm-6">
+                        <div class="form-group">
+                          <label class="form__title col-form-label">
+                            HÓA ĐƠN GIÁ TRỊ GIA TĂNG
+                          </label>
+                        </div>
+                      </div>
+                      <div class="col-md-3 col-lg-3 col-sm-3">
+                        <div class="invoice__info">
+                          <div class="form-group row">
+                            <label class="ccol-sm-3 col-md-3 col-lg-3 col-form-label text-bold">Mẫu số:</label>
+                            <div class="col-sm-9 col-md-9 col-lg-9">
+                              <input type="text" class="form-control">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="invoice-form__info">
+                    <div class="row">
+                      <div class="col-md-3 offset-md-9 col-lg-3 offset-lg-9">
+                        <div class="form-group text-right row">
+                          <label class="col-sm-3 col-md-3 col-lg-3 col-form-label">Ký hiệu:</label>
+                          <div class="col-sm-9 col-md-9 col-lg-9">
+                            <input type="text" class="form-control">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row justify-content-end">
+                      <div class="col-md-3 col-lg-3">
+                        <div class="form-group text-center row">
+                          <label class="col-sm-3 col-md-3 col-lg-3 col-form-label">Ngày:</label>
+                          <div class="col-sm-9 col-md-9 col-lg-9">
+                            <div class="input-group">
+                              <input formControlName="invoice_date" class="form-control" placeholder="dd-mm-yyyy" name="dp"
+                                ngbDatepicker #d="ngbDatepicker">
+                              <div class="input-group-append">
+                                <button class="btn btn-outline-light calendar" (click)="d.toggle()" type="button"></button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="col-md-3 col-lg-3 offset-md-2 offset-lg-2">
+                        <div class="form-group row">
+                          <label class="col-sm-3 col-md-3 col-lg-3 col-form-label">Số HĐ:</label>
+                          <div class="col-sm-9 col-md-9 col-lg-9">
+                            <input type="text" class="form-control">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="invoice__body">
+                    <div formGroupName="customer" class="customer-group">
+                      <div class="row">
+                        <div class="col">
+                          <div class="form-group row">
+                            <label class="col-sm-2 col-md-2 col-lg-2 col-form-label">Họ tên người mua</label>
+                            <div class="col-sm-10 col-md-10 col-lg-10">
+                              <input formControlName="customer_name" class="form-control" name="customer_name" type="text">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-md-4 col-lg-4">
+                          <div class="form-group row">
+                            <label class="col-sm-6 col-md-6 col-lg-6 col-form-label">Mã khách hàng</label>
+                            <div class="col-sm-6 col-md-6 col-lg-6">
+                              <input formControlName="customer_name" class="form-control " name="customer_name" type="text">
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-1 col-lg-1">
+                          <div class="form-group">
+                            <button type="button" class="btn btn-icons btn-inverse-light"><i class="fas fa-search"></i></button>
+                          </div>
+                        </div>
+
+                        <div class="col-md-7 col-lg-7">
+                          <div class="form-group row">
+                            <label class="col-sm-3 col-md-3 col-lg-3 text-right col-form-label">Tên khác</label>
+                            <div class="col-sm-9 col-md-9 col-lg-9">
+                              <input formControlName="customer_name" class="form-control " name="customer_name" type="text">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col">
+                          <div class="form-group row">
+                            <label class="col-sm-2 col-md-2 col-lg-2 col-form-label">Địa chỉ</label>
+                            <div class="col-sm-10 col-md-10 col-lg-10">
+                              <textarea formControlName="address" class="form-control" name="customer_address" type="text"></textarea>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-md-4 col-lg-4">
+                          <div class="form-group row">
+                            <label class="col-sm-6 col-md-6 col-lg-6 col-form-label">Mã số thuế</label>
+                            <div class="col-sm-6 col-md-6 col-lg-6">
+                              <input formControlName="customer_name" class="form-control " name="customer_name" type="text">
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="col-md-8 col-lg-8">
+                          <div class="form-group row">
+                            <label class="col-sm-4 col-md-4 col-lg-4 col-form-label text-right">Hình thức
+                              thanh toán</label>
+                            <div class="col-sm-8 col-md-8 col-lg-8">
+                              <input formControlName="customer_name" class="form-control " name="customer_name" type="text">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-md-4 col-lg-4">
+                          <div class="form-group row">
+                            <label class="col-sm-6 col-md-6 col-lg-6 col-form-label">Email</label>
+                            <div class="col-sm-6 col-md-6 col-lg-6">
+                              <input formControlName="customer_name" class="form-control " name="customer_name" type="text">
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="col-md-8 col-lg-8">
+                          <div class="form-group row">
+                            <label class="col-sm-4 col-md-4 col-lg-4 col-form-label text-right">Website</label>
+                            <div class="col-sm-8 col-md-8 col-lg-8">
+                              <input formControlName="customer_name" class="form-control " name="customer_name" type="text">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-md-4 col-lg-4">
+                          <div class="form-group row">
+                            <label class="col-sm-6 col-md-6 col-lg-6 col-form-label">Số tài khoản</label>
+                            <div class="col-sm-6 col-md-6 col-lg-6">
+                              <input formControlName="customer_name" class="form-control " name="customer_name" type="text">
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="col-md-8 col-lg-8">
+                          <div class="form-group row">
+                            <label class="col-sm-4 col-md-4 col-lg-4 col-form-label text-right">Tại</label>
+                            <div class="col-sm-8 col-md-8 col-lg-8">
+                              <input formControlName="customer_name" class="form-control " name="customer_name" type="text">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+                    <!--#end customer-group-->
+
+                    <div class="product-item__wrapper">
+                      <h3><small class="text-muted">THÔNG TIN DÒNG HÀNG</small></h3>
+                      <table class="table table-bordered">
+                        <thead>
+                          <tr>
+                            <th class="w-20"></th>
+                            <th>#STT</th>
+                            <th>Mã</th>
+                            <th>Nội dung</th>
+                            <th class="text-right">Số lượng</th>
+                            <th>Đơn vị</th>
+                            <th class="text-right">Đơn giá</th>
+                            <th class="text-right">Thành tiền</th>
+                            <th class="text-right">%VAT</th>
+                            <th class="text-right">Tiền VAT</th>
+                            <th class="text-right">Tổng tiền</th>
+                            <th>Trạng thái</th>
+                          </tr>
+                        </thead>
+                        <tbody formArrayName="items">
+                          <tr class="product-line" *ngFor="let item of itemFormArray.controls; let idx = index"
+                            [formGroupName]="idx">
+                            <td><a (click)="stickyButtonClicked(idx === (itemFormArray.controls.length - 1), idx)"
+                                [ngClass]="(idx === (itemFormArray.controls.length - 1)) ? 'btn btn-bg-add':'btn btn-bg-remove'"></a></td>
+                            <td>{{idx + 1}}</td>
+                            <td class="no-padding"><input formControlName="item_code" class="form-control" name="item_item_code"
+                                type="text"></td>
+                            <td class="no-padding"><input [ngbPopover]="popContent" [(ngModel)]="item['item_name']"
+                                autoClose="outside" placement="bottom" popoverTitle="Thông tin mở rộng" formControlName="item_name"
+                                class="form-control" name="item_item_name" type="text">
+                            </td>
+                            <td class="no-padding"><input formControlName="quantity" class="form-control text-right"
+                                name="item_quantity" type="text"></td>
+                            <td class="no-padding"><input formControlName="unit" class="form-control" name="item_unit"
+                                type="text"></td>
+                            <td class="no-padding"><input formControlName="price" class="form-control text-right" name="item_price"
+                                type="text"></td>
+                            <td class="no-padding"><input formControlName="price_wt" class="form-control text-right"
+                                name="item_price_wt" type="text"></td>
+                            <td class="no-padding"><input formControlName="vat" class="form-control text-right" name="item_vat"
+                                type="text" data-inputmask="'alias': 'currency'"></td>
+                            <td class="no-padding"><input formControlName="total_vat" class="form-control text-right"
+                                name="item_total_vat" type="text"></td>
+                            <td class="no-padding"><input formControlName="total_price" class="form-control text-right"
+                                name="item_total_price" type="text"></td>
+                            <td class="no-padding"><input formControlName="status" class="form-control" name="item_status"
+                                type="text">
+                            </td>
+                            <ng-template #popContent>
+                              <textarea formControlName="item_name" [(ngModel)]="item['item_name']" class="form-control"
+                                rows="4" name="item_item_name_expand" type="text"></textarea>
+                            </ng-template>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div class="template-ein text-right navbar-action">
+                    <button (click)="cancelClicked()" type="button" class="btn btn-inverse-secondary btn-fw">
+                      <i class="fas fa-times"></i> Hủy bỏ
+                    </button>
+
+                    <button (click)="ngAddForm.ngSubmit.emit()" type="button" class="btn btn-inverse-success btn-fw">
+                      <i class="fas fa-save"></i> Lưu lại
+                    </button>
+                  </div>
+
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <div class="container-fluid page-body-wrapper">
   <div class="jumbotron jumbotron-fluid">
     <div class="container">
       <nav aria-label="breadcrumb">
@@ -88,7 +372,6 @@
 
           <div class="row">
             <div class="col-lg-6 grid-margin stretch-card">
-              <!--x-editable starts-->
               <div class="card">
                 <div class="card-body">
                   <h4 class="card-title">Thông tin Người bán</h4>
@@ -131,10 +414,8 @@
                   </div>
                 </div>
               </div>
-              <!--x-editable ends-->
             </div>
             <div class="col-lg-6 grid-margin stretch-card">
-              <!--form mask starts-->
               <div class="card">
                 <div class="card-body">
                   <h4 class="card-title">Thông tin khách hàng</h4>
@@ -169,7 +450,6 @@
                   </div>
                 </div>
               </div>
-              <!--form mask ends-->
             </div>
           </div>
 
@@ -262,4 +542,4 @@
       </div>
     </div>
   </div>
-</div>
+</div> -->
