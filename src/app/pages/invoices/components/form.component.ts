@@ -1,30 +1,50 @@
-import { Component, OnInit, OnDestroy, AfterViewInit} from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ViewChild, AfterViewInit } from '@angular/core';
 import { FormGroup, FormArray, Validators, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { ProductItem } from './../../../_models';
+import { ProductItem, SelectItem } from './../../../_models';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
+import { APIService } from './../../../_services/api.service';
 
 declare var $: any;
+type ArrayObject = Array<SelectItem>;
 
 @Component({
   selector: 'app-invoice-form',
-  templateUrl: './form.component.html'
+  templateUrl: './form.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
   public addForm: FormGroup;
   public invoiceItem: any;
   public columNo = 11;
+  public modalRef: BsModalRef;
+  public bsConfig = { dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-default' };
+
+  // combobox
+  public serialArr: ArrayObject = [];
+
+  @ViewChild('overTabLength') overTabLength: any;
+
+  public tabs: any[] = [
+    { title: 'Hóa đơn 1', active: true, removable: false, disabled: false }
+  ];
 
   private subscription: Subscription;
   constructor(
     private router: Router,
     private formBuilder: FormBuilder,
-    private activatedRoute: ActivatedRoute) {
+    private apiService: APIService,
+    private activatedRoute: ActivatedRoute,
+    private modalService: BsModalService) {
+
   }
 
   ngOnInit() {
     this.initRouter();
     this.createItemsForm();
+    this.formSetDefault();
 
     for (let i = 0; i < 5; i++) {
       this.stickyButtonAdd();
@@ -32,14 +52,39 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    $('[data-toggle="tooltip"]').tooltip({ trigger: 'hover' });
-    $('[data-toggle="tooltip"]').on('click', function () {
-      $(this).tooltip('hide');
-    });
+    this.initSelectBox();
   }
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+
+  // TAB
+  addNewTab(): void {
+    const newTabIndex = this.tabs.length + 1;
+    if (newTabIndex > 10) {
+      this.showOverTabLength();
+    } else {
+      this.tabs.push({
+        title: `Hóa đơn ${newTabIndex}`,
+        active: true,
+        disabled: false,
+        removable: true
+      });
+    }
+  }
+
+  showOverTabLength() {
+    this.modalRef = this.modalService.show(this.overTabLength, { class: 'modal-sm' });
+  }
+
+  closeOverTabLength(): void {
+    this.modalRef.hide();
+  }
+
+  removeTabHandler(tab: any): void {
+    this.tabs.splice(this.tabs.indexOf(tab), 1);
+    console.log('Remove Tab handler');
   }
 
   cancelClicked() {
@@ -118,5 +163,23 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
       }),
       items: this.formBuilder.array([])
     });
+  }
+
+  private formSetDefault() {
+    this.addForm.patchValue({
+      invoice_date: new Date()
+    });
+
+    this.getSerialCombobox();
+  }
+
+  private getSerialCombobox() {
+    this.apiService.getSerialCombobox().subscribe(data => {
+      console.log(data);
+    });
+  }
+
+  private initSelectBox() {
+    $('select').select2({ minimumResultsForSearch: Infinity });
   }
 }

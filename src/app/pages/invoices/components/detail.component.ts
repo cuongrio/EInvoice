@@ -11,14 +11,7 @@ export class InvoiceDetailComponent implements OnInit, OnDestroy {
   public invoiceDetail: any;
   private subscription: Subscription;
 
-
-  constructor(
-    private apiService: APIService,
-    private activatedRoute: ActivatedRoute,
-    private router: Router,
-  ) {
-
-  }
+  constructor(private apiService: APIService, private activatedRoute: ActivatedRoute, private router: Router) {}
 
   ngOnInit() {
     this.subscription = this.activatedRoute.params.subscribe((params: any) => {
@@ -36,11 +29,13 @@ export class InvoiceDetailComponent implements OnInit, OnDestroy {
 
   // get detail of teacher
   private retrieveById(invoiceId: number) {
-    this.apiService.getInvoiceRetrieveById(invoiceId).subscribe(response => {
-      this.invoiceDetail = response;
-    }, error => {
-      this.router.navigate(['/500']);
-    });
+    this.apiService.getInvoiceRetrieveById(invoiceId).subscribe(
+      response => {
+        this.invoiceDetail = response;
+      },
+      error => {
+        this.router.navigate(['/500']);
+      }
+    );
   }
-
 }

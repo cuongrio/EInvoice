@@ -18,15 +18,15 @@
   font-size: $input-font-size;
   padding: 6px 0.75rem;
   line-height: 14px;
-  font-weight: 500;     
- 
-  &:disabled{
-    background: #f5f5f5
+  font-weight: 500;
+
+  &:disabled {
+    background: #f5f5f5;
   }
 
-  &:focus{
-    border:1px solid #1f77c0;
-    box-shadow: 0px 0px 5px #9dc7eb
+  &:focus {
+    border: 1px solid #1f77c0;
+    box-shadow: 0px 0px 5px #9dc7eb;
   }
 
   &.form-control-lg {
@@ -45,6 +45,7 @@ select {
 }
 
 .form-group {
+  margin-bottom: 4px !important;
   label {
     font-size: $default-font-size;
     line-height: 1;

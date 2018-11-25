@@ -11,6 +11,10 @@ export class APIService {
 
   constructor(private httpClient: HttpClient) { }
 
+  getSerialCombobox() {
+    return this.httpClient.get(`${this.API_URL}/1/preferences`);
+  }
+
   getInvoiceRetrieveById(invoiceId: number) {
     return this.httpClient.get(`${this.API_URL}/1/invoices/${invoiceId}`);
   }

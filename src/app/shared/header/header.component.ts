@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { AuthenticationService } from './../../_services';
-import { Router} from '@angular/router';
+import { Router } from '@angular/router';
 
 declare var $: any;
 
@@ -26,10 +26,7 @@ export const ROUTES: RouteInfo[] = [
 export class HeaderComponent implements OnInit, AfterViewInit {
   menuItems: any[];
 
-  constructor(
-    private router: Router,
-    private authenticationService: AuthenticationService
-  ) {}
+  constructor(private router: Router, private authenticationService: AuthenticationService) {}
 
   ngOnInit() {
     this.menuItems = ROUTES.filter(menuItem => menuItem);

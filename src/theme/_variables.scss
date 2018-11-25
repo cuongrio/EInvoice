@@ -54,7 +54,7 @@ $social-colors: (
 // //////// SOCIAL COLORS //////////
 // //////// FONTS //////////
 $type-1: "Open Sans", sans-serif;
-$default-font-size: 0.875rem;
+$default-font-size: 13px;
 $text-muted: #959595;
 $body-color: $black;
 $title-color: #000000;
@@ -81,7 +81,7 @@ $horizontal-menu-icon-font-size: 0.9375rem;
 $horizontal-menu-submenu-item-padding: 0.85rem 0;
 // /////// HORIZONTAL MENU /////////
 // /////// NAVBAR ////////
-$navbar-height: 60px;
+$navbar-height: 32px;
 $navbar-light-color: #202339;
 $navbar-font-size: 14px;
 $navbar-icon-font-size: 1rem;
@@ -122,10 +122,8 @@ $input-line-height-sm: 1;
 $input-padding-y-lg: 0.94rem;
 $input-padding-x-lg: 1.94rem;
 $input-line-height-lg: 1;
-
 // /////// FORMS /////////
 // //////  DROPDOWNS ///////
-
 $dropdown-border-color: $border-color;
 $dropdown-divider-bg: $border-color;
 $dropdown-link-color: $body-color;

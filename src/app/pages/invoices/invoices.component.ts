@@ -1,15 +1,15 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, HostListener, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { APIService } from './../../_services/api.service';
 import { InvoiceParams } from './../../_models';
 import { DatePipe } from '@angular/common';
-import { HostListener } from '@angular/core';
+
 import * as moment from 'moment';
 
 declare var $: any;
 
-type ArrayObject = Array<{ value: string; text: string }>;
+type ArrayObject = Array<{ code: string; value: string }>;
 
 @Component({
   selector: 'app-invoices',
@@ -18,12 +18,14 @@ type ArrayObject = Array<{ value: string; text: string }>;
 export class InvoicesComponent implements OnInit, AfterViewInit {
   public sortArr: string[] = ['ASC', 'DESC'];
   public sortByArr: ArrayObject = [
-    { value: 'invoiceNo', text: 'Số hóa đơn' },
-    { value: 'fromDate', text: 'Từ ngày' },
-    { value: 'toDate', text: 'Đến ngày' },
-    { value: 'serial', text: 'Số Serial' },
-    { value: 'orgTaxCode', text: 'Mã số thuế' }
+    { code: 'invoiceNo', value: 'Số hóa đơn' },
+    { code: 'fromDate', value: 'Từ ngày' },
+    { code: 'toDate', value: 'Đến ngày' },
+    { code: 'serial', value: 'Số Serial' },
+    { code: 'orgTaxCode', value: 'Mã số thuế' }
   ];
+
+  public bsConfig = { dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-default' };
 
   // expand search
   public expandSearch: boolean;
@@ -42,7 +44,6 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
   private defaultSort = 'ASC';
   private defaultSortBy = 'invoiceNo';
 
-
   constructor(
     private datePipe: DatePipe,
     private router: Router,
@@ -56,16 +57,11 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
     this.initDefault();
     this.initDataTable();
     this.initForm();
-    this.initSelectBox();
     this.initPageHandlerInRouter();
   }
 
   ngAfterViewInit() {
-    $('[data-toggle="tooltip"]').tooltip({ trigger: 'hover' });
-    $('[data-toggle="tooltip"]').on('click', function () {
-      $(this).tooltip('hide');
-    });
-    $('.details-control').removeClass('');
+    this.initSelectBox();
   }
 
   @HostListener('document:keypress', ['$event'])
@@ -208,7 +204,8 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
           render: function (data: any) {
             return '<label class="badge badge-info">' + data + '</label>';
           }
-        }, {
+        },
+        {
           width: '50px',
           targets: 6,
           render: function (data: any) {
@@ -218,7 +215,8 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
               return '<span></span>';
             }
           }
-        }, {
+        },
+        {
           width: '70px',
           targets: 7,
           render: function (data: any) {
@@ -247,13 +245,15 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
           orderable: false,
           data: null,
           defaultContent: ''
-        }, {
+        },
+        {
           data: 'invoice_no'
-        }, {
+        },
+        {
           data: function (row: any, type: any) {
             if (type === 'display' && row.invoice_date && row.invoice_date !== 'null') {
               const dateFormate = moment(row.invoice_date).format('DD/MM/YYYY');
-              return  `<span>${dateFormate}</span>`;
+              return `<span>${dateFormate}</span>`;
             } else {
               return '<span></span>';
             }
@@ -267,7 +267,8 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
               return '<span></span>';
             }
           }
-        }, {
+        },
+        {
           data: function (row: any, type: any) {
             if (type === 'display' && row.customer && row.customer !== 'null') {
               return row.customer.tax_code;
@@ -275,7 +276,8 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
               return '<span></span>';
             }
           }
-        }, {
+        },
+        {
           data: function (row: any, type: any) {
             if (type === 'display' && row.customer && row.customer !== 'null') {
               return row.customer.address;
@@ -304,7 +306,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
         url: url,
         beforeSend: function (xhr: any) {
           xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-        },
+        }
       })
         .done(function (data: any) {
           callback(data.items);
@@ -350,8 +352,8 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
               <th class="text-right">amount</th>
             </tr>
           </thead>
-          <tbody>`
-          + lineItem +
+          <tbody>` +
+          lineItem +
           `</tbody>
         </table>`;
       } else {

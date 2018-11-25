@@ -29,8 +29,8 @@ export class AppComponent implements OnInit {
     private titleService: Title,
     private translateService: TranslateService,
     private i18nService: I18nService
-  ) { 
-    this.authenticationService.currentUser.subscribe(x => this.currentUser = x);
+  ) {
+    this.authenticationService.currentUser.subscribe(x => (this.currentUser = x));
   }
 
   ngOnInit() {

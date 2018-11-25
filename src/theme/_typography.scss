@@ -117,11 +117,11 @@ address {
 }
 
 .card-title {
-  margin-bottom: 1.5rem;
   text-transform: uppercase;
   color: $title-color;
   font-weight: 600;
-  font-size: 1.125rem;
+  font-size: 14px;
+  margin-bottom: 0 !important;
   .rtl & {
     text-align: right;
   }

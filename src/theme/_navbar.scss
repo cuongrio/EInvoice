@@ -197,8 +197,10 @@
                 }
                 .nav-profile-name {
                   vertical-align: middle;
-                  color: $horizontal-top-menu-item-color;
+                  color: #fff;
                   margin-left: 0.25rem;
+                  font-size: 13px;
+
                   @media (max-width: 767px) {
                     display: none;
                   }
@@ -325,7 +327,7 @@
 
           > .nav-link {
             color: $horizontal-bottom-menu-item-color;
-            padding: 22px 10px;
+            padding: 15px 10px;
             line-height: 1;
             font-weight: 600;
             .menu-title {

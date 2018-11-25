@@ -25,14 +25,14 @@ html {
   }
 }
 
-.main-panel { 
+.main-panel {
   @include media-breakpoint-down(md) {
     padding-top: 60px;
   }
 }
 
 .content-wrapper {
-  padding: 1rem 0 2rem;
+  padding: 15px 0 2rem;
   @include make-container();
   @include make-container-max-widths();
   min-height: calc(100vh - #{$horizontal-navbar-height} - #{$footer-height});

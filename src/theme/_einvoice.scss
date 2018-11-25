@@ -1,64 +1,74 @@
-.main-panel{
+.main-panel {
   padding-bottom: 30px;
 }
 
 .jumbotron {
-  padding: 5px !important;
+  padding: 0 !important;
   margin-bottom: 0px !important;
   background: #e4e7ec;
-  .breadcrumb{
+  .breadcrumb {
     border: 0 !important;
     padding: 0.56rem 0px !important;
     margin-bottom: 0;
   }
 }
 
-.btn-light{
+.btn-light {
   border-color: #ccc !important;
 }
 
-.card-shadow{
+.card-shadow {
   box-shadow: 0px 5px 5px #ccc !important;
 }
 
-.text-bold{
+.text-bold {
   font-weight: 600 !important;
 }
 
-.text-italic{
+.text-italic {
   font-style: italic !important;
 }
 
-.tb-footer{
+.tb-footer {
   background: #f0f0f0;
 }
 
-.error.text-danger{
+.error.text-danger {
   width: 100%;
   background: antiquewhite;
   padding: 7px;
 }
 
-.no-border-right{
+.no-border-right {
   border-right: 0 !important;
 }
 
-.product-item{
-  .product-item__title{
+.product-item {
+  .product-item__title {
     border-bottom: 1px dashed #a4a4a4;
     padding: 10px 0px;
     margin-bottom: 25px;
 
-    span{
-      font-weight: 500; 
+    span {
+      font-weight: 500;
     }
 
-    a{
+    a {
       margin-left: 16px;
-      &:hover, &:focus{
+      &:hover,
+      &:focus {
         cursor: pointer;
       }
     }
+  }
+}
+
+// button md
+.input-group{
+  .btn-icons{
+    text-shadow: 0 0 grey; 
+    height: 31px  !important;
+    padding: 7px !important;
   }
 }
 
@@ -101,6 +111,18 @@ legend.scheduler-border {
   float: right;
 }
 
+.bs-datepicker-container{
+  padding: 0px !important;
+
+  .bs-datepicker-head{
+    min-width: 270px;
+    height: 35px;
+    padding: 4px 10px;
+    border-radius: 3px 3px 0 0;
+    text-align: justify;
+  }
+}
+
 .scheduler-border {
   .table {
     background: aliceblue;
@@ -113,23 +135,19 @@ legend.scheduler-border {
   }
 }
 
-table {
-  th,
-  td {
-    font-size: 13px !important;
-  }
+// table {
+//   th,
+//   td {
+//     font-size: 13px !important;
+//   }
 
-  > tbody > tr > td {
-    padding: 10px !important;
-  }
-
-  tr.tr-expand + tr {
-    background: aliceblue;
-    > td {
-      padding: 12px 20px !important;
-    }
-  }
-}
+//   tr.tr-expand + tr {
+//     background: aliceblue;
+//     > td {
+//       padding: 12px 20px !important;
+//     }
+//   }
+// }
 
 .ein-select2-container {
   width: 100%;
@@ -150,7 +168,7 @@ table {
     }
   }
 
-  .select2-selection{
+  .select2-selection {
     border-radius: 4px;
   }
 }
@@ -215,9 +233,9 @@ table {
     @extend .mt-2;
     @extend .mr-2;
 
-    &.no-mg-r{
+    &.no-mg-r {
       margin-right: 0 !important;
-    }    
+    }
   }
 
   > .btn-toolbar {
@@ -367,7 +385,7 @@ table {
 }
 
 .big-tittle {
-  color: #1F77C0;
+  color: #1f77c0;
   font-weight: bold;
   font-size: 16px;
   text-transform: uppercase;
@@ -384,84 +402,117 @@ table {
 }
 
 /***LOGIN FORM***/
-.loginForm{
-  .input-group-text, 
-  .form-control{
+.loginForm {
+  .input-group-text,
+  .form-control {
     border-radius: 0 !important;
   }
 }
 
-.no-border{
+.no-border {
   border: 0 !important;
 }
 
-.invoice__actions{
-  padding: 0px 120px;  
+.invoice__actions {
+  padding: 0px 120px;
 }
 
-.td-expand-line{
+.td-expand-line {
   padding: 4px !important;
   background: #eee;
 }
 
+.modal-backdrop{
+  opacity: 0.5 !important;
+}
+
+.form-tabset{
+  .nav-item{
+    .bs-remove-tab{
+      visibility: hidden;
+      &:hover{ 
+        &:after{
+          color: red !important;
+        }
+      }
+
+      &:after{
+        content: "\00d7";
+        color: #ccc;
+        font-size: 22px;
+        font-weight: bold;
+        visibility: visible;
+        position: absolute;
+        right: 5px;
+        top: 4px;
+        padding: 4px;
+      }
+    }
+    .nav-link{
+      padding: 12px;
+      position: relative;
+      border: 0;
+      box-shadow: 1px 0px 3px 0px rgba(0, 0, 0, 0.5);
+    }
+  }
+}
 /***INVOICE FORM***/
-.invoice__wrapper{
-  .navbar-action{
+.invoice__wrapper {
+  .navbar-action {
     margin-top: 20px;
   }
 
-  .invoice__form{ 
-    .form-group{
+  .invoice__form {
+    .form-group {
       margin-bottom: 4px !important;
     }
 
-    .invoice-form__heading{
+    .invoice-form__heading {
       text-align: center;
- 
-      .form__title{
+
+      .form__title {
         text-align: center;
         font-weight: bold;
         font-size: 20px;
       }
     }
 
-    .invoice__body{
-      padding-bottom: 50px;  
+    .invoice__body {
+      padding-bottom: 50px;
     }
 
-    .product-item__wrapper{ 
-
-      .sub-title{
+    .product-item__wrapper {
+      .sub-title {
         margin-top: 8px;
         margin-bottom: 15px;
         display: block;
-        button{
+        button {
           float: right;
         }
       }
       .product-line {
         position: relative;
 
-        .sticky-btn__td{
-          position: absolute; 
+        .sticky-btn__td {
+          position: absolute;
           margin-top: 5px;
           padding: 0px 5px;
-          right: 12px; 
-          .sticky_btn{
+          right: 2px;
+          .sticky_btn {
             padding: 4px;
             color: #ccc !important;
 
-            &:hover{
+            &:hover {
               cursor: pointer;
               color: red !important;
             }
           }
         }
 
-        .invoice-no__item{
+        .invoice-no__item {
           padding-left: 5px !important;
 
-          .line-title{
+          .line-title {
             width: 100%;
             padding-left: 8px;
             padding-top: 8px;
@@ -469,39 +520,39 @@ table {
           }
         }
 
-        & > td.no-padding{
+        & > td.no-padding {
           padding: 0px !important;
-          input.form-control{
+          input.form-control {
             border-width: 0 !important;
             border-radius: 0 !important;
             padding-left: 5px;
 
-            &:focus{
+            &:focus {
               border-radius: 2px !important;
               border-width: 1px !important;
               outline: 1px !important;
             }
           }
 
-          .popover{
-            .popover-header{
+          .popover {
+            .popover-header {
               font-size: 13px !important;
             }
-            .popover-body{
+            .popover-body {
               padding: 5px !important;
             }
           }
         }
       }
 
-      .btn-bg-add{
+      .btn-bg-add {
         padding: 10px !important;
         display: block;
         background: url("./assets/images/details_open.png") no-repeat left center;
         cursor: pointer;
       }
 
-      .btn-bg-remove{
+      .btn-bg-remove {
         padding: 10px !important;
         display: block;
         background: url("./assets/images/details_close.png") no-repeat left center;

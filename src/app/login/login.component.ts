@@ -40,7 +40,9 @@ export class LoginComponent implements OnInit {
   }
 
   // convenience getter for easy access to form fields
-  get f() { return this.loginForm.controls; }
+  get f() {
+    return this.loginForm.controls;
+  }
 
   onSubmit() {
     this.submitted = true;
@@ -65,18 +67,10 @@ export class LoginComponent implements OnInit {
     this.loading = false;
   }
 
-
   private createForm() {
     this.loginForm = this.formBuilder.group({
-      username: ['', Validators.compose([
-        Validators.required,
-        this.validationService.emailValidator]
-      )],
-      password: ['', Validators.compose([
-        Validators.required,
-        this.validationService.passwordValidator
-      ])]
+      username: ['', Validators.compose([Validators.required, this.validationService.emailValidator])],
+      password: ['', Validators.compose([Validators.required, this.validationService.passwordValidator])]
     });
-
   }
 }

@@ -8,13 +8,11 @@ import { ValidationService } from './../../_services/validator.service';
   encapsulation: ViewEncapsulation.None
 })
 export class ControlMessageComponent implements OnInit {
-
   @Input() control: FormControl;
 
-  constructor(private validationService: ValidationService) { }
+  constructor(private validationService: ValidationService) {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   get errorMessage() {
     for (const propertyName in this.control.errors) {
