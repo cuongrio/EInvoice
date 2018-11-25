@@ -117,9 +117,10 @@
 
 .select2-container--open {
   .select2-selection--single,
-  .select2-selection--multiple {
-    background-color: #fff;
+  .select2-selection--multiple { 
     border-color: $input-border-color;
+    border-color: #1f77c0;
+    box-shadow: 0px 0px 5px #9dc7eb;
   }
 
   .select2-dropdown--above {
@@ -134,7 +135,7 @@
 
 .select2-dropdown {
   border-color: $input-border-color;
-  z-index: 200;
+  z-index: 200; 
 }
 
 .select2-search--dropdown {

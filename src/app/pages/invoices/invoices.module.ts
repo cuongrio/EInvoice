@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { SharedModule } from '@app/shared';
 import { InvoicesRoutes } from './invoices.routing';
 import { DatePipe } from '@angular/common';
 import { InvoicesComponent } from './invoices.component';
@@ -13,8 +14,19 @@ import { InvoiceDetailComponent } from './components/detail.component';
 import { AutofocusDirective } from './../../_directives/autofocus.directive';
 
 @NgModule({
-  imports: [CommonModule, RouterModule.forChild(InvoicesRoutes), NgbModule, FormsModule, ReactiveFormsModule],
-  declarations: [AutofocusDirective, InvoicesComponent, InvoiceDetailComponent, InvoiceFormComponent],
+  imports: [
+    CommonModule,
+    SharedModule,
+    RouterModule.forChild(InvoicesRoutes),
+    NgbModule,
+    FormsModule,
+    ReactiveFormsModule],
+  declarations: [
+    AutofocusDirective,
+    InvoicesComponent,
+    InvoiceDetailComponent,
+    InvoiceFormComponent
+  ],
   providers: [APIService, DatePipe, AppConfig]
 })
-export class InvoicesModule {}
+export class InvoicesModule { }

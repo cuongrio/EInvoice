@@ -1,15 +1,36 @@
+.main-panel{
+  padding-bottom: 30px;
+}
+
 .jumbotron {
   padding: 5px !important;
   margin-bottom: 0px !important;
   background: #e4e7ec;
   .breadcrumb{
     border: 0 !important;
+    padding: 0.56rem 0px !important;
     margin-bottom: 0;
   }
 }
 
+.btn-light{
+  border-color: #ccc !important;
+}
+
+.card-shadow{
+  box-shadow: 0px 5px 5px #ccc !important;
+}
+
 .text-bold{
-  font-weight: 600;
+  font-weight: 600 !important;
+}
+
+.text-italic{
+  font-style: italic !important;
+}
+
+.tb-footer{
+  background: #f0f0f0;
 }
 
 .error.text-danger{
@@ -18,8 +39,8 @@
   padding: 7px;
 }
 
-.btn-search {
-  height: 40px;
+.no-border-right{
+  border-right: 0 !important;
 }
 
 .product-item{
@@ -39,15 +60,6 @@
       }
     }
   }
-}
-
-button.calendar,
-button.calendar:active {
-  width: 2.75rem;
-  background-image: url(./assets/images/calendar-80.png) !important;
-  background-repeat: no-repeat;
-  background-size: 28px;
-  background-position: center;
 }
 
 .bg-primary {
@@ -123,7 +135,8 @@ table {
   width: 100%;
   display: flex;
   align-items: stretch;
-  flex-flow: row;
+  flex-flow: row nowrap;
+  justify-content: space-between;
 
   .ein-select {
     padding: 0.56rem 0.75rem;
@@ -135,6 +148,10 @@ table {
     &:first-child {
       margin-right: 12px;
     }
+  }
+
+  .select2-selection{
+    border-radius: 4px;
   }
 }
 
@@ -197,6 +214,10 @@ table {
   > .btn {
     @extend .mt-2;
     @extend .mr-2;
+
+    &.no-mg-r{
+      margin-right: 0 !important;
+    }    
   }
 
   > .btn-toolbar {
@@ -345,6 +366,18 @@ table {
   }
 }
 
+.big-tittle {
+  color: #1F77C0;
+  font-weight: bold;
+  font-size: 16px;
+  text-transform: uppercase;
+  background: url(./assets/images/tab.png) no-repeat 0 0;
+  min-height: 32px;
+  padding-left: 16px;
+  padding-top: 10px;
+  margin-top: 16px;
+}
+
 .ein-vector-map {
   width: 100%;
   height: 500px;
@@ -358,64 +391,105 @@ table {
   }
 }
 
+.no-border{
+  border: 0 !important;
+}
+
+.invoice__actions{
+  padding: 0px 120px;  
+}
+
+.td-expand-line{
+  padding: 4px !important;
+  background: #eee;
+}
+
 /***INVOICE FORM***/
 .invoice__wrapper{
-  &.card-body{
-    padding: 80px 30px !important;
-  }
-
   .navbar-action{
     margin-top: 20px;
   }
 
-  .invoice__form{
-    .form-group, .row{
+  .invoice__form{ 
+    .form-group{
       margin-bottom: 4px !important;
     }
-    
+
     .invoice-form__heading{
+      text-align: center;
+ 
       .form__title{
-        font-weight: 600;
-        font-size: 18px;
+        text-align: center;
+        font-weight: bold;
+        font-size: 20px;
       }
     }
 
     .invoice__body{
-      margin-top: 40px;
-      padding-bottom: 80px;
-      border-bottom: 1px solid #eee;
-
-      .customer-group{
-        .form-group{
-          margin-bottom: 1rem !important;
-        }
-      }
-      
-      .customer-group__detail{
-        .form-group{
-          margin-bottom: 0 !important;
-        }
-      }
-
-      
+      padding-bottom: 50px;  
     }
 
-    .product-item__wrapper{
-      margin-top: 40px;
+    .product-item__wrapper{ 
 
-      .product-line > td.no-padding{
-        padding: 0px !important;
-        input.form-control{
-          border: 0 !important;
-          padding-left: 5px;
+      .sub-title{
+        margin-top: 8px;
+        margin-bottom: 15px;
+        display: block;
+        button{
+          float: right;
+        }
+      }
+      .product-line {
+        position: relative;
+
+        .sticky-btn__td{
+          position: absolute; 
+          margin-top: 5px;
+          padding: 0px 5px;
+          right: 12px; 
+          .sticky_btn{
+            padding: 4px;
+            color: #ccc !important;
+
+            &:hover{
+              cursor: pointer;
+              color: red !important;
+            }
+          }
         }
 
-        .popover{
-          .popover-header{
-            font-size: 13px !important;
+        .invoice-no__item{
+          padding-left: 5px !important;
+
+          .line-title{
+            width: 100%;
+            padding-left: 8px;
+            padding-top: 8px;
+            font-weight: 600;
           }
-          .popover-body{
-            padding: 5px !important;
+        }
+
+        & > td.no-padding{
+          padding: 0px !important;
+          input.form-control{
+            border-width: 0 !important;
+            border-radius: 0 !important;
+            padding-left: 5px;
+
+            &:focus{
+              border-radius: 2px !important;
+              border-width: 1px !important;
+              outline: 1px !important;
+            }
+          }
+
+          .popover{
+            .popover-header{
+              font-size: 13px !important;
+            }
+            .popover-body{
+              padding: 5px !important;
+            }
           }
         }
       }
@@ -423,14 +497,14 @@ table {
       .btn-bg-add{
         padding: 10px !important;
         display: block;
-        background: url("./assets/images/details_open.png") no-repeat center center;
+        background: url("./assets/images/details_open.png") no-repeat left center;
         cursor: pointer;
       }
 
       .btn-bg-remove{
         padding: 10px !important;
         display: block;
-        background: url("./assets/images/details_close.png") no-repeat center center;
+        background: url("./assets/images/details_close.png") no-repeat left center;
         cursor: pointer;
       }
     }

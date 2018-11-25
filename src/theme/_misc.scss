@@ -3,6 +3,7 @@ body,
 html {
   overflow-x: hidden;
   padding-right: 0; // resets padding right added by Bootstrap modal
+  background: $content-bg;
 }
 
 *:-moz-full-screen,
@@ -24,14 +25,14 @@ html {
   }
 }
 
-.main-panel {
+.main-panel { 
   @include media-breakpoint-down(md) {
     padding-top: 60px;
   }
 }
 
 .content-wrapper {
-  padding: 1.5rem 0;
+  padding: 1rem 0 2rem;
   @include make-container();
   @include make-container-max-widths();
   min-height: calc(100vh - #{$horizontal-navbar-height} - #{$footer-height});

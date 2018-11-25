@@ -1,28 +1,41 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormControl, FormGroup, FormArray, Validators, FormBuilder } from '@angular/forms';
+import { Component, OnInit, OnDestroy, AfterViewInit} from '@angular/core';
+import { FormGroup, FormArray, Validators, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ProductItem } from './../../../_models';
+
+declare var $: any;
 
 @Component({
   selector: 'app-invoice-form',
   templateUrl: './form.component.html'
 })
-export class InvoiceFormComponent implements OnInit, OnDestroy {
+export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
   public addForm: FormGroup;
   public invoiceItem: any;
+  public columNo = 11;
 
   private subscription: Subscription;
   constructor(
-    private router: Router, 
+    private router: Router,
     private formBuilder: FormBuilder,
-    private activatedRoute: ActivatedRoute) { 
-
+    private activatedRoute: ActivatedRoute) {
   }
+
   ngOnInit() {
     this.initRouter();
     this.createItemsForm();
-    this.stickyButtonAdd();
+
+    for (let i = 0; i < 5; i++) {
+      this.stickyButtonAdd();
+    }
+  }
+
+  ngAfterViewInit() {
+    $('[data-toggle="tooltip"]').tooltip({ trigger: 'hover' });
+    $('[data-toggle="tooltip"]').on('click', function () {
+      $(this).tooltip('hide');
+    });
   }
 
   ngOnDestroy() {
@@ -42,21 +55,21 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     return this.addForm.get('items') as FormArray;
   }
 
-  stickyButtonClicked(isAdd: boolean, idx: number) {
-    if (isAdd) {
-      this.stickyButtonAdd();
-    } else {
-      this.stickyButtonDelete(idx);
-    }
+  deleteLineClicked(idx: number) {
+    this.stickyButtonDelete(idx);
   }
 
-  private initRouter(){
+  addMoreLineClicked() {
+    this.stickyButtonAdd();
+  }
+
+  private initRouter() {
     this.subscription = this.activatedRoute.params.subscribe((params: any) => {
       console.log('params: ' + params);
       if (params.id) {
-         // get service
-         this.invoiceItem = {};
-         this.invoiceItem.invoice_id = params.id;
+        // get service
+        this.invoiceItem = {};
+        this.invoiceItem.invoice_id = params.id;
       } else {
         this.invoiceItem = {};
       }
@@ -75,12 +88,13 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
       total_vat: '',
       total_price: '',
       status: ''
-    }
+    };
+
     const fg = this.formBuilder.group(emptyProductLine);
     this.itemFormArray.push(fg);
   }
 
-  private stickyButtonDelete(idx: number){
+  private stickyButtonDelete(idx: number) {
     this.itemFormArray.removeAt(idx);
   }
 

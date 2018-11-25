@@ -27,10 +27,8 @@
     @include border-radius(50px);
   }
 
-  &.btn-icons {
-    width: 40px;
-    height: 40px;
-    padding: 10px;
+  &.btn-icons { 
+    padding: 8px;
     text-align: center;
     vertical-align: middle;
 
@@ -42,6 +40,10 @@
 
   &.btn-fw {
     min-width: $button-fixed-width;
+  }
+
+  &.btn-md{
+    padding: 8px !important;
   }
 
   &.icon-btn {
@@ -90,9 +92,16 @@
     color: rgba($black, 0.5);
     border-color: lighten($black, 80%);
 
+    &:focus,
+    &.active{
+      border-color: #1f77c0;
+      box-shadow: 0px 0px 5px #9dc7eb;
+    }
+
     &:hover {
       color: rgba($black, 0.5);
-      border-color: lighten($black, 85%);
+      border-color: #1f77c0;
+      box-shadow: 0px 0px 5px #9dc7eb;
     }
   }
 }

@@ -14,7 +14,7 @@ export const ROUTES: RouteInfo[] = [
   { path: '/dashboard', title: 'Trang chủ', icon: 'link-icon icon-screen-desktop' },
   { path: '/products', title: 'Hàng hóa', icon: 'link-icon icon-disc' },
   { path: '/customers', title: 'Tệp khách hàng', icon: 'link-icon icon-pie-chart' },
-  { path: '/invoices', title: 'Dải hóa đơn', icon: 'link-icon icon-docs' },
+  { path: '/invoices', title: 'Danh sách hóa đơn', icon: 'link-icon icon-docs' },
   { path: '/report', title: 'Báo cáo', icon: 'link-icon icon-calculator' },
   { path: '/info', title: 'Thông tin Công ty', icon: 'link-icon icon-book-open' }
 ];

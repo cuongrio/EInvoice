@@ -1,14 +1,8 @@
 <!-- partial -->
 <div class="container-fluid page-body-wrapper">
-  <div class="jumbotron jumbotron-fluid">
-    <div class="container">
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a routerLink="/">Trang chủ</a></li>
-          <li class="breadcrumb-item active" aria-current="page">Dải hóa đơn</li>
-        </ol>
-      </nav>
-    </div>
+
+  <div class="container">
+    <h2 class="big-tittle" style="font-style:normal">THÔNG TIN HÓA ĐƠN</h2>
   </div>
 
   <div class="main-panel">
@@ -25,110 +19,111 @@
               </button>
             </h4>
             <div class="row grid-margin">
-              <div class="search-box">
-                <div [hidden]="!expandSearch" class="card shadow-nohover">
-                  <div class="card-body">
-
-                    <form class="form-horizontal" #ngSearchForm="ngForm" [formGroup]="searchForm" (ngSubmit)="onSubmit(searchForm.value)">
-                      <div class="row">
-                        <div class="col-md-3 col-lg-3 col-sm-4">
-                          <div class="form-group">
-                            <label>Mã hóa đơn</label>
-                            <input formControlName="invoiceNo" type="text" class="form-control" placeholder="Mã hóa đơn">
+              <div class="col-12">
+                <div class="search-box">
+                  <div [hidden]="!expandSearch" class="card shadow-nohover">
+                    <div class="card-body">
+                      <form class="form-horizontal" #ngSearchForm="ngForm" [formGroup]="searchForm" (ngSubmit)="onSubmit(searchForm.value)">
+                        <div class="row">
+                          <div class="col-md-3 col-lg-3 col-sm-4">
+                            <div class="form-group">
+                              <label>Mã hóa đơn</label>
+                              <input formControlName="invoiceNo" type="text" class="form-control form-control-sm" placeholder="Mã hóa đơn">
+                            </div>
                           </div>
-                        </div>
 
-                        <div class="col-md-3 col-lg-3 col-sm-4">
-                          <div class="form-group">
-                            <label>Số Serial</label>
-                            <input formControlName="serial" type="text" class="form-control" placeholder="Số Serial">
+                          <div class="col-md-3 col-lg-3 col-sm-4">
+                            <div class="form-group">
+                              <label>Số Serial</label>
+                              <input formControlName="serial" type="text" class="form-control form-control-sm" placeholder="Số Serial">
+                            </div>
                           </div>
-                        </div>
 
-                        <div class="col-md-3 col-lg-3 col-sm-4">
-                          <div class="form-group">
-                            <label>Mã số thuế</label>
-                            <input formControlName="orgTaxCode" type="text" class="form-control" placeholder="Mã số thuế">
+                          <div class="col-md-3 col-lg-3 col-sm-4">
+                            <div class="form-group">
+                              <label>Mã số thuế</label>
+                              <input formControlName="orgTaxCode" type="text" class="form-control form-control-sm" placeholder="Mã số thuế">
+                            </div>
                           </div>
-                        </div>
 
-                        <div class="col-md-3 col-lg-3 col-sm-4">
-                          <div class="form-group">
-                            <label>Kích cỡ</label>
-                            <input formControlName="size" type="text" class="form-control" placeholder="Kích cỡ">
+                          <div class="col-md-3 col-lg-3 col-sm-4">
+                            <div class="form-group">
+                              <label>Kích cỡ</label>
+                              <input formControlName="size" type="text" class="form-control form-control-sm" placeholder="Kích cỡ">
+                            </div>
                           </div>
-                        </div>
 
-                        <div class="col-md-3 col-lg-3 col-sm-4">
-                          <div class="form-group">
-                            <label>Từ ngày</label>
-                            <div class="input-group">
-                              <input formControlName="fromDate" class="form-control" placeholder="dd/MM/yyyy" name="dp"
-                                ngbDatepicker #d="ngbDatepicker">
-                              <div class="input-group-append">
-                                <button class="btn btn-outline-light calendar" (click)="d.toggle()" type="button"></button>
+                          <div class="col-md-3 col-lg-3 col-sm-4">
+                            <div class="form-group">
+                              <label>Từ ngày</label>
+                              <div class="input-group">
+                                <input formControlName="fromDate" class="form-control form-control-sm" placeholder="dd/MM/yyyy" name="dp"
+                                  ngbDatepicker #d="ngbDatepicker">
+                                <div class="input-group-append">
+                                  <button class="btn btn-outline-light calendar" (click)="d.toggle()" type="button"></button>
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
 
-                        <div class="col-md-3 col-lg-3 col-sm-4">
-                          <div class="form-group">
-                            <label>Đến ngày</label>
-                            <input formControlName="toDate" type="text" class="form-control" placeholder="Đến ngày">
-                          </div>
-                        </div>
-
-                        <div class="col-md-3 col-lg-3 col-sm-4">
-                          <div class="form-group">
-                            <label>Form</label>
-                            <input formControlName="form" type="text" class="form-control" placeholder="Form">
-                          </div>
-                        </div>
-
-                        <div class="col-md-3 col-lg-3 col-sm-4">
-                          <div class="form-group">
-                            <label>Sắp xếp theo</label>
-                            <div class="ein-select2-container">
-                              <select formControlName="sortBy" class="ein-select">
-                                <option [value]="op.value" *ngFor="let op of sortByArr">{{op.text}}</option>
-                              </select>
-                              <select formControlName="sort" class="ein-select">
-                                <option [value]="op" *ngFor="let op of sortArr">{{op}}</option>
-                              </select>
+                          <div class="col-md-3 col-lg-3 col-sm-4">
+                            <div class="form-group">
+                              <label>Đến ngày</label>
+                              <input formControlName="toDate" type="text" class="form-control form-control-sm" placeholder="Đến ngày">
                             </div>
+                          </div>
 
+                          <div class="col-md-3 col-lg-3 col-sm-4">
+                            <div class="form-group">
+                              <label>Form</label>
+                              <input formControlName="form" type="text" class="form-control form-control-sm" placeholder="Form">
+                            </div>
+                          </div>
+
+                          <div class="col-md-3 col-lg-3 col-sm-4">
+                            <div class="form-group">
+                              <label>Sắp xếp theo</label>
+                              <div class="ein-select2-container">
+                                <select formControlName="sortBy" class="ein-select">
+                                  <option [value]="op.value" *ngFor="let op of sortByArr">{{op.text}}</option>
+                                </select>
+                                <select formControlName="sort" class="ein-select">
+                                  <option [value]="op" *ngFor="let op of sortArr">{{op}}</option>
+                                </select>
+                              </div>
+
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </form>
+                      </form>
+                    </div>
                   </div>
                 </div>
               </div>
 
               <div class="col-12">
                 <div class="template-ein navbar-action">
-                  <button [hidden]="!expandSearch" type="button" form="ngForm" class="btn btn-info btn-search" (click)="ngSearchForm.ngSubmit.emit()"><i
+                  <button [hidden]="!expandSearch" type="button" form="ngForm" class="btn btn-md btn-info btn-search" (click)="ngSearchForm.ngSubmit.emit()"><i
                       class="icon-magnifier"></i>
                     Tìm kiếm</button>
 
-                  <button type="button" routerLink="/invoices/createNew" class="btn btn-icons btn-inverse-secondary"
+                  <button type="button" routerLink="/invoices/createNew" class="btn btn-icons btn-secondary"
                     data-toggle="tooltip" trigger="hover" data-placement="bottom" title="Thêm mới">
                     <i class="fas fa-plus"></i>
                   </button>
-                  <button type="button" routerLink="/invoices/update/1" class="btn btn-icons btn-inverse-success"
-                    data-toggle="tooltip" trigger="hover" data-placement="bottom" title="Sửa"><i class="fas fa-edit"></i></button>
-                  <button type="button" class="btn btn-icons btn-inverse-primary" trigger="hover" data-toggle="tooltip"
+                  <button type="button" routerLink="/invoices/update/1" class="btn btn-icons btn-success" data-toggle="tooltip"
+                    trigger="hover" data-placement="bottom" title="Sửa"><i class="fas fa-edit"></i></button>
+                  <button type="button" class="btn btn-icons btn-primary" trigger="hover" data-toggle="tooltip"
                     data-placement="bottom" title="Xóa"><i class="fas fa-trash"></i></button>
-                  <button type="button" class="btn btn-icons btn-inverse-primary" trigger="hover" data-toggle="tooltip"
+                  <button type="button" class="btn btn-icons btn-primary" trigger="hover" data-toggle="tooltip"
                     data-placement="bottom" title="Sao chép"><i class="fas fa-copy"></i></button>
-                  <button type="button" class="btn btn-icons btn-inverse-primary" trigger="hover" data-toggle="tooltip"
+                  <button type="button" class="btn btn-icons btn-primary" trigger="hover" data-toggle="tooltip"
                     data-placement="bottom" title="In"><i class="fas fa-print"></i></button>
-                  <button type="button" class="btn btn-icons btn-inverse-primary" trigger="hover" data-toggle="tooltip"
+                  <button type="button" class="btn btn-icons btn-primary" trigger="hover" data-toggle="tooltip"
                     data-placement="bottom" title="Ký hóa đơn"><i class="fas fa-key"></i></button>
-                  <button type="button" class="btn btn-icons btn-inverse-primary" trigger="hover" data-toggle="tooltip"
+                  <button type="button" class="btn btn-icons btn-primary" trigger="hover" data-toggle="tooltip"
                     data-placement="bottom" title="Nhận Excel"><i class="fas fa-file-excel"></i></button>
-                  <button type="button" class="btn btn-icons btn-inverse-primary" trigger="hover" data-toggle="tooltip"
+                  <button type="button" class="btn btn-icons btn-primary" trigger="hover" data-toggle="tooltip"
                     data-placement="bottom" title="In chuyển đổi"><i class="fas fa-retweet"></i></button>
                 </div>
               </div>
