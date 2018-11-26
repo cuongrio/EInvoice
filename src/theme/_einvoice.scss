@@ -64,10 +64,10 @@
 }
 
 // button md
-.input-group{
-  .btn-icons{
-    text-shadow: 0 0 grey; 
-    height: 31px  !important;
+.input-group {
+  .btn-icons {
+    text-shadow: 0 0 grey;
+    height: 31px !important;
     padding: 7px !important;
   }
 }
@@ -111,10 +111,10 @@ legend.scheduler-border {
   float: right;
 }
 
-.bs-datepicker-container{
+.bs-datepicker-container {
   padding: 0px !important;
 
-  .bs-datepicker-head{
+  .bs-datepicker-head {
     min-width: 270px;
     height: 35px;
     padding: 4px 10px;
@@ -178,6 +178,8 @@ legend.scheduler-border {
   .card {
     .card-body {
       border: 1px solid #d9d9d9;
+      padding: 15px 12px 5px !important;
+
       form {
         .form-control {
           border: 1px solid #d9d9d9;
@@ -422,21 +424,21 @@ legend.scheduler-border {
   background: #eee;
 }
 
-.modal-backdrop{
+.modal-backdrop {
   opacity: 0.5 !important;
 }
 
-.form-tabset{
-  .nav-item{
-    .bs-remove-tab{
+.form-tabset {
+  .nav-item {
+    .bs-remove-tab {
       visibility: hidden;
-      &:hover{ 
-        &:after{
+      &:hover {
+        &:after {
           color: red !important;
         }
       }
 
-      &:after{
+      &:after {
         content: "\00d7";
         color: #ccc;
         font-size: 22px;
@@ -448,7 +450,7 @@ legend.scheduler-border {
         padding: 4px;
       }
     }
-    .nav-link{
+    .nav-link {
       padding: 12px;
       position: relative;
       border: 0;
@@ -486,12 +488,32 @@ legend.scheduler-border {
         margin-top: 8px;
         margin-bottom: 15px;
         display: block;
+        .sub-title__small{
+          font-size: 14px;
+          font-weight: 600;
+        }
+
         button {
           float: right;
         }
       }
       .product-line {
         position: relative;
+
+        td{
+          position: relative;
+
+          .popover{
+            width: 100%;
+            top: 32px;
+            border-bottom: 1px solid #ccc;
+            border-radius: 0 !important;
+
+            .form-control{
+              padding: 5px !important;
+            }
+          }
+        }
 
         .sticky-btn__td {
           position: absolute;

@@ -8,16 +8,22 @@
   font-size: 12px !important;
 }
 
-.select2-container{
-  width: 50% !important;
+.select2-container {
+  width: 100% !important;
+}
+
+.select2-container-half{   
+  .select2-container {
+    width: 50% !important;
+  }
 }
 
 .select2-container--default {
   .select2-selection--single {
     background-color: #fff;
     border-color: $input-border-color;
-    border-radius: $border-radius; 
-    height: 32px !important; 
+    border-radius: $border-radius;
+    height: 32px !important;
     outline: none;
 
     .select2-selection__rendered {

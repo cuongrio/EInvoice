@@ -33,6 +33,7 @@ html {
 
 .content-wrapper {
   padding: 15px 0 2rem;
+  max-width: 1240px !important;
   @include make-container();
   @include make-container-max-widths();
   min-height: calc(100vh - #{$horizontal-navbar-height} - #{$footer-height});

@@ -27,9 +27,7 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('overTabLength') overTabLength: any;
 
-  public tabs: any[] = [
-    { title: 'Hóa đơn 1', active: true, removable: false, disabled: false }
-  ];
+  public tabs: any[] = [{ title: 'Hóa đơn 1', active: true, removable: false, disabled: false }];
 
   private subscription: Subscription;
   constructor(
@@ -37,9 +35,8 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
     private formBuilder: FormBuilder,
     private apiService: APIService,
     private activatedRoute: ActivatedRoute,
-    private modalService: BsModalService) {
-
-  }
+    private modalService: BsModalService
+  ) {}
 
   ngOnInit() {
     this.initRouter();

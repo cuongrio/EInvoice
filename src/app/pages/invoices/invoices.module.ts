@@ -34,12 +34,7 @@ import { AutofocusDirective } from './../../_directives/autofocus.directive';
     PopoverModule.forRoot(),
     ModalModule.forRoot()
   ],
-  declarations: [
-    AutofocusDirective,
-    InvoicesComponent,
-    InvoiceDetailComponent,
-    InvoiceFormComponent
-  ],
+  declarations: [AutofocusDirective, InvoicesComponent, InvoiceDetailComponent, InvoiceFormComponent],
   providers: [APIService, DatePipe, AppConfig]
 })
-export class InvoicesModule { }
+export class InvoicesModule {}

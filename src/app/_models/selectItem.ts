@@ -1,5 +1,5 @@
 export class SelectItem {
-    code: string;
-    value: string;
-    description: string;
+  code: string;
+  value: string;
+  description: string;
 }
