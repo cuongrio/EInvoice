@@ -14,8 +14,8 @@
 
   <div class="main-panel">
     <div class="content-wrapper">
+      <ngx-spinner bdColor="rgba(51, 51, 51, 0.8)" size="default" color="#439aff" type="ball-clip-rotate-multiple"></ngx-spinner>
       <div class="content-list">
-
         <div class="card card-shadow">
           <div class="card-body">
             <h4 class="card-title">
@@ -161,17 +161,18 @@
                   <button [hidden]="!expandSearch" type="button" form="ngForm" class="btn btn-md btn-info btn-search"
                     (click)="ngSearchForm.ngSubmit.emit()"><i class="icon-magnifier"></i>
                     Tìm kiếm</button>
-
-                  <button type="button" routerLink="/invoices/createNew" class="btn btn-icons btn-secondary"
-                    data-toggle="tooltip" trigger="hover" data-placement="bottom" title="Thêm mới">
+                  <button type="button" routerLink="/invoices/createNew" class="btn btn-icons btn-success" data-toggle="tooltip"
+                    trigger="hover" data-placement="bottom" title="Thêm mới">
                     <i class="fas fa-plus"></i>
                   </button>
-                  <button type="button" routerLink="/invoices/update/1" class="btn btn-icons btn-success" tooltip="Sửa"
+                  <button type="button" (click)="editRow()" class="btn btn-icons btn-success" tooltip="Sửa"
                     placement="bottom">
                     <i class="fas fa-edit"></i>
                   </button>
-                  <button type="button" class="btn btn-icons btn-primary" trigger="hover" data-toggle="tooltip"
+                  <button type="button" (click)="deleteRow()" class="btn btn-icons btn-primary" 
+                    trigger="hover" data-toggle="tooltip"
                     data-placement="bottom" title="Xóa"><i class="fas fa-trash"></i></button>
+
                   <button type="button" class="btn btn-icons btn-primary" trigger="hover" data-toggle="tooltip"
                     data-placement="bottom" title="Sao chép"><i class="fas fa-copy"></i></button>
                   <button type="button" class="btn btn-icons btn-primary" trigger="hover" data-toggle="tooltip"
@@ -192,26 +193,28 @@
                   <tr>
                     <th></th>
                     <th>Số hóa đơn</th>
-                    <th>Ngày hóa đơn</th>
+                    <th>Ngày HĐ</th>
                     <th>Khách hàng</th>
-                    <th>Mã số thuế</th>
+                    <th>MST</th>
                     <th>Địa chỉ</th>
                     <th class="text-right">%VAT</th>
                     <th class="text-right">TS thuế</th>
                     <th class="text-right">Tổng tiền</th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tfoot>
                   <tr>
                     <th></th>
                     <th>Số hóa đơn</th>
-                    <th>Ngày hóa đơn</th>
+                    <th>Ngày HĐ</th>
                     <th>Khách hàng</th>
-                    <th>Mã số thuế</th>
+                    <th>MST</th>
                     <th>Địa chỉ</th>
                     <th class="text-right">%VAT</th>
-                    <th class="text-right">Tổng số thuế</th>
+                    <th class="text-right">TS thuế</th>
                     <th class="text-right">Tổng tiền</th>
+                    <th></th>
                   </tr>
                 </tfoot>
               </table>
@@ -220,12 +223,11 @@
               <div class="page-info">
                 Trang {{page}}: {{totalElements}} dòng | Tổng số: {{totalPages}} trang.
               </div>
-
+              <!-- <ngb-pagination class="d-flex justify-content-end" [pageSize]="itemsPerPage" [collectionSize]="totalItems"
+                [(page)]="page" (pageChange)="onPageChange($event)" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"></ngb-pagination> -->
               <div *ngIf="totalPages > 1">
-                <pagination [totalItems]="totalItems" [(ngModel)]="page" (pageChanged)="onPageChange($event)"></pagination>
-
-                <!-- <ngb-pagination class="d-flex justify-content-end" [pageSize]="itemsPerPage" [collectionSize]="totalItems"
-                  [(page)]="page" (pageChange)="onPageChange($event)" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"></ngb-pagination> -->
+                <ngb-pagination class="d-flex justify-content-end" [pageSize]="itemsPerPage" [collectionSize]="totalItems"
+                  [(page)]="page" (pageChange)="onPageChange($event)" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"></ngb-pagination>
               </div>
             </div>
           </div>

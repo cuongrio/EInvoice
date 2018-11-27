@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { APIService } from './../../_services/api.service';
 import { InvoiceParams } from './../../_models';
 import { DatePipe } from '@angular/common';
-
+import { NgxSpinnerService } from 'ngx-spinner';
 import * as moment from 'moment';
 
 declare var $: any;
@@ -46,11 +46,12 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
 
   constructor(
     private datePipe: DatePipe,
+    private spinner: NgxSpinnerService,
     private router: Router,
     private activeRouter: ActivatedRoute,
     private apiService: APIService,
     private formBuilder: FormBuilder
-  ) {}
+  ) { }
 
   ngOnInit() {
     console.log('init');
@@ -84,12 +85,52 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
   }
 
   public onSubmit(form: any) {
+    this.spinner.show();
     this.page = 1;
     const invoiceParams: InvoiceParams = this.formatForm(form);
     invoiceParams.page = JSON.stringify(this.page);
     localStorage.setItem('userquery', JSON.stringify(invoiceParams));
     this.router.navigate([], { replaceUrl: true, queryParams: invoiceParams });
     this.callServiceAndBindTable(invoiceParams);
+  }
+
+  public onPageChange(page: number) {
+    console.log(this.previousPage + '---' + page);
+    if (this.previousPage !== page) {
+      this.previousPage = page;
+      const userquery = localStorage.getItem('userquery');
+      let invoiceParams: InvoiceParams;
+      if (userquery) {
+        invoiceParams = JSON.parse(userquery);
+      } else {
+        invoiceParams = {};
+      }
+
+      invoiceParams.page = JSON.stringify(this.page);
+      console.log('invoiceParams: ' + JSON.stringify(invoiceParams));
+
+      // call service
+      this.router.navigate([], { replaceUrl: true, queryParams: invoiceParams });
+      this.callServiceAndBindTable(invoiceParams);
+    }
+  }
+
+  public deleteRow() {
+    const itemsChecked = this.getCheckboxesValue();
+    console.log('item: ' + itemsChecked);
+  }
+
+  public editRow() {
+
+  }
+
+  private getCheckboxesValue() {
+    const itemsChecked = new Array<string>();
+    $('input:checkbox[name=stickchoice]:checked').each(function () {
+      const item: string = $(this).val();
+      itemsChecked.push(item);
+    });
+    return itemsChecked;
   }
 
   private initPageHandlerInRouter() {
@@ -121,27 +162,6 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
     $('select').select2({ minimumResultsForSearch: Infinity });
   }
 
-  private onPageChange(page: number) {
-    console.log(this.previousPage + '---' + page);
-    if (this.previousPage !== page) {
-      this.previousPage = page;
-      const userquery = localStorage.getItem('userquery');
-      let invoiceParams: InvoiceParams;
-      if (userquery) {
-        invoiceParams = JSON.parse(userquery);
-      } else {
-        invoiceParams = {};
-      }
-
-      invoiceParams.page = JSON.stringify(this.page);
-      console.log('invoiceParams: ' + JSON.stringify(invoiceParams));
-
-      // call service
-      this.router.navigate([], { replaceUrl: true, queryParams: invoiceParams });
-      this.callServiceAndBindTable(invoiceParams);
-    }
-  }
-
   private callServiceAndBindTable(params: InvoiceParams) {
     this.apiService.getInvoices(params).subscribe(response => {
       if (response && response.contents.length > 0) {
@@ -155,7 +175,10 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
         $('#invoiceTable')
           .dataTable()
           .fnAddData(response.contents);
+        this.spinner.hide();
       }
+    }, err => {
+      this.spinner.hide();
     });
   }
 
@@ -192,34 +215,55 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
       info: false,
       scrollX: true,
       iDisplayLength: 20,
+      language: {
+        searchPlaceholder: 'Lọc trong danh sách...',
+        sSearch: '',
+        lengthMenu: 'Hiển thị  _MENU_ dòng/trang',
+        info: 'Trang hiện tại _PAGE_/ _PAGES_',
+        emptyTable: 'Không có dữ liệu',
+        paginate: {
+          previous: '<',
+          next: '>',
+          first: '<<',
+          last: '>>'
+        }
+      },
       columnDefs: [
         {
-          width: '30px',
+          width: '20px',
           targets: 0,
           orderable: false
         },
         {
-          width: '100px',
+          width: '80px',
           targets: 1,
-          render: function(data: any) {
+          render: function (data: any) {
             return '<label class="badge badge-info">' + data + '</label>';
+          }
+        }, {
+          width: '60px',
+          targets: 2,
+        }, {
+          width: '80px',
+          targets: 3,
+        }, {
+          width: '60px',
+          targets: 4,
+        }, {
+          width: '50px',
+          targets: 6,
+          render: function (data: any) {
+            if (data && data !== 'null') {
+              return '<span class="number-format">' + data + '</span>';
+            } else {
+              return '<span></span>';
+            }
           }
         },
         {
           width: '50px',
-          targets: 6,
-          render: function(data: any) {
-            if (data && data !== 'null') {
-              return '<span class="number-format">' + data + '</span>';
-            } else {
-              return '<span></span>';
-            }
-          }
-        },
-        {
-          width: '70px',
           targets: 7,
-          render: function(data: any) {
+          render: function (data: any) {
             if (data && data !== 'null') {
               return '<span class="number-format">' + data + '</span>';
             } else {
@@ -228,15 +272,18 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
           }
         },
         {
-          width: '70px',
+          width: '80px',
           targets: 8,
-          render: function(data: any) {
+          render: function (data: any) {
             if (data && data !== 'null') {
               return '<span class="number-format">' + data + '</span>';
             } else {
               return '<span></span>';
             }
           }
+        }, {
+          width: '20px',
+          targets: 9
         }
       ],
       columns: [
@@ -250,7 +297,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
           data: 'invoice_no'
         },
         {
-          data: function(row: any, type: any) {
+          data: function (row: any, type: any) {
             if (type === 'display' && row.invoice_date && row.invoice_date !== 'null') {
               const dateFormate = moment(row.invoice_date).format('DD/MM/YYYY');
               return `<span>${dateFormate}</span>`;
@@ -260,7 +307,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
           }
         },
         {
-          data: function(row: any, type: any) {
+          data: function (row: any, type: any) {
             if (type === 'display' && row.customer && row.customer !== 'null') {
               return row.customer.customer_name;
             } else {
@@ -269,7 +316,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
           }
         },
         {
-          data: function(row: any, type: any) {
+          data: function (row: any, type: any) {
             if (type === 'display' && row.customer && row.customer !== 'null') {
               return row.customer.tax_code;
             } else {
@@ -278,7 +325,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
           }
         },
         {
-          data: function(row: any, type: any) {
+          data: function (row: any, type: any) {
             if (type === 'display' && row.customer && row.customer !== 'null') {
               return row.customer.address;
             } else {
@@ -288,10 +335,39 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
         },
         { data: 'total_tax' },
         { data: 'total_tax' },
-        { data: 'total' }
+        { data: 'total' },
+        {
+          orderable: false,
+          data: function (row: any, type: any) {
+            if (type === 'display' && row.invoice_id && row.invoice_id !== 'null') {
+              return `
+                <div class="form-check">
+                  <label class="form-check-label">
+                    <input type="checkbox" name="stickchoice" value="${row.invoice_id}" class="form-check-input">
+                  <i class="input-helper"></i></label>
+                </div>
+              `;
+              // return `
+              // <div class="btn-group" role="group">
+              //   <a target="_blank" href="/invoices/update/${row.invoice_id}"
+              //        class="btn btn-md btn-primary btn-icons">
+              //     <i class="fas fa-edit"></i>
+              //   </a>
+              //   <button type="button" class="btn btn-md btn-danger btn-icons">
+              //     <i class="fas fa-trash"></i>
+              //   </button>
+              //   </div>`;
+            } else {
+              return '<span></span>';
+            }
+          }
+        }
       ],
+      select: {
+        style: 'multi'
+      },
       order: [[2, 'desc']],
-      drawCallback: function() {
+      drawCallback: function () {
         const pagination = $(this)
           .closest('.dataTables_wrapper')
           .find('.dataTables_paginate');
@@ -299,19 +375,19 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
       }
     });
 
-    function getProductItemByInvoice(invoiceId: number, callback: any) {
+    function getProductItemByInvoice(invoiceId: string, callback: any) {
       const token = 'abcxyz';
-      const url = 'http://178.128.123.223:8080/1/invoices/29';
+      const url = `http://178.128.123.223:8080/1/invoices/${invoiceId}`;
       $.ajax({
         url: url,
-        beforeSend: function(xhr: any) {
+        beforeSend: function (xhr: any) {
           xhr.setRequestHeader('Authorization', 'Bearer ' + token);
         }
       })
-        .done(function(data: any) {
+        .done(function (data: any) {
           callback(data.items);
         })
-        .fail(function(jqXHR: any, textStatus: any) {
+        .fail(function (jqXHR: any, textStatus: any) {
           alert('Đã xảy ra lỗi: ' + textStatus);
         });
     }
@@ -320,7 +396,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
       let contentItemHtml = ``;
       if (items && items.length > 0) {
         let lineItem = ``;
-        items.forEach(function(entry: any) {
+        items.forEach(function (entry: any) {
           lineItem += `
             <tr>
               <td>${entry.item_line}</td>
@@ -370,7 +446,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
       );
     }
     // Add event listener for opening and closing details
-    $('#invoiceTable tbody').on('click', 'td.details-control', function() {
+    $('#invoiceTable tbody').on('click', 'td.details-control', function () {
       const tr = $(this).closest('tr');
 
       const row = table.row(tr);
@@ -380,7 +456,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
         tr.removeClass('tr-expand');
       } else {
         // call API
-        getProductItemByInvoice(row.data().invoice_id, function(items: any) {
+        getProductItemByInvoice(row.data().invoice_id, function (items: any) {
           row.child(formatEinvoiceRow(items)).show();
           tr.addClass('tr-expand');
         });

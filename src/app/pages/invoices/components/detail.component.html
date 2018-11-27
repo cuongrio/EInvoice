@@ -4,7 +4,7 @@
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a routerLink="/">Trang chủ</a></li>
-          <li class="breadcrumb-item"><a routerLink="/invoices">Dải hóa đơn</a></li>
+          <li class="breadcrumb-item"><a routerLink="/invoices">Danh sách hóa đơn</a></li>
           <li class="breadcrumb-item active" aria-current="page">Chi tiết hóa đơn</li>
         </ol>
       </nav>
@@ -14,217 +14,203 @@
   <div class="main-panel">
     <div class="content-wrapper">
       <div class="row">
+        <div class="container-fluid">
+          <div class="template-ein navbar-action">
+            <button type="button" class="btn btn-md btn-outline-primary"><i class="fas fa-edit"></i> Sửa</button>
+            <button type="button" class="btn btn-md btn-outline-primary"><i class="fas fa-key"></i> Ký</button>
+            <button type="button" class="btn btn-md btn-outline-primary"><i class="fas fa-print"></i> In CĐ</button>
+            <button routerLink="/invoices" type="button" class="btn btn-md btn-light"><i class="fas fa-share-square"></i>
+              Thoát</button>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="row">
         <div class="col-lg-12">
-          <div class="card px-2">
+          <div class="card card-shadow px-2">
             <div class="card-body invoice__wrapper">
-              <div class="invoice__form">
-                <div class="container-fluid">
-                  <!--ROW HEADING-->
-                  <div class="invoice-form__heading">
-                    <div class="row">
-                      <div class="col-md-3 col-lg-3 col-sm-12">
-                        <div class="form-group">
-                          <label class="text-bold col-sm-6">
-                            Chi tiết
-                          </label>
-                        </div>
+              <form class="invoice__form">
+                <div class="invoice__body invoice__detail">
+                  <div class="row invoice-detail_heading">
+                    <div class="col text-center">
+                      <h4 class="form__title">
+                        HÓA ĐƠN GIÁ TRỊ GIA TĂNG
+                      </h4>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-3 col-lg-3">
+                      <div class="col-form-label">
+                        <label>Ngày lập:</label>
+                        <label class="text-bold ml-2">12/12/2012</label>
                       </div>
-                      <div class="col-md-6 text-center heading-block col-lg-6 col-sm-12">
-                        <div class="form-group">
-                          <label class="form__title">
-                            HÓA ĐƠN GIÁ TRỊ GIA TĂNG
-                          </label>
-                          <label class="invoice-date__label">Ngày: <span class="text-bold">20/11/2013</span></label>
-                        </div>
+                    </div>
 
+                    <div class="col-md-3 col-lg-3">
+                      <div class="col-form-label">
+                        <label>Số hóa đơn:</label>
+                        <label class="text-bold ml-2">0000000001</label>
                       </div>
-                      <div class="col-md-3 col-lg-3 col-sm-12">
-                        <div class="invoice__info">
-                          <div class="form-group row">
-                            <label class="ccol-sm-12 col-md-3 col-lg-3 text-bold">Mẫu số:</label>
-                            <div class="col-sm-12 col-md-9 col-lg-9">
-                              <label class="text-bold">0221/315121</label>
-                            </div>
-                          </div>
+                    </div>
 
-                          <div class="form-group row">
-                            <label class="col-sm-12 col-md-3 col-lg-3">Ký hiệu:</label>
-                            <div class="col-sm-12 col-md-9 col-lg-9">
-                              <label class="text-bold">111AAA/BBBB</label>
-                            </div>
-                          </div>
+                    <div class="col-md-3 col-lg-3">
+                      <div class="col-form-label">
+                        <label>Mẫu số:</label>
+                        <label class="text-bold ml-2">000000/0001</label>
+                      </div>
+                    </div>
 
-                          <div class="form-group row">
-                            <label class="col-sm-12 col-md-3 col-lg-3">Số HĐ:</label>
-                            <div class="col-sm-12 col-md-9 col-lg-9">
-                              <label class="text-bold">111AAA/BBBB</label>
-                            </div>
-                          </div>
-                        </div>
+                    <div class="col-md-3 col-lg-3">
+                      <div class="col-form-label">
+                        <label>Ký hiệu:</label>
+                        <label class="text-bold ml-2">2200/0001</label>
+                      </div>
+                    </div>
+
+                    <div class="col-md-3 col-lg-3">
+                      <div class="col-form-label">
+                        <label>Mã khách hàng:</label>
+                        <label class="text-bold ml-2">AAAAAA</label>
+                      </div>
+                    </div>
+
+                    <div class="col-md-3 col-lg-3">
+                      <div class="col-form-label">
+                        <label>Mã số thuế:</label>
+                        <label class="text-bold ml-2">2121545151</label>
+                      </div>
+                    </div>
+
+                    <div class="col-md-3 col-lg-3">
+                      <div class="col-form-label">
+                        <label>Email:</label>
+                        <label class="text-bold ml-2">cuongrio07@gmail.com</label>
+                      </div>
+                    </div>
+
+                    <div class="col-md-3 col-lg-3">
+                      <div class="col-form-label">
+                        <label>Mã đơn hàng:</label>
+                        <label class="text-bold ml-2">234234234</label>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6 col-lg-6">
+                      <div class="col-form-label">
+                        <label>Tên đơn vị:</label>
+                        <label class="text-bold ml-2">Đơn vị ABC</label>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6 col-lg-6">
+                      <div class="col-form-label">
+                        <label>Người mua:</label>
+                        <label class="text-bold ml-2">FDSFDSFSDFSDFSDF</label>
+                      </div>
+                    </div>
+
+
+                    <div class="col-md-12 col-lg-12">
+                      <div class="col-form-label">
+                        <label>Địa chỉ:</label>
+                        <label class="text-italic text-bold ml-2">133 Minh Khai - Hà nội</label>
+                      </div>
+                    </div>
+
+                    <div class="col-md-3 col-lg-3">
+                      <div class="col-form-label">
+                        <label>Email:</label>
+                        <label class="text-bold ml-2">cuongrio07@gmail.com</label>
+                      </div>
+                    </div>
+
+                    <div class="col-md-3 col-lg-3">
+                      <div class="col-form-label">
+                        <label>Số tài khoản:</label>
+                        <label class="text-bold ml-2">43343434</label>
+                      </div>
+                    </div>
+
+                    <div class="col-md-3 col-lg-3">
+                      <div class="col-form-label">
+                        <label>Ngân hàng:</label>
+                        <label class="text-bold ml-2">Ngân hàng abc</label>
+                      </div>
+                    </div>
+
+                    <div class="col-md-3 col-lg-3">
+                      <div class="col-form-label">
+                        <label>Trạng thái:</label>
+                        <label class="text-bold ml-2">Lập Đơn</label>
                       </div>
                     </div>
                   </div>
 
-                  <div class="invoice__body">
-                    <div class="customer-group__detail">
-                      <div class="row">
-                        <div class="col">
-                          <div class="form-group row">
-                            <label class="col-sm-2 col-md-2 col-lg-2">Họ tên người mua: </label>
-                            <div class="col-sm-10 col-md-10 col-lg-10">
-                              <label class="text-bold">Trần Văn Cường</label>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                  <div class="product-item__wrapper">
+                    <h3 class="sub-title">
+                      <small class="sub-title__small">Chi tiết hóa đơn</small>
+                    </h3>
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Mã HH</th>
+                          <th>Nội dung</th>
+                          <th class="text-right">ĐVT</th>
+                          <th class="text-right">SL</th>
+                          <th class="text-right">Giá</th>
+                          <th class="text-right">Tiền</th>
+                          <th class="text-right">% CK</th>
+                          <th class="text-right">Tiền CK</th>
+                          <th class="text-right">% VAT</th>
+                          <th class="text-right">Tiền VAT</th>
+                          <th class="text-right">Tổng tiền</th>
+                        </tr>
+                      </thead>
+                      <tbody formArrayName="items">
+                        <tr class="product-line">
+                          <td class="no-padding invoice-no__item">
+                            <label class="line-title">0903930</label>
+                          </td>
+                          <td>
+                              0903930
+                          </td>
+                          <td>0903930</td>
+                          <td>0903930</td>
+                          <td>0903930</td>
+                          <td>0903930</td>
+                          <td>0903930</td>
+                          <td>0903930</td>
+                          <td>0903930</td>
+                          <td>0903930</td>
+                          <td>0903930</td>
+                        </tr>
 
-                      <div class="row">
-                        <div class="col-md-4 col-lg-4">
-                          <div class="form-group row">
-                            <label class="col-sm-6 col-md-6 col-lg-6">Mã khách hàng:</label>
-                            <div class="col-sm-6 col-md-6 col-lg-6">
-                              <label class="text-bold">000622254111</label>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div class="col-md-8 col-lg-8">
-                          <div class="form-group row">
-                            <label class="col-sm-4 col-md-4 col-lg-4 text-right">Tên khác:</label>
-                            <div class="col-sm-8 col-md-8 col-lg-8">
-                              <label class="text-bold">Cuong Rio</label>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="row">
-                        <div class="col">
-                          <div class="form-group row">
-                            <label class="col-sm-2 col-md-2 col-lg-2">Địa chỉ: </label>
-                            <div class="col-sm-10 col-md-10 col-lg-10">
-                              <label class="text-italic">123 Hateco, Yên Sở, Hoàng Mai, Hà Nội</label>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="row">
-                        <div class="col-md-4 col-lg-4">
-                          <div class="form-group row">
-                            <label class="col-sm-6 col-md-6 col-lg-6">Mã số thuế: </label>
-                            <div class="col-sm-6 col-md-6 col-lg-6">
-                              <label class="text-bold">123213124</label>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div class="col-md-8 col-lg-8">
-                          <div class="form-group row">
-                            <label class="col-sm-4 col-md-4 col-lg-4 text-right">
-                              Hình thức thanh toán: </label>
-                            <div class="col-sm-8 col-md-8 col-lg-8">
-                              <label class="text-bold">Thanh toán bằng ATM</label>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="row">
-                        <div class="col-md-4 col-lg-4">
-                          <div class="form-group row">
-                            <label class="col-sm-6 col-md-6 col-lg-6">Email: </label>
-                            <div class="col-sm-6 col-md-6 col-lg-6">
-                              <label class="text-bold">cuongrio07@gmail.com</label>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div class="col-md-8 col-lg-8">
-                          <div class="form-group row">
-                            <label class="col-sm-4 col-md-4 col-lg-4 text-right">Website: </label>
-                            <div class="col-sm-8 col-md-8 col-lg-8">
-                              <label class="text-bold"> https://adayroi.com</label>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="row">
-                        <div class="col-md-4 col-lg-4">
-                          <div class="form-group row">
-                            <label class="col-sm-6 col-md-6 col-lg-6">Số tài khoản: </label>
-                            <div class="col-sm-6 col-md-6 col-lg-6">
-                                <label class="text-bold">324234243</label>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div class="col-md-8 col-lg-8">
-                          <div class="form-group row">
-                            <label class="col-sm-4 col-md-4 col-lg-4 text-right">Tại: </label>
-                            <div class="col-sm-8 col-md-8 col-lg-8">
-                                <label>Ngân hàng Techcombank</label>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                    </div>
-                    <!--#end customer-group-->
-
-                    <div class="product-item__wrapper">
-                      <h3><small class="text-muted">THÔNG TIN DÒNG HÀNG</small></h3>
-                      <table class="table table-bordered">
-                        <thead>
-                          <tr>
-                            <th>#STT</th>
-                            <th>Mã</th>
-                            <th>Nội dung</th>
-                            <th class="text-right">Số lượng</th>
-                            <th>Đơn vị</th>
-                            <th class="text-right">Đơn giá</th>
-                            <th class="text-right">Thành tiền</th>
-                            <th class="text-right">%VAT</th>
-                            <th class="text-right">Tiền VAT</th>
-                            <th class="text-right">Tổng tiền</th>
-                            <th>Trạng thái</th>
-                          </tr>
-                        </thead>
-                        <tbody formArrayName="items">
-                          <tr class="product-line">
-                            <td>1</td>
-                            <td>11</td>
-                            <td>2</td>
-                            <td>3</td>
-                            <td>4</td>
-                            <td>5</td>
-                            <td>6</td>
-                            <td>7</td>
-                            <td>8</td>
-                            <td>9</td>
-                            <td>10</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
+                      </tbody>
+                      <tfoot>
+                        <tr class="tb-footer">
+                          <th style="width: 120px;">Tổng</th>
+                          <th></th>
+                          <th style="width: 80px;" class="text-right"></th>
+                          <th style="width: 80px;" class="text-right"></th>
+                          <th style="width: 80px;" class="text-right"></th>
+                          <th style="width: 120px;" class="text-right"></th>
+                          <th style="width: 80px;" class="text-right"></th>
+                          <th style="width: 80px;" class="text-right"></th>
+                          <th style="width: 80px;" class="text-right"></th>
+                          <th style="width: 120px;" class="text-right"></th>
+                          <th style="width: 120px;"></th>
+                        </tr>
+                      </tfoot>
+                    </table>
                   </div>
-                  <div class="template-ein text-right navbar-action">
-                    <button type="button" class="btn btn btn-primary btn-fw">
-                      <i class="fas fa-times"></i> Ký hóa đơn
-                    </button>
-
-                    <button type="button" class="btn btn-success btn-fw">
-                      <i class="fas fa-save"></i> In Hóa đơn
-                    </button>
-                  </div>
-
                 </div>
-              </div>
+              </form>
             </div>
           </div>
         </div>
       </div>
+
     </div>
   </div>
 </div>

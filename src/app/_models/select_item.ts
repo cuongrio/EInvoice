@@ -1,5 +1,3 @@
-declare var $: any;
-
 export class SelectItem {
   code: string;
   type?: string;

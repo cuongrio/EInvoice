@@ -6,8 +6,8 @@ html {
   background: $content-bg;
 }
 
-a{
-  &:hover{
+a {
+  &:hover {
     text-decoration: none !important;
   }
 }
@@ -37,7 +37,7 @@ a{
   }
 }
 
-.container{
+.container {
   max-width: 1240px !important;
 }
 

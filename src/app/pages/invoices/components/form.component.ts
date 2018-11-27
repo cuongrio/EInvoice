@@ -2,10 +2,11 @@ import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ViewChild, After
 import { FormGroup, FormArray, Validators, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { ProductItem, SelectItem } from '@app/_models';
+import { ProductItem, SelectItem, Customer } from '@app/_models';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import { APIService } from '@app/_services/api.service';
+import { Good } from './../../../_models/good';
 
 declare var $: any;
 type ArrayObject = Array<SelectItem>;
@@ -22,34 +23,50 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
   public modalRef: BsModalRef;
   public bsConfig = { dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-default' };
 
+  public customerPicked: Customer;
+  public taxCode: string;
+
   configSelect = {
-    displayKey: 'value',
-    placeholder: '...',
+    displayKey: 'customer_name',
+    placeholder: 'Lựa chọn',
     search: false,
     limitTo: 5
   };
 
-  configFind = {
+  public configCode = {
     searchPlaceholder: 'Tìm kiếm',
     noResultsFound: 'Không có kết quả',
     moreText: 'Xem thêm',
-    placeholder: '...',
-    displayKey: 'name',
+    placeholder: 'Lựa chọn',
+    displayKey: 'select_item',
     search: true,
     limitTo: 5
   };
 
-  options = [{
-    '_id': '5a66d6c31d5e4e36c7711b7a',
-    'index': 0,
-    'balance': '$2,806.37',
-    'picture': 'http://placehold.it/32x32',
-    'name': 'Burns Dalton'
-  }];
+  public configTaxCode = {
+    searchPlaceholder: 'Tìm kiếm',
+    noResultsFound: 'Không có kết quả',
+    moreText: 'Xem thêm',
+    placeholder: 'Lựa chọn',
+    displayKey: 'tax_code',
+    search: true,
+    limitTo: 5
+  };
+
+  public configGood = {
+    searchPlaceholder: 'Tìm kiếm',
+    noResultsFound: 'Không có kết quả',
+    moreText: 'Xem thêm',
+    placeholder: 'Lựa chọn',
+    displayKey: 'select_item',
+    search: true,
+    limitTo: 5
+  };
 
   // combobox
-  public taxRateCombo: Array<SelectItem>;
-  public serialArr: [];
+  public taxRateArr: Array<SelectItem>;
+  public customerArr: Array<Customer>;
+  public goodArr: Array<Good>;
 
   private subscription: Subscription;
 
@@ -59,14 +76,16 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
     private apiService: APIService,
     private activatedRoute: ActivatedRoute,
     private modalService: BsModalService
-  ) {
-  }
+  ) { }
 
   ngOnInit() {
     this.initRouter();
     this.createItemsForm();
     this.formSetDefault();
     this.loadReferences();
+    this.loadCustomers();
+    this.loadGoods();
+
     for (let i = 0; i < 5; i++) {
       this.stickyButtonAdd();
     }
@@ -89,6 +108,14 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
     console.log(JSON.stringify(form));
   }
 
+  public onCustomerTaxChange(dataArr: Customer[]) {
+    this.initDataForm(dataArr);
+  }
+
+  public onCustomerChange(dataArr: Customer[]) {
+    this.initDataForm(dataArr);
+  }
+
   get itemFormArray(): FormArray {
     return this.addForm.get('items') as FormArray;
   }
@@ -105,22 +132,74 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
     db.currentTarget.result.createObjectStore('references');
   }
 
+  private loadGoods() {
+    this.apiService.getCustomers().subscribe(items => {
+      const goods = items as Good[];
+      this.goodArr = new Array<Good>();
+
+      for (let i = 0; i < goods.length; i++) {
+        const good = new Good();
+        Object.assign(good, goods[i]);
+        good.select_item = good.goods_code + '-' + good.goods_name;
+        this.goodArr.push(good);
+      }
+    });
+  }
+
+  private loadCustomers() {
+    this.apiService.getCustomers().subscribe(items => {
+      const customers = items as Customer[];
+      this.customerArr = new Array<Customer>();
+
+      for (let i = 0; i < customers.length; i++) {
+        const customer = new Customer();
+        Object.assign(customer, customers[i]);
+        customer.select_item = customer.customer_code + '-' + customer.customer_name;
+        this.customerArr.push(customer);
+      }
+    });
+  }
   private loadReferences() {
     this.apiService.getReferences().subscribe(items => {
       const selectItems = items as SelectItem[];
-      this.taxRateCombo = new Array<SelectItem>();
+      this.taxRateArr = new Array<SelectItem>();
+
       for (let i = 0; i < selectItems.length; i++) {
         const selectItem = new SelectItem();
         Object.assign(selectItem, selectItems[i]);
-        console.log(selectItem.type);
 
         if (selectItem.type === 'COMBO_TAX_RATE_CODE') {
-          this.taxRateCombo.push(selectItem);
+          this.taxRateArr.push(selectItem);
         }
       }
-      console.log(JSON.stringify(this.taxRateCombo));
     });
+  }
 
+  private initDataForm(dataArr: Customer[]) {
+    if (dataArr && dataArr.length > 0) {
+      const customerPicked = dataArr[0];
+
+      // set form value
+      this.addForm.patchValue({
+        customer_email: customerPicked.email,
+        customer_org: customerPicked.org,
+        customer_bank_account: customerPicked.bank_account,
+        customer_bank: customerPicked.bank,
+        customer_address: customerPicked.address,
+      });
+
+      this.taxCode = customerPicked.tax_code;
+      console.log(JSON.stringify(customerPicked));
+
+    } else {
+      this.addForm.patchValue({
+        customer_email: '',
+        customer_org: '',
+        customer_bank_account: '',
+        customer_bank: '',
+        customer_address: '',
+      });
+    }
   }
 
   private initRouter() {
@@ -168,14 +247,15 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
       totalBeforeTax: '',
       total_tax: '',
       total: '',
-      customer: this.formBuilder.group({
-        customer_name: '',
-        org: '',
-        tax_code: '',
-        bank_account: '',
-        bank: '',
-        address: ''
-      }),
+      customer: ['', Validators.compose([
+        Validators.required
+      ]
+      )],
+      customer_email: '',
+      customer_org: '',
+      customer_bank_account: '',
+      customer_bank: '',
+      customer_address: '',
       items: this.formBuilder.array([])
     });
   }

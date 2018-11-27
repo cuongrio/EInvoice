@@ -1,5 +1,5 @@
 .main-panel {
-  padding-bottom: 30px;
+  padding-bottom: 10px;
 }
 
 .jumbotron {
@@ -7,7 +7,7 @@
   margin-bottom: 0px !important;
   background: #e9ecef;
   .breadcrumb {
-    border: 0 !important; 
+    border: 0 !important;
     margin-bottom: 0;
     padding-left: 0 !important;
   }
@@ -43,37 +43,63 @@
   border-right: 0 !important;
 }
 
-.ngx-dropdown-container{
+.bs-datepicker-head button.next span, 
+.bs-datepicker-head button.previous span{
+  font-size: 24px !important;
+}
+
+.required:after { 
+  content:" (*)"; 
+}
+
+.ngx-dropdown-container {
   font-size: 13px !important;
 
-  .ngx-dropdown-list-container{
-    .search-container{
-      input{
-        border-bottom: 1px solid #eee !important;
-        &::-webkit-input-placeholder { /* Chrome/Opera/Safari */
-          font-size: 13px;
-        }
-        &::-moz-placeholder { /* Firefox 19+ */
-          font-size: 13px;
-        }
-        &:-ms-input-placeholder { /* IE 10+ */
-          font-size: 13px;
-        }
-        &:-moz-placeholder { /* Firefox 18- */
-          font-size: 13px;
-        }
-      }
-    }
+  .ngx-dropdown-list-container {
     .selected-items{
-      margin-top: 0px !important;
-      margin-bottom: 10px !important;
-
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
       li{
-        background: #439aff !important;
-        padding: 4px 10px !important;
+        color: #333 !important;
+        background: #f0f0f0 !important;
+        padding: 4px !important;
       }
     }
-    hr{
+
+    .available-items{
+      li{
+        padding: 0px !important;
+      }
+    }
+
+    .search-container {
+      margin-top: 7px;
+      label{
+        font-size: 13px !important;
+      }
+
+      input {
+        border-bottom: 1px solid #eee !important;
+        &::-webkit-input-placeholder {
+          /* Chrome/Opera/Safari */
+          font-size: 13px;
+        }
+        &::-moz-placeholder {
+          /* Firefox 19+ */
+          font-size: 13px;
+        }
+        &:-ms-input-placeholder {
+          /* IE 10+ */
+          font-size: 13px;
+        }
+        &:-moz-placeholder {
+          /* Firefox 18- */
+          font-size: 13px;
+        }
+      }
+    }
+
+    hr {
       margin-top: 5px !important;
       margin-bottom: 5px !important;
     }
@@ -132,6 +158,7 @@ legend.scheduler-border {
     position: absolute;
     top: 0;
     left: 0;
+    font-size: 13px;
   }
 }
 .table-expanded-form {
@@ -157,6 +184,7 @@ legend.scheduler-border {
     padding: 4px 10px;
     border-radius: 3px 3px 0 0;
     text-align: justify;
+    font-size: 13px;
   }
 }
 
@@ -220,14 +248,23 @@ legend.scheduler-border {
       form {
         .form-control {
           border: 1px solid #d9d9d9;
+          font-weight: 600;
         }
       }
     }
   }
 }
 
+
+.black-overlay{
+  background: rgba(255, 255, 255, 0.5) !important;
+}
+
 .table-wrapper {
   border: 1px solid #dedede;
+  position: relative;
+
+
 
   .dataTables_info {
     margin-top: 12px;
@@ -257,9 +294,11 @@ legend.scheduler-border {
     td.details-control {
       background: url("./assets/images/details_open.png") no-repeat center center;
       cursor: pointer;
+      width: 15px !important;
     }
     tr.tr-expand td.details-control {
       background: url("./assets/images/details_close.png") no-repeat center center;
+      width: 15px !important;
     }
   }
 }
@@ -424,7 +463,6 @@ legend.scheduler-border {
 }
 
 .big-tittle {
-  color: #1f77c0;
   font-weight: bold;
   font-size: 16px;
   text-transform: uppercase;
@@ -506,18 +544,26 @@ legend.scheduler-border {
       margin-bottom: 4px !important;
     }
 
-    .invoice-form__heading {
-      text-align: center;
-
-      .form__title {
-        text-align: center;
-        font-weight: bold;
-        font-size: 20px;
-      }
-    }
-
     .invoice__body {
-      padding-bottom: 50px;
+      padding-bottom: 30px;
+      &.invoice__detail {
+        padding: 30px 60px;
+
+        .col-form-label {
+          font-size: 13px;
+        }
+
+        .invoice-detail_heading {
+          text-align: center;
+          margin-bottom: 40px;
+
+          .form__title {
+            text-align: center;
+            font-weight: bold;
+            font-size: 20px;
+          }
+        }
+      }
     }
 
     .product-item__wrapper {
@@ -525,7 +571,7 @@ legend.scheduler-border {
         margin-top: 8px;
         margin-bottom: 15px;
         display: block;
-        .sub-title__small{
+        .sub-title__small {
           font-size: 14px;
           font-weight: 600;
         }
@@ -536,50 +582,50 @@ legend.scheduler-border {
       }
       .product-line {
         position: relative;
- 
-        .ngx-dropdown-button{
+
+        .ngx-dropdown-button {
           border: 0 !important;
           border-radius: 0 !important;
         }
-        .ngx-dropdown-list-container{
+        .ngx-dropdown-list-container {
           min-width: 180px;
         }
-        .hideselect{ 
-          .ngx-dropdown-list-container{
+        .hideselect {
+          .ngx-dropdown-list-container {
             min-width: 240px;
           }
-          .nsdicon-angle-down{
+          .nsdicon-angle-down {
             display: none !important;
           }
-          .ngx-dropdown-button{
+          .ngx-dropdown-button {
             font-weight: 600;
           }
         }
 
-        .select2-selection--single{
+        .select2-selection--single {
           border-width: 0 !important;
           border-radius: 0 !important;
 
-          &:focus{
+          &:focus {
             border-width: 1px !important;
             border-radius: 0 !important;
           }
         }
 
-        .select2-dropdown{
+        .select2-dropdown {
           border-radius: 0 !important;
         }
- 
-        td{
+
+        td {
           position: relative;
 
-          .popover{
+          .popover {
             width: 100%;
             top: 32px;
             border-bottom: 1px solid #ccc;
             border-radius: 0 !important;
 
-            .form-control{
+            .form-control {
               padding: 5px !important;
             }
           }

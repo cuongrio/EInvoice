@@ -20,7 +20,8 @@
 						<button type="button" (click)="addNewTab()" class="btn btn-md btn-primary"><i class="fas fa-plus"></i>
 							Thêm</button>
 						<button type="button" class="btn btn-md btn-outline-primary"><i class="fas fa-edit"></i> Sửa</button>
-						<button type="button" class="btn btn-md btn-success"><i class="fas fa-save"></i> Lưu</button>
+						<button type="button" (click)="ngAddForm.ngSubmit.emit()" class="btn btn-md btn-success"><i class="fas fa-save"></i>
+							Lưu</button>
 						<button type="button" class="btn btn-md btn-outline-primary"><i class="fas fa-info"></i> Xem</button>
 
 						<button type="button" class="btn btn-md btn-outline-primary"><i class="fas fa-key"></i> Ký</button>
@@ -96,10 +97,11 @@
 										<div class="col-md-3 col-lg-3">
 											<div class="form-group row">
 												<div class="col-md-4 col-lg-4 col-form-label">
-													<label>Mã KH</label>
+													<label class="required">Mã KH</label>
 												</div>
 												<div class="col-md-8 col-lg-8">
-													<ngx-select-dropdown [multiple]="false" [config]="configSelect" [options]="options"></ngx-select-dropdown>
+													<ngx-select-dropdown [multiple]="false" [(value)]="customerPicked" (valueChange)="onCustomerChange($event)"
+													 [config]="configCode" [options]="customerArr"></ngx-select-dropdown>
 												</div>
 											</div>
 										</div>
@@ -110,7 +112,8 @@
 													<label>Mã số thuế</label>
 												</div>
 												<div class="col-md-8 col-lg-8">
-													<ngx-select-dropdown [multiple]="false" [config]="configSelect" [options]="options"></ngx-select-dropdown>
+													<ngx-select-dropdown [multiple]="false" [(value)]="customerPicked" (valueChange)="onCustomerTaxChange($event)"
+													 [config]="configTaxCode" [options]="customerArr"></ngx-select-dropdown>
 												</div>
 											</div>
 										</div>
@@ -121,7 +124,8 @@
 													<label>Email</label>
 												</div>
 												<div class="col-md-8 col-lg-8">
-													<input type="text" placeholder="Email" class="form-control form-control-sm"></div>
+													<input formControlName="customer_email" type="text" placeholder="Email" class="form-control form-control-sm">
+												</div>
 											</div>
 										</div>
 
@@ -141,11 +145,11 @@
 													<label>Tên đơn vị</label>
 												</div>
 												<div class="col-md-10 col-lg-10">
-													<input placeholder="(Tên đơn vị)" class="form-control form-control-sm " name="customer_name" type="text">
+													<input formControlName="customer_org" placeholder="(Tên đơn vị)" class="form-control form-control-sm "
+													 name="customer_name" type="text">
 												</div>
 											</div>
 										</div>
-
 										<div class="col-md-6 col-lg-6">
 											<div class="form-group row">
 												<div class="col-md-2 col-lg-2 col-form-label">
@@ -163,7 +167,8 @@
 													<label>Địa chỉ</label>
 												</div>
 												<div class="col-md-11 col-lg-11">
-													<input type="text" placeholder="Địa chỉ" class="form-control form-control-sm"></div>
+													<input formControlName="customer_address" type="text" placeholder="Địa chỉ" class="form-control form-control-sm">
+												</div>
 											</div>
 										</div>
 
@@ -173,7 +178,8 @@
 													<label>Email</label>
 												</div>
 												<div class="col-md-8 col-lg-8">
-													<input type="text" placeholder="Hình thức thanh toán" class="form-control form-control-sm"></div>
+													<input formControlName="customer_email" type="text" placeholder="Email" class="form-control form-control-sm">
+												</div>
 											</div>
 										</div>
 
@@ -183,17 +189,16 @@
 													<label>Số TK</label>
 												</div>
 												<div class="col-md-8 col-lg-8">
-													<input type="text" placeholder="Số tài khoản" class="form-control form-control-sm"></div>
+													<input formControlName="customer_bank_account" type="text" placeholder="Số tài khoản" class="form-control form-control-sm"></div>
 											</div>
 										</div>
-
 										<div class="col-md-3 col-lg-3">
 											<div class="form-group row">
 												<div class="col-md-4 col-lg-4 col-form-label">
 													<label>Ngân hàng</label>
 												</div>
 												<div class="col-md-8 col-lg-8">
-													<input type="text" placeholder="Ngân hàng" class="form-control form-control-sm"></div>
+													<input formControlName="customer_bank" type="text" placeholder="Ngân hàng" class="form-control form-control-sm"></div>
 											</div>
 										</div>
 
@@ -206,6 +211,7 @@
 													<input type="text" placeholder="Trạng thái" class="form-control form-control-sm"></div>
 											</div>
 										</div>
+
 									</div>
 
 									<div class="product-item__wrapper">
@@ -236,7 +242,8 @@
 												<tr class="product-line" *ngFor="let item of itemFormArray.controls; let idx = index" [formGroupName]="idx">
 													<td class="no-padding text-center">{{idx + 1}}</td>
 													<td class="no-padding invoice-no__item hideselect">
-														<ngx-select-dropdown [multiple]="false" [config]="configFind" [options]="taxRateCombo"></ngx-select-dropdown>
+														<ngx-select-dropdown [multiple]="false"
+													 [config]="configGood" [options]="goodArr"></ngx-select-dropdown>
 													</td>
 													<td class="no-padding">
 														<input [popover]="popContent" popoverTitle="Thông tin mở rộng" [(ngModel)]="item['item_name']"
@@ -254,10 +261,8 @@
 														 type="text"></td>
 													<td class="no-padding"><input formControlName="price_wt" class="form-control form-control-sm text-right"
 														 name="item_price_wt" type="text"></td>
-													<td class="no-padding"><input class="form-control form-control-sm text-right"
-														  type="text"></td>
-													<td class="no-padding"><input  class="form-control form-control-sm text-right"
-														  type="text"></td>
+													<td class="no-padding"><input class="form-control form-control-sm text-right" type="text"></td>
+													<td class="no-padding"><input class="form-control form-control-sm text-right" type="text"></td>
 													<td class="no-padding">
 														<select formControlName="vat" class="ein-select">
 															<option [value]="op.code" *ngFor="let op of taxRateCombo">{{op.value}}</option>
@@ -268,7 +273,7 @@
 													<td class="no-padding"><input formControlName="total_price" class="form-control form-control-sm text-right"
 														 name="item_total_price" type="text">
 													</td>
-													 
+
 													<div class="sticky-btn__td">
 														<a (click)="deleteLineClicked(idx)" title="Xóa dòng" class="sticky_btn">
 															<i class="fas fa-times"></i>
@@ -310,11 +315,4 @@
 
 		</div>
 	</div>
-
-	<ng-template #overTabLength>
-		<div class="modal-body text-center">
-			<p>Bạn đang mở quá nhiều tabs. <br /> Vui lòng đóng bớt các tab khác.</p>
-			<button type="button" class="btn btn-primary" (click)="closeOverTabLength()">Đồng ý</button>
-		</div>
-	</ng-template>
 </div>
