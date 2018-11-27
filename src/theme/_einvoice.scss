@@ -5,11 +5,11 @@
 .jumbotron {
   padding: 0 !important;
   margin-bottom: 0px !important;
-  background: #e4e7ec;
+  background: #e9ecef;
   .breadcrumb {
-    border: 0 !important;
-    padding: 0.56rem 0px !important;
+    border: 0 !important; 
     margin-bottom: 0;
+    padding-left: 0 !important;
   }
 }
 
@@ -41,6 +41,43 @@
 
 .no-border-right {
   border-right: 0 !important;
+}
+
+.ngx-dropdown-container{
+  font-size: 13px !important;
+
+  .ngx-dropdown-list-container{
+    .search-container{
+      input{
+        border-bottom: 1px solid #eee !important;
+        &::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+          font-size: 13px;
+        }
+        &::-moz-placeholder { /* Firefox 19+ */
+          font-size: 13px;
+        }
+        &:-ms-input-placeholder { /* IE 10+ */
+          font-size: 13px;
+        }
+        &:-moz-placeholder { /* Firefox 18- */
+          font-size: 13px;
+        }
+      }
+    }
+    .selected-items{
+      margin-top: 0px !important;
+      margin-bottom: 10px !important;
+
+      li{
+        background: #439aff !important;
+        padding: 4px 10px !important;
+      }
+    }
+    hr{
+      margin-top: 5px !important;
+      margin-bottom: 5px !important;
+    }
+  }
 }
 
 .product-item {
@@ -499,7 +536,40 @@ legend.scheduler-border {
       }
       .product-line {
         position: relative;
+ 
+        .ngx-dropdown-button{
+          border: 0 !important;
+          border-radius: 0 !important;
+        }
+        .ngx-dropdown-list-container{
+          min-width: 180px;
+        }
+        .hideselect{ 
+          .ngx-dropdown-list-container{
+            min-width: 240px;
+          }
+          .nsdicon-angle-down{
+            display: none !important;
+          }
+          .ngx-dropdown-button{
+            font-weight: 600;
+          }
+        }
 
+        .select2-selection--single{
+          border-width: 0 !important;
+          border-radius: 0 !important;
+
+          &:focus{
+            border-width: 1px !important;
+            border-radius: 0 !important;
+          }
+        }
+
+        .select2-dropdown{
+          border-radius: 0 !important;
+        }
+ 
         td{
           position: relative;
 

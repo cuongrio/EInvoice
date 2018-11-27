@@ -4,8 +4,9 @@
 
   .breadcrumb-item {
     font-size: $breadcrumb-font-size;
-
+    font-weight: 600;
     &.active {
+      font-weight: 500;
     }
   }
 
@@ -19,7 +20,7 @@
       padding: $breadcrumb-custom-item-padding-y $breadcrumb-custom-item-padding-x;
       color: $breadcrumb-custom-item-color;
       display: inline-block;
-      vertical-align: top;
+      vertical-align: top; 
 
       &:last-child {
         background: transparent;
@@ -35,6 +36,7 @@
         border: 1px solid $breadcrumb-item-bg;
         display: inline-block;
         vertical-align: top;
+        font-weight: 600;
 
         &:after,
         &:before {
@@ -70,6 +72,9 @@
       }
 
       &.active {
+        a{
+          font-weight: 500;
+        }
       }
     }
   }

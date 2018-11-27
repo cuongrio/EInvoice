@@ -6,6 +6,12 @@ html {
   background: $content-bg;
 }
 
+a{
+  &:hover{
+    text-decoration: none !important;
+  }
+}
+
 *:-moz-full-screen,
 *:-webkit-full-screen,
 *:fullscreen *:-ms-fullscreen {
@@ -29,6 +35,10 @@ html {
   @include media-breakpoint-down(md) {
     padding-top: 60px;
   }
+}
+
+.container{
+  max-width: 1240px !important;
 }
 
 .content-wrapper {

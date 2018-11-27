@@ -2,10 +2,10 @@ import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ViewChild, After
 import { FormGroup, FormArray, Validators, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { ProductItem, SelectItem } from './../../../_models';
+import { ProductItem, SelectItem } from '@app/_models';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
-import { APIService } from './../../../_services/api.service';
+import { APIService } from '@app/_services/api.service';
 
 declare var $: any;
 type ArrayObject = Array<SelectItem>;
@@ -18,70 +18,66 @@ type ArrayObject = Array<SelectItem>;
 export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
   public addForm: FormGroup;
   public invoiceItem: any;
-  public columNo = 11;
+  public columNo = 12;
   public modalRef: BsModalRef;
   public bsConfig = { dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-default' };
 
+  configSelect = {
+    displayKey: 'value',
+    placeholder: '...',
+    search: false,
+    limitTo: 5
+  };
+
+  configFind = {
+    searchPlaceholder: 'Tìm kiếm',
+    noResultsFound: 'Không có kết quả',
+    moreText: 'Xem thêm',
+    placeholder: '...',
+    displayKey: 'name',
+    search: true,
+    limitTo: 5
+  };
+
+  options = [{
+    '_id': '5a66d6c31d5e4e36c7711b7a',
+    'index': 0,
+    'balance': '$2,806.37',
+    'picture': 'http://placehold.it/32x32',
+    'name': 'Burns Dalton'
+  }];
+
   // combobox
-  public serialArr: ArrayObject = [];
-
-  @ViewChild('overTabLength') overTabLength: any;
-
-  public tabs: any[] = [{ title: 'Hóa đơn 1', active: true, removable: false, disabled: false }];
+  public taxRateCombo: Array<SelectItem>;
+  public serialArr: [];
 
   private subscription: Subscription;
+
   constructor(
     private router: Router,
     private formBuilder: FormBuilder,
     private apiService: APIService,
     private activatedRoute: ActivatedRoute,
     private modalService: BsModalService
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
     this.initRouter();
     this.createItemsForm();
     this.formSetDefault();
-
+    this.loadReferences();
     for (let i = 0; i < 5; i++) {
       this.stickyButtonAdd();
     }
   }
 
   ngAfterViewInit() {
-    this.initSelectBox();
+    $('select').select2({ minimumResultsForSearch: Infinity });
   }
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
-  }
-
-  // TAB
-  addNewTab(): void {
-    const newTabIndex = this.tabs.length + 1;
-    if (newTabIndex > 10) {
-      this.showOverTabLength();
-    } else {
-      this.tabs.push({
-        title: `Hóa đơn ${newTabIndex}`,
-        active: true,
-        disabled: false,
-        removable: true
-      });
-    }
-  }
-
-  showOverTabLength() {
-    this.modalRef = this.modalService.show(this.overTabLength, { class: 'modal-sm' });
-  }
-
-  closeOverTabLength(): void {
-    this.modalRef.hide();
-  }
-
-  removeTabHandler(tab: any): void {
-    this.tabs.splice(this.tabs.indexOf(tab), 1);
-    console.log('Remove Tab handler');
   }
 
   cancelClicked() {
@@ -103,6 +99,28 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
   addMoreLineClicked() {
     this.stickyButtonAdd();
+  }
+
+  private createCollections(db: any) {
+    db.currentTarget.result.createObjectStore('references');
+  }
+
+  private loadReferences() {
+    this.apiService.getReferences().subscribe(items => {
+      const selectItems = items as SelectItem[];
+      this.taxRateCombo = new Array<SelectItem>();
+      for (let i = 0; i < selectItems.length; i++) {
+        const selectItem = new SelectItem();
+        Object.assign(selectItem, selectItems[i]);
+        console.log(selectItem.type);
+
+        if (selectItem.type === 'COMBO_TAX_RATE_CODE') {
+          this.taxRateCombo.push(selectItem);
+        }
+      }
+      console.log(JSON.stringify(this.taxRateCombo));
+    });
+
   }
 
   private initRouter() {
@@ -166,17 +184,5 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
     this.addForm.patchValue({
       invoice_date: new Date()
     });
-
-    this.getSerialCombobox();
-  }
-
-  private getSerialCombobox() {
-    this.apiService.getSerialCombobox().subscribe(data => {
-      console.log(data);
-    });
-  }
-
-  private initSelectBox() {
-    $('select').select2({ minimumResultsForSearch: Infinity });
   }
 }
