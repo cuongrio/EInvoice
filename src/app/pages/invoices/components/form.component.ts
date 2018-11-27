@@ -133,7 +133,7 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private loadGoods() {
-    this.apiService.getCustomers().subscribe(items => {
+    this.apiService.getGoods().subscribe(items => {
       const goods = items as Good[];
       this.goodArr = new Array<Good>();
 
@@ -143,6 +143,9 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
         good.select_item = good.goods_code + '-' + good.goods_name;
         this.goodArr.push(good);
       }
+
+      console.log(JSON.stringify(this.goodArr));
+
     });
   }
 
