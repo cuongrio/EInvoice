@@ -10,6 +10,8 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { PopoverModule } from 'ngx-bootstrap/popover';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 import { InvoicesRoutes } from './invoices.routing';
 import { DatePipe } from '@angular/common';
@@ -27,6 +29,8 @@ import { AutofocusDirective } from './../../_directives/autofocus.directive';
     RouterModule.forChild(InvoicesRoutes),
     FormsModule,
     ReactiveFormsModule,
+    NgbModule,
+    NgxSpinnerModule,
     TabsModule.forRoot(),
     TooltipModule.forRoot(),
     PaginationModule.forRoot(),

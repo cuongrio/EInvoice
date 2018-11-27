@@ -1,3 +1,4 @@
+<ngx-spinner bdColor="rgba(51, 51, 51, 0.8)" size="default" color="#fff" type="ball-clip-rotate-pulse"></ngx-spinner>
 <!-- partial -->
 <div class="container-fluid page-body-wrapper">
 
@@ -220,12 +221,11 @@
               <div class="page-info">
                 Trang {{page}}: {{totalElements}} dòng | Tổng số: {{totalPages}} trang.
               </div>
-
+              <!-- <ngb-pagination class="d-flex justify-content-end" [pageSize]="itemsPerPage" [collectionSize]="totalItems"
+                [(page)]="page" (pageChange)="onPageChange($event)" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"></ngb-pagination> -->
               <div *ngIf="totalPages > 1">
-                <pagination [totalItems]="totalItems" [(ngModel)]="page" (pageChanged)="onPageChange($event)"></pagination>
-
-                <!-- <ngb-pagination class="d-flex justify-content-end" [pageSize]="itemsPerPage" [collectionSize]="totalItems"
-                  [(page)]="page" (pageChange)="onPageChange($event)" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"></ngb-pagination> -->
+                <ngb-pagination class="d-flex justify-content-end" [pageSize]="itemsPerPage" [collectionSize]="totalItems"
+                  [(page)]="page" (pageChange)="onPageChange($event)" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"></ngb-pagination>
               </div>
             </div>
           </div>

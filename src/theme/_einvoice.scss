@@ -1,5 +1,5 @@
 .main-panel {
-  padding-bottom: 30px;
+  padding-bottom: 10px;
 }
 
 .jumbotron {
@@ -95,6 +95,7 @@ legend.scheduler-border {
     position: absolute;
     top: 0;
     left: 0;
+    font-size: 13px;
   }
 }
 .table-expanded-form {
@@ -120,6 +121,7 @@ legend.scheduler-border {
     padding: 4px 10px;
     border-radius: 3px 3px 0 0;
     text-align: justify;
+    font-size: 13px;
   }
 }
 
@@ -183,6 +185,7 @@ legend.scheduler-border {
       form {
         .form-control {
           border: 1px solid #d9d9d9;
+          font-weight: 600;
         }
       }
     }
@@ -387,7 +390,6 @@ legend.scheduler-border {
 }
 
 .big-tittle {
-  color: #1f77c0;
   font-weight: bold;
   font-size: 16px;
   text-transform: uppercase;
@@ -469,18 +471,28 @@ legend.scheduler-border {
       margin-bottom: 4px !important;
     }
 
-    .invoice-form__heading {
-      text-align: center;
-
-      .form__title {
-        text-align: center;
-        font-weight: bold;
-        font-size: 20px;
-      }
-    }
-
+    
     .invoice__body {
-      padding-bottom: 50px;
+      padding-bottom: 30px;
+      &.invoice__detail{
+        padding: 30px 60px;
+
+        .col-form-label{
+          font-size: 13px;
+        }
+
+        .invoice-detail_heading {
+          text-align: center;
+          margin-bottom: 40px;
+    
+          .form__title {
+            text-align: center;
+            font-weight: bold;
+            font-size: 20px;
+          }
+        }
+        
+      }
     }
 
     .product-item__wrapper {
