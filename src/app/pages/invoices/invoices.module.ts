@@ -21,9 +21,10 @@ import { InvoiceDetailComponent } from './components/detail.component';
 import { AutofocusDirective } from './../../_directives/autofocus.directive';
 import { SlTruncatePipe } from './../../_directives/sl_truncate.directive';
 import { SelectDropDownModule } from 'ngx-select-dropdown';
-import { NgxLoadingModule } from 'ngx-loading';
 import { ClickOutsideModule } from 'ng-click-outside';
-import { AutocompleteModule } from 'ng2-input-autocomplete';
+
+import { HttpClientModule } from '@angular/common/http';
+import { NgProgressModule } from '@ngx-progressbar/core';
 
 @NgModule({
   imports: [
@@ -33,9 +34,9 @@ import { AutocompleteModule } from 'ng2-input-autocomplete';
     FormsModule,
     ReactiveFormsModule,
     SelectDropDownModule,
-    AutocompleteModule.forRoot(),
     ClickOutsideModule,
-    NgxLoadingModule.forRoot({}),
+    HttpClientModule,
+    NgProgressModule.forRoot(),
     NgbModule,
     TooltipModule.forRoot(),
     PaginationModule.forRoot(),

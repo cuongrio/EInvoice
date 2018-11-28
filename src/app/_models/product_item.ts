@@ -1,12 +1,16 @@
 ﻿export class ProductItem {
+  item_line: number;
   item_code: string;
   item_name: string;
-  quantity: string;
   unit: string;
   price: string;
-  price_wt: string;
-  vat: string;
-  total_vat: string;
-  total_price: string;
-  status: string;
+  ck?: number;
+  total_ck?: number;
+  tax: number;
+  tax_rate: number;
+  tax_rate_code: string;
+  price_wt: number;
+  quantity: number;
+  amount: number;
+  amount_wt: number;
 }

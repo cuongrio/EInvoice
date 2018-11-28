@@ -1,9 +1,8 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, AfterViewInit } from '@angular/core';
 import { FormGroup, FormArray, Validators, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { ProductItem, SelectItem, Customer } from '@app/_models';
-import { ngxLoadingAnimationTypes, NgxLoadingComponent } from 'ngx-loading';
+import { Subscription, Observable, Subject } from 'rxjs';
+import { ProductItem, SelectItem, Customer, InvoiceItem } from '@app/_models';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import { APIService } from '@app/_services/api.service';
@@ -23,31 +22,19 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
   public modalRef: BsModalRef;
   public bsConfig = { dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-blue' };
 
-  //loading
-  public ngxLoadingAnimationTypes = ngxLoadingAnimationTypes;
-  public loadCustomer = false;
-  public loadTaxCode = false;
-
-  public configLoading = {
-    animationType: ngxLoadingAnimationTypes.pulse,
-    primaryColour: '#107fff',
-    secondaryColour: '#107fff',
-    backdropBorderRadius: '4px',
-    backdropBackgroundColour: 'rgba(255, 255, 255, 0.5)'
-  };
-
   public customerPicked: Customer;
-  public vatInputChanged: string = '';
-  public vatSelectedItem: any = '';
-
-  public taxCode: string;
+  public formPicked: string;
+  public serialPicked: string;
+  public total_before_tax: number;
+  public total_tax: number;
+  public total: number;
 
   public configCode = {
     searchPlaceholder: 'Tìm kiếm',
-    noResultsFound: 'Không có kết quả',
+    noResultsFound: 'Không có dữ liệu',
     moreText: 'Xem thêm',
     showNotFound: true,
-    placeholder: 'Lựa chọn',
+    placeholder: ' ',
     toggleDropdown: true,
     displayKey: 'select_item',
     search: true,
@@ -56,9 +43,9 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public configTaxCode = {
     searchPlaceholder: 'Tìm kiếm',
-    noResultsFound: 'Không có kết quả',
+    noResultsFound: 'Không có dữ liệu',
     moreText: 'Xem thêm',
-    placeholder: 'Lựa chọn',
+    placeholder: ' ',
     displayKey: 'tax_code',
     search: true,
     limitTo: 7
@@ -66,9 +53,9 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public configGood = {
     searchPlaceholder: 'Tìm kiếm',
-    noResultsFound: 'Không có kết quả',
+    noResultsFound: 'Không có dữ liệu',
     moreText: 'Xem thêm',
-    placeholder: 'Lựa chọn',
+    placeholder: ' ',
     displayKey: 'select_item',
     search: true,
     limitTo: 7
@@ -83,8 +70,11 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
   public taxRateArr: Array<SelectItem>;
   public customerArr: Array<Customer>;
   public goodArr: Array<Good>;
-  public serialArr: Array<SelectItem>;
-  public vatArr: Array<SelectItem>;
+
+  public comboHTTT = new Array<SelectItem>();
+  public comboForm = new Array<SelectItem>();
+  public comboSerial = new Array<SelectItem>();
+  public comboTaxRate = new Array<SelectItem>();
 
   private subscription: Subscription;
 
@@ -94,16 +84,17 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
     private apiService: APIService,
     private activatedRoute: ActivatedRoute,
     private modalService: BsModalService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.initRouter();
     this.createItemsForm();
     this.formSetDefault();
+    this.loadCustomers();
     this.loadReferences();
     this.loadSerials();
     this.loadGoods();
-    this.loadVats();
+    this.loadHttt();
 
     for (let i = 0; i < 5; i++) {
       this.stickyButtonAdd();
@@ -111,7 +102,15 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    $('select').select2({ minimumResultsForSearch: Infinity });
+    $('select').select2({
+      minimumResultsForSearch: Infinity,
+      simple_tags: true,
+      language: {
+        noResults: function () {
+          return 'Không có dữ liệu';
+        }
+      }
+    });
   }
 
   ngOnDestroy() {
@@ -123,34 +122,21 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
     this.router.navigate(['/invoices']);
   }
 
-  onSubmit(form: any) {
-    console.log(JSON.stringify(form));
-  }
+  onSubmit(dataForm: any) {
+    const invoiceItem = new InvoiceItem();
 
-  /** LOADING */
-  public openCustomerBox() {
-    this.loadCustomers('code');
-  }
+    invoiceItem.form = dataForm.form;
+    invoiceItem.serial = dataForm.serial;
+    invoiceItem.invoice_date = dataForm.invoice_date;
+    invoiceItem.customer = this.customerPicked;
 
-  public closeCustomerBox() {
-    this.loadCustomer = false;
-  }
+    // caculator
 
-  public onTaxCodeClickedOutside() {
-    this.loadTaxCode = false;
-  }
 
-  public onCustomerCodelickedOutside() {
-    this.loadCustomer = false;
-  }
 
-  public openTaxCodeBox() {
-    this.loadCustomers('tax');
-  }
 
-  public closeTaxCodeBox() {
-    console.log('close tax');
-    this.loadTaxCode = false;
+
+    console.log(JSON.stringify(dataForm));
   }
 
   public onCustomerTaxChange(dataArr: Customer[]) {
@@ -173,81 +159,86 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
     this.stickyButtonAdd();
   }
 
-  onVatValueSelect(item: any) {
-    console.log('value: ' + item.code);
-    this.vatSelectedItem = item;
-  }
-
-  onVatInputChangedEvent(val: string) {
-    console.log('value: ' + val);
-    this.vatInputChanged = val;
-  }
-
   private loadSerials() {
-    this.serialArr = this.dummySerial();
+    // this.serialArr = this.dummySerial();
   }
 
   private loadGoods() {
-    // this.apiService.getGoods().subscribe(items => {
-    //   const goods = items as Good[];
-    //   this.goodArr = new Array<Good>();
-
-    //   for (let i = 0; i < goods.length; i++) {
-    //     const good = new Good();
-    //     Object.assign(good, goods[i]);
-    //     good.select_item = good.goods_code + '-' + good.goods_name;
-    //     this.goodArr.push(good);
-    //   }
-
-    //   console.log(JSON.stringify(this.goodArr));
-    // });
-    this.goodArr = this.dummyGoods();
-  }
-
-  private loadVats() {
-    this.vatArr = this.dummyVAT();
-  }
-
-  private loadCustomers(type: string) {
-    if (type === 'code') {
-      this.loadCustomer = true;
-    } else {
-      this.loadTaxCode = true;
+    if (this.goodArr && this.goodArr.length > 0) {
+      return;
     }
 
-    // this.apiService.getCustomers().subscribe(items => {
-    //   const customers = items as Customer[];
-    //   this.customerArr = new Array<Customer>();
+    this.apiService.getGoods().subscribe(items => {
+      const goods = items as Good[];
+      this.goodArr = new Array<Good>();
 
-    //   for (let i = 0; i < customers.length; i++) {
-    //     const customer = new Customer();
-    //     Object.assign(customer, customers[i]);
-    //     customer.select_item = customer.customer_code + '-' + customer.customer_name;
-    //     this.customerArr.push(customer);
-    //   }
-    //   this.loadCustomer = false;
-    // }, err => {
-    //   this.loadCustomer = false;
-    // });
-    this.customerArr = this.dummyCustomer();
-    if (type === 'code') {
-      this.loadCustomer = false;
-    } else {
-      this.loadTaxCode = false;
-    }
+      for (let i = 0; i < goods.length; i++) {
+        const good = new Good();
+        Object.assign(good, goods[i]);
+        good.select_item = good.goods_code;
+        this.goodArr.push(good);
+      }
+    });
   }
+
+  private loadHttt() {
+    this.comboHTTT = this.htttDummy();
+    this.addForm.patchValue({
+      paymentType: 'CK/TM'
+    });
+  }
+
+  private loadCustomers() {
+    if (this.customerArr && this.customerArr.length > 0) {
+      return;
+    }
+
+    this.apiService.getCustomers().subscribe(items => {
+      const customers = items as Customer[];
+      this.customerArr = new Array<Customer>();
+
+      for (let i = 0; i < customers.length; i++) {
+        const customer = new Customer();
+        Object.assign(customer, customers[i]);
+        customer.select_item = customer.customer_code;
+        this.customerArr.push(customer);
+      }
+    });
+  }
+
   private loadReferences() {
     this.apiService.getReferences().subscribe(items => {
       const selectItems = items as SelectItem[];
-      this.taxRateArr = new Array<SelectItem>();
 
       for (let i = 0; i < selectItems.length; i++) {
         const selectItem = new SelectItem();
         Object.assign(selectItem, selectItems[i]);
 
         if (selectItem.type === 'COMBO_TAX_RATE_CODE') {
-          this.taxRateArr.push(selectItem);
+          this.comboTaxRate.push(selectItem);
         }
+
+        if (selectItem.type === 'COMBO_FORM') {
+          this.comboForm.push(selectItem);
+        }
+
+        if (selectItem.type === 'COMBO_SERIAL_01GTKT0/001') {
+          this.comboSerial.push(selectItem);
+        }
+      }
+
+      if (this.comboForm.length > 0) {
+        this.formPicked = this.comboForm[0].code;
+        this.addForm.patchValue({
+          form: this.formPicked
+        });
+      }
+
+      if (this.comboForm.length > 0) {
+        this.serialPicked = this.comboSerial[0].code;
+        this.addForm.patchValue({
+          serial: this.serialPicked
+        });
       }
     });
   }
@@ -265,7 +256,6 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
         customer_address: customerPicked.address
       });
 
-      this.taxCode = customerPicked.tax_code;
       console.log(JSON.stringify(customerPicked));
     } else {
       this.addForm.patchValue({
@@ -280,7 +270,6 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private initRouter() {
     this.subscription = this.activatedRoute.params.subscribe((params: any) => {
-      console.log('params: ' + params);
       if (params.id) {
         // get service
         this.invoiceItem = {};
@@ -293,16 +282,18 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private stickyButtonAdd() {
     const emptyProductLine: ProductItem = {
+      item_line: 0,
       item_code: '',
       item_name: '',
-      quantity: '',
       unit: '',
       price: '',
-      price_wt: '',
-      vat: '',
-      total_vat: '',
-      total_price: '',
-      status: ''
+      tax: 0,
+      tax_rate: 0,
+      tax_rate_code: '',
+      price_wt: 0,
+      quantity: 0,
+      amount: 0,
+      amount_wt: 0,
     };
 
     const fg = this.formBuilder.group(emptyProductLine);
@@ -315,21 +306,52 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // https://www.concretepage.com/angular-2/angular-2-4-formbuilder-example
 
+  private htttDummy() {
+    const items = new Array<SelectItem>();
+    let selectItem = new SelectItem();
+
+    // CK/TM,CK,TM mặc định CK/TM
+    selectItem.code = 'CK/TM';
+    selectItem.value = 'CK/TM';
+    items.push(selectItem);
+
+    selectItem = new SelectItem();
+    selectItem.code = 'CK';
+    selectItem.value = 'CK';
+    items.push(selectItem);
+
+    selectItem = new SelectItem();
+    selectItem.code = 'CK/TM';
+    selectItem.value = 'CK/TM';
+    items.push(selectItem);
+    return items;
+  }
+
   private createItemsForm() {
     this.addForm = this.formBuilder.group({
       invoice_date: '',
       form: '',
       serial: '',
-      totalBeforeTax: '',
-      total_tax: '',
-      total: '',
       customer: ['', Validators.compose([Validators.required])],
       customer_email: '',
       customer_org: '',
+      paymentType: '',
       customer_bank_account: '',
       customer_bank: '',
       customer_address: '',
-      items: this.formBuilder.array([])
+      items: this.formBuilder.array([{
+        item_line: '',
+        item_name: '',
+        unit: '',
+        quantity: '',
+        price: '',
+        price_wt: '',
+        ck: '',
+        total_ck: '',
+        tax_rate_code: '',
+        total_tax: '',
+        total_price: ''
+      }])
     });
   }
 
@@ -337,62 +359,5 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
     this.addForm.patchValue({
       invoice_date: new Date()
     });
-  }
-
-  private dummySerial() {
-    const serials = new Array<SelectItem>();
-    for (let i = 0; i < 10; i++) {
-      const selectItem = new SelectItem();
-      selectItem.code = 'CODE' + i;
-      selectItem.value = 'CODE_NAME' + i;
-      serials.push(selectItem);
-    }
-    return serials;
-  }
-
-  private dummyGoods() {
-    const goods = new Array<Good>();
-    for (let i = 0; i < 10; i++) {
-      const good = new Good();
-      good.goods_code = 'GOOD' + i;
-      good.goods_name = 'Túi đeo vai Furla B Club Crossbody 870575 màu đen' + i;
-      good.select_item = good.goods_code;
-      good.goods_group = 'GROUP' + i;
-      (good.price = '1200000'),
-        (good.tax_rate = '5'),
-        (good.tax_rate_code = 'TAX01'),
-        (good.unit = 'CAI'),
-        goods.push(good);
-    }
-    return goods;
-  }
-
-  private dummyVAT() {
-    const vats = new Array<SelectItem>();
-    for (let i = 5; i < 10; i++) {
-      const selectItem = new SelectItem();
-      selectItem.code = '' + i;
-      selectItem.value = '' + i;
-      vats.push(selectItem);
-    }
-    return vats;
-  }
-
-  private dummyCustomer() {
-    const customers = new Array<Customer>();
-    for (let i = 0; i < 10; i++) {
-      const customer = new Customer();
-      customer.customer_code = 'VT' + i;
-      customer.customer_name = 'Dummy' + i;
-      customer.select_item = customer.customer_code;
-      customer.tax_code = '000112_' + i;
-      (customer.org = 'Công ty TNHH Nova'),
-        (customer.address = '2121 Minh Khai - Hai bà trưng - Hà nội'),
-        (customer.email = 'cuongrio0' + i + '@gmail.com');
-      customer.bank = 'Ngân hàng Nông Nghiệp Và Phát Triển Nông Thôn Việt Nam ' + i;
-      customer.bank_account = '00001_' + i;
-      customers.push(customer);
-    }
-    return customers;
   }
 }
