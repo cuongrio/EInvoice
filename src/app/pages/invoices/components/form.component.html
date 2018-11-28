@@ -1,318 +1,427 @@
 <div class="container-fluid page-body-wrapper">
-	<div class="jumbotron jumbotron-fluid">
-		<div class="container">
-			<nav aria-label="breadcrumb">
-				<ol class="breadcrumb">
-					<li class="breadcrumb-item"><a routerLink="/">Trang chủ</a></li>
-					<li class="breadcrumb-item"><a routerLink="/invoices">Danh sách hóa đơn</a></li>
-					<li *ngIf="invoiceItem.invoice_id" class="breadcrumb-item active" aria-current="page">Sửa hóa đơn</li>
-					<li *ngIf="!invoiceItem.invoice_id" class="breadcrumb-item active" aria-current="page">Lập hóa đơn</li>
-				</ol>
-			</nav>
-		</div>
-	</div>
+  <div class="jumbotron jumbotron-fluid">
+    <div class="container">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a routerLink="/">Trang chủ</a></li>
+          <li class="breadcrumb-item"><a routerLink="/invoices">Danh sách hóa đơn</a></li>
+          <li *ngIf="invoiceItem.invoice_id" class="breadcrumb-item active" aria-current="page">Sửa hóa đơn</li>
+          <li *ngIf="!invoiceItem.invoice_id" class="breadcrumb-item active" aria-current="page">Lập hóa đơn</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
 
-	<div class="main-panel">
-		<div class="content-wrapper">
-			<div class="row">
-				<div class="container-fluid">
-					<div class="template-ein navbar-action">
-						<button type="button" (click)="addNewTab()" class="btn btn-md btn-primary"><i class="fas fa-plus"></i>
-							Thêm</button>
-						<button type="button" class="btn btn-md btn-outline-primary"><i class="fas fa-edit"></i> Sửa</button>
-						<button type="button" (click)="ngAddForm.ngSubmit.emit()" class="btn btn-md btn-success"><i class="fas fa-save"></i>
-							Lưu</button>
-						<button type="button" class="btn btn-md btn-outline-primary"><i class="fas fa-info"></i> Xem</button>
+  <div class="main-panel">
+    <div class="content-wrapper">
+      <div class="row">
+        <div class="container-fluid">
+          <div class="template-ein navbar-action">
+            <button type="button" (click)="addNewTab()" class="btn btn-md btn-primary">
+              <i class="fas fa-plus"></i> Thêm
+            </button>
+            <button type="button" class="btn btn-md btn-outline-primary"><i class="fas fa-edit"></i> Sửa</button>
+            <button type="button" (click)="ngAddForm.ngSubmit.emit()" class="btn btn-md btn-success">
+              <i class="fas fa-save"></i> Lưu
+            </button>
+            <button type="button" class="btn btn-md btn-outline-primary"><i class="fas fa-info"></i> Xem</button>
 
-						<button type="button" class="btn btn-md btn-outline-primary"><i class="fas fa-key"></i> Ký</button>
-						<button type="button" class="btn btn-md btn-outline-primary"><i class="fas fa-print"></i> In CĐ</button>
-						<button routerLink="/invoices" type="button" class="btn btn-md btn-light"><i class="fas fa-share-square"></i>
-							Thoát</button>
-					</div>
-				</div>
-			</div>
+            <button type="button" class="btn btn-md btn-outline-primary"><i class="fas fa-key"></i> Ký</button>
+            <button type="button" class="btn btn-md btn-outline-primary"><i class="fas fa-print"></i> In CĐ</button>
+            <button routerLink="/invoices" type="button" class="btn btn-md btn-light">
+              <i class="fas fa-share-square"></i> Thoát
+            </button>
+          </div>
+        </div>
+      </div>
 
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card card-shadow px-2">
+            <div class="card-body invoice__wrapper">
+              <form
+                class="invoice__form"
+                #ngAddForm="ngForm"
+                [formGroup]="addForm"
+                (ngSubmit)="onSubmit(addForm.value)"
+              >
+                <div class="invoice__body">
+                  <div class="row">
+                    <div class="col-md-3 col-lg-3">
+                      <div class="form-group row">
+                        <div class="col-md-4 col-lg-4 col-form-label">
+                          <label class="text-bold required">Ngày lập</label>
+                        </div>
+                        <div class="col-md-8 col-lg-8">
+                          <div class="input-group">
+                            <input
+                              formControlName="invoice_date"
+                              class="form-control form-control-sm text-bold"
+                              placeholder="DD/MM/YYYY"
+                              triggers="dblclick:click"
+                              [bsConfig]="bsConfig"
+                              #dinvoiceDate="bsDatepicker"
+                              bsDatepicker
+                            />
+                            <div class="input-group-append">
+                              <button
+                                class="btn btn-icons btn-inverse-light btn-md"
+                                (click)="dinvoiceDate.toggle()"
+                                [attr.aria-expanded]="dinvoiceDate.isOpen"
+                                type="button"
+                              >
+                                <i class="fas fa-calendar"></i>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
 
-			<div class="row">
-				<div class="col-lg-12">
-					<div class="card card-shadow px-2">
-						<div class="card-body invoice__wrapper">
-							<form class="invoice__form" #ngAddForm="ngForm" [formGroup]="addForm" (ngSubmit)="onSubmit(addForm.value)">
-								<div class="invoice__body">
-									<div class="row">
-										<div class="col-md-3 col-lg-3">
-											<div class="form-group row">
-												<div class="col-md-4 col-lg-4 col-form-label">
-													<label class="text-bold">Ngày lập</label>
-												</div>
-												<div class="col-md-8 col-lg-8">
-													<div class="input-group">
-														<input formControlName="invoice_date" class="form-control form-control-sm text-bold" placeholder="DD/MM/YYYY"
-														 triggers="dblclick:click" [bsConfig]="bsConfig" #dinvoiceDate="bsDatepicker" bsDatepicker>
-														<div class="input-group-append">
-															<button class="btn btn-icons btn-inverse-light btn-md" (click)="dinvoiceDate.toggle()"
-															 [attr.aria-expanded]="dinvoiceDate.isOpen" type="button">
-																<i class="fas fa-calendar"></i>
-															</button>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
+                    <div class="col-md-3 col-lg-3">
+                      <div class="form-group row">
+                        <div class="col-md-4 col-lg-4 col-form-label"><label>Số hóa đơn</label></div>
+                        <div class="col-md-8 col-lg-8">
+                          <input readonly="readonly" type="text" class="form-control form-control-sm" />
+                        </div>
+                      </div>
+                    </div>
 
-										<div class="col-md-3 col-lg-3">
-											<div class="form-group row">
-												<div class="col-md-4 col-lg-4 col-form-label">
-													<label>Số hóa đơn</label>
-												</div>
-												<div class="col-md-8 col-lg-8">
-													<input readonly="readonly" type="text" class="form-control form-control-sm">
-												</div>
-											</div>
-										</div>
+                    <div class="col-md-3 col-lg-3">
+                      <div class="form-group row">
+                        <div class="col-md-4 col-lg-4 col-form-label"><label>Mẫu số</label></div>
+                        <div class="col-md-8 col-lg-8">
+                          <select formControlName="serial" class="ein-select">
+                            <option [value]="op.code" *ngFor="let op of serialArr">{{ op.value }}</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
 
-										<div class="col-md-3 col-lg-3">
-											<div class="form-group row">
-												<div class="col-md-4 col-lg-4 col-form-label">
-													<label>Mẫu số</label>
-												</div>
-												<div class="col-md-8 col-lg-8">
-													<select formControlName="serial" class="ein-select">
-														<option [value]="op.code" *ngFor="let op of serialArr">{{op.value}}</option>
-													</select>
-												</div>
-											</div>
-										</div>
+                    <div class="col-md-3 col-lg-3">
+                      <div class="form-group row">
+                        <div class="col-md-4 col-lg-4 col-form-label"><label>Ký hiệu</label></div>
+                        <div class="col-md-8 col-lg-8"><input type="text" class="form-control form-control-sm" /></div>
+                      </div>
+                    </div>
 
-										<div class="col-md-3 col-lg-3">
-											<div class="form-group row">
-												<div class="col-md-4 col-lg-4 col-form-label">
-													<label>Ký hiệu</label>
-												</div>
-												<div class="col-md-8 col-lg-8">
-													<input type="text" class="form-control form-control-sm"></div>
-											</div>
-										</div>
+                    <div class="col-md-3 col-lg-3">
+                      <div class="form-group row">
+                        <div class="col-md-4 col-lg-4 col-form-label"><label class="required">Mã KH</label></div>
+                        <div (clickOutside)="onCustomerCodelickedOutside()" class="col-md-8 col-lg-8">
+                          <ngx-select-dropdown
+                            [multiple]="false"
+                            [(value)]="customerPicked"
+                            (open)="openCustomerBox()"
+                            (close)="closeCustomerBox()"
+                            (valueChange)="onCustomerChange($event)"
+                            [config]="configCode"
+                            [options]="customerArr"
+                          ></ngx-select-dropdown>
+                          <div class="loading">
+                            <ngx-loading [show]="loadCustomer" [config]="configLoading"></ngx-loading>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
 
-										<div class="col-md-3 col-lg-3">
-											<div class="form-group row">
-												<div class="col-md-4 col-lg-4 col-form-label">
-													<label class="required">Mã KH</label>
-												</div>
-												<div class="col-md-8 col-lg-8">
-													<ngx-select-dropdown [multiple]="false" [(value)]="customerPicked" (valueChange)="onCustomerChange($event)"
-													 [config]="configCode" [options]="customerArr"></ngx-select-dropdown>
-												</div>
-											</div>
-										</div>
+                    <div class="col-md-3 col-lg-3">
+                      <div class="form-group row">
+                        <div class="col-md-4 col-lg-4 col-form-label"><label>Mã số thuế</label></div>
+                        <div (clickOutside)="onTaxCodeClickedOutside()" class="col-md-8 col-lg-8">
+                          <ngx-select-dropdown
+                            [multiple]="false"
+                            (open)="openTaxCodeBox()"
+                            (close)="closeTaxCodeBox()"
+                            [(value)]="customerPicked"
+                            (valueChange)="onCustomerTaxChange($event)"
+                            [config]="configTaxCode"
+                            [options]="customerArr"
+                          ></ngx-select-dropdown>
+                          <div class="loading">
+                            <ngx-loading [show]="loadTaxCode" [config]="configLoading"></ngx-loading>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
 
-										<div class="col-md-3 col-lg-3">
-											<div class="form-group row">
-												<div class="col-md-4 col-lg-4 col-form-label">
-													<label>Mã số thuế</label>
-												</div>
-												<div class="col-md-8 col-lg-8">
-													<ngx-select-dropdown [multiple]="false" [(value)]="customerPicked" (valueChange)="onCustomerTaxChange($event)"
-													 [config]="configTaxCode" [options]="customerArr"></ngx-select-dropdown>
-												</div>
-											</div>
-										</div>
+                    <div class="col-md-3 col-lg-3">
+                      <div class="form-group row">
+                        <div class="col-md-4 col-lg-4 col-form-label"><label>Email</label></div>
+                        <div class="col-md-8 col-lg-8">
+                          <input
+                            formControlName="customer_email"
+                            type="text"
+                            placeholder="Email"
+                            class="form-control form-control-sm"
+                          />
+                        </div>
+                      </div>
+                    </div>
 
-										<div class="col-md-3 col-lg-3">
-											<div class="form-group row">
-												<div class="col-md-4 col-lg-4 col-form-label">
-													<label>Email</label>
-												</div>
-												<div class="col-md-8 col-lg-8">
-													<input formControlName="customer_email" type="text" placeholder="Email" class="form-control form-control-sm">
-												</div>
-											</div>
-										</div>
+                    <div class="col-md-3 col-lg-3">
+                      <div class="form-group row">
+                        <div class="col-md-4 col-lg-4 col-form-label"><label>Mã ĐH</label></div>
+                        <div class="col-md-8 col-lg-8">
+                          <input type="text" placeholder="Mã đơn hàng" class="form-control form-control-sm" />
+                        </div>
+                      </div>
+                    </div>
 
-										<div class="col-md-3 col-lg-3">
-											<div class="form-group row">
-												<div class="col-md-4 col-lg-4 col-form-label">
-													<label>Mã ĐH</label>
-												</div>
-												<div class="col-md-8 col-lg-8">
-													<input type="text" placeholder="Mã đơn hàng" class="form-control form-control-sm"></div>
-											</div>
-										</div>
+                    <div class="col-md-6 col-lg-6">
+                      <div class="form-group row">
+                        <div class="col-md-2 col-lg-2 col-form-label"><label>Tên đơn vị</label></div>
+                        <div class="col-md-10 col-lg-10">
+                          <input
+                            formControlName="customer_org"
+                            placeholder="(Tên đơn vị)"
+                            class="form-control form-control-sm "
+                            name="customer_name"
+                            type="text"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6">
+                      <div class="form-group row">
+                        <div class="col-md-2 col-lg-2 col-form-label"><label>Người mua</label></div>
+                        <div class="col-md-10 col-lg-10">
+                          <input
+                            type="text"
+                            placeholder="(Họ tên người mua hàng)"
+                            class="form-control form-control-sm"
+                          />
+                        </div>
+                      </div>
+                    </div>
 
-										<div class="col-md-6 col-lg-6">
-											<div class="form-group row">
-												<div class="col-md-2 col-lg-2 col-form-label">
-													<label>Tên đơn vị</label>
-												</div>
-												<div class="col-md-10 col-lg-10">
-													<input formControlName="customer_org" placeholder="(Tên đơn vị)" class="form-control form-control-sm "
-													 name="customer_name" type="text">
-												</div>
-											</div>
-										</div>
-										<div class="col-md-6 col-lg-6">
-											<div class="form-group row">
-												<div class="col-md-2 col-lg-2 col-form-label">
-													<label>Người mua</label>
-												</div>
-												<div class="col-md-10 col-lg-10">
-													<input type="text" placeholder="(Họ tên người mua hàng)" class="form-control form-control-sm"></div>
-											</div>
-										</div>
+                    <div class="col-md-12 col-lg-12">
+                      <div class="form-group row">
+                        <div class="col-md-1 col-lg-1 col-form-label"><label>Địa chỉ</label></div>
+                        <div class="col-md-11 col-lg-11">
+                          <input
+                            formControlName="customer_address"
+                            type="text"
+                            placeholder="Địa chỉ"
+                            class="form-control form-control-sm"
+                          />
+                        </div>
+                      </div>
+                    </div>
 
+                    <div class="col-md-3 col-lg-3">
+                      <div class="form-group row">
+                        <div class="col-md-4 col-lg-4 col-form-label"><label>Email</label></div>
+                        <div class="col-md-8 col-lg-8">
+                          <input
+                            formControlName="customer_email"
+                            type="text"
+                            placeholder="Email"
+                            class="form-control form-control-sm"
+                          />
+                        </div>
+                      </div>
+                    </div>
 
-										<div class="col-md-12 col-lg-12">
-											<div class="form-group row">
-												<div class="col-md-1 col-lg-1 col-form-label">
-													<label>Địa chỉ</label>
-												</div>
-												<div class="col-md-11 col-lg-11">
-													<input formControlName="customer_address" type="text" placeholder="Địa chỉ" class="form-control form-control-sm">
-												</div>
-											</div>
-										</div>
+                    <div class="col-md-3 col-lg-3">
+                      <div class="form-group row">
+                        <div class="col-md-4 col-lg-4 col-form-label"><label>Số TK</label></div>
+                        <div class="col-md-8 col-lg-8">
+                          <input
+                            formControlName="customer_bank_account"
+                            type="text"
+                            placeholder="Số tài khoản"
+                            class="form-control form-control-sm"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-3 col-lg-3">
+                      <div class="form-group row">
+                        <div class="col-md-4 col-lg-4 col-form-label"><label>Ngân hàng</label></div>
+                        <div class="col-md-8 col-lg-8">
+                          <input
+                            formControlName="customer_bank"
+                            type="text"
+                            placeholder="Ngân hàng"
+                            class="form-control form-control-sm"
+                          />
+                        </div>
+                      </div>
+                    </div>
 
-										<div class="col-md-3 col-lg-3">
-											<div class="form-group row">
-												<div class="col-md-4 col-lg-4 col-form-label">
-													<label>Email</label>
-												</div>
-												<div class="col-md-8 col-lg-8">
-													<input formControlName="customer_email" type="text" placeholder="Email" class="form-control form-control-sm">
-												</div>
-											</div>
-										</div>
+                    <div class="col-md-3 col-lg-3">
+                      <div class="form-group row">
+                        <div class="col-md-4 col-lg-4 col-form-label"><label>Trạng thái</label></div>
+                        <div class="col-md-8 col-lg-8">
+                          <input type="text" placeholder="Trạng thái" class="form-control form-control-sm" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
-										<div class="col-md-3 col-lg-3">
-											<div class="form-group row">
-												<div class="col-md-4 col-lg-4 col-form-label">
-													<label>Số TK</label>
-												</div>
-												<div class="col-md-8 col-lg-8">
-													<input formControlName="customer_bank_account" type="text" placeholder="Số tài khoản" class="form-control form-control-sm"></div>
-											</div>
-										</div>
-										<div class="col-md-3 col-lg-3">
-											<div class="form-group row">
-												<div class="col-md-4 col-lg-4 col-form-label">
-													<label>Ngân hàng</label>
-												</div>
-												<div class="col-md-8 col-lg-8">
-													<input formControlName="customer_bank" type="text" placeholder="Ngân hàng" class="form-control form-control-sm"></div>
-											</div>
-										</div>
+                  <div class="product-item__wrapper">
+                    <h3 class="sub-title">
+                      <small class="sub-title__small">Chi tiết hóa đơn</small>
+                      <button type="button" class="btn btn-light btn-md">Ẩn/Hiện cột</button>
+                    </h3>
+                    <table class="table table-bordered no-border-right">
+                      <thead>
+                        <tr>
+                          <th style="width: 20px;">#</th>
+                          <th style="width: 120px;">Mã HH</th>
+                          <th>Nội dung</th>
+                          <th style="width: 80px;" class="text-right">ĐVT</th>
+                          <th style="width: 80px;" class="text-right">SL</th>
+                          <th style="width: 80px;" class="text-right">Giá</th>
+                          <th style="width: 80px;" class="text-right">Tiền</th>
+                          <th style="width: 80px;" class="text-right">% CK</th>
+                          <th style="width: 80px;" class="text-right">Tiền CK</th>
+                          <th style="width: 80px;" class="text-right">% VAT</th>
+                          <th class="text-right">Tiền VAT</th>
+                          <th class="text-right">Tổng tiền</th>
+                        </tr>
+                      </thead>
+                      <tbody formArrayName="items">
+                        <tr
+                          class="product-line"
+                          *ngFor="let item of itemFormArray.controls; let idx = index"
+                          [formGroupName]="idx"
+                        >
+                          <td class="no-padding text-center">{{ idx + 1 }}</td>
+                          <td class="no-padding invoice-no__item hideselect">
+                            <ngx-select-dropdown
+                              [multiple]="false"
+                              [config]="configGood"
+                              [options]="goodArr"
+                            ></ngx-select-dropdown>
+                          </td>
+                          <td class="no-padding">
+                            <input
+                              [popover]="popContent"
+                              popoverTitle="Hiển thị thêm"
+                              [(ngModel)]="item['item_name']"
+                              [outsideClick]="true"
+                              [placement]="bottom"
+                              formControlName="item_name"
+                              class="form-control form-control-sm"
+                              name="item_item_name"
+                              type="text"
+                            />
+                            <ng-template #popContent>
+                              <textarea
+                                formControlName="item_name"
+                                [(ngModel)]="item['item_name']"
+                                class="form-control form-control-sm"
+                                rows="5"
+                                name="item_item_name_expand"
+                                type="text"
+                              ></textarea>
+                            </ng-template>
+                          </td>
+                          <td class="no-padding">
+                            <input class="form-control form-control-sm" name="item_unit" type="text" />
+                          </td>
+                          <td class="no-padding">
+                            <input
+                              formControlName="quantity"
+                              class="form-control form-control-sm text-right"
+                              name="item_quantity"
+                              type="text"
+                            />
+                          </td>
 
-										<div class="col-md-3 col-lg-3">
-											<div class="form-group row">
-												<div class="col-md-4 col-lg-4 col-form-label">
-													<label>Trạng thái</label>
-												</div>
-												<div class="col-md-8 col-lg-8">
-													<input type="text" placeholder="Trạng thái" class="form-control form-control-sm"></div>
-											</div>
-										</div>
+                          <td class="no-padding">
+                            <input
+                              formControlName="price"
+                              class="form-control form-control-sm text-right"
+                              name="item_price"
+                              type="text"
+                            />
+                          </td>
 
-									</div>
+                          <td class="no-padding">
+                            <input
+                              formControlName="price_wt"
+                              class="form-control form-control-sm text-right"
+                              name="item_price_wt"
+                              type="text"
+                            />
+                          </td>
 
-									<div class="product-item__wrapper">
-										<h3 class="sub-title">
-											<small class="sub-title__small">Chi tiết hóa đơn</small>
-											<button type="button" class="btn btn-light btn-md">
-												Ẩn/Hiện cột
-											</button>
-										</h3>
-										<table class="table table-bordered no-border-right">
-											<thead>
-												<tr>
-													<th>#</th>
-													<th>Mã HH</th>
-													<th>Nội dung</th>
-													<th class="text-right">ĐVT</th>
-													<th class="text-right">SL</th>
-													<th class="text-right">Giá</th>
-													<th class="text-right">Tiền</th>
-													<th class="text-right">% CK</th>
-													<th class="text-right">Tiền CK</th>
-													<th class="text-right">% VAT</th>
-													<th class="text-right">Tiền VAT</th>
-													<th class="text-right">Tổng tiền</th>
-												</tr>
-											</thead>
-											<tbody formArrayName="items">
-												<tr class="product-line" *ngFor="let item of itemFormArray.controls; let idx = index" [formGroupName]="idx">
-													<td class="no-padding text-center">{{idx + 1}}</td>
-													<td class="no-padding invoice-no__item hideselect">
-														<ngx-select-dropdown [multiple]="false"
-													 [config]="configGood" [options]="goodArr"></ngx-select-dropdown>
-													</td>
-													<td class="no-padding">
-														<input [popover]="popContent" popoverTitle="Thông tin mở rộng" [(ngModel)]="item['item_name']"
-														 [outsideClick]="true" [placement]="bottom" formControlName="item_name" class="form-control form-control-sm"
-														 name="item_item_name" type="text">
-														<ng-template #popContent>
-															<textarea formControlName="item_name" [(ngModel)]="item['item_name']" class="form-control form-control-sm"
-															 rows="5" name="item_item_name_expand" type="text"></textarea>
-														</ng-template>
-													</td>
-													<td class="no-padding"><input class="form-control form-control-sm" name="item_unit" type="text"></td>
-													<td class="no-padding"><input formControlName="quantity" class="form-control form-control-sm text-right"
-														 name="item_quantity" type="text"></td>
-													<td class="no-padding"><input formControlName="price" class="form-control form-control-sm text-right" name="item_price"
-														 type="text"></td>
-													<td class="no-padding"><input formControlName="price_wt" class="form-control form-control-sm text-right"
-														 name="item_price_wt" type="text"></td>
-													<td class="no-padding"><input class="form-control form-control-sm text-right" type="text"></td>
-													<td class="no-padding"><input class="form-control form-control-sm text-right" type="text"></td>
-													<td class="no-padding">
-														<select formControlName="vat" class="ein-select">
-															<option [value]="op.code" *ngFor="let op of taxRateCombo">{{op.value}}</option>
-														</select>
-													</td>
-													<td class="no-padding"><input formControlName="total_vat" class="form-control form-control-sm text-right"
-														 name="item_total_vat" type="text"></td>
-													<td class="no-padding"><input formControlName="total_price" class="form-control form-control-sm text-right"
-														 name="item_total_price" type="text">
-													</td>
+                          <td class="no-padding">
+                            <input class="form-control form-control-sm text-right" type="text" />
+                          </td>
+                          <td class="no-padding">
+                            <input class="form-control form-control-sm text-right" type="text" />
+                          </td>
+                          <td class="no-padding vat-line">
+                            <input
+                              class="form-control form-control-sm text-right text-bold"
+                              type="text"
+                              autocomplete
+                              [config]="configVAT"
+                              (inputChangedEvent)="onVatInputChangedEvent($event)"
+                              [items]="vatArr"
+                              (selectEvent)="onVatValueSelect($event)"
+                            />
+                          </td>
+                          <td class="no-padding">
+                            <input
+                              formControlName="total_vat"
+                              class="form-control form-control-sm text-right"
+                              name="item_total_vat"
+                              type="text"
+                            />
+                          </td>
 
-													<div class="sticky-btn__td">
-														<a (click)="deleteLineClicked(idx)" title="Xóa dòng" class="sticky_btn">
-															<i class="fas fa-times"></i>
-														</a>
-													</div>
-												</tr>
-												<tr>
-													<td class="td-expand-line" [attr.colspan]="columNo">
-														<button type="button" (click)="addMoreLineClicked()" class="btn btn-light btn-md">
-															<i class="fas fa-plus"></i>Thêm dòng
-														</button>
-													</td>
-												</tr>
-											</tbody>
-											<tfoot>
-												<tr class="tb-footer">
-													<th></th>
-													<th style="width: 120px;">Tổng</th>
-													<th></th>
-													<th style="width: 80px;" class="text-right"></th>
-													<th style="width: 80px;" class="text-right"></th>
-													<th style="width: 80px;" class="text-right"></th>
-													<th style="width: 120px;" class="text-right"></th>
-													<th style="width: 80px;" class="text-right"></th>
-													<th style="width: 80px;" class="text-right"></th>
-													<th style="width: 80px;" class="text-right"></th>
-													<th style="width: 120px;" class="text-right"></th>
-													<th style="width: 120px;"></th>
-												</tr>
-											</tfoot>
-										</table>
-									</div>
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
-			</div>
+                          <td class="no-padding">
+                            <input
+                              formControlName="total_price"
+                              class="form-control form-control-sm text-right"
+                              name="item_total_price"
+                              type="text"
+                            />
+                          </td>
 
-		</div>
-	</div>
+                          <div class="sticky-btn__td">
+                            <a (click)="deleteLineClicked(idx)" title="Xóa dòng" class="sticky_btn">
+                              <i class="fas fa-times"></i>
+                            </a>
+                          </div>
+                        </tr>
+                        <tr>
+                          <td class="td-expand-line" [attr.colspan]="columNo">
+                            <button type="button" (click)="addMoreLineClicked()" class="btn btn-light btn-md">
+                              <i class="fas fa-plus"></i>Thêm dòng
+                            </button>
+                          </td>
+                        </tr>
+                      </tbody>
+                      <tfoot>
+                        <tr class="tb-footer">
+                          <th style="width: 20px;"></th>
+                          <th style="width: 120px;">Tổng</th>
+                          <th></th>
+                          <th style="width: 80px;" class="text-right"></th>
+                          <th style="width: 80px;" class="text-right"></th>
+                          <th style="width: 80px;" class="text-right"></th>
+                          <th style="width: 120px;" class="text-right"></th>
+                          <th style="width: 80px;" class="text-right"></th>
+                          <th style="width: 80px;" class="text-right"></th>
+                          <th style="width: 80px;" class="text-right"></th>
+                          <th style="width: 120px;" class="text-right"></th>
+                          <th style="width: 120px;"></th>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

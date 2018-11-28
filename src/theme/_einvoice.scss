@@ -43,56 +43,60 @@
   border-right: 0 !important;
 }
 
-.bs-datepicker-head button.next span, 
-.bs-datepicker-head button.previous span{
+.bs-datepicker-head button.next span,
+.bs-datepicker-head button.previous span {
   font-size: 24px !important;
 }
 
-.required:after { 
-  content:" (*)"; 
+.required:after {
+  content: " (*)";
 }
 
 .ngx-dropdown-container {
   font-size: 13px !important;
 
   .ngx-dropdown-list-container {
-    .selected-items{
+    .selected-items {
       margin-top: 0 !important;
       margin-bottom: 0 !important;
-      li{
-        color: #333 !important;
-        background: #f0f0f0 !important;
-        padding: 4px !important;
+      li {
+        background: #439aff !important;
+        padding: 4px 10px !important;
         height: 28px !important;
         /* padding: 11px; */
         overflow: hidden;
         line-height: 22px !important;
         font-size: 12px !important;
         word-break: break-all;
-        span{
+        span {
           word-break: break-all;
         }
       }
     }
 
-    .available-items{
+    .available-items {
       margin-top: 5px !important;
 
-      li{
+      li {
         padding: 4px !important;
         line-height: 20px;
         height: 26px !important;
         overflow: hidden !important;
         word-break: break-all;
-        span{
+        span {
           word-break: break-all;
+        }
+
+        &:hover {
+          color: #fff !important;
+          background: #439aff !important;
         }
       }
     }
 
     .search-container {
       margin-top: 7px;
-      label{
+      label {
         font-size: 13px !important;
       }
 
@@ -232,6 +236,19 @@ legend.scheduler-border {
 //   }
 // }
 
+/****SCROLLBAR***/
+.select2-results__options {
+  &::-webkit-scrollbar {
+    width: 4px;
+    opacity: 0.7;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    -webkit-box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.3);
+    background-color: #439aff;
+  }
+}
+
 .ein-select2-container {
   width: 100%;
   display: flex;
@@ -273,16 +290,13 @@ legend.scheduler-border {
   }
 }
 
-
-.black-overlay{
+.black-overlay {
   background: rgba(255, 255, 255, 0.5) !important;
 }
 
 .table-wrapper {
   border: 1px solid #dedede;
   position: relative;
-
-
 
   .dataTables_info {
     margin-top: 12px;
@@ -551,6 +565,31 @@ legend.scheduler-border {
     }
   }
 }
+
+.vat-line {
+  .autocomplete {
+    //     -webkit-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.21);
+    // -moz-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.21);
+    // box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.21);
+    // text-align: right;
+    font-weight: 600;
+    z-index: 99999999;
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    input {
+      border: 0 !important;
+      max-width: 80px !important;
+      text-align: right;
+      padding: 0.25rem 0.75rem;
+      height: 30px;
+      width: 77px;
+    }
+  }
+}
+
 /***INVOICE FORM***/
 .invoice__wrapper {
   .navbar-action {
@@ -564,6 +603,26 @@ legend.scheduler-border {
 
     .invoice__body {
       padding-bottom: 30px;
+
+      .loading {
+        .backdrop {
+          top: 30px !important;
+          left: 6px !important;
+          right: 6px !important;
+          bottom: 10px !important;
+          min-height: 252px;
+          z-index: 9999999999;
+          box-shadow: none;
+        }
+
+        .spinner-pulse {
+          top: 200px !important;
+          width: 20px !important;
+          height: 20px !important;
+          z-index: 9999999999;
+        }
+      }
+
       &.invoice__detail {
         padding: 30px 60px;
 
@@ -606,17 +665,14 @@ legend.scheduler-border {
           border-radius: 0 !important;
         }
         .ngx-dropdown-list-container {
-          min-width: 180px;
+          min-width: 186px;
         }
         .hideselect {
           .ngx-dropdown-list-container {
-            min-width: 240px;
+            min-width: 186px;
           }
           .nsdicon-angle-down {
             display: none !important;
-          }
-          .ngx-dropdown-button {
-            font-weight: 600;
           }
         }
 
@@ -684,15 +740,13 @@ legend.scheduler-border {
             padding-left: 5px;
 
             &:focus {
-              border-radius: 2px !important;
-              border-width: 1px !important;
               outline: 1px !important;
             }
           }
 
           .popover {
             .popover-header {
-              font-size: 13px !important;
+              font-size: 11px !important;
             }
             .popover-body {
               padding: 5px !important;

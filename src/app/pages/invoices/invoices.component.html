@@ -1,6 +1,5 @@
 <!-- partial -->
 <div class="container-fluid page-body-wrapper">
-
   <div class="jumbotron jumbotron-fluid">
     <div class="container">
       <nav aria-label="breadcrumb">
@@ -14,7 +13,6 @@
 
   <div class="main-panel">
     <div class="content-wrapper">
-      <ngx-spinner bdColor="rgba(51, 51, 51, 0.8)" size="default" color="#439aff" type="ball-clip-rotate-multiple"></ngx-spinner>
       <div class="content-list">
         <div class="card card-shadow">
           <div class="card-body">
@@ -30,28 +28,37 @@
                 <div class="search-box">
                   <div [hidden]="!expandSearch" class="card shadow-nohover">
                     <div class="card-body">
-                      <form class="form-horizontal" #ngSearchForm="ngForm" [formGroup]="searchForm" (ngSubmit)="onSubmit(searchForm.value)">
+                      <form
+                        class="form-horizontal"
+                        #ngSearchForm="ngForm"
+                        [formGroup]="searchForm"
+                        (ngSubmit)="onSubmit(searchForm.value)"
+                      >
                         <div class="row">
                           <div class="col-md-3 col-lg-3">
                             <div class="form-group row">
-                              <div class="col-md-4 col-lg-4 col-form-label">
-                                <label>Mã hóa đơn</label>
-                              </div>
+                              <div class="col-md-4 col-lg-4 col-form-label"><label>Mã hóa đơn</label></div>
                               <div class="col-md-8 col-lg-8">
-                                <input formControlName="invoiceNo" type="text" class="form-control form-control-sm"
-                                  placeholder="Mã hóa đơn">
+                                <input
+                                  formControlName="invoiceNo"
+                                  type="text"
+                                  class="form-control form-control-sm"
+                                  placeholder="Mã hóa đơn"
+                                />
                               </div>
                             </div>
                           </div>
 
                           <div class="col-md-3 col-lg-3">
                             <div class="form-group row">
-                              <div class="col-md-4 col-lg-4 col-form-label text-right">
-                                <label>Số Serial</label>
-                              </div>
+                              <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Số Serial</label></div>
                               <div class="col-md-8 col-lg-8">
-                                <input formControlName="serial" type="text" class="form-control form-control-sm"
-                                  placeholder="Số Serial">
+                                <input
+                                  formControlName="serial"
+                                  type="text"
+                                  class="form-control form-control-sm"
+                                  placeholder="Số Serial"
+                                />
                               </div>
                             </div>
                           </div>
@@ -60,36 +67,51 @@
                             <div class="form-group row">
                               <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Mã số thuế</label></div>
                               <div class="col-md-8 col-lg-8">
-                                <input formControlName="orgTaxCode" type="text" class="form-control form-control-sm"
-                                  placeholder="Mã số thuế">
+                                <input
+                                  formControlName="orgTaxCode"
+                                  type="text"
+                                  class="form-control form-control-sm"
+                                  placeholder="Mã số thuế"
+                                />
                               </div>
                             </div>
                           </div>
 
                           <div class="col-md-3 col-lg-3">
                             <div class="form-group row">
-                              <div class="col-md-4 col-lg-4 col-form-label text-right">
-                                <label>Kích cỡ</label></div>
+                              <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Kích cỡ</label></div>
                               <div class="col-md-8 col-lg-8">
-                                <input formControlName="size" type="text" class="form-control form-control-sm"
-                                  placeholder="Kích cỡ">
+                                <input
+                                  formControlName="size"
+                                  type="text"
+                                  class="form-control form-control-sm"
+                                  placeholder="Kích cỡ"
+                                />
                               </div>
                             </div>
                           </div>
 
                           <div class="col-md-3 col-lg-3">
                             <div class="form-group row">
-                              <div class="col-md-4 col-lg-4 col-form-label">
-                                <label>Từ ngày</label>
-                              </div>
+                              <div class="col-md-4 col-lg-4 col-form-label"><label>Từ ngày</label></div>
                               <div class="col-md-8 col-lg-8">
                                 <div class="input-group">
-                                  <input formControlName="fromDate" class="form-control form-control-sm" placeholder="DD/MM/YYYY"
-                                    triggers="dblclick:click" [bsConfig]="bsConfig" #dfromDate="bsDatepicker"
-                                    bsDatepicker>
+                                  <input
+                                    formControlName="fromDate"
+                                    class="form-control form-control-sm"
+                                    placeholder="DD/MM/YYYY"
+                                    triggers="dblclick:click"
+                                    [bsConfig]="bsConfig"
+                                    #dfromDate="bsDatepicker"
+                                    bsDatepicker
+                                  />
                                   <div class="input-group-append">
-                                    <button class="btn btn-icons btn-inverse-light btn-md" (click)="dfromDate.toggle()"
-                                      [attr.aria-expanded]="dfromDate.isOpen" type="button">
+                                    <button
+                                      class="btn btn-icons btn-inverse-light btn-md"
+                                      (click)="dfromDate.toggle()"
+                                      [attr.aria-expanded]="dfromDate.isOpen"
+                                      type="button"
+                                    >
                                       <i class="fas fa-calendar"></i>
                                     </button>
                                   </div>
@@ -100,17 +122,25 @@
 
                           <div class="col-md-3 col-lg-3">
                             <div class="form-group row">
-                              <div class="col-md-4 col-lg-4 col-form-label text-right">
-                                <label>Đến ngày</label>
-                              </div>
+                              <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Đến ngày</label></div>
                               <div class="col-md-8 col-lg-8">
                                 <div class="input-group">
-                                  <input formControlName="toDate" class="form-control form-control-sm" placeholder="DD/MM/YYYY"
-                                    [bsConfig]="bsConfig" #dtoDate="bsDatepicker" triggers="dblclick:click"
-                                    bsDatepicker>
+                                  <input
+                                    formControlName="toDate"
+                                    class="form-control form-control-sm"
+                                    placeholder="DD/MM/YYYY"
+                                    [bsConfig]="bsConfig"
+                                    #dtoDate="bsDatepicker"
+                                    triggers="dblclick:click"
+                                    bsDatepicker
+                                  />
                                   <div class="input-group-append">
-                                    <button class="btn btn-icons btn-inverse-light btn-md" (click)="dtoDate.toggle()"
-                                      [attr.aria-expanded]="dtoDate.isOpen" type="button">
+                                    <button
+                                      class="btn btn-icons btn-inverse-light btn-md"
+                                      (click)="dtoDate.toggle()"
+                                      [attr.aria-expanded]="dtoDate.isOpen"
+                                      type="button"
+                                    >
                                       <i class="fas fa-calendar"></i>
                                     </button>
                                   </div>
@@ -121,32 +151,31 @@
 
                           <div class="col-md-3 col-lg-3">
                             <div class="form-group row">
-                              <div class="col-md-4 col-lg-4 col-form-label text-right">
-                                <label>Form</label>
-                              </div>
+                              <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Form</label></div>
                               <div class="col-md-8 col-lg-8">
-                                <input formControlName="form" type="text" class="form-control form-control-sm"
-                                  placeholder="Form">
+                                <input
+                                  formControlName="form"
+                                  type="text"
+                                  class="form-control form-control-sm"
+                                  placeholder="Form"
+                                />
                               </div>
                             </div>
                           </div>
 
                           <div class="col-md-3 col-lg-3">
                             <div class="form-group row">
-                              <div class="col-md-4 col-lg-4 col-form-label text-right">
-                                <label>Sắp xếp</label>
-                              </div>
+                              <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Sắp xếp</label></div>
                               <div class="col-md-8 col-lg-8">
                                 <div class="ein-select2-container select2-container-half">
                                   <select formControlName="sortBy" class="ein-select">
-                                    <option [value]="op.code" *ngFor="let op of sortByArr">{{op.value}}</option>
+                                    <option [value]="op.code" *ngFor="let op of sortByArr">{{ op.value }}</option>
                                   </select>
                                   <select formControlName="sort" class="ein-select">
-                                    <option [value]="op" *ngFor="let op of sortArr">{{op}}</option>
+                                    <option [value]="op" *ngFor="let op of sortArr">{{ op }}</option>
                                   </select>
                                 </div>
                               </div>
-
                             </div>
                           </div>
                         </div>
@@ -158,31 +187,97 @@
 
               <div class="col-12">
                 <div class="template-ein navbar-action">
-                  <button [hidden]="!expandSearch" type="button" form="ngForm" class="btn btn-md btn-info btn-search"
-                    (click)="ngSearchForm.ngSubmit.emit()"><i class="icon-magnifier"></i>
-                    Tìm kiếm</button>
-                  <button type="button" routerLink="/invoices/createNew" class="btn btn-icons btn-success" data-toggle="tooltip"
-                    trigger="hover" data-placement="bottom" title="Thêm mới">
+                  <button
+                    [hidden]="!expandSearch"
+                    type="button"
+                    form="ngForm"
+                    class="btn btn-md btn-info btn-search"
+                    (click)="ngSearchForm.ngSubmit.emit()"
+                  >
+                    <i class="icon-magnifier"></i> Tìm kiếm
+                  </button>
+                  <button
+                    type="button"
+                    routerLink="/invoices/createNew"
+                    class="btn btn-icons btn-success"
+                    data-toggle="tooltip"
+                    trigger="hover"
+                    data-placement="bottom"
+                    title="Thêm mới"
+                  >
                     <i class="fas fa-plus"></i>
                   </button>
-                  <button type="button" (click)="editRow()" class="btn btn-icons btn-success" tooltip="Sửa"
-                    placement="bottom">
+                  <button
+                    type="button"
+                    (click)="editRow()"
+                    class="btn btn-icons btn-success"
+                    tooltip="Sửa"
+                    placement="bottom"
+                  >
                     <i class="fas fa-edit"></i>
                   </button>
-                  <button type="button" (click)="deleteRow()" class="btn btn-icons btn-primary" 
-                    trigger="hover" data-toggle="tooltip"
-                    data-placement="bottom" title="Xóa"><i class="fas fa-trash"></i></button>
+                  <button
+                    type="button"
+                    (click)="deleteRow()"
+                    class="btn btn-icons btn-primary"
+                    trigger="hover"
+                    data-toggle="tooltip"
+                    data-placement="bottom"
+                    title="Xóa"
+                  >
+                    <i class="fas fa-trash"></i>
+                  </button>
 
-                  <button type="button" class="btn btn-icons btn-primary" trigger="hover" data-toggle="tooltip"
-                    data-placement="bottom" title="Sao chép"><i class="fas fa-copy"></i></button>
-                  <button type="button" class="btn btn-icons btn-primary" trigger="hover" data-toggle="tooltip"
-                    data-placement="bottom" title="In"><i class="fas fa-print"></i></button>
-                  <button type="button" class="btn btn-icons btn-primary" trigger="hover" data-toggle="tooltip"
-                    data-placement="bottom" title="Ký hóa đơn"><i class="fas fa-key"></i></button>
-                  <button type="button" class="btn btn-icons btn-primary" trigger="hover" data-toggle="tooltip"
-                    data-placement="bottom" title="Nhận Excel"><i class="fas fa-file-excel"></i></button>
-                  <button type="button" class="btn btn-icons btn-primary" trigger="hover" data-toggle="tooltip"
-                    data-placement="bottom" title="In chuyển đổi"><i class="fas fa-retweet"></i></button>
+                  <button
+                    type="button"
+                    class="btn btn-icons btn-primary"
+                    trigger="hover"
+                    data-toggle="tooltip"
+                    data-placement="bottom"
+                    title="Sao chép"
+                  >
+                    <i class="fas fa-copy"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-icons btn-primary"
+                    trigger="hover"
+                    data-toggle="tooltip"
+                    data-placement="bottom"
+                    title="In"
+                  >
+                    <i class="fas fa-print"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-icons btn-primary"
+                    trigger="hover"
+                    data-toggle="tooltip"
+                    data-placement="bottom"
+                    title="Ký hóa đơn"
+                  >
+                    <i class="fas fa-key"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-icons btn-primary"
+                    trigger="hover"
+                    data-toggle="tooltip"
+                    data-placement="bottom"
+                    title="Nhận Excel"
+                  >
+                    <i class="fas fa-file-excel"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-icons btn-primary"
+                    trigger="hover"
+                    data-toggle="tooltip"
+                    data-placement="bottom"
+                    title="In chuyển đổi"
+                  >
+                    <i class="fas fa-retweet"></i>
+                  </button>
                 </div>
               </div>
             </div>
@@ -220,14 +315,22 @@
               </table>
             </div>
             <div class="ngb-pagination">
-              <div class="page-info">
-                Trang {{page}}: {{totalElements}} dòng | Tổng số: {{totalPages}} trang.
-              </div>
-              <!-- <ngb-pagination class="d-flex justify-content-end" [pageSize]="itemsPerPage" [collectionSize]="totalItems"
-                [(page)]="page" (pageChange)="onPageChange($event)" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"></ngb-pagination> -->
-              <div *ngIf="totalPages > 1">
+              <div class="page-info">Trang {{ page }}: {{ totalElements }} dòng | Tổng số: {{ totalPages }} trang.</div>
+              <!--
                 <ngb-pagination class="d-flex justify-content-end" [pageSize]="itemsPerPage" [collectionSize]="totalItems"
-                  [(page)]="page" (pageChange)="onPageChange($event)" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"></ngb-pagination>
+                [(page)]="page" (pageChange)="onPageChange($event)" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"></ngb-pagination>
+              -->
+              <div *ngIf="totalPages > 1">
+                <ngb-pagination
+                  class="d-flex justify-content-end"
+                  [pageSize]="itemsPerPage"
+                  [collectionSize]="totalItems"
+                  [(page)]="page"
+                  (pageChange)="onPageChange($event)"
+                  [maxSize]="5"
+                  [rotate]="true"
+                  [boundaryLinks]="true"
+                ></ngb-pagination>
               </div>
             </div>
           </div>
