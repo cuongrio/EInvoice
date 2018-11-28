@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, AfterViewInit } from '@angular/core';
-import { FormGroup, FormArray, Validators, FormBuilder } from '@angular/forms';
+import { FormGroup, FormArray, Validators, FormBuilder, AbstractControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { ProductItem, SelectItem, Customer, InvoiceItem } from '@app/_models';
@@ -25,9 +25,11 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
   public customerPicked: Customer;
   public formPicked: string;
   public serialPicked: string;
-  public total_before_tax: number;
-  public total_tax: number;
-  public total: number;
+
+  // total price
+  public totalPrice = new Array<number>();
+  public totalVat = new Array<number>();
+  public finalTotalPrice = new Array<number>();
 
   public configCode = {
     searchPlaceholder: 'Tìm kiếm',
@@ -92,13 +94,9 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
     this.formSetDefault();
     this.loadCustomers();
     this.loadReferences();
-    this.loadSerials();
     this.loadGoods();
     this.loadHttt();
-
-    for (let i = 0; i < 5; i++) {
-      this.stickyButtonAdd();
-    }
+    this.stickyButtonAdd();
   }
 
   ngAfterViewInit() {
@@ -131,11 +129,6 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
     invoiceItem.customer = this.customerPicked;
 
     // caculator
-
-
-
-
-
     console.log(JSON.stringify(dataForm));
   }
 
@@ -147,21 +140,96 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
     this.initDataForm(dataArr);
   }
 
-  get itemFormArray(): FormArray {
-    return this.addForm.get('items') as FormArray;
-  }
+  public addNewButtonClicked() {
+    this.customerPicked = null;
+    this.totalPrice = new Array<number>();
+    this.totalVat = new Array<number>();
+    this.finalTotalPrice = new Array<number>();
+    this.clearFormArray(this.itemFormArray);
+    this.addForm.reset();
 
-  deleteLineClicked(idx: number) {
-    this.stickyButtonDelete(idx);
-  }
-
-  addMoreLineClicked() {
+    // set default
+    this.formSetDefault();
+    this.loadCustomers();
+    this.loadGoods();
     this.stickyButtonAdd();
   }
 
-  private loadSerials() {
-    // this.serialArr = this.dummySerial();
+  public onGoodlineChange(dataArr: Good[], idx: number) {
+    if (dataArr && dataArr.length > 0) {
+      const good = dataArr[0];
+      const controlArray = <FormArray>this.addForm.get('items');
+      controlArray.controls[idx].get('item_line').setValue(idx + 1);
+      controlArray.controls[idx].get('item_code').setValue(good.goods_code);
+      controlArray.controls[idx].get('item_name').setValue(good.goods_name);
+      controlArray.controls[idx].get('unit').setValue(good.unit);
+      controlArray.controls[idx].get('price').setValue(good.price);
+      controlArray.controls[idx].get('tax_rate').setValue(good.tax_rate);
+
+      this.totalPricePopulator(idx);
+      this.totalVatPopulator(idx);
+      this.finalTotalPricePopulator(idx);
+    }
   }
+
+  public get itemFormArray(): FormArray {
+    return this.addForm.get('items') as FormArray;
+  }
+
+  public deleteLineClicked(idx: number) {
+    this.stickyButtonDelete(idx);
+  }
+
+  public addMoreLineClicked() {
+    this.stickyButtonAdd();
+  }
+
+
+  /*** TOTAL PRICE */
+  public quantityValueChange(value: number, idx: number) {
+    const controlArray = <FormArray>this.addForm.get('items');
+    const itemCode = controlArray.controls[idx].get('item_code').value;
+    if (itemCode) {
+      this.totalPricePopulator(idx, value, null);
+    }
+  }
+
+  public priceValueChange(value: number, idx: number) {
+    const controlArray = <FormArray>this.addForm.get('items');
+    const itemCode = controlArray.controls[idx].get('item_code').value;
+    if (itemCode) {
+      this.totalPricePopulator(idx, null, value);
+    }
+  }
+
+  public ckValueChange(value: number, idx: number) {
+    const controlArray = <FormArray>this.addForm.get('items');
+    const itemCode = controlArray.controls[idx].get('item_code').value;
+    if (itemCode) {
+      const totalPrice = this.totalPrice[idx];
+      if (totalPrice && totalPrice > 0) {
+        const totalCk = (totalPrice * value) / 100;
+        controlArray.controls[idx].get('total_ck').setValue(totalCk);
+        this.totalVatPopulator(idx, null, totalCk);
+        this.finalTotalPricePopulator(idx, totalCk);
+      }
+    }
+  }
+
+  public totalCkValueChange(value: number, idx: number) {
+    const controlArray = <FormArray>this.addForm.get('items');
+    const itemCode = controlArray.controls[idx].get('item_code').value;
+    if (itemCode) {
+      const totalPrice = this.totalPrice[idx];
+      if (value > 0 && totalPrice && totalPrice > 0) {
+        const ck = (value * 100) / totalPrice;
+        controlArray.controls[idx].get('ck').setValue(ck);
+        this.finalTotalPricePopulator(idx, value);
+      }
+      this.totalVatPopulator(idx, null, value);
+    }
+  }
+  /*** END TOTAL PRICE */
 
   private loadGoods() {
     if (this.goodArr && this.goodArr.length > 0) {
@@ -255,8 +323,6 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
         customer_bank: customerPicked.bank,
         customer_address: customerPicked.address
       });
-
-      console.log(JSON.stringify(customerPicked));
     } else {
       this.addForm.patchValue({
         customer_email: '',
@@ -282,22 +348,25 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private stickyButtonAdd() {
     const emptyProductLine: ProductItem = {
-      item_line: 0,
+      item_line: null,
       item_code: '',
       item_name: '',
       unit: '',
-      price: '',
-      tax: 0,
+      quantity: null,
+      price: null,
+      price_wt: null,
+      ck: 0,
+      total_ck: 0,
       tax_rate: 0,
-      tax_rate_code: '',
-      price_wt: 0,
-      quantity: 0,
-      amount: 0,
-      amount_wt: 0,
+      tax: null,
+      total_price: null
     };
 
     const fg = this.formBuilder.group(emptyProductLine);
     this.itemFormArray.push(fg);
+    this.totalPrice.push(null);
+    this.finalTotalPrice.push(null);
+    this.totalVat.push(null);
   }
 
   private stickyButtonDelete(idx: number) {
@@ -339,25 +408,70 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
       customer_bank_account: '',
       customer_bank: '',
       customer_address: '',
-      items: this.formBuilder.array([{
-        item_line: '',
-        item_name: '',
-        unit: '',
-        quantity: '',
-        price: '',
-        price_wt: '',
-        ck: '',
-        total_ck: '',
-        tax_rate_code: '',
-        total_tax: '',
-        total_price: ''
-      }])
+      items: this.formBuilder.array([])
     });
+  }
+
+  private clearFormArray = (formArray: FormArray) => {
+    while (formArray.length !== 0) {
+      formArray.removeAt(0);
+    }
   }
 
   private formSetDefault() {
     this.addForm.patchValue({
       invoice_date: new Date()
     });
+  }
+
+  private totalPricePopulator(idx: number, quantityVal: number = 0, priceVal: number = 0) {
+    const controlArray = <FormArray>this.addForm.get('items');
+    let quantity = quantityVal;
+    let price = priceVal;
+
+    if (quantity === null || quantity === 0) {
+      quantity = controlArray.controls[idx].get('quantity').value;
+    }
+    if (price === null || price === 0) {
+      price = controlArray.controls[idx].get('price').value;
+    }
+
+    if (quantity > 0 && price > 0) {
+      this.totalPrice[idx] = quantity * price;
+      this.totalVatPopulator(idx);
+      this.finalTotalPricePopulator(idx);
+    }
+  }
+
+  private totalVatPopulator(idx: number, vatVal: number = 0, totalCkVal: number = 0) {
+    const totalPrice = this.totalPrice[idx];
+    let vat = vatVal;
+    let totalCk: number = totalCkVal;
+
+    if (totalPrice && totalPrice > 0) {
+      const controlArray = <FormArray>this.addForm.get('items');
+
+      if (vat === null || vat === 0) {
+        vat = controlArray.controls[idx].get('tax_rate').value;
+      }
+
+      if (totalCk === null || totalCk === 0) {
+        totalCk = controlArray.controls[idx].get('total_ck').value;
+      }
+
+      if (vat > 0) {
+        this.totalVat[idx] = ((totalPrice - totalCk) * vat) / 100;
+      } else {
+        this.totalVat[idx] = 0;
+      }
+    }
+  }
+
+  private finalTotalPricePopulator(idx: number, totalCkVal: number = 0) {
+    const totalPrice = this.totalPrice[idx];
+    const totalVat = this.totalVat[idx];
+    if (totalPrice && totalVat) {
+      this.finalTotalPrice[idx] = (totalPrice + totalVat) - totalCkVal;
+    }
   }
 }

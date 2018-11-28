@@ -9,21 +9,22 @@ import { InvoiceParams } from './../_models';
 export class APIService {
   API_URL = 'http://178.128.123.223:8080';
 
-  constructor(private httpClient: HttpClient) {}
+  constructor(private httpClient: HttpClient) { }
 
-  getGoods() {
-    return this.httpClient.get(`${this.API_URL}/1/goods`);
+  getGoods(): Observable<any> {
+    return this.httpClient
+      .get(`${this.API_URL}/1/goods`);
   }
 
-  getCustomers() {
+  getCustomers(): Observable<any> {
     return this.httpClient.get(`${this.API_URL}/1/customers`);
   }
 
-  getReferences() {
+  getReferences(): Observable<any> {
     return this.httpClient.get(`${this.API_URL}/1/references`);
   }
 
-  getInvoiceRetrieveById(invoiceId: number) {
+  getInvoiceRetrieveById(invoiceId: number): Observable<any> {
     return this.httpClient.get(`${this.API_URL}/1/invoices/${invoiceId}`);
   }
 

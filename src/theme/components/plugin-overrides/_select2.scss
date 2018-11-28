@@ -1,7 +1,8 @@
 /* Select2 */
 .select2-container--default {
   .select2-results__option--highlighted[aria-selected] {
-    background: theme-color(primary);
+    background: #e9ecef;
+    color: #333 !important;
   }
 
   &.select2-container--open {

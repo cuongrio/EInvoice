@@ -17,7 +17,7 @@
       <div class="row">
         <div class="container-fluid">
           <div class="template-ein navbar-action">
-            <button type="button" (click)="addNewTab()" class="btn btn-md btn-primary">
+            <button type="button" (click)="addNewButtonClicked()" class="btn btn-md btn-primary">
               <i class="fas fa-plus"></i> Thêm
             </button>
             <button type="button" class="btn btn-md btn-outline-primary"><i class="fas fa-edit"></i> Sửa</button>
@@ -210,7 +210,7 @@
                           <th class="bg-smoke" style="width: 20px;">#</th>
                           <th style="width: 120px;">Mã HH</th>
                           <th>Nội dung</th>
-                          <th style="width: 80px;" class="text-right">ĐVT</th>
+                          <th style="width: 80px;">ĐVT</th>
                           <th style="width: 80px;" class="text-right">SL</th>
                           <th style="width: 80px;" class="text-right">Giá</th>
                           <th style="width: 80px;" class="text-right">Tiền</th>
@@ -225,11 +225,11 @@
                         <tr class="product-line" *ngFor="let item of itemFormArray.controls; let idx = index"
                           [formGroupName]="idx">
                           <td class="no-padding bg-smoke text-center">
-                            <input formControlName="item_line" value="{{idx + 1}}" readonly="readonly" class="form-control form-control-sm"
-                              name="item_line" type="text" />
+                            {{idx + 1}}
                           </td>
                           <td class="no-padding invoice-no__item hideselect">
-                            <ngx-select-dropdown [multiple]="false" [config]="configGood" [options]="goodArr"></ngx-select-dropdown>
+                            <ngx-select-dropdown (valueChange)="onGoodlineChange($event, idx)" [multiple]="false"
+                              [config]="configGood" [options]="goodArr"></ngx-select-dropdown>
                           </td>
                           <td class="no-padding">
                             <input formControlName="item_name" [popover]="popContent" popoverTitle="Hiển thị thêm"
@@ -245,37 +245,40 @@
                             <input formControlName="unit" class="form-control form-control-sm" name="item_unit" type="text" />
                           </td>
                           <td class="no-padding">
-                            <input formControlName="quantity" class="form-control form-control-sm text-right" name="item_quantity"
-                              type="text" />
+                            <input formControlName="quantity" numbersOnly type="number" (input)="quantityValueChange($event.target.value, idx)"
+                              class="form-control form-control-sm text-right" name="item_quantity" type="text" />
                           </td>
 
                           <td class="no-padding">
-                            <input formControlName="price" class="form-control form-control-sm text-right" name="item_price"
-                              type="text" />
+                            <input formControlName="price" numbersOnly type="number" (input)="priceValueChange($event.target.value, idx)"
+                              class="form-control form-control-sm text-right" name="item_price" type="text" />
+                          </td>
+
+                          <td class="no-padding text-right">
+                            <label class="mt-2 mr-2">{{totalPrice[idx] | currency:'VND':'symbol':'4.2-2'}}</label>
                           </td>
 
                           <td class="no-padding">
-                            <input formControlName="price_wt" class="form-control form-control-sm text-right" name="item_price_wt"
-                              type="text" />
-                          </td>
-
-                          <td class="no-padding">
-                            <input formControlName="ck" class="form-control form-control-sm text-right" type="text" />
+                            <input formControlName="ck" type="number" numbersOnly (input)="ckValueChange($event.target.value, idx)"
+                              class="form-control form-control-sm text-right" type="text" />
                           </td>
                           <td class="no-padding">
-                            <input formControlName="totalCk" class="form-control form-control-sm text-right" type="text" />
+                            <input formControlName="total_ck" numbersOnly type="number" (input)="totalCkValueChange($event.target.value, idx)"
+                              class="form-control form-control-sm text-right" type="text" />
                           </td>
                           <td class="no-padding vat-line">
-                            <input formControlName="vat" class="form-control form-control-sm text-right text-bold" list="vatOptions">
+                            <input formControlName="tax_rate" numbersOnly type="number" (input)="taxRateValueChange($event.target.value, idx)"
+                              class="form-control form-control-sm text-right text-bold" list="vatOptions">
                           </td>
-                          <td class="no-padding">
-                            <input formControlName="totalVat" class="form-control form-control-sm text-right" name="item_total_vat"
-                              type="text" />
+                          <td class="no-padding text-right">
+                            <label class="mt-2 mr-2">{{totalVat[idx] |
+                              currency:'VND':'symbol':'4.2-2'}}
+                            </label>
                           </td>
 
-                          <td class="no-padding">
-                            <input formControlName="totalPrice" class="form-control form-control-sm text-right" name="item_total_price"
-                              type="text" />
+                          <td class="no-padding text-right">
+                            <label class="text-bold mt-2 mr-2">{{finalTotalPrice[idx] |
+                              currency:'VND':'symbol':'4.2-2'}}</label>
                           </td>
 
                           <div class="sticky-btn__td">

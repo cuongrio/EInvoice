@@ -25,6 +25,7 @@ import { ClickOutsideModule } from 'ng-click-outside';
 
 import { HttpClientModule } from '@angular/common/http';
 import { NgProgressModule } from '@ngx-progressbar/core';
+import { NumberDirective } from '@app/_directives/number_only.directive';
 
 @NgModule({
   imports: [
@@ -44,7 +45,14 @@ import { NgProgressModule } from '@ngx-progressbar/core';
     PopoverModule.forRoot(),
     ModalModule.forRoot()
   ],
-  declarations: [AutofocusDirective, SlTruncatePipe, InvoicesComponent, InvoiceDetailComponent, InvoiceFormComponent],
+  declarations: [
+    NumberDirective,
+    AutofocusDirective,
+    SlTruncatePipe,
+    InvoicesComponent,
+    InvoiceDetailComponent,
+    InvoiceFormComponent
+  ],
   providers: [APIService, DatePipe, AppConfig]
 })
-export class InvoicesModule {}
+export class InvoicesModule { }
