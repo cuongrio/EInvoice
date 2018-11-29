@@ -26,7 +26,21 @@
             </button>
             <button type="button" class="btn btn-md btn-outline-primary"><i class="fas fa-info"></i> Xem</button>
 
-            <button type="button" class="btn btn-md btn-outline-primary"><i class="fas fa-key"></i> Ký</button>
+            <button type="button" (click)="signInvoiceClicked(listTokenModal)" class="btn btn-md btn-outline-primary"><i class="fas fa-key"></i>
+              Ký</button>
+              <ng-template #listTokenModal>
+                <div class="modal-header">
+                  <h4 class="modal-title pull-left">Danh sách chữ ký</h4>
+                  <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body mh-150">
+                  <select class="ein-select form-control form-control-sm">
+                    <option [value]="op.code" *ngFor="let op of listTokenDummy">{{ op.value }}</option>
+                  </select>
+                </div>
+              </ng-template>
             <button type="button" class="btn btn-md btn-outline-primary"><i class="fas fa-print"></i> In CĐ</button>
             <button routerLink="/invoices" type="button" class="btn btn-md btn-light">
               <i class="fas fa-share-square"></i> Thoát
@@ -250,8 +264,9 @@
                           </td>
 
                           <td class="no-padding">
-                            <input formControlName="price" numbersOnly type="number" (input)="priceValueChange($event.target.value, idx)"
-                              class="form-control form-control-sm text-right" name="item_price" type="text" />
+                            <input formControlName="price" numbersOnly currencyMask [options]="{ prefix: 'đ', allowNegative: false, precision: 0  }"
+                              type="number" (input)="priceValueChange($event.target.value, idx)" class="form-control form-control-sm text-right"
+                              name="item_price" type="text" />
                           </td>
 
                           <td class="no-padding text-right">
@@ -263,8 +278,9 @@
                               class="form-control form-control-sm text-right" type="text" />
                           </td>
                           <td class="no-padding">
-                            <input formControlName="total_ck" numbersOnly type="number" (input)="totalCkValueChange($event.target.value, idx)"
-                              class="form-control form-control-sm text-right" type="text" />
+                            <input formControlName="total_ck" currencyMask [options]="{ prefix: 'đ', allowNegative: false, precision: 0  }"
+                              numbersOnly type="number" (input)="totalCkValueChange($event.target.value, idx)" class="form-control form-control-sm text-right"
+                              type="text" />
                           </td>
                           <td class="no-padding vat-line">
                             <input formControlName="tax_rate" numbersOnly type="number" (input)="taxRateValueChange($event.target.value, idx)"

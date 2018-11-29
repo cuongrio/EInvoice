@@ -10,5 +10,5 @@ export class Customer {
   bank_account?: string;
   bank?: string;
   phone?: string;
-  select_item: string;
+  select_item?: string;
 }

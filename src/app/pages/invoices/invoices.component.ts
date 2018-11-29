@@ -158,7 +158,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
   }
 
   private callServiceAndBindTable(params: InvoiceParams) {
-    this.apiService.getInvoices(params).subscribe(response => {
+    this.apiService.queryInvoices(params).subscribe(response => {
       if (response && response.contents.length > 0) {
         this.totalElements = response.total_elements;
         this.totalPages = response.total_pages;

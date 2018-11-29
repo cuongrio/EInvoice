@@ -29,7 +29,7 @@ export class InvoiceDetailComponent implements OnInit, OnDestroy {
 
   // get detail of teacher
   private retrieveById(invoiceId: number) {
-    this.apiService.getInvoiceRetrieveById(invoiceId).subscribe(
+    this.apiService.retrieveInvoiceById(invoiceId).subscribe(
       response => {
         this.invoiceDetail = response;
       },

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, TemplateRef, ChangeDetectionStrategy, AfterViewInit } from '@angular/core';
 import { FormGroup, FormArray, Validators, FormBuilder, AbstractControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, Observable, Subject } from 'rxjs';
@@ -25,6 +25,8 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
   public customerPicked: Customer;
   public formPicked: string;
   public serialPicked: string;
+
+  public listTokenDummy = new Array<SelectItem>();
 
   // total price
   public totalPrice = new Array<number>();
@@ -97,6 +99,16 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loadGoods();
     this.loadHttt();
     this.stickyButtonAdd();
+
+    this.listTokenDummy.push ({
+      code: 'token1',
+      value: 'token1'
+    });
+    
+    this.listTokenDummy.push ({
+      code: 'token2',
+      value: 'token2'
+    });
   }
 
   ngAfterViewInit() {
@@ -126,10 +138,25 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
     invoiceItem.form = dataForm.form;
     invoiceItem.serial = dataForm.serial;
     invoiceItem.invoice_date = dataForm.invoice_date;
-    invoiceItem.customer = this.customerPicked;
 
+    // update customer
+    invoiceItem.customer = this.customerPicked;
+    invoiceItem.customer.customer_name = dataForm.customer_name;
+    invoiceItem.customer.org = dataForm.customer_org;
+    invoiceItem.customer.bank = dataForm.customer_bank;
+    invoiceItem.customer.bank_account = dataForm.customer_bank_account;
+    invoiceItem.customer.address = dataForm.customer_address;
+
+    if (dataForm.items && dataForm.items.length > 0) {
+      invoiceItem.items = dataForm.items.filter((elemnent: any, index: number, array: any) => {
+        return (elemnent.item_code !== null && elemnent.item_code !== '')
+      });
+    }
+    invoiceItem.total_before_tax = this.sumPriceArr(this.totalPrice);
+    invoiceItem.total_tax = this.sumPriceArr(this.totalVat);
+    invoiceItem.total = this.sumPriceArr(this.finalTotalPrice);
     // caculator
-    console.log(JSON.stringify(dataForm));
+    console.log(JSON.stringify(invoiceItem));
   }
 
   public onCustomerTaxChange(dataArr: Customer[]) {
@@ -153,6 +180,21 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loadCustomers();
     this.loadGoods();
     this.stickyButtonAdd();
+  }
+
+  public async signInvoiceClicked(template: TemplateRef<any>) {
+    let listToken: Array<any>;
+    // 1. get list token
+    await this.apiService.listToken().subscribe(data => {
+      // show choice token
+      listToken = data as Array<any>;
+    });
+
+    // if (listToken && listToken.length > 0) {
+       this.modalRef = this.modalService.show(template);
+    // } else {
+    //   this.signedInvoiceAction(0);
+    // }
   }
 
   public onGoodlineChange(dataArr: Good[], idx: number) {
@@ -230,6 +272,30 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
   /*** END TOTAL PRICE */
+
+  private async signedInvoiceAction(invoiceId: number) {
+    let params: Array<any>;
+    // get sign paramater
+    await this.apiService.sign(invoiceId).subscribe(data => {
+      params = data as Array<any>;
+    });
+
+    const alias: string = params[0] + '';
+    const pdf64: string = params[1] + '';
+    const signatureImg: string = params[2] + '';
+    const location: string = '';
+    const ahdsign: string = '';
+
+    let signEncode: string;
+    await this.apiService.signByToken(alias, pdf64, signatureImg, location, ahdsign).subscribe(data => {
+      signEncode = data as string;
+    });
+
+    this.apiService.signed(invoiceId, signEncode).subscribe(data => {
+
+    });
+  }
+
 
   private loadGoods() {
     if (this.goodArr && this.goodArr.length > 0) {
@@ -346,6 +412,17 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+  private sumPriceArr(prices: Array<number>) {
+    if (prices && prices.length > 0) {
+      let sumPrice = 0;
+      prices.forEach((price: number, index: number) => {
+        sumPrice += price;
+      });
+      return sumPrice;
+    }
+    return 0;
+  }
+
   private stickyButtonAdd() {
     const emptyProductLine: ProductItem = {
       item_line: null,
@@ -354,12 +431,9 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
       unit: '',
       quantity: null,
       price: null,
-      price_wt: null,
-      ck: 0,
-      total_ck: 0,
-      tax_rate: 0,
-      tax: null,
-      total_price: null
+      ck: null,
+      total_ck: null,
+      tax_rate: null
     };
 
     const fg = this.formBuilder.group(emptyProductLine);
@@ -453,10 +527,16 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
       if (vat === null || vat === 0) {
         vat = controlArray.controls[idx].get('tax_rate').value;
+        if (vat === null) {
+          vat = 0;
+        }
       }
 
       if (totalCk === null || totalCk === 0) {
         totalCk = controlArray.controls[idx].get('total_ck').value;
+        if (totalCk === null) {
+          totalCk = 0;
+        }
       }
 
       if (vat > 0) {

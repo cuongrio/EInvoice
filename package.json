@@ -54,6 +54,7 @@
     "lodash": "^4.17.10",
     "moment": "2.22.2",
     "ngx-bootstrap": "^3.1.2",
+    "ngx-currency": "^1.5.1",
     "rxjs": "^6.3.1",
     "select2": "^4.0.6-rc.1",
     "simple-line-icons": "2.4.1",

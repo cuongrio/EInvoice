@@ -27,6 +27,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgProgressModule } from '@ngx-progressbar/core';
 import { NumberDirective } from '@app/_directives/number_only.directive';
 
+import { NgxCurrencyModule } from "ngx-currency";
+
 @NgModule({
   imports: [
     CommonModule,
@@ -37,6 +39,7 @@ import { NumberDirective } from '@app/_directives/number_only.directive';
     SelectDropDownModule,
     ClickOutsideModule,
     HttpClientModule,
+    NgxCurrencyModule,
     NgProgressModule.forRoot(),
     NgbModule,
     TooltipModule.forRoot(),

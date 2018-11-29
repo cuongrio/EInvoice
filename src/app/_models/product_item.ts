@@ -3,12 +3,10 @@
   item_code?: string;
   item_name: string;
   unit: string;
+  quantity: number;
   price: number;
+  total_price?: number;
   ck?: number;
   total_ck?: number;
-  tax: number;
   tax_rate: number;
-  price_wt: number;
-  quantity: number;
-  total_price?: number;
 }

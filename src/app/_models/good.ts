@@ -8,6 +8,6 @@ export class Good {
   tax_rate_code: string;
   tax_rate: string;
   goods_group: string;
-  insert_date: string;
-  select_item: string;
+  insert_date?: string;
+  select_item?: string;
 }
