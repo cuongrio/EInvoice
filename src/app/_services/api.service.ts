@@ -10,9 +10,7 @@ export class APIService {
   API_URL = 'http://178.128.123.223:8080';
   PLUGIN_URL = 'https://ahoadonplugin.com:15668';
 
-  constructor(private httpClient: HttpClient) {
-
-  }
+  constructor(private httpClient: HttpClient) {}
 
   /** PDF */
   preview(invoiceItem: InvoiceItem) {
@@ -130,50 +128,50 @@ export class APIService {
 
   /**** LIST *** */
   getGoods(): Observable<any> {
-    const goods = new Array<Good>();
-    for (let i = 0; i <= 100; i++) {
-      const good: Good = {
-        goods_id: '00' + i,
-        tenant_id: '00' + i,
-        goods_code: 'GOOD_CODE' + i,
-        goods_name: 'GOOD_NAME' + i,
-        unit: 'CAI',
-        price: '12344',
-        tax_rate_code: '10',
-        tax_rate: '10',
-        goods_group: 'GOOD_GROUP' + i,
-        insert_date: '2018-08-08'
-      };
-      goods.push(good);
-    }
+    // const goods = new Array<Good>();
+    // for (let i = 0; i <= 100; i++) {
+    //   const good: Good = {
+    //     goods_id: '00' + i,
+    //     tenant_id: '00' + i,
+    //     goods_code: 'GOOD_CODE' + i,
+    //     goods_name: 'GOOD_NAME' + i,
+    //     unit: 'CAI',
+    //     price: '12344',
+    //     tax_rate_code: '10',
+    //     tax_rate: '10',
+    //     goods_group: 'GOOD_GROUP' + i,
+    //     insert_date: '2018-08-08'
+    //   };
+    //   goods.push(good);
+    // }
 
-    return of(goods);
-    // return this.httpClient
-    //   .get(`${this.API_URL}/1/goods`);
+    // return of(goods);
+    return this.httpClient
+      .get(`${this.API_URL}/1/goods`);
   }
 
   getCustomers(): Observable<any> {
-    const customers = new Array<Customer>();
-    for (let i = 0; i <= 100; i++) {
-      const customer: Customer = {
-        customer_id: '00' + i,
-        tenant_id: '000',
-        customer_code: 'C_CODE_' + i,
-        customer_name: 'C_NAME_' + i,
-        org: 'C_ORG_' + i,
-        tax_code: '10',
-        email: 'C_EMAIL_@gmail.com',
-        address: 'C_ADDRESS_' + i,
-        bank_account: '000000',
-        bank: 'NHCT VIET NAM',
-        phone: '000000'
-      };
-      customers.push(customer);
-    }
+    // const customers = new Array<Customer>();
+    // for (let i = 0; i <= 100; i++) {
+    //   const customer: Customer = {
+    //     customer_id: '00' + i,
+    //     tenant_id: '000',
+    //     customer_code: 'C_CODE_' + i,
+    //     customer_name: 'C_NAME_' + i,
+    //     org: 'C_ORG_' + i,
+    //     tax_code: '10',
+    //     email: 'C_EMAIL_@gmail.com',
+    //     address: 'C_ADDRESS_' + i,
+    //     bank_account: '000000',
+    //     bank: 'NHCT VIET NAM',
+    //     phone: '000000'
+    //   };
+    //   customers.push(customer);
+    // }
 
-    return of(customers);
+    // return of(customers);
 
-    // return this.httpClient.get(`${this.API_URL}/1/customers`);
+    return this.httpClient.get(`${this.API_URL}/1/customers`);
   }
 
   getReferences(): Observable<any> {
@@ -181,6 +179,4 @@ export class APIService {
   }
 
   /**** END LIST */
-
-
 }

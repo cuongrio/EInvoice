@@ -520,7 +520,7 @@
     }
     @media (max-width: 991px) {
       position: fixed;
-      z-index: 99;
+      z-index: 999999 !important;
       top: 0;
       left: 0;
       right: 0;

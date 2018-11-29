@@ -10,6 +10,7 @@ import { PopoverModule } from 'ngx-bootstrap/popover';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { AlertModule } from 'ngx-bootstrap';
 
 import { InvoicesRoutes } from './invoices.routing';
 import { DatePipe } from '@angular/common';
@@ -21,13 +22,12 @@ import { InvoiceDetailComponent } from './components/detail.component';
 import { AutofocusDirective } from './../../_directives/autofocus.directive';
 import { SlTruncatePipe } from './../../_directives/sl_truncate.directive';
 import { SelectDropDownModule } from 'ngx-select-dropdown';
-import { ClickOutsideModule } from 'ng-click-outside';
+import {SelectModule} from 'ng2-select';
 
 import { HttpClientModule } from '@angular/common/http';
 import { NgProgressModule } from '@ngx-progressbar/core';
 import { NumberDirective } from '@app/_directives/number_only.directive';
-
-import { NgxCurrencyModule } from "ngx-currency";
+import { NgxCurrencyModule } from 'ngx-currency';
 
 @NgModule({
   imports: [
@@ -37,8 +37,9 @@ import { NgxCurrencyModule } from "ngx-currency";
     FormsModule,
     ReactiveFormsModule,
     SelectDropDownModule,
-    ClickOutsideModule,
+    SelectModule,
     HttpClientModule,
+    AlertModule.forRoot(),
     NgxCurrencyModule,
     NgProgressModule.forRoot(),
     NgbModule,

@@ -1,4 +1,3 @@
-
 .jumbotron {
   padding: 0 !important;
   margin-bottom: 0px !important;
@@ -40,9 +39,12 @@
   border-right: 0 !important;
 }
 
-.bs-datepicker-head button.next span,
-.bs-datepicker-head button.previous span {
-  font-size: 24px !important;
+.bs-datepicker-head button{
+  color: #333 !important;
+  .next span,
+  .previous span{
+    font-size: 24px !important;
+  }
 }
 
 .required:after {
@@ -150,7 +152,7 @@
 .input-group {
   .btn-icons {
     text-shadow: 0 0 grey;
-    height: 31px !important;
+    border-radius: 0 !important;
     padding: 7px !important;
   }
 }
@@ -236,8 +238,7 @@ legend.scheduler-border {
 
 /****SCROLLBAR***/
 .select2-results__options {
-
-  .select2-results__option{
+  .select2-results__option {
     padding: 4px 8px !important;
   }
   &::-webkit-scrollbar {
@@ -337,8 +338,14 @@ legend.scheduler-border {
   }
 }
 
-.bg-smoke{
+.bg-smoke {
   background: #f0f0f0 !important;
+}
+
+.form-group{
+  .form-control{
+    border-radius: 0!important;
+  }
 }
 
 .template-ein {
@@ -516,7 +523,7 @@ legend.scheduler-border {
   height: 500px;
 }
 
-.mh-150{
+.mh-150 {
   min-height: 150px !important;
 }
 
@@ -582,15 +589,31 @@ legend.scheduler-border {
   }
 }
 
+label.error{
+  font-size: 12px !important;
+}
+
 .popover {
   .popover-header {
-    color: #333;
+    color: #333 !important;
+  }
+}
+
+.ngx-dropdown-container{
+  .ngx-dropdown-list-container{
+    border-radius: 0!important;
+  }
+  .ngx-dropdown-button{
+    width: 100%;
+    height: 38px;
+    padding: 5px 10px 5px 10px;
+    border-radius: 0 !important;
   }
 }
 
 /***INVOICE FORM***/
 .invoice__wrapper {
-  &.card-body{
+  &.card-body {
     padding: 40px 16px !important;
   }
   .navbar-action {
@@ -643,10 +666,10 @@ legend.scheduler-border {
 
     .product-item__wrapper {
       min-height: 280px;
-      .table th{
+      .table th {
         padding: 16px 4px !important;
       }
-      .form-control{
+      .form-control {
         padding: 4px !important;
       }
       .sub-title {
