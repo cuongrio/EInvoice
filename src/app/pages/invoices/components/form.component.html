@@ -103,7 +103,6 @@
                             class="ein-select form-control form-control-sm">
                             <option [value]="op.code" *ngFor="let op of comboForm">{{ op.value }}</option>
                           </select>
-                          <label class="error mt-2 text-danger" for="form">This field is required.</label>
                           <!-- <ng-select [allowClear]="true" [items]="comboForm" (selected)="selected($event)" (removed)="removed($event)"
                             (typed)="typed($event)" (data)="refreshValue($event)">
                           </ng-select> -->
@@ -113,7 +112,7 @@
 
                     <div class="col-md-3 col-lg-3">
                       <div class="form-group row">
-                        <div class="col-md-4 col-lg-4 col-form-label"><label>Ký hiệu</label></div>
+                        <div class="col-md-4 col-lg-4 col-form-label"><label class="required">Ký hiệu</label></div>
                         <div class="col-md-8 col-lg-8">
                           <select [(ngModel)]="serialPicked" formControlName="serial" class="ein-select form-control form-control-sm">
                             <option [value]="op.code" *ngFor="let op of comboSerial">{{ op.value }}</option>
@@ -190,7 +189,7 @@
 
                     <div class="col-md-3 col-lg-3">
                       <div class="form-group row">
-                        <div class="col-md-4 col-lg-4 col-form-label"><label>HTTT</label></div>
+                        <div class="col-md-4 col-lg-4 col-form-label"><label class="required">HTTT</label></div>
                         <div class="col-md-8 col-lg-8">
                           <select placeholder="Hình thức thanh toán" formControlName="paymentType" class="ein-select">
                             <option [value]="op.code" *ngFor="let op of comboHTTT">{{ op.value }}</option>

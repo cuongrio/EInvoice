@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { AlertService, AuthenticationService } from '@app/_services';
+import { AlertService, AuthenticationService, APIService } from '@app/_services';
 import { first } from 'rxjs/operators';
 import { ValidationService } from './../_services/validator.service';
 
@@ -17,6 +17,7 @@ export class LoginComponent implements OnInit {
   loading = false;
   submitted = false;
   returnUrl: string;
+  public errMessage: string;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -24,7 +25,7 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private authenticationService: AuthenticationService,
     private alertService: AlertService,
-    private validationService: ValidationService
+    private apiService: APIService
   ) {
     // redirect to home if already logged in
     if (this.authenticationService.currentUserValue) {
@@ -34,12 +35,9 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     this.createForm();
-
-    // get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   }
 
-  // convenience getter for easy access to form fields
   get f() {
     return this.loginForm.controls;
   }
@@ -47,30 +45,28 @@ export class LoginComponent implements OnInit {
   onSubmit() {
     this.submitted = true;
 
-    // stop here if form is invalid
     if (this.loginForm.invalid) {
       return;
     }
 
     this.loading = true;
-    // this.authenticationService.login(this.f.username.value, this.f.password.value)
-    //   .pipe(first())
-    //   .subscribe(
-    //     data => {
-    //       this.router.navigate([this.returnUrl]);
-    //     },
-    //     error => {
-    //       this.alertService.error(error);
-    //       this.loading = false;
-    //     });
+    this.apiService.login(this.f.username.value, this.f.password.value)
+      .pipe(first())
+      .subscribe(data => {
+        console.log('data: ' + data);
+        this.router.navigate([this.returnUrl]);
+      },
+        error => {
+            this.errMessage = 'erroroororor';
+        });
     this.router.navigate([this.returnUrl]);
     this.loading = false;
   }
 
   private createForm() {
     this.loginForm = this.formBuilder.group({
-      username: ['', Validators.compose([Validators.required, this.validationService.emailValidator])],
-      password: ['', Validators.compose([Validators.required, this.validationService.passwordValidator])]
+      username: ['', Validators.compose([Validators.required])],
+      password: ['', Validators.compose([Validators.required])]
     });
   }
 }

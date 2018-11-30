@@ -1,4 +1,4 @@
-<div class="container-scroller">
+<div class="page-login">
     <div class="container-fluid page-body-wrapper full-page-wrapper">
         <div class="content-wrapper auth p-0 theme-two">
             <div class="row d-flex align-items-stretch">
@@ -8,13 +8,17 @@
                 </div>
                 <div class="col-12 col-md-8 h-100 bg-white">
                     <div class="auto-form-wrapper d-flex align-items-center justify-content-center flex-column">
-                        <div class="nav-get-started">
+                        <!-- <div class="nav-get-started">
                             <p>Bạn chưa có tài khoản?</p>
                             <a routerLink="/register" class="btn get-started-btn">ĐĂNG KÝ</a>
-                        </div>
+                        </div> -->
                         <form class="loginForm" [formGroup]="loginForm" (ngSubmit)="onSubmit($event)">
                             <h3 class="mr-auto">Đăng nhập tài khoản</h3>
                             <p class="mb-5 mr-auto">Vui lòng nhập thông tin bên dưới.</p>
+                            <alert *ngIf="errMessage" type="danger">
+                               {{errMessage}}
+                            </alert>
+
                             <div class="form-group">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
@@ -24,8 +28,8 @@
                                         [ngClass]="{ 'is-invalid': submitted && loginForm.controls['password'].errors }" />
                                 </div>
                                 <app-control-message *ngIf="submitted" [control]="loginForm.controls['username']"></app-control-message>
-                            </div> 
-                            
+                            </div>
+
                             <div class="form-group">
                                 <div class="input-group">
                                     <div class="input-group-prepend">

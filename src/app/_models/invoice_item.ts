@@ -5,6 +5,7 @@ export class InvoiceItem {
   serial: string;
   invoice_date: string;
   customer: Customer;
+  paymentType: string;
   total_before_tax: number;
   total_tax: number;
   total: number;

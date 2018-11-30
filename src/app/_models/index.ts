@@ -5,4 +5,3 @@ export * from './select_item';
 export * from './customer';
 export * from './good';
 export * from './invoice_item';
-

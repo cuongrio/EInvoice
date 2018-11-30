@@ -1,3 +1,7 @@
+html {
+  overflow-y: scroll !important;
+}
+
 .jumbotron {
   padding: 0 !important;
   margin-bottom: 0px !important;
@@ -7,6 +11,16 @@
     margin-bottom: 0;
     padding-left: 0 !important;
   }
+}
+
+.tooltip.has-error .tooltip-arrow {
+  left: 10px !important;
+  border-bottom-color: #a94442;
+}
+
+.tooltip.has-error .tooltip-inner {
+  background: #a94442;
+  max-width: 100%;
 }
 
 .btn-light {
@@ -26,24 +40,28 @@
 }
 
 .tb-footer {
-  background: #f0f0f0;
+  background: #e9ecef;
 }
 
 .error.text-danger {
-  width: 100%;
-  background: antiquewhite;
-  padding: 7px;
+  color: #a94442;
 }
 
 .no-border-right {
   border-right: 0 !important;
 }
 
-.bs-datepicker-head button{
-  color: #333 !important;
-  .next span,
-  .previous span{
-    font-size: 24px !important;
+.theme-blue {
+  .bs-datepicker-head{
+    background: #439aff !important;
+  }
+  
+  .bs-datepicker-head button {
+    color: #fff !important;
+    .next span,
+    .previous span {
+      font-size: 24px !important;
+    }
   }
 }
 
@@ -339,13 +357,7 @@ legend.scheduler-border {
 }
 
 .bg-smoke {
-  background: #f0f0f0 !important;
-}
-
-.form-group{
-  .form-control{
-    border-radius: 0!important;
-  }
+  background: #e9ecef !important;
 }
 
 .template-ein {
@@ -528,13 +540,11 @@ legend.scheduler-border {
 }
 
 /***LOGIN FORM***/
-.loginForm {
-  .input-group-text,
-  .form-control {
-    border-radius: 0 !important;
+.page-login{
+  .content-wrapper{
+    max-width: unset !important;
   }
 }
-
 .no-border {
   border: 0 !important;
 }
@@ -545,7 +555,7 @@ legend.scheduler-border {
 
 .td-expand-line {
   padding: 4px !important;
-  background: #eee;
+  background: #e9ecef;
 }
 
 .modal-backdrop {
@@ -589,7 +599,7 @@ legend.scheduler-border {
   }
 }
 
-label.error{
+label.error {
   font-size: 12px !important;
 }
 
@@ -599,11 +609,8 @@ label.error{
   }
 }
 
-.ngx-dropdown-container{
-  .ngx-dropdown-list-container{
-    border-radius: 0!important;
-  }
-  .ngx-dropdown-button{
+.ngx-dropdown-container {
+  .ngx-dropdown-button {
     width: 100%;
     height: 32px;
     padding: 5px 10px 5px 10px;
@@ -622,7 +629,7 @@ label.error{
 
   .invoice__form {
     .form-group {
-      margin-bottom: 4px !important;
+      margin-bottom: 7px !important;
     }
 
     .invoice__body {

@@ -2,14 +2,57 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SharedModule } from '@app/shared';
+
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { PaginationModule } from 'ngx-bootstrap/pagination';
+import { PopoverModule } from 'ngx-bootstrap/popover';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { ModalModule } from 'ngx-bootstrap/modal';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { AlertModule } from 'ngx-bootstrap';
 
 import { ProductsRoutes } from './products.routing';
+import { DatePipe } from '@angular/common';
+import { APIService } from './../../_services';
+import { AppConfig } from './../../app.config';
+import { SelectDropDownModule } from 'ngx-select-dropdown';
+import { SelectModule } from 'ng2-select';
 
+import { HttpClientModule } from '@angular/common/http';
+import { NgProgressModule } from '@ngx-progressbar/core';
+import { NgxCurrencyModule } from 'ngx-currency';
+import { UtilsService } from '@app/_services/utils.service';
 import { ProductsComponent } from './products.component';
 import { ProductFormComponent } from './components/form.component';
 
 @NgModule({
-  imports: [CommonModule, RouterModule.forChild(ProductsRoutes), FormsModule, ReactiveFormsModule],
-  declarations: [ProductsComponent, ProductFormComponent]
+  imports: [
+
+    CommonModule,
+
+    RouterModule.forChild(ProductsRoutes),
+    FormsModule,
+    ReactiveFormsModule,
+    SelectDropDownModule,
+    SelectModule,
+    HttpClientModule,
+    AlertModule.forRoot(),
+    NgxCurrencyModule,
+    NgProgressModule.forRoot(),
+    NgbModule,
+    TooltipModule.forRoot(),
+    PaginationModule.forRoot(),
+    BsDatepickerModule.forRoot(),
+    PopoverModule.forRoot(),
+    ModalModule.forRoot(),
+
+    SharedModule
+  ],
+  declarations: [
+    ProductsComponent,
+    ProductFormComponent
+  ],
+  providers: [APIService, UtilsService, DatePipe, AppConfig]
 })
-export class ProductsModule {}
+export class ProductsModule { }

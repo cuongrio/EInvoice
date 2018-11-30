@@ -14,7 +14,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NgProgressModule } from '@ngx-progressbar/core';
 import { NgProgressHttpModule } from '@ngx-progressbar/http';
 import { NgProgressRouterModule } from '@ngx-progressbar/router';
-// import { SlimScroll } from 'angular-io-slimscroll';
+import { AlertModule } from 'ngx-bootstrap';
 import { SharedModule } from '@app/shared';
 
 // list page routes
@@ -27,8 +27,10 @@ import { Page404Component } from './page404/page404.component';
 import { Exception500Component } from './exception/exception-500.component';
 
 import { JwtInterceptor, ErrorInterceptor } from './_helpers';
-
+import { NumberDirective } from '@app/_directives/number_only.directive';
 import { ValidationService } from './_services/validator.service';
+import { AutofocusDirective } from './_directives/autofocus.directive';
+import { SlTruncatePipe } from './_directives/sl_truncate.directive';
 
 @NgModule({
   declarations: [
@@ -38,7 +40,10 @@ import { ValidationService } from './_services/validator.service';
     RegisterComponent,
     LogoutComponent,
     Page404Component,
-    Exception500Component
+    Exception500Component,
+    NumberDirective,
+    AutofocusDirective,
+    SlTruncatePipe,
   ],
   imports: [
     BrowserModule,
@@ -53,6 +58,7 @@ import { ValidationService } from './_services/validator.service';
     SharedModule,
     AppRoutingModule,
     TranslateModule.forRoot(),
+    AlertModule.forRoot(),
     NgProgressModule.forRoot(),
     NgProgressRouterModule.forRoot(),
     NgProgressHttpModule.forRoot()

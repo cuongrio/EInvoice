@@ -1,12 +1,14 @@
 import { Component, OnInit, OnDestroy, TemplateRef, ChangeDetectionStrategy, AfterViewInit } from '@angular/core';
-import { FormGroup, FormArray, Validators, FormBuilder, AbstractControl } from '@angular/forms';
+import { FormGroup, FormArray, Validators, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription, Observable, Subject } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { ProductItem, SelectItem, Customer, InvoiceItem } from '@app/_models';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import { APIService } from '@app/_services/api.service';
-import { Good } from './../../../_models/good';
+import { Good } from '@app//_models/good';
+import { AlertComponent } from '@app//shared/alert/alert.component';
+import { UtilsService } from '@app/_services/utils.service';
 
 declare var $: any;
 
@@ -96,7 +98,8 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
     private formBuilder: FormBuilder,
     private apiService: APIService,
     private activatedRoute: ActivatedRoute,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private utilsService: UtilsService
   ) { }
 
   ngOnInit() {
@@ -130,7 +133,6 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
     });
-
   }
 
   ngOnDestroy() {
@@ -143,6 +145,13 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onSubmit(dataForm: any) {
+    // validator
+    const listErr = this.errorFields(dataForm);
+    if (listErr && listErr.length > 0) {
+      this.utilsService.showValidatorAlert('Các thông tin còn thiếu', listErr);
+      return;
+    }
+
     const invoiceItem = new InvoiceItem();
 
     invoiceItem.form = dataForm.form;
@@ -158,6 +167,9 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
     invoiceItem.customer.address = dataForm.customer_address;
     invoiceItem.customer.phone = this.customerPicked.phone;
 
+    // paymentType
+    invoiceItem.paymentType = dataForm.paymentType;
+
     if (dataForm.items && dataForm.items.length > 0) {
       invoiceItem.items = dataForm.items.filter((elemnent: any, index: number, array: any) => {
         return elemnent.item_code !== null && elemnent.item_code !== '';
@@ -169,16 +181,19 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
     console.log('before: ' + JSON.stringify(invoiceItem));
 
-    return this.apiService.createInvoice(invoiceItem).subscribe(data => {
-      console.log('submiited: ' + JSON.stringify(data));
-    }, err => {
-      if (err.error) {
-        console.log(err);
-        alert(err.error.error + '!!! \n' + err.error.message);
-      } else {
-        alert('Đã xảy ra lỗi!!!\nVui lòng liên hệ với administrator.');
+    return this.apiService.createInvoice(invoiceItem).subscribe(
+      data => {
+        console.log('submiited: ' + JSON.stringify(data));
+      },
+      err => {
+        if (err.error) {
+          console.log(err);
+          alert(err.error.error + '!!! \n' + err.error.message);
+        } else {
+          alert('Đã xảy ra lỗi!!!\nVui lòng liên hệ với administrator.');
+        }
       }
-    });
+    );
   }
 
   public onCustomerTaxChange(dataArr: Customer[]) {
@@ -219,6 +234,15 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
     // } else {
     //   this.signedInvoiceAction(0);
     // }
+  }
+
+  public inCDClicked() {
+    const initialState = {
+      message: 'Open a modal with component',
+      title: 'Modal with component',
+      class: 'error'
+    };
+    this.modalRef = this.modalService.show(AlertComponent, { initialState });
   }
 
   public onGoodlineChange(dataArr: Good[], idx: number) {
@@ -621,5 +645,27 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
     if (totalPrice && totalVat) {
       this.finalTotalPrice[idx] = totalPrice + totalVat - totalCkVal;
     }
+  }
+
+  private errorFields(dataForm: any) {
+    const listErr = new Array<string>();
+    if (!dataForm.invoice_date) {
+      listErr.push('Ngày lập');
+    }
+    if (!dataForm.form) {
+      listErr.push('Mẫu số');
+    }
+    if (!dataForm.serial) {
+      listErr.push('Ký hiệu');
+    }
+
+    if (!this.customerPicked) {
+      listErr.push('Mã khách hàng | Mã số thuế');
+    }
+
+    if (!dataForm.paymentType) {
+      listErr.push('Hình thức thanh toán');
+    }
+    return listErr;
   }
 }

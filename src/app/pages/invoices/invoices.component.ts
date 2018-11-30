@@ -191,11 +191,6 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
     this.searchForm.controls['sortBy'].setValue(this.defaultSortBy, { onlySelf: true });
   }
 
-  private convertDateToString(myDate: any) {
-    const convertedDate = myDate.year + '-' + myDate.month + '-' + myDate.day;
-    return convertedDate;
-  }
-
   private initDataTable() {
     const $data_table = $('#invoiceTable');
     const table = $data_table.DataTable({
@@ -464,10 +459,10 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
     }
 
     if (form.fromDate) {
-      invoiceParamsForamat.fromDate = this.convertDateToString(form.fromDate);
+      invoiceParamsForamat.fromDate = form.fromDate;
     }
     if (form.toDate) {
-      invoiceParamsForamat.toDate = this.convertDateToString(form.toDate);
+      invoiceParamsForamat.toDate = form.toDate;
     }
     if (form.invoiceNo) {
       invoiceParamsForamat.invoiceNo = form.invoiceNo;

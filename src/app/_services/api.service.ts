@@ -10,7 +10,15 @@ export class APIService {
   API_URL = 'http://178.128.123.223:8080';
   PLUGIN_URL = 'https://ahoadonplugin.com:15668';
 
-  constructor(private httpClient: HttpClient) {}
+  constructor(private httpClient: HttpClient) { }
+
+  /** LOGIN */
+  login(username: string, password: string) {
+    return this.httpClient.post(`${this.API_URL}/1/invoices/preview`, {
+      username: username,
+      password: password
+    });
+  }
 
   /** PDF */
   preview(invoiceItem: InvoiceItem) {
@@ -146,8 +154,7 @@ export class APIService {
     // }
 
     // return of(goods);
-    return this.httpClient
-      .get(`${this.API_URL}/1/goods`);
+    return this.httpClient.get(`${this.API_URL}/1/goods`);
   }
 
   getCustomers(): Observable<any> {
