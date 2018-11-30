@@ -45,12 +45,12 @@
                 </button>
               </div>
               <div class="modal-body mh-150">
-                <select class="ein-select form-control">
+                <select class="ein-select form-control form-control-sm">
                   <option [value]="op.code" *ngFor="let op of listTokenDummy">{{ op.value }}</option>
                 </select>
               </div>
             </ng-template>
-            <button type="button" class="btn btn-md btn-outline-primary"><i class="fas fa-print"></i> In CĐ</button>
+            <button (click)="inCDClicked()" type="button" class="btn btn-md btn-outline-primary"><i class="fas fa-print"></i> In CĐ</button>
             <button routerLink="/invoices" type="button" class="btn btn-md btn-light">
               <i class="fas fa-share-square"></i> Thoát
             </button>
@@ -72,7 +72,7 @@
                         </div>
                         <div class="col-md-8 col-lg-8">
                           <div class="input-group">
-                            <input appAutofocus formControlName="invoice_date" class="form-control text-bold"
+                            <input appAutofocus formControlName="invoice_date" class="form-control form-control-sm text-bold"
                               placeholder="DD/MM/YYYY" triggers="dblclick:click" [bsConfig]="bsConfig" #dinvoiceDate="bsDatepicker"
                               bsDatepicker />
                             <div class="input-group-append">
@@ -90,7 +90,7 @@
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label"><label>Số hóa đơn</label></div>
                         <div class="col-md-8 col-lg-8">
-                          <input readonly="readonly" type="text" class="form-control" />
+                          <input readonly="readonly" type="text" class="form-control form-control-sm" />
                         </div>
                       </div>
                     </div>
@@ -100,7 +100,7 @@
                         <div class="col-md-4 col-lg-4 col-form-label"><label class="required">Mẫu số</label></div>
                         <div class="col-md-8 col-lg-8">
                           <select id="formSelectId" name="form" formControlName="form" (ngModelChange)="onFormChange($event)" 
-                            class="ein-select form-control">
+                            class="ein-select form-control form-control-sm">
                             <option [value]="op.code" *ngFor="let op of comboForm">{{ op.value }}</option>
                           </select>
                           <label class="error mt-2 text-danger" for="form">This field is required.</label>
@@ -115,7 +115,7 @@
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label"><label>Ký hiệu</label></div>
                         <div class="col-md-8 col-lg-8">
-                          <select [(ngModel)]="serialPicked" formControlName="serial" class="ein-select form-control">
+                          <select [(ngModel)]="serialPicked" formControlName="serial" class="ein-select form-control form-control-sm">
                             <option [value]="op.code" *ngFor="let op of comboSerial">{{ op.value }}</option>
                           </select>
                         </div>
@@ -147,7 +147,7 @@
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label"><label>Email</label></div>
                         <div class="col-md-8 col-lg-8">
-                          <input formControlName="customer_email" type="text" placeholder="Email" class="form-control" />
+                          <input formControlName="customer_email" type="text" placeholder="Email" class="form-control form-control-sm" />
                         </div>
                       </div>
                     </div>
@@ -156,7 +156,7 @@
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label"><label>Mã ĐH</label></div>
                         <div class="col-md-8 col-lg-8">
-                          <input type="text" placeholder="Mã đơn hàng" class="form-control" />
+                          <input type="text" placeholder="Mã đơn hàng" class="form-control form-control-sm" />
                         </div>
                       </div>
                     </div>
@@ -165,7 +165,7 @@
                       <div class="form-group row">
                         <div class="col-md-2 col-lg-2 col-form-label"><label>Tên đơn vị</label></div>
                         <div class="col-md-10 col-lg-10">
-                          <input formControlName="customer_org" placeholder="(Tên đơn vị)" class="form-control " name="customer_org"
+                          <input formControlName="customer_org" placeholder="(Tên đơn vị)" class="form-control form-control-sm " name="customer_org"
                             type="text" />
                         </div>
                       </div>
@@ -174,7 +174,7 @@
                       <div class="form-group row">
                         <div class="col-md-2 col-lg-2 col-form-label"><label>Người mua</label></div>
                         <div class="col-md-10 col-lg-10">
-                          <input type="text" placeholder="(Họ tên người mua hàng)" class="form-control" />
+                          <input type="text" placeholder="(Họ tên người mua hàng)" class="form-control form-control-sm" />
                         </div>
                       </div>
                     </div>
@@ -183,7 +183,7 @@
                       <div class="form-group row">
                         <div class="col-md-1 col-lg-1 col-form-label"><label>Địa chỉ</label></div>
                         <div class="col-md-11 col-lg-11">
-                          <input formControlName="customer_address" type="text" placeholder="Địa chỉ" class="form-control" />
+                          <input formControlName="customer_address" type="text" placeholder="Địa chỉ" class="form-control form-control-sm" />
                         </div>
                       </div>
                     </div>
@@ -203,7 +203,7 @@
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label"><label>Số TK</label></div>
                         <div class="col-md-8 col-lg-8">
-                          <input formControlName="customer_bank_account" type="text" placeholder="Số tài khoản" class="form-control" />
+                          <input formControlName="customer_bank_account" type="text" placeholder="Số tài khoản" class="form-control form-control-sm" />
                         </div>
                       </div>
                     </div>
@@ -211,7 +211,7 @@
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label"><label>Ngân hàng</label></div>
                         <div class="col-md-8 col-lg-8">
-                          <input formControlName="customer_bank" type="text" placeholder="Ngân hàng" class="form-control" />
+                          <input formControlName="customer_bank" type="text" placeholder="Ngân hàng" class="form-control form-control-sm" />
                         </div>
                       </div>
                     </div>
@@ -220,7 +220,7 @@
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label"><label>Trạng thái</label></div>
                         <div class="col-md-8 col-lg-8">
-                          <input type="text" readonly="readonly" class="form-control" />
+                          <input type="text" readonly="readonly" class="form-control form-control-sm" />
                         </div>
                       </div>
                     </div>
@@ -261,23 +261,23 @@
                           <td class="no-padding">
                             <input formControlName="item_name" triggers="dblclick" [popover]="popContent" popoverTitle="Hiển thị thêm"
                               [(ngModel)]="item['item_name']" [outsideClick]="true" [placement]="bottom"
-                              formControlName="item_name" class="form-control" name="item_item_name" type="text" />
+                              formControlName="item_name" class="form-control form-control-sm" name="item_item_name" type="text" />
                             <ng-template #popContent>
-                              <textarea formControlName="item_name" [(ngModel)]="item['item_name']" class="form-control"
+                              <textarea formControlName="item_name" [(ngModel)]="item['item_name']" class="form-control form-control-sm"
                                 rows="5" name="item_item_name_expand" type="text"></textarea>
                             </ng-template>
                           </td>
                           <td class="no-padding">
-                            <input formControlName="unit" class="form-control" name="item_unit" type="text" />
+                            <input formControlName="unit" class="form-control form-control-sm" name="item_unit" type="text" />
                           </td>
                           <td class="no-padding">
                             <input formControlName="quantity" numbersOnly type="number" (input)="quantityValueChange($event.target.value, idx)"
-                              class="form-control text-right" name="item_quantity" type="text" />
+                              class="form-control form-control-sm text-right" name="item_quantity" type="text" />
                           </td>
 
                           <td class="no-padding">
                             <input formControlName="price" numbersOnly currencyMask [options]="{ prefix: 'đ', allowNegative: false, precision: 0  }"
-                              type="number" (input)="priceValueChange($event.target.value, idx)" class="form-control text-right"
+                              type="number" (input)="priceValueChange($event.target.value, idx)" class="form-control form-control-sm text-right"
                               name="item_price" type="text" />
                           </td>
 
@@ -287,16 +287,16 @@
 
                           <td [(hidden)]="hiddenExColumn" class="no-padding">
                             <input formControlName="ck" type="number" numbersOnly (input)="ckValueChange($event.target.value, idx)"
-                              class="form-control text-right" type="text" />
+                              class="form-control form-control-sm text-right" type="text" />
                           </td>
                           <td [(hidden)]="hiddenExColumn" class="no-padding">
                             <input formControlName="total_ck" currencyMask [options]="{ prefix: 'đ', allowNegative: false, precision: 0  }"
-                              numbersOnly type="number" (input)="totalCkValueChange($event.target.value, idx)" class="form-control text-right"
+                              numbersOnly type="number" (input)="totalCkValueChange($event.target.value, idx)" class="form-control form-control-sm text-right"
                               type="text" />
                           </td>
                           <td class="no-padding vat-line">
                             <input formControlName="tax_rate" numbersOnly type="number" (input)="taxRateValueChange($event.target.value, idx)"
-                              class="form-control text-right text-bold" list="vatOptions">
+                              class="form-control form-control-sm text-right text-bold" list="vatOptions">
                           </td>
                           <td class="no-padding text-right">
                             <label class="mt-2 mr-2">{{totalVat[idx] |
