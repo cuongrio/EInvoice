@@ -20,7 +20,7 @@ export class UtilsService {
             title: title,
             class: 'success'
         };
-        this.modalRef = this.modalService.show(AlertComponent, { initialState });
+        this.modalRef = this.modalService.show(AlertComponent, {class: 'modal-sm', initialState });
     }
 
     public showErrorAlert(title: string, message: string) {
@@ -29,7 +29,7 @@ export class UtilsService {
             title: title,
             class: 'error'
         };
-        this.modalRef = this.modalService.show(AlertComponent, { initialState });
+        this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
     }
 
     public showValidatorAlert(title: string, list: Array<string>) {
@@ -38,7 +38,7 @@ export class UtilsService {
             title: title,
             class: 'error'
         };
-        this.modalRef = this.modalService.show(AlertComponent, { initialState });
+        this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
     }
 
 }

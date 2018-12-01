@@ -51,6 +51,9 @@ import { CustomersRoutes } from './customers.routing';
 
     SharedModule
   ],
+  entryComponents: [
+    CustomerFormComponent
+  ],
   declarations: [ 
     CustomersComponent,
     CustomerFormComponent

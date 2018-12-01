@@ -3,12 +3,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { APIService } from './../../_services/api.service';
 import { InvoiceParams } from './../../_models';
-import { DatePipe } from '@angular/common';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
+import { ProductFormComponent } from './components/form.component';
 import * as moment from 'moment';
 
 declare var $: any;
-
-type ArrayObject = Array<{ code: string; value: string }>;
 
 @Component({
   selector: 'app-products',
@@ -17,6 +17,7 @@ type ArrayObject = Array<{ code: string; value: string }>;
 export class ProductsComponent implements OnInit, AfterViewInit {
 
   public bsConfig = { dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-blue' };
+  public modalRef: BsModalRef;
 
   // expand search
   public expandSearch: boolean;
@@ -34,14 +35,15 @@ export class ProductsComponent implements OnInit, AfterViewInit {
     private router: Router,
     private activeRouter: ActivatedRoute,
     private apiService: APIService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private modalService: BsModalService
   ) { }
 
   ngOnInit() {
     this.initDefault();
-    this.initDataTable();
+    // this.initDataTable();
     this.initForm();
-    this.initPageHandlerInRouter();
+    // this.initPageHandlerInRouter();
   }
 
   ngAfterViewInit() {
@@ -68,38 +70,31 @@ export class ProductsComponent implements OnInit, AfterViewInit {
   }
 
   public onSubmit(form: any) {
-    this.page = 1;
-    const invoiceParams: InvoiceParams = this.formatForm(form);
-    invoiceParams.page = JSON.stringify(this.page);
-    localStorage.setItem('userquery', JSON.stringify(invoiceParams));
-    this.router.navigate([], { replaceUrl: true, queryParams: invoiceParams });
-    this.callServiceAndBindTable(invoiceParams);
+
+  }
+
+  public addNewClicked() {
+    this.modalRef = this.modalService.show(ProductFormComponent, { class: 'modal-lg' });
+  }
+
+  public editClicked() {
+
+  }
+
+  public deleteClicked() {
+
+  }
+
+  public copyClicked() {
+
   }
 
   public onPageChange(page: number) {
-    console.log(this.previousPage + '---' + page);
-    if (this.previousPage !== page) {
-      this.previousPage = page;
-      const userquery = localStorage.getItem('userquery');
-      let invoiceParams: InvoiceParams;
-      if (userquery) {
-        invoiceParams = JSON.parse(userquery);
-      } else {
-        invoiceParams = {};
-      }
 
-      invoiceParams.page = JSON.stringify(this.page);
-      console.log('invoiceParams: ' + JSON.stringify(invoiceParams));
-
-      // call service
-      this.router.navigate([], { replaceUrl: true, queryParams: invoiceParams });
-      this.callServiceAndBindTable(invoiceParams);
-    }
   }
 
   public deleteRow() {
-    const itemsChecked = this.getCheckboxesValue();
-    console.log('item: ' + itemsChecked);
+
   }
 
   public editRow() { }

@@ -5,6 +5,9 @@ import { APIService } from './../../_services/api.service';
 import { InvoiceParams } from './../../_models';
 import { DatePipe } from '@angular/common';
 import * as moment from 'moment';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
+import { CustomerFormComponent } from './components/form.component';
 
 declare var $: any;
 
@@ -17,7 +20,8 @@ type ArrayObject = Array<{ code: string; value: string }>;
 export class CustomersComponent implements OnInit, AfterViewInit {
 
   public bsConfig = { dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-blue' };
-
+  public modalRef: BsModalRef;
+  
   // expand search
   public expandSearch: boolean;
   public searchForm: FormGroup;
@@ -34,14 +38,15 @@ export class CustomersComponent implements OnInit, AfterViewInit {
     private router: Router,
     private activeRouter: ActivatedRoute,
     private apiService: APIService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private modalService: BsModalService
   ) { }
 
   ngOnInit() {
     this.initDefault();
-    this.initDataTable();
+   // this.initDataTable();
     this.initForm();
-    this.initPageHandlerInRouter();
+   // this.initPageHandlerInRouter();
   }
 
   ngAfterViewInit() {
@@ -68,38 +73,31 @@ export class CustomersComponent implements OnInit, AfterViewInit {
   }
 
   public onSubmit(form: any) {
-    this.page = 1;
-    const invoiceParams: InvoiceParams = this.formatForm(form);
-    invoiceParams.page = JSON.stringify(this.page);
-    localStorage.setItem('userquery', JSON.stringify(invoiceParams));
-    this.router.navigate([], { replaceUrl: true, queryParams: invoiceParams });
-    this.callServiceAndBindTable(invoiceParams);
+    
+  }
+
+  public addNewClicked(){
+    this.modalRef = this.modalService.show(CustomerFormComponent, {class: 'modal-lg'});
+  }
+
+  public editClicked(){
+    
+  }
+
+  public deleteClicked(){
+    
+  }
+
+  public copyClicked(){
+    
   }
 
   public onPageChange(page: number) {
-    console.log(this.previousPage + '---' + page);
-    if (this.previousPage !== page) {
-      this.previousPage = page;
-      const userquery = localStorage.getItem('userquery');
-      let invoiceParams: InvoiceParams;
-      if (userquery) {
-        invoiceParams = JSON.parse(userquery);
-      } else {
-        invoiceParams = {};
-      }
-
-      invoiceParams.page = JSON.stringify(this.page);
-      console.log('invoiceParams: ' + JSON.stringify(invoiceParams));
-
-      // call service
-      this.router.navigate([], { replaceUrl: true, queryParams: invoiceParams });
-      this.callServiceAndBindTable(invoiceParams);
-    }
+    
   }
 
   public deleteRow() {
-    const itemsChecked = this.getCheckboxesValue();
-    console.log('item: ' + itemsChecked);
+    
   }
 
   public editRow() { }
@@ -114,19 +112,7 @@ export class CustomersComponent implements OnInit, AfterViewInit {
   }
 
   private initPageHandlerInRouter() {
-    if (this.activeRouter.snapshot.queryParams) {
-      const routerParams = JSON.parse(JSON.stringify(this.activeRouter.snapshot.queryParams));
-      if (routerParams['page']) {
-        this.page = +routerParams['page'];
-        this.previousPage = +routerParams['page'];
-      }
-
-      // set default value form
-      (<FormGroup>this.searchForm).patchValue(routerParams, { onlySelf: true });
-    }
-    const invoiceParams: InvoiceParams = { page: JSON.stringify(this.page) };
-    // call service
-    this.callServiceAndBindTable(invoiceParams);
+    
   }
 
   private initDefault() {
@@ -143,33 +129,15 @@ export class CustomersComponent implements OnInit, AfterViewInit {
   }
 
   private callServiceAndBindTable(params: InvoiceParams) {
-    this.apiService.queryInvoices(params).subscribe(response => {
-      if (response && response.contents.length > 0) {
-        this.totalElements = response.total_elements;
-        this.totalPages = response.total_pages;
-        this.totalItems = response.total_pages * this.itemsPerPage;
-
-        $('#customerTable')
-          .dataTable()
-          .fnClearTable();
-        $('#customerTable')
-          .dataTable()
-          .fnAddData(response.contents);
-      }
-    });
+    
   }
 
   private initForm() {
     this.searchForm = this.formBuilder.group({
-      sort: '',
-      sortBy: '',
-      size: '',
-      fromDate: '',
-      toDate: '',
-      invoiceNo: '',
-      form: '',
-      serial: '',
-      orgTaxCode: ''
+      code: '',
+      name: '',
+      phone: '',
+      taxCode: ''
     });
   }
 
@@ -426,32 +394,5 @@ export class CustomersComponent implements OnInit, AfterViewInit {
         });
       }
     });
-  }
-
-  private formatForm(form: any) {
-    const invoiceParamsForamat: InvoiceParams = {};
-    if (form.sort) {
-      invoiceParamsForamat.sort = form.sort;
-    }
-    if (form.sortBy) {
-      invoiceParamsForamat.sortBy = form.sortBy;
-    }
-    if (form.size) {
-      invoiceParamsForamat.size = form.size;
-    }
-
-    if (form.invoiceNo) {
-      invoiceParamsForamat.invoiceNo = form.invoiceNo;
-    }
-    if (form.form) {
-      invoiceParamsForamat.form = form.form;
-    }
-    if (form.serial) {
-      invoiceParamsForamat.serial = form.serial;
-    }
-    if (form.orgTaxCode) {
-      invoiceParamsForamat.orgTaxCode = form.orgTaxCode;
-    }
-    return invoiceParamsForamat;
   }
 }

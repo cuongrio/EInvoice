@@ -61,7 +61,7 @@
                             <div class="form-group row">
                               <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Mã số thuế</label></div>
                               <div class="col-md-8 col-lg-8">
-                                <input formControlName="size" type="text" class="form-control form-control-sm" />
+                                <input formControlName="taxCode" type="text" class="form-control form-control-sm" />
                               </div>
                             </div>
                           </div>
@@ -75,24 +75,24 @@
 
               <div class="col-12">
                 <div class="template-ein navbar-action">
-                    <button [hidden]="!expandSearch" type="button" form="ngForm" class="btn btn-md btn-info" (click)="ngSearchForm.ngSubmit.emit()">
-                        <i class="icon-magnifier"></i> Tìm kiếm
-                      </button>
-                      <button type="button" form="ngForm" class="btn btn-md btn-success" (click)="ngSearchForm.ngSubmit.emit()">
-                        <i class="fas fa-plus"></i> Thêm mới
-                      </button>
-    
-                      <button type="button" form="ngForm" class="btn btn-md btn-outline-primary" (click)="ngSearchForm.ngSubmit.emit()">
-                        <i class="fas fa-edit"></i> Sửa
-                      </button>
-    
-                      <button type="button" form="ngForm" class="btn btn-md btn-outline-danger" (click)="ngSearchForm.ngSubmit.emit()">
-                        <i class="fas fa-trash"></i> Xóa
-                      </button>
-    
-                      <button type="button" form="ngForm" class="btn btn-md btn-outline-primary" (click)="ngSearchForm.ngSubmit.emit()">
-                          <i class="fas fa-copy"></i> Sao chép
-                      </button> 
+                  <button [hidden]="!expandSearch" type="button" form="ngForm" class="btn btn-md btn-info" (click)="ngSearchForm.ngSubmit.emit()">
+                    <i class="icon-magnifier"></i> Tìm kiếm
+                  </button>
+                  <button type="button" form="ngForm" class="btn btn-md btn-success" (click)="addNewClicked()">
+                    <i class="fas fa-plus"></i> Thêm mới
+                  </button>
+
+                  <button type="button" form="ngForm" class="btn btn-md btn-outline-primary" (click)="editClicked()">
+                    <i class="fas fa-edit"></i> Sửa
+                  </button>
+
+                  <button type="button" form="ngForm" class="btn btn-md btn-outline-danger" (click)="deleteClicked()">
+                    <i class="fas fa-trash"></i> Xóa
+                  </button>
+
+                  <button type="button" form="ngForm" class="btn btn-md btn-outline-primary" (click)="copyClicked()">
+                    <i class="fas fa-copy"></i> Sao chép
+                  </button>
                 </div>
               </div>
             </div>

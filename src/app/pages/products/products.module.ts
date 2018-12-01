@@ -49,6 +49,9 @@ import { ProductFormComponent } from './components/form.component';
 
     SharedModule
   ],
+  entryComponents: [
+    ProductFormComponent
+  ],
   declarations: [
     ProductsComponent,
     ProductFormComponent

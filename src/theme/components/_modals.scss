@@ -21,13 +21,22 @@ body.modal-open{
     display: flex !important;
     justify-content: center !important;
     align-items: center !important; 
+    min-width: 350px !important;
+
+    &.modal-lg{
+      width: 800px !important;
+      min-width: 600px !important;
+
+      .modal-body{
+        padding: 25px 38px;
+      }
+    }
 
     .modal-content {
       border: 0px !important;
       border-radius: 0px !important;
       background: #fff;
       box-shadow: 0 3px 13px rgba(0,0,0,.5);
-      width: 425px;
       
       .modal-header { 
         display: -webkit-box;
