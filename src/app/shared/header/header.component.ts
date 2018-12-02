@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { AuthenticationService } from './../../_services';
 import { Router } from '@angular/router';
+import { AuthenticationService } from '@app/_services/authenticate/authentication.service';
+import { UserModel } from '@app/_models';
 
 declare var $: any;
 
@@ -25,17 +26,19 @@ export const ROUTES: RouteInfo[] = [
 })
 export class HeaderComponent implements OnInit, AfterViewInit {
   menuItems: any[];
+  userLogged: UserModel;
 
-  constructor(private router: Router, private authenticationService: AuthenticationService) {}
+  constructor(private router: Router, private authenticationService: AuthenticationService) { }
 
   ngOnInit() {
     this.menuItems = ROUTES.filter(menuItem => menuItem);
+    this.userLogged = this.authenticationService.currentUserValue;
   }
 
   ngAfterViewInit() {
-    $(window).scroll(function() {
+    $(window).scroll(function () {
       if (window.matchMedia('(min-width: 992px)').matches) {
-        var header = '.navbar.horizontal-layout';
+        const header = '.navbar.horizontal-layout';
         if ($(window).scrollTop() >= 70) {
           $(header).addClass('fixed-on-scroll');
         } else {

@@ -14,17 +14,17 @@ import { AlertModule } from 'ngx-bootstrap';
 
 import { ProductsRoutes } from './products.routing';
 import { DatePipe } from '@angular/common';
-import { APIService } from './../../_services';
-import { AppConfig } from './../../app.config';
+import { AppConfig } from '@app/app.config';
 import { SelectDropDownModule } from 'ngx-select-dropdown';
 import { SelectModule } from 'ng2-select';
 
 import { HttpClientModule } from '@angular/common/http';
 import { NgProgressModule } from '@ngx-progressbar/core';
 import { NgxCurrencyModule } from 'ngx-currency';
-import { UtilsService } from '@app/_services/utils.service';
+import { UtilsService } from '@app/_services/utils/utils.service';
 import { ProductsComponent } from './products.component';
 import { ProductFormComponent } from './components/form.component';
+import { ValidationService, GoodService } from '@app/_services';
 
 @NgModule({
   imports: [
@@ -56,6 +56,12 @@ import { ProductFormComponent } from './components/form.component';
     ProductsComponent,
     ProductFormComponent
   ],
-  providers: [APIService, UtilsService, DatePipe, AppConfig]
+  providers: [
+    GoodService,
+    UtilsService,
+    DatePipe,
+    AppConfig,
+    ValidationService
+  ]
 })
 export class ProductsModule { }

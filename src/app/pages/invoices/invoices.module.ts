@@ -16,19 +16,21 @@ import { InvoicesRoutes } from './invoices.routing';
 import { DatePipe } from '@angular/common';
 import { InvoicesComponent } from './invoices.component';
 import { InvoiceFormComponent } from './components/form.component';
-import { APIService } from './../../_services';
+import { InvoiceService, ValidationService, GoodService, CustomerService } from './../../_services';
 import { AppConfig } from './../../app.config';
-import { InvoiceDetailComponent } from './components/detail.component'; 
+import { InvoiceDetailComponent } from './components/detail.component';
 import { SelectDropDownModule } from 'ngx-select-dropdown';
 import { SelectModule } from 'ng2-select';
 
-import { HttpClientModule } from '@angular/common/http';
-import { NgProgressModule } from '@ngx-progressbar/core'; 
+import { NgProgressModule } from '@ngx-progressbar/core';
 import { NgxCurrencyModule } from 'ngx-currency';
-import { UtilsService } from '@app/_services/utils.service';
+import { UtilsService } from '@app/_services/utils/utils.service';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { JwtInterceptor, ErrorInterceptor } from '@app/_helpers';
 
 @NgModule({
   imports: [
+
     CommonModule,
 
     RouterModule.forChild(InvoicesRoutes),
@@ -54,6 +56,16 @@ import { UtilsService } from '@app/_services/utils.service';
     InvoiceDetailComponent,
     InvoiceFormComponent
   ],
-  providers: [APIService, UtilsService, DatePipe, AppConfig]
+  providers: [
+    ValidationService,
+    InvoiceService,
+    GoodService,
+    CustomerService,
+    UtilsService,
+    DatePipe,
+    AppConfig,
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
+  ]
 })
 export class InvoicesModule { }

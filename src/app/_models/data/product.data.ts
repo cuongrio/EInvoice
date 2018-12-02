@@ -1,4 +1,4 @@
-﻿export class ProductItem {
+﻿export class ProductData {
   item_line: number;
   item_code?: string;
   item_name: string;

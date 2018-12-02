@@ -12,7 +12,7 @@
                             <p>Bạn chưa có tài khoản?</p>
                             <a routerLink="/register" class="btn get-started-btn">ĐĂNG KÝ</a>
                         </div> -->
-                        <form class="loginForm" [formGroup]="loginForm" (ngSubmit)="onSubmit($event)">
+                        <form class="loginForm" [formGroup]="loginForm" (ngSubmit)="onSubmit(loginForm.value)">
                             <h3 class="mr-auto">Đăng nhập tài khoản</h3>
                             <p class="mb-5 mr-auto">Vui lòng nhập thông tin bên dưới.</p>
                             <alert *ngIf="errMessage" type="danger">

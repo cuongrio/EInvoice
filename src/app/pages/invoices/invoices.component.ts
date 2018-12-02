@@ -1,10 +1,10 @@
 import { Component, OnInit, HostListener, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { APIService } from './../../_services/api.service';
-import { InvoiceParams } from './../../_models';
 import { DatePipe } from '@angular/common';
 import * as moment from 'moment';
+import { InvoiceService } from '@app/_services';
+import { InvoiceParam, InvoiceListData } from '@app/_models';
 
 declare var $: any;
 
@@ -47,7 +47,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
     private datePipe: DatePipe,
     private router: Router,
     private activeRouter: ActivatedRoute,
-    private apiService: APIService,
+    private invoiceService: InvoiceService,
     private formBuilder: FormBuilder
   ) { }
 
@@ -63,15 +63,15 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
     this.initSelectBox();
   }
 
-  @HostListener('document:keypress', ['$event'])
-  handleKeyboardEvent(event: KeyboardEvent) {
-    if (event.key === 'f') {
-      this.expandSearchClicked();
-    }
-    if (event.key === 'Enter' && this.expandSearch === true) {
-      this.onSubmit(this.searchForm.value);
-    }
-  }
+  // @HostListener('document:keypress', ['$event'])
+  // handleKeyboardEvent(event: KeyboardEvent) {
+  //   if (event.key === 'f') {
+  //     this.expandSearchClicked();
+  //   }
+  //   if (event.key === 'Enter' && this.expandSearch === true) {
+  //     this.onSubmit(this.searchForm.value);
+  //   }
+  // }
 
   public expandSearchClicked() {
     if (this.expandSearch) {
@@ -84,11 +84,11 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
 
   public onSubmit(form: any) {
     this.page = 1;
-    const invoiceParams: InvoiceParams = this.formatForm(form);
-    invoiceParams.page = JSON.stringify(this.page);
-    localStorage.setItem('userquery', JSON.stringify(invoiceParams));
-    this.router.navigate([], { replaceUrl: true, queryParams: invoiceParams });
-    this.callServiceAndBindTable(invoiceParams);
+    const invoiceParam: InvoiceParam = this.formatForm(form);
+    invoiceParam.page = JSON.stringify(this.page);
+    localStorage.setItem('userquery', JSON.stringify(invoiceParam));
+    this.router.navigate([], { replaceUrl: true, queryParams: invoiceParam });
+    this.callServiceAndBindTable(invoiceParam);
   }
 
   public onPageChange(page: number) {
@@ -96,19 +96,19 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
     if (this.previousPage !== page) {
       this.previousPage = page;
       const userquery = localStorage.getItem('userquery');
-      let invoiceParams: InvoiceParams;
+      let invoiceParam: InvoiceParam;
       if (userquery) {
-        invoiceParams = JSON.parse(userquery);
+        invoiceParam = JSON.parse(userquery);
       } else {
-        invoiceParams = {};
+        invoiceParam = {};
       }
 
-      invoiceParams.page = JSON.stringify(this.page);
-      console.log('invoiceParams: ' + JSON.stringify(invoiceParams));
+      invoiceParam.page = JSON.stringify(this.page);
+      console.log('invoiceParams: ' + JSON.stringify(invoiceParam));
 
       // call service
-      this.router.navigate([], { replaceUrl: true, queryParams: invoiceParams });
-      this.callServiceAndBindTable(invoiceParams);
+      this.router.navigate([], { replaceUrl: true, queryParams: invoiceParam });
+      this.callServiceAndBindTable(invoiceParam);
     }
   }
 
@@ -139,9 +139,9 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
       // set default value form
       (<FormGroup>this.searchForm).patchValue(routerParams, { onlySelf: true });
     }
-    const invoiceParams: InvoiceParams = { page: JSON.stringify(this.page) };
+    const invoiceParam: InvoiceParam = { page: JSON.stringify(this.page) };
     // call service
-    this.callServiceAndBindTable(invoiceParams);
+    this.callServiceAndBindTable(invoiceParam);
   }
 
   private initDefault() {
@@ -157,19 +157,22 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
     $('select').select2({ minimumResultsForSearch: Infinity });
   }
 
-  private callServiceAndBindTable(params: InvoiceParams) {
-    this.apiService.queryInvoices(params).subscribe(response => {
-      if (response && response.contents.length > 0) {
-        this.totalElements = response.total_elements;
-        this.totalPages = response.total_pages;
-        this.totalItems = response.total_pages * this.itemsPerPage;
+  private callServiceAndBindTable(params: InvoiceParam) {
+    this.invoiceService.queryInvoices(params).subscribe(data => {
+      if (data) {
+        const invoiceList = data as InvoiceListData;
+        if (invoiceList.contents.length > 0) {
+          this.totalElements = invoiceList.total_elements;
+          this.totalPages = invoiceList.total_pages;
+          this.totalItems = invoiceList.total_pages * this.itemsPerPage;
 
-        $('#invoiceTable')
-          .dataTable()
-          .fnClearTable();
-        $('#invoiceTable')
-          .dataTable()
-          .fnAddData(response.contents);
+          $('#invoiceTable')
+            .dataTable()
+            .fnClearTable();
+          $('#invoiceTable')
+            .dataTable()
+            .fnAddData(invoiceList.contents);
+        }
       }
     });
   }
@@ -447,7 +450,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
   }
 
   private formatForm(form: any) {
-    const invoiceParamsForamat: InvoiceParams = {};
+    const invoiceParamsForamat: InvoiceParam = {};
     if (form.sort) {
       invoiceParamsForamat.sort = form.sort;
     }

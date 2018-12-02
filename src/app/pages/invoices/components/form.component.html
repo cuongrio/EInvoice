@@ -50,7 +50,8 @@
                 </select>
               </div>
             </ng-template>
-            <button (click)="inCDClicked()" type="button" class="btn btn-md btn-outline-primary"><i class="fas fa-print"></i> In CĐ</button>
+            <button (click)="inCDClicked()" type="button" class="btn btn-md btn-outline-primary"><i class="fas fa-print"></i>
+              In CĐ</button>
             <button routerLink="/invoices" type="button" class="btn btn-md btn-light">
               <i class="fas fa-share-square"></i> Thoát
             </button>
@@ -72,7 +73,8 @@
                         </div>
                         <div class="col-md-8 col-lg-8">
                           <div class="input-group">
-                            <input appAutofocus formControlName="invoice_date" class="form-control form-control-sm text-bold"
+                            <input appAutofocus formControlName="invoiceDate" class="form-control form-control-sm text-bold"
+                              [ngClass]="{ 'is-invalid': submitted && addForm.controls['invoiceDate'].errors }"
                               placeholder="DD/MM/YYYY" triggers="dblclick:click" [bsConfig]="bsConfig" #dinvoiceDate="bsDatepicker"
                               bsDatepicker />
                             <div class="input-group-append">
@@ -82,6 +84,7 @@
                               </button>
                             </div>
                           </div>
+                          <app-control-message *ngIf="submitted" [control]="addForm.controls['invoiceDate']"></app-control-message>
                         </div>
                       </div>
                     </div>
@@ -90,7 +93,7 @@
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label"><label>Số hóa đơn</label></div>
                         <div class="col-md-8 col-lg-8">
-                          <input readonly="readonly" type="text" class="form-control form-control-sm" />
+                          <input formControlName="invoiceNo" readonly="readonly" type="text" class="form-control form-control-sm" />
                         </div>
                       </div>
                     </div>
@@ -99,13 +102,14 @@
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label"><label class="required">Mẫu số</label></div>
                         <div class="col-md-8 col-lg-8">
-                          <select id="formSelectId" name="form" formControlName="form" (ngModelChange)="onFormChange($event)" 
-                            class="ein-select form-control form-control-sm">
+                          <select id="formSelectId" name="form" formControlName="form" (ngModelChange)="onFormChange($event)"
+                            class="ein-select form-control form-control-sm" [ngClass]="{ 'is-invalid': submitted && addForm.controls['form'].errors }">
                             <option [value]="op.code" *ngFor="let op of comboForm">{{ op.value }}</option>
                           </select>
                           <!-- <ng-select [allowClear]="true" [items]="comboForm" (selected)="selected($event)" (removed)="removed($event)"
                             (typed)="typed($event)" (data)="refreshValue($event)">
                           </ng-select> -->
+                          <app-control-message *ngIf="submitted" [control]="addForm.controls['form']"></app-control-message>
                         </div>
                       </div>
                     </div>
@@ -114,9 +118,11 @@
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label"><label class="required">Ký hiệu</label></div>
                         <div class="col-md-8 col-lg-8">
-                          <select [(ngModel)]="serialPicked" formControlName="serial" class="ein-select form-control form-control-sm">
+                          <select [(ngModel)]="serialPicked" formControlName="serial" class="ein-select form-control form-control-sm"
+                            [ngClass]="{ 'is-invalid': submitted && addForm.controls['serial'].errors }">
                             <option [value]="op.code" *ngFor="let op of comboSerial">{{ op.value }}</option>
                           </select>
+                          <app-control-message *ngIf="submitted" [control]="addForm.controls['serial']"></app-control-message>
                         </div>
                       </div>
                     </div>
@@ -127,53 +133,61 @@
                         <div class="col-md-8 col-lg-8">
                           <ngx-select-dropdown [multiple]="false" (open)="loadCustomers()" [(value)]="customerPicked"
                             (valueChange)="onCustomerChange($event)" [config]="configCode" [options]="customerArr"></ngx-select-dropdown>
-
+                          <app-control-message *ngIf="submitted" [control]="addForm.controls['customerCode']"></app-control-message>
                         </div>
                       </div>
                     </div>
 
                     <div class="col-md-3 col-lg-3">
                       <div class="form-group row">
-                        <div class="col-md-4 col-lg-4 col-form-label"><label>Mã số thuế</label></div>
+                        <div class="col-md-4 col-lg-4 col-form-label required"><label>Mã số thuế</label></div>
                         <div class="col-md-8 col-lg-8">
                           <ngx-select-dropdown [multiple]="false" [(value)]="customerPicked" (valueChange)="onCustomerTaxChange($event)"
                             [config]="configTaxCode" [options]="customerArr"></ngx-select-dropdown>
+                          <app-control-message *ngIf="submitted" [control]="addForm.controls['customerTax']"></app-control-message>
                         </div>
                       </div>
                     </div>
 
                     <div class="col-md-3 col-lg-3">
                       <div class="form-group row">
-                        <div class="col-md-4 col-lg-4 col-form-label"><label>Email</label></div>
+                        <div class="col-md-4 col-lg-4 col-form-label required"><label>Email</label></div>
                         <div class="col-md-8 col-lg-8">
-                          <input formControlName="customer_email" type="text" placeholder="Email" class="form-control form-control-sm" />
+                          <input formControlName="customerEmail" type="text" class="form-control form-control-sm"
+                            [ngClass]="{ 'is-invalid': submitted && addForm.controls['serial'].errors }" />
+                          <app-control-message *ngIf="submitted" [control]="addForm.controls['customerEmail']"></app-control-message>
                         </div>
                       </div>
                     </div>
 
                     <div class="col-md-3 col-lg-3">
                       <div class="form-group row">
-                        <div class="col-md-4 col-lg-4 col-form-label"><label>Mã ĐH</label></div>
+                        <div class="col-md-4 col-lg-4 col-form-label required"><label>Mã ĐH</label></div>
                         <div class="col-md-8 col-lg-8">
-                          <input type="text" placeholder="Mã đơn hàng" class="form-control form-control-sm" />
+                          <input type="text" formControlName="orderNo" placeholder="Mã đơn hàng" class="form-control form-control-sm"
+                            [ngClass]="{ 'is-invalid': submitted && addForm.controls['orderNo'].errors }" />
+                          <app-control-message *ngIf="submitted" [control]="addForm.controls['orderNo']"></app-control-message>
                         </div>
                       </div>
                     </div>
 
                     <div class="col-md-6 col-lg-6">
                       <div class="form-group row">
-                        <div class="col-md-2 col-lg-2 col-form-label"><label>Tên đơn vị</label></div>
+                        <div class="col-md-2 col-lg-2 col-form-label required"><label>Tên đơn vị</label></div>
                         <div class="col-md-10 col-lg-10">
-                          <input formControlName="customer_org" placeholder="(Tên đơn vị)" class="form-control form-control-sm " name="customer_org"
-                            type="text" />
+                          <input formControlName="customerOrg" placeholder="(Tên đơn vị)" class="form-control form-control-sm"
+                            name="customerOrg" type="text" [ngClass]="{ 'is-invalid': submitted && addForm.controls['customerOrg'].errors }" />
+                          <app-control-message *ngIf="submitted" [control]="addForm.controls['customerOrg']"></app-control-message>
                         </div>
                       </div>
                     </div>
                     <div class="col-md-6 col-lg-6">
                       <div class="form-group row">
-                        <div class="col-md-2 col-lg-2 col-form-label"><label>Người mua</label></div>
+                        <div class="col-md-2 col-lg-2 col-form-label required"><label>Người mua</label></div>
                         <div class="col-md-10 col-lg-10">
-                          <input type="text" placeholder="(Họ tên người mua hàng)" class="form-control form-control-sm" />
+                          <input type="text" formControlName="customerName" class="form-control form-control-sm"
+                          [ngClass]="{ 'is-invalid': submitted && addForm.controls['customerName'].errors }" />
+                          <app-control-message *ngIf="submitted" [control]="addForm.controls['customerName']"></app-control-message>
                         </div>
                       </div>
                     </div>
@@ -182,7 +196,9 @@
                       <div class="form-group row">
                         <div class="col-md-1 col-lg-1 col-form-label"><label>Địa chỉ</label></div>
                         <div class="col-md-11 col-lg-11">
-                          <input formControlName="customer_address" type="text" placeholder="Địa chỉ" class="form-control form-control-sm" />
+                          <input formControlName="customerAddress" type="text" placeholder="Địa chỉ" class="form-control form-control-sm" 
+                          [ngClass]="{ 'is-invalid': submitted && addForm.controls['customerAddress'].errors }"/>
+                          <app-control-message *ngIf="submitted" [control]="addForm.controls['customerAddress']"></app-control-message>
                         </div>
                       </div>
                     </div>
@@ -191,9 +207,11 @@
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label"><label class="required">HTTT</label></div>
                         <div class="col-md-8 col-lg-8">
-                          <select placeholder="Hình thức thanh toán" formControlName="paymentType" class="ein-select">
+                          <select placeholder="Hình thức thanh toán" formControlName="paymentType" class="ein-select form-control form-control-sm"
+                          [ngClass]="{ 'is-invalid': submitted && addForm.controls['paymentType'].errors }">
                             <option [value]="op.code" *ngFor="let op of comboHTTT">{{ op.value }}</option>
                           </select>
+                          <app-control-message *ngIf="submitted" [control]="addForm.controls['paymentType']"></app-control-message>
                         </div>
                       </div>
                     </div>
@@ -202,7 +220,7 @@
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label"><label>Số TK</label></div>
                         <div class="col-md-8 col-lg-8">
-                          <input formControlName="customer_bank_account" type="text" placeholder="Số tài khoản" class="form-control form-control-sm" />
+                          <input formControlName="customerBankAccount" type="text" placeholder="Số tài khoản" class="form-control form-control-sm" />
                         </div>
                       </div>
                     </div>
@@ -210,7 +228,7 @@
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label"><label>Ngân hàng</label></div>
                         <div class="col-md-8 col-lg-8">
-                          <input formControlName="customer_bank" type="text" placeholder="Ngân hàng" class="form-control form-control-sm" />
+                          <input formControlName="customerBank" type="text" placeholder="Ngân hàng" class="form-control form-control-sm" />
                         </div>
                       </div>
                     </div>
@@ -219,7 +237,7 @@
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label"><label>Trạng thái</label></div>
                         <div class="col-md-8 col-lg-8">
-                          <input type="text" readonly="readonly" class="form-control form-control-sm" />
+                          <input type="text" formControlName="status" readonly="readonly" class="form-control form-control-sm" />
                         </div>
                       </div>
                     </div>
@@ -230,6 +248,7 @@
                       <small class="sub-title__small">Chi tiết hóa đơn</small>
                       <button (click)="hiddenColumnClicked()" type="button" class="btn btn-light btn-md">Ẩn/Hiện cột</button>
                     </h3>
+                    <p *ngIf="noItemLine" class="error text-danger">Không có thông tin sản phẩm</p>
                     <table class="table table-bordered no-border-right">
                       <thead>
                         <tr>
@@ -260,7 +279,8 @@
                           <td class="no-padding">
                             <input formControlName="item_name" triggers="dblclick" [popover]="popContent" popoverTitle="Hiển thị thêm"
                               [(ngModel)]="item['item_name']" [outsideClick]="true" [placement]="bottom"
-                              formControlName="item_name" class="form-control form-control-sm" name="item_item_name" type="text" />
+                              formControlName="item_name" class="form-control form-control-sm" name="item_item_name"
+                              type="text" />
                             <ng-template #popContent>
                               <textarea formControlName="item_name" [(ngModel)]="item['item_name']" class="form-control form-control-sm"
                                 rows="5" name="item_item_name_expand" type="text"></textarea>
@@ -270,13 +290,13 @@
                             <input formControlName="unit" class="form-control form-control-sm" name="item_unit" type="text" />
                           </td>
                           <td class="no-padding">
-                            <input formControlName="quantity" numbersOnly type="number" (input)="quantityValueChange($event.target.value, idx)"
+                            <input formControlName="quantity" numbersOnly (input)="quantityValueChange($event.target.value, idx)"
                               class="form-control form-control-sm text-right" name="item_quantity" type="text" />
                           </td>
 
                           <td class="no-padding">
                             <input formControlName="price" numbersOnly currencyMask [options]="{ prefix: 'đ', allowNegative: false, precision: 0  }"
-                              type="number" (input)="priceValueChange($event.target.value, idx)" class="form-control form-control-sm text-right"
+                             (input)="priceValueChange($event.target.value, idx)" class="form-control form-control-sm text-right"
                               name="item_price" type="text" />
                           </td>
 
@@ -285,16 +305,16 @@
                           </td>
 
                           <td [(hidden)]="hiddenExColumn" class="no-padding">
-                            <input formControlName="ck" type="number" numbersOnly (input)="ckValueChange($event.target.value, idx)"
+                            <input formControlName="ck"numbersOnly (input)="ckValueChange($event.target.value, idx)"
                               class="form-control form-control-sm text-right" type="text" />
                           </td>
                           <td [(hidden)]="hiddenExColumn" class="no-padding">
                             <input formControlName="total_ck" currencyMask [options]="{ prefix: 'đ', allowNegative: false, precision: 0  }"
-                              numbersOnly type="number" (input)="totalCkValueChange($event.target.value, idx)" class="form-control form-control-sm text-right"
+                              numbersOnly (input)="totalCkValueChange($event.target.value, idx)" class="form-control form-control-sm text-right"
                               type="text" />
                           </td>
                           <td class="no-padding vat-line">
-                            <input formControlName="tax_rate" numbersOnly type="number" (input)="taxRateValueChange($event.target.value, idx)"
+                            <input formControlName="tax_rate" numbersOnly (input)="taxRateValueChange($event.target.value, idx)"
                               class="form-control form-control-sm text-right text-bold" list="vatOptions">
                           </td>
                           <td class="no-padding text-right">
@@ -331,17 +351,17 @@
                           <th style="width: 60px;" class="text-right"></th>
                           <th style="width: 100px;" class="text-right"></th>
                           <th style="width: 120px;" class="text-right">
-                              {{ getSumTotalPrice() | currency:'VND':'symbol':'4.2-2'}}
-                            </th>
+                            {{ getSumTotalPrice() | currency:'VND':'symbol':'4.2-2'}}
+                          </th>
                           <th *ngIf="!hiddenExColumn" style="width: 60px;" class="text-right"></th>
                           <th *ngIf="!hiddenExColumn" style="width: 120px;" class="text-right">
                           </th>
                           <th style="width: 60px;" class="text-right"></th>
                           <th style="width: 120px;" class="text-right">
-                              {{ getSumVatTotal() | currency:'VND':'symbol':'4.2-2'}}
+                            {{ getSumVatTotal() | currency:'VND':'symbol':'4.2-2'}}
                           </th>
                           <th style="width: 120px;" class="text-right">
-                              {{ getSumFinalTotal() | currency:'VND':'symbol':'4.2-2'}}
+                            {{ getSumFinalTotal() | currency:'VND':'symbol':'4.2-2'}}
                           </th>
                         </tr>
                       </tfoot>

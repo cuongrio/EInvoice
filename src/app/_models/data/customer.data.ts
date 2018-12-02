@@ -1,4 +1,4 @@
-export class Customer {
+export class CustomerData {
   customer_id: string;
   tenant_id?: string;
   customer_code: string;

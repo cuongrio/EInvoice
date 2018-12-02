@@ -28,9 +28,9 @@ import { Exception500Component } from './exception/exception-500.component';
 
 import { JwtInterceptor, ErrorInterceptor } from './_helpers';
 import { NumberDirective } from '@app/_directives/number_only.directive';
-import { ValidationService } from './_services/validator.service';
 import { AutofocusDirective } from './_directives/autofocus.directive';
 import { SlTruncatePipe } from './_directives/sl_truncate.directive';
+import { ValidationService } from './_services';
 
 @NgModule({
   declarations: [

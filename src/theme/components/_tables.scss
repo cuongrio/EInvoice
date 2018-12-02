@@ -32,9 +32,11 @@
     }
   }
 
-  td {
-    font-weight: 500;
-    padding: 7px 5px !important;
+  &.dataTable{
+    td {
+      font-weight: 500;
+      padding: 16px 5px !important;
+    }
   }
 
   &.table-borderless {

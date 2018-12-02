@@ -7,10 +7,11 @@ import { Injectable } from '@angular/core';
 export class ValidationService {
   getValidatorErrorMessage(validatorName: string, validatorValue?: any) {
     const config = {
-      required: 'Vui lòng không để trống',
-      invalidEmail: 'Email phải có định dạng: yourname@company.com',
-      invalidPassword: 'Mật khẩu chứa ít nhất 6 ký tự',
-      minlength: `Nhập ít nhất ${validatorValue.requiredLength}`
+      required: 'Vui lòng không để trống!',
+      email: 'Email phải có định dạng: yourname@company.com!',
+      invalidEmail: 'Email phải có định dạng: yourname@company.com!',
+      invalidPassword: 'Mật khẩu chứa ít nhất 6 ký tự!',
+      minlength: `Nhập ít nhất ${validatorValue.requiredLength}!`
     };
 
     return config[validatorName];

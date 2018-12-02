@@ -12,81 +12,87 @@
             <div class="row">
                 <div class="col-md-6 col-lg-6">
                     <div class="form-group row">
-                        <label class="col-sm-4 col-form-label">Mã đối tượng</label>
+                        <label class="col-sm-4 col-form-label text-right required">Mã đối tượng</label>
                         <div class="col-sm-8">
-                            <input appAutofocus formControlName="code" type="text" class="form-control form-control-sm">
+                            <input appAutofocus formControlName="customer_code" type="text" class="form-control form-control-sm"
+                                [ngClass]="{ 'is-invalid': submitted && addForm.controls['customer_code'].errors }">
+                            <app-control-message *ngIf="submitted" [control]="addForm.controls['customer_code']"></app-control-message>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-6">
                     <div class="form-group row">
-                        <label class="col-sm-4 col-form-label">Tên đối tượng</label>
+                        <label class="col-sm-4 col-form-label text-right required">Tên đối tượng</label>
                         <div class="col-sm-8">
-                            <input formControlName="name" class="form-control form-control-sm" placeholder="Email">
+                            <input formControlName="customer_name" class="form-control form-control-sm" [ngClass]="{ 'is-invalid': submitted && addForm.controls['customer_name'].errors }">
+                            <app-control-message *ngIf="submitted" [control]="addForm.controls['customer_name']"></app-control-message>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 col-lg-12">
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label text-right">Địa chỉ</label>
+                        <div class="col-sm-10">
+                            <input formControlName="address" type="text" class="form-control form-control-sm" [ngClass]="{ 'is-invalid': submitted && addForm.controls['address'].errors }">
+                            <app-control-message *ngIf="submitted" [control]="addForm.controls['address']"></app-control-message>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-6">
                     <div class="form-group row">
-                        <label class="col-sm-4 col-form-label">Địa chỉ</label>
+                        <label class="col-sm-4 col-form-label text-right required">Điện thoại</label>
                         <div class="col-sm-8">
-                            <input formControlName="address" type="text" class="form-control form-control-sm">
+                            <input formControlName="phone" type="text" class="form-control form-control-sm" [ngClass]="{ 'is-invalid': submitted && addForm.controls['phone'].errors }">
+                            <app-control-message *ngIf="submitted" [control]="addForm.controls['phone']"></app-control-message>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-6">
                     <div class="form-group row">
-                        <label class="col-sm-4 col-form-label">Điện thoại</label>
+                        <label class="col-sm-4 col-form-label text-right required">Email</label>
                         <div class="col-sm-8">
-                            <input formControlName="phone" type="text" class="form-control form-control-sm">
+                            <input formControlName="email" type="text" class="form-control form-control-sm" [ngClass]="{ 'is-invalid': submitted && addForm.controls['email'].errors }">
+                            <app-control-message *ngIf="submitted" [control]="addForm.controls['email']"></app-control-message>
                         </div>
                     </div>
                 </div>
+                <div class="col-md-12 col-lg-12">
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label text-right">Đơn vị</label>
+                            <div class="col-sm-10">
+                                <input formControlName="org" type="text" class="form-control form-control-sm" [ngClass]="{ 'is-invalid': submitted && addForm.controls['org'].errors }">
+                                <app-control-message *ngIf="submitted" [control]="addForm.controls['org']"></app-control-message>
+                            </div>
+                        </div>
+                    </div>
+    
                 <div class="col-md-6 col-lg-6">
                     <div class="form-group row">
-                        <label class="col-sm-4 col-form-label">Fax</label>
+                        <label class="col-sm-4 col-form-label text-right required">Mã số thuế</label>
                         <div class="col-sm-8">
-                            <input formControlName="fax" type="text" class="form-control form-control-sm">
+                            <input formControlName="tax_code" type="text" class="form-control form-control-sm"
+                                [ngClass]="{ 'is-invalid': submitted && addForm.controls['tax_code'].errors }">
+                            <app-control-message *ngIf="submitted" [control]="addForm.controls['tax_code']"></app-control-message>
                         </div>
                     </div>
                 </div>
+               
                 <div class="col-md-6 col-lg-6">
                     <div class="form-group row">
-                        <label class="col-sm-4 col-form-label">Mã số thuế</label>
+                        <label class="col-sm-4 col-form-label text-right">Số TK</label>
                         <div class="col-sm-8">
-                            <input formControlName="taxCode" type="text" class="form-control form-control-sm">
+                            <input formControlName="bank_account" type="text" class="form-control form-control-sm"
+                                [ngClass]="{ 'is-invalid': submitted && addForm.controls['bank_account'].errors }">
+                            <app-control-message *ngIf="submitted" [control]="addForm.controls['bank_account']"></app-control-message>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6 col-lg-6">
+                <div class="col-md-12 col-lg-12">
                     <div class="form-group row">
-                        <label class="col-sm-4 col-form-label">Diễn giải</label>
-                        <div class="col-sm-8">
-                            <input formControlName="description" type="text" class="form-control form-control-sm">
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-6">
-                    <div class="form-group row">
-                        <label class="col-sm-4 col-form-label">Email</label>
-                        <div class="col-sm-8">
-                            <input formControlName="email" type="text" class="form-control form-control-sm">
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-6">
-                    <div class="form-group row">
-                        <label class="col-sm-4 col-form-label">ĐTDD</label>
-                        <div class="col-sm-8">
-                            <input formControlName="mobilePhone" type="text" class="form-control form-control-sm">
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-6">
-                    <div class="form-group row">
-                        <label class="col-sm-4 col-form-label">Nhóm</label>
-                        <div class="col-sm-8">
-                            <input formControlName="group" type="text" class="form-control form-control-sm">
+                        <label class="col-sm-2 col-form-label text-right">Ngân hàng</label>
+                        <div class="col-sm-10">
+                            <input formControlName="bank" type="text" class="form-control form-control-sm" [ngClass]="{ 'is-invalid': submitted && addForm.controls['bank'].errors }">
+                            <app-control-message *ngIf="submitted" [control]="addForm.controls['bank']"></app-control-message>
                         </div>
                     </div>
                 </div>
@@ -94,8 +100,12 @@
         </form>
     </div>
 
-    <div class="modal-footer"> 
-        <button type="button" class="btn btn-primary pull-right">Lưu lại</button>
-        <button type="button" (click)="bsModalRef.hide()" class="btn btn-secondary pull-right">Bỏ qua</button>
+    <div class="modal-footer">
+        <button type="button" (click)="ngAddForm.ngSubmit.emit()" class="btn btn-md btn-success pull-right">
+            <i class="fas fa-save"></i> Lưu
+        </button>
+        <button type="button" (click)="bsModalRef.hide()" class="btn btn-md btn-light pull-right">
+            <i class="fas fa-share-square"></i> Bỏ qua
+        </button>
     </div>
 </div>

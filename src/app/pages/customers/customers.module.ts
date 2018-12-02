@@ -13,10 +13,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AlertModule } from 'ngx-bootstrap';
 
 import { DatePipe } from '@angular/common';
-import { APIService } from './../../_services';
-import { AppConfig } from './../../app.config';
-import { AutofocusDirective } from './../../_directives/autofocus.directive';
-import { SlTruncatePipe } from './../../_directives/sl_truncate.directive';
+import { CustomerService, ValidationService } from './../../_services';
+import { AppConfig } from './../../app.config'; 
 import { SelectDropDownModule } from 'ngx-select-dropdown';
 import { SelectModule } from 'ng2-select';
 
@@ -24,13 +22,14 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgProgressModule } from '@ngx-progressbar/core';
 
 import { NgxCurrencyModule } from 'ngx-currency';
-import { UtilsService } from '@app/_services/utils.service';
+import { UtilsService } from '@app/_services/utils/utils.service';
 import { CustomersComponent } from './customers.component';
 import { CustomerFormComponent } from './components/form.component';
 import { CustomersRoutes } from './customers.routing';
 
 @NgModule({
   imports: [
+
     CommonModule,
 
     RouterModule.forChild(CustomersRoutes),
@@ -54,10 +53,16 @@ import { CustomersRoutes } from './customers.routing';
   entryComponents: [
     CustomerFormComponent
   ],
-  declarations: [ 
+  declarations: [
     CustomersComponent,
     CustomerFormComponent
   ],
-  providers: [APIService, UtilsService, DatePipe, AppConfig]
+  providers: [
+    CustomerService,
+    UtilsService,
+    DatePipe,
+    AppConfig,
+    ValidationService
+  ]
 })
 export class CustomersModule { }

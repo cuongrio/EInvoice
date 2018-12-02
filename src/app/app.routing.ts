@@ -20,32 +20,37 @@ const routes: Routes = [
   {
     path: '',
     component: PageLayoutComponent,
-    // canActivate: [AuthGuard],
-    // canActivateChild: [AuthGuard],
+    canActivate: [AuthGuard],
     children: [
       {
         path: 'dashboard',
-        loadChildren: './pages/dashboard/dashboard.module#DashboardModule'
+        loadChildren: './pages/dashboard/dashboard.module#DashboardModule',
+        canActivate: [AuthGuard]
       },
       {
         path: 'customers',
-        loadChildren: './pages/customers/customers.module#CustomersModule'
+        loadChildren: './pages/customers/customers.module#CustomersModule',
+        canActivate: [AuthGuard]
       },
       {
         path: 'products',
-        loadChildren: './pages/products/products.module#ProductsModule'
+        loadChildren: './pages/products/products.module#ProductsModule',
+        canActivate: [AuthGuard]
       },
       {
         path: 'invoices',
-        loadChildren: './pages/invoices/invoices.module#InvoicesModule'
+        loadChildren: './pages/invoices/invoices.module#InvoicesModule',
+        canActivate: [AuthGuard]
       },
       {
         path: 'info',
-        loadChildren: './pages/info/info.module#InfoModule'
+        loadChildren: './pages/info/info.module#InfoModule',
+        canActivate: [AuthGuard]
       },
       {
         path: 'report',
-        loadChildren: './pages/report/report.module#ReportModule'
+        loadChildren: './pages/report/report.module#ReportModule',
+        canActivate: [AuthGuard]
       }
     ]
   },
@@ -59,11 +64,11 @@ const routes: Routes = [
     component: LogoutComponent,
     data: { title: 'Đăng xuất' }
   },
-  {
-    path: 'register',
-    component: RegisterComponent,
-    data: { title: 'Thông tin đăng ký' }
-  },
+  // {
+  //   path: 'register',
+  //   component: RegisterComponent,
+  //   data: { title: 'Thông tin đăng ký' }
+  // },
   {
     path: '404',
     component: Page404Component,

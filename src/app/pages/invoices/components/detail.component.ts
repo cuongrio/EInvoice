@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { APIService } from './../../../_services/api.service';
+import { InvoiceService } from '@app/_services';
 
 @Component({
   selector: 'app-invoice-detail',
@@ -11,7 +11,12 @@ export class InvoiceDetailComponent implements OnInit, OnDestroy {
   public invoiceDetail: any;
   private subscription: Subscription;
 
-  constructor(private apiService: APIService, private activatedRoute: ActivatedRoute, private router: Router) {}
+  constructor(
+    private invoiceService: InvoiceService,
+    private activatedRoute: ActivatedRoute,
+    private router: Router) {
+
+  }
 
   ngOnInit() {
     this.subscription = this.activatedRoute.params.subscribe((params: any) => {
@@ -29,7 +34,7 @@ export class InvoiceDetailComponent implements OnInit, OnDestroy {
 
   // get detail of teacher
   private retrieveById(invoiceId: number) {
-    this.apiService.retrieveInvoiceById(invoiceId).subscribe(
+    this.invoiceService.retrieveInvoiceById(invoiceId).subscribe(
       response => {
         this.invoiceDetail = response;
       },

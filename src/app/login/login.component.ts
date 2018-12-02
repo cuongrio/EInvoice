@@ -1,12 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { AlertService, AuthenticationService, APIService } from '@app/_services';
 import { first } from 'rxjs/operators';
-import { ValidationService } from './../_services/validator.service';
-
-// http://jasonwatmore.com/post/2018/10/29/angular-7-user-registration-and-login-example-tutorial
-// https://github.com/cornflourblue/angular-7-registration-login-example
+import { AuthenticationService } from '@app/_services/authenticate/authentication.service';
 
 @Component({
   selector: 'app-login',
@@ -23,11 +19,8 @@ export class LoginComponent implements OnInit {
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private authenticationService: AuthenticationService,
-    private alertService: AlertService,
-    private apiService: APIService
+    private authenticationService: AuthenticationService
   ) {
-    // redirect to home if already logged in
     if (this.authenticationService.currentUserValue) {
       this.router.navigate(['/']);
     }
@@ -35,31 +28,28 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     this.createForm();
+    this.authenticationService.logout();
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   }
 
-  get f() {
-    return this.loginForm.controls;
-  }
-
-  onSubmit() {
+  onSubmit(dataForm: any) {
     this.submitted = true;
 
     if (this.loginForm.invalid) {
       return;
     }
 
+    console.log(dataForm);
+
     this.loading = true;
-    this.apiService.login(this.f.username.value, this.f.password.value)
+    this.authenticationService.login(dataForm.username, dataForm.password)
       .pipe(first())
       .subscribe(data => {
         console.log('data: ' + data);
         this.router.navigate([this.returnUrl]);
-      },
-        error => {
-            this.errMessage = 'erroroororor';
-        });
-    this.router.navigate([this.returnUrl]);
+      }, error => {
+        this.errMessage = error;
+      });
     this.loading = false;
   }
 

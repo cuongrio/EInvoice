@@ -1,4 +1,4 @@
-﻿export class InvoiceParams {
+﻿export class InvoiceParam {
   sort?: string;
   sortBy?: string;
   size?: string;

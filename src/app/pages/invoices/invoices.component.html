@@ -28,23 +28,14 @@
                 <div class="search-box">
                   <div [hidden]="!expandSearch" class="card shadow-nohover">
                     <div class="card-body">
-                      <form
-                        class="form-horizontal"
-                        #ngSearchForm="ngForm"
-                        [formGroup]="searchForm"
-                        (ngSubmit)="onSubmit(searchForm.value)"
-                      >
+                      <form class="form-horizontal" #ngSearchForm="ngForm" [formGroup]="searchForm" (ngSubmit)="onSubmit(searchForm.value)">
                         <div class="row">
                           <div class="col-md-3 col-lg-3">
                             <div class="form-group row">
                               <div class="col-md-4 col-lg-4 col-form-label"><label>Mã hóa đơn</label></div>
                               <div class="col-md-8 col-lg-8">
-                                <input
-                                  formControlName="invoiceNo"
-                                  type="text"
-                                  class="form-control form-control-sm"
-                                  placeholder="Mã hóa đơn"
-                                />
+                                <input formControlName="invoiceNo" type="text" class="form-control form-control-sm"
+                                  placeholder="Mã hóa đơn" />
                               </div>
                             </div>
                           </div>
@@ -53,12 +44,8 @@
                             <div class="form-group row">
                               <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Số Serial</label></div>
                               <div class="col-md-8 col-lg-8">
-                                <input
-                                  formControlName="serial"
-                                  type="text"
-                                  class="form-control form-control-sm"
-                                  placeholder="Số Serial"
-                                />
+                                <input formControlName="serial" type="text" class="form-control form-control-sm"
+                                  placeholder="Số Serial" />
                               </div>
                             </div>
                           </div>
@@ -67,12 +54,8 @@
                             <div class="form-group row">
                               <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Mã số thuế</label></div>
                               <div class="col-md-8 col-lg-8">
-                                <input
-                                  formControlName="orgTaxCode"
-                                  type="text"
-                                  class="form-control form-control-sm"
-                                  placeholder="Mã số thuế"
-                                />
+                                <input formControlName="orgTaxCode" type="text" class="form-control form-control-sm"
+                                  placeholder="Mã số thuế" />
                               </div>
                             </div>
                           </div>
@@ -81,12 +64,8 @@
                             <div class="form-group row">
                               <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Kích cỡ</label></div>
                               <div class="col-md-8 col-lg-8">
-                                <input
-                                  formControlName="size"
-                                  type="text"
-                                  class="form-control form-control-sm"
-                                  placeholder="Kích cỡ"
-                                />
+                                <input formControlName="size" type="text" class="form-control form-control-sm"
+                                  placeholder="Kích cỡ" />
                               </div>
                             </div>
                           </div>
@@ -96,22 +75,12 @@
                               <div class="col-md-4 col-lg-4 col-form-label"><label>Từ ngày</label></div>
                               <div class="col-md-8 col-lg-8">
                                 <div class="input-group">
-                                  <input
-                                    formControlName="fromDate"
-                                    class="form-control form-control-sm"
-                                    placeholder="DD/MM/YYYY"
-                                    triggers="dblclick:click"
-                                    [bsConfig]="bsConfig"
-                                    #dfromDate="bsDatepicker"
-                                    bsDatepicker
-                                  />
+                                  <input formControlName="fromDate" class="form-control form-control-sm" placeholder="DD/MM/YYYY"
+                                    triggers="dblclick:click" [bsConfig]="bsConfig" #dfromDate="bsDatepicker"
+                                    bsDatepicker />
                                   <div class="input-group-append">
-                                    <button
-                                      class="btn btn-icons btn-inverse-light btn-md"
-                                      (click)="dfromDate.toggle()"
-                                      [attr.aria-expanded]="dfromDate.isOpen"
-                                      type="button"
-                                    >
+                                    <button class="btn btn-inverse-light btn-md" (click)="dfromDate.toggle()"
+                                      [attr.aria-expanded]="dfromDate.isOpen" type="button">
                                       <i class="fas fa-calendar"></i>
                                     </button>
                                   </div>
@@ -125,22 +94,12 @@
                               <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Đến ngày</label></div>
                               <div class="col-md-8 col-lg-8">
                                 <div class="input-group">
-                                  <input
-                                    formControlName="toDate"
-                                    class="form-control form-control-sm"
-                                    placeholder="DD/MM/YYYY"
-                                    [bsConfig]="bsConfig"
-                                    #dtoDate="bsDatepicker"
-                                    triggers="dblclick:click"
-                                    bsDatepicker
-                                  />
+                                  <input formControlName="toDate" class="form-control form-control-sm" placeholder="DD/MM/YYYY"
+                                    [bsConfig]="bsConfig" #dtoDate="bsDatepicker" triggers="dblclick:click"
+                                    bsDatepicker />
                                   <div class="input-group-append">
-                                    <button
-                                      class="btn btn-icons btn-inverse-light btn-md"
-                                      (click)="dtoDate.toggle()"
-                                      [attr.aria-expanded]="dtoDate.isOpen"
-                                      type="button"
-                                    >
+                                    <button class="btn btn-inverse-light btn-md" (click)="dtoDate.toggle()"
+                                      [attr.aria-expanded]="dtoDate.isOpen" type="button">
                                       <i class="fas fa-calendar"></i>
                                     </button>
                                   </div>
@@ -153,12 +112,8 @@
                             <div class="form-group row">
                               <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Form</label></div>
                               <div class="col-md-8 col-lg-8">
-                                <input
-                                  formControlName="form"
-                                  type="text"
-                                  class="form-control form-control-sm"
-                                  placeholder="Form"
-                                />
+                                <input formControlName="form" type="text" class="form-control form-control-sm"
+                                  placeholder="Form" />
                               </div>
                             </div>
                           </div>
@@ -187,96 +142,34 @@
 
               <div class="col-12">
                 <div class="template-ein navbar-action">
-                  <button
-                    [hidden]="!expandSearch"
-                    type="button"
-                    form="ngForm"
-                    class="btn btn-md btn-info btn-search"
-                    (click)="ngSearchForm.ngSubmit.emit()"
-                  >
+                  <button [hidden]="!expandSearch" type="button" form="ngForm" class="btn btn-md btn-info btn-search"
+                    (click)="ngSearchForm.ngSubmit.emit()">
                     <i class="icon-magnifier"></i> Tìm kiếm
                   </button>
-                  <button
-                    type="button"
-                    routerLink="/invoices/createNew"
-                    class="btn btn-icons btn-success"
-                    data-toggle="tooltip"
-                    trigger="hover"
-                    data-placement="bottom"
-                    title="Thêm mới"
-                  >
-                    <i class="fas fa-plus"></i>
+                  <button type="button" routerLink="/invoices/createNew" class="btn btn-md btn-success">
+                    <i class="fas fa-plus"></i> Thêm
                   </button>
-                  <button
-                    type="button"
-                    (click)="editRow()"
-                    class="btn btn-icons btn-success"
-                    tooltip="Sửa"
-                    placement="bottom"
-                  >
-                    <i class="fas fa-edit"></i>
+                  <button type="button" (click)="editRow()" class="btn  btn-md btn-outline-primary">
+                    <i class="fas fa-edit"></i> Sửa
                   </button>
-                  <button
-                    type="button"
-                    (click)="deleteRow()"
-                    class="btn btn-icons btn-primary"
-                    trigger="hover"
-                    data-toggle="tooltip"
-                    data-placement="bottom"
-                    title="Xóa"
-                  >
-                    <i class="fas fa-trash"></i>
+                  <button type="button" (click)="deleteRow()" class="btn  btn-md btn-outline-danger">
+                    <i class="fas fa-trash"></i> Xóa
                   </button>
 
-                  <button
-                    type="button"
-                    class="btn btn-icons btn-primary"
-                    trigger="hover"
-                    data-toggle="tooltip"
-                    data-placement="bottom"
-                    title="Sao chép"
-                  >
-                    <i class="fas fa-copy"></i>
+                  <button type="button" class="btn  btn-md btn-outline-primary" title="Sao chép">
+                    <i class="fas fa-copy"></i> Sao chép
                   </button>
-                  <button
-                    type="button"
-                    class="btn btn-icons btn-primary"
-                    trigger="hover"
-                    data-toggle="tooltip"
-                    data-placement="bottom"
-                    title="In"
-                  >
-                    <i class="fas fa-print"></i>
+                  <button type="button" class="btn  btn-md btn-outline-primary">
+                    <i class="fas fa-print"></i> In
                   </button>
-                  <button
-                    type="button"
-                    class="btn btn-icons btn-primary"
-                    trigger="hover"
-                    data-toggle="tooltip"
-                    data-placement="bottom"
-                    title="Ký hóa đơn"
-                  >
-                    <i class="fas fa-key"></i>
+                  <button type="button" class="btn  btn-md btn-outline-primary">
+                    <i class="fas fa-key"></i> Ký
                   </button>
-                  <button
-                    type="button"
-                    class="btn btn-icons btn-primary"
-                    trigger="hover"
-                    data-toggle="tooltip"
-                    data-placement="bottom"
-                    title="Nhận Excel"
-                  >
-                    <i class="fas fa-file-excel"></i>
+                  <button type="button" class="btn  btn-md btn-outline-primary">
+                    <i class="fas fa-file-excel"></i> Nhận Excel
                   </button>
-                  <button
-                    type="button"
-                    class="btn btn-icons btn-primary"
-                    trigger="hover"
-                    data-toggle="tooltip"
-                    data-placement="bottom"
-                    title="In chuyển đổi"
-                  >
-                    <i class="fas fa-retweet"></i>
+                  <button type="button" class="btn  btn-md btn-outline-primary">
+                    <i class="fas fa-retweet"></i> In chuyển đổi
                   </button>
                 </div>
               </div>
@@ -321,16 +214,8 @@
                 [(page)]="page" (pageChange)="onPageChange($event)" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"></ngb-pagination>
               -->
               <div *ngIf="totalPages > 1">
-                <ngb-pagination
-                  class="d-flex justify-content-end"
-                  [pageSize]="itemsPerPage"
-                  [collectionSize]="totalItems"
-                  [(page)]="page"
-                  (pageChange)="onPageChange($event)"
-                  [maxSize]="5"
-                  [rotate]="true"
-                  [boundaryLinks]="true"
-                ></ngb-pagination>
+                <ngb-pagination class="d-flex justify-content-end" [pageSize]="itemsPerPage" [collectionSize]="totalItems"
+                  [(page)]="page" (pageChange)="onPageChange($event)" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"></ngb-pagination>
               </div>
             </div>
           </div>

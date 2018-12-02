@@ -1,4 +1,4 @@
-export class SelectItem {
+export class SelectData {
   code: string;
   type?: string;
   value: string;

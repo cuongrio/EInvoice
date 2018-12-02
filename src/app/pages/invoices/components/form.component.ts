@@ -2,13 +2,16 @@ import { Component, OnInit, OnDestroy, TemplateRef, ChangeDetectionStrategy, Aft
 import { FormGroup, FormArray, Validators, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { ProductItem, SelectItem, Customer, InvoiceItem } from '@app/_models';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
-import { APIService } from '@app/_services/api.service';
-import { Good } from '@app//_models/good';
 import { AlertComponent } from '@app//shared/alert/alert.component';
-import { UtilsService } from '@app/_services/utils.service';
+import { UtilsService } from '@app/_services/utils/utils.service';
+import { InvoiceService } from './../../../_services/app/invoice.service';
+import { CustomerData } from './../../../_models/data/customer.data';
+import { SelectData, GoodData, InvoiceModel, ProductData } from '@app/_models';
+import { CustomerService } from './../../../_services/app/customer.service';
+import { GoodService } from '@app/_services';
+import { ReferenceService } from './../../../_services/app/reference.service';
 
 declare var $: any;
 
@@ -19,25 +22,23 @@ declare var $: any;
 })
 export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
   public addForm: FormGroup;
+  public submitted = false;
   public invoiceItem: any;
   public columNo = 10;
   public modalRef: BsModalRef;
   public bsConfig = { dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-blue' };
 
-  public customerPicked: Customer;
+  public customerPicked: CustomerData;
   public formPicked: string;
   public serialPicked: string;
 
-  public references: Array<SelectItem>;
+  public references: Array<SelectData>;
 
-  public errorStatus: string;
-  public errorMessage: string;
-  public successStatus: string;
-  public successMessage: string;
+  public noItemLine = false;
 
   public hiddenExColumn = true;
 
-  public listTokenDummy = new Array<SelectItem>();
+  public listTokenDummy = new Array<SelectData>();
 
   // total price
   public totalPrice = new Array<number>();
@@ -82,24 +83,27 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
   };
 
   // combobox
-  public taxRateArr: Array<SelectItem>;
-  public customerArr: Array<Customer>;
-  public goodArr: Array<Good>;
+  public taxRateArr: Array<SelectData>;
+  public customerArr: Array<CustomerData>;
+  public goodArr: Array<GoodData>;
 
-  public comboHTTT = new Array<SelectItem>();
-  public comboForm = new Array<SelectItem>();
-  public comboSerial = new Array<SelectItem>();
-  public comboTaxRate = new Array<SelectItem>();
+  public comboHTTT = new Array<SelectData>();
+  public comboForm = new Array<SelectData>();
+  public comboSerial = new Array<SelectData>();
+  public comboTaxRate = new Array<SelectData>();
 
   private subscription: Subscription;
 
   constructor(
     private router: Router,
     private formBuilder: FormBuilder,
-    private apiService: APIService,
+    private invoiceService: InvoiceService,
     private activatedRoute: ActivatedRoute,
     private modalService: BsModalService,
-    private utilsService: UtilsService
+    private utilsService: UtilsService,
+    private goodService: GoodService,
+    private customerService: CustomerService,
+    private referenceService: ReferenceService
   ) { }
 
   ngOnInit() {
@@ -133,6 +137,11 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
     });
+
+    $('#formSelectId').on('select2:selecting', function (e: any) {
+      console.log(e);
+    });
+    // what
   }
 
   ngOnDestroy() {
@@ -145,43 +154,56 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onSubmit(dataForm: any) {
-    // validator
-    const listErr = this.errorFields(dataForm);
-    if (listErr && listErr.length > 0) {
-      this.utilsService.showValidatorAlert('Các thông tin còn thiếu', listErr);
+    this.submitted = true;
+    this.submitted = true;
+
+    if (!dataForm.items) {
+      this.noItemLine = true;
+    } else {
+      const items = dataForm.items.filter((elemnent: any, index: number, array: any) => {
+        return elemnent.item_code !== null && elemnent.item_code !== '';
+      });
+
+      if (!items || items.length === 0) {
+        this.noItemLine = true;
+      }
+    }
+
+    if (this.addForm.invalid) {
       return;
     }
 
-    const invoiceItem = new InvoiceItem();
+    this.noItemLine = false;
+    const invoiceModel = new InvoiceModel();
 
-    invoiceItem.form = dataForm.form;
-    invoiceItem.serial = dataForm.serial;
-    invoiceItem.invoice_date = dataForm.invoice_date;
+    invoiceModel.form = dataForm.form;
+    invoiceModel.serial = dataForm.serial;
+    invoiceModel.invoice_date = dataForm.invoice_date;
 
     // update customer
-    invoiceItem.customer = new Customer();
-    invoiceItem.customer.customer_name = dataForm.customer_name;
-    invoiceItem.customer.org = dataForm.customer_org;
-    invoiceItem.customer.bank = dataForm.customer_bank;
-    invoiceItem.customer.bank_account = dataForm.customer_bank_account;
-    invoiceItem.customer.address = dataForm.customer_address;
-    invoiceItem.customer.phone = this.customerPicked.phone;
+    invoiceModel.customer = new CustomerData();
+    invoiceModel.customer.customer_name = dataForm.customer_name;
+    invoiceModel.customer.org = dataForm.customer_org;
+    invoiceModel.customer.bank = dataForm.customer_bank;
+    invoiceModel.customer.bank_account = dataForm.customer_bank_account;
+    invoiceModel.customer.address = dataForm.customer_address;
+    invoiceModel.customer.phone = this.customerPicked.phone;
 
     // paymentType
-    invoiceItem.paymentType = dataForm.paymentType;
+    invoiceModel.paymentType = dataForm.paymentType;
 
     if (dataForm.items && dataForm.items.length > 0) {
-      invoiceItem.items = dataForm.items.filter((elemnent: any, index: number, array: any) => {
+      invoiceModel.items = dataForm.items.filter((elemnent: any, index: number, array: any) => {
         return elemnent.item_code !== null && elemnent.item_code !== '';
       });
     }
-    invoiceItem.total_before_tax = this.sumPriceArr(this.totalPrice);
-    invoiceItem.total_tax = this.sumPriceArr(this.totalVat);
-    invoiceItem.total = this.sumPriceArr(this.finalTotalPrice);
+    invoiceModel.total_before_tax = this.sumPriceArr(this.totalPrice);
+    invoiceModel.total_tax = this.sumPriceArr(this.totalVat);
+    invoiceModel.total = this.sumPriceArr(this.finalTotalPrice);
 
-    console.log('before: ' + JSON.stringify(invoiceItem));
+    console.log('before: ' + JSON.stringify(invoiceModel));
 
-    return this.apiService.createInvoice(invoiceItem).subscribe(
+    return this.invoiceService.createInvoice(invoiceModel).subscribe(
       data => {
         console.log('submiited: ' + JSON.stringify(data));
       },
@@ -196,11 +218,11 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  public onCustomerTaxChange(dataArr: Customer[]) {
+  public onCustomerTaxChange(dataArr: CustomerData[]) {
     this.initDataForm(dataArr);
   }
 
-  public onCustomerChange(dataArr: Customer[]) {
+  public onCustomerChange(dataArr: CustomerData[]) {
     this.initDataForm(dataArr);
   }
 
@@ -222,7 +244,7 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
   public async signInvoiceClicked(template: TemplateRef<any>) {
     let listToken: Array<any>;
     // 1. get list token
-    await this.apiService.listToken().subscribe(data => {
+    await this.invoiceService.listToken().subscribe(data => {
       // show choice token
       listToken = data as Array<any>;
     });
@@ -245,7 +267,7 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
     this.modalRef = this.modalService.show(AlertComponent, { initialState });
   }
 
-  public onGoodlineChange(dataArr: Good[], idx: number) {
+  public onGoodlineChange(dataArr: GoodData[], idx: number) {
     if (dataArr && dataArr.length > 0) {
       const good = dataArr[0];
       const controlArray = <FormArray>this.addForm.get('items');
@@ -378,7 +400,7 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
   private async signedInvoiceAction(invoiceId: number) {
     let params: Array<any>;
     // get sign paramater
-    await this.apiService.sign(invoiceId).subscribe(data => {
+    await this.invoiceService.sign(invoiceId).subscribe(data => {
       params = data as Array<any>;
     });
 
@@ -403,12 +425,12 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    this.apiService.getGoods().subscribe(items => {
-      const goods = items as Good[];
-      this.goodArr = new Array<Good>();
+    this.goodService.getList().subscribe(items => {
+      const goods = items as GoodData[];
+      this.goodArr = new Array<GoodData>();
 
       for (let i = 0; i < goods.length; i++) {
-        const good = new Good();
+        const good = new GoodData();
         Object.assign(good, goods[i]);
         good.select_item = good.goods_code;
         this.goodArr.push(good);
@@ -429,12 +451,12 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    this.apiService.getCustomers().subscribe(items => {
-      const customers = items as Customer[];
-      this.customerArr = new Array<Customer>();
+    this.customerService.getList().subscribe(items => {
+      const customers = items as CustomerData[];
+      this.customerArr = new Array<CustomerData>();
 
       for (let i = 0; i < customers.length; i++) {
-        const customer = new Customer();
+        const customer = new CustomerData();
         Object.assign(customer, customers[i]);
         customer.select_item = customer.customer_code;
         this.customerArr.push(customer);
@@ -443,12 +465,12 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private loadReferences() {
-    this.apiService.getReferences().subscribe(items => {
-      const selectItems = items as SelectItem[];
+    this.referenceService.referenceInfo().subscribe(items => {
+      const selectItems = items as SelectData[];
       this.references = selectItems;
 
       for (let i = 0; i < selectItems.length; i++) {
-        const selectItem = new SelectItem();
+        const selectItem = new SelectData();
         Object.assign(selectItem, selectItems[i]);
 
         if (selectItem.type === 'COMBO_TAX_RATE_CODE') {
@@ -469,7 +491,7 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  private initDataForm(dataArr: Customer[]) {
+  private initDataForm(dataArr: CustomerData[]) {
     if (dataArr && dataArr.length > 0) {
       const customerPicked = dataArr[0];
 
@@ -516,7 +538,7 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private stickyButtonAdd() {
-    const emptyProductLine: ProductItem = {
+    const emptyProductLine: ProductData = {
       item_line: null,
       item_code: '',
       item_name: '',
@@ -542,20 +564,20 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
   // https://www.concretepage.com/angular-2/angular-2-4-formbuilder-example
 
   private htttDummy() {
-    const items = new Array<SelectItem>();
-    let selectItem = new SelectItem();
+    const items = new Array<SelectData>();
+    let selectItem = new SelectData();
 
     // CK/TM,CK,TM mặc định CK/TM
     selectItem.code = 'CK/TM';
     selectItem.value = 'CK/TM';
     items.push(selectItem);
 
-    selectItem = new SelectItem();
+    selectItem = new SelectData();
     selectItem.code = 'CK';
     selectItem.value = 'CK';
     items.push(selectItem);
 
-    selectItem = new SelectItem();
+    selectItem = new SelectData();
     selectItem.code = 'CK/TM';
     selectItem.value = 'CK/TM';
     items.push(selectItem);
@@ -564,16 +586,21 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private createItemsForm() {
     this.addForm = this.formBuilder.group({
-      invoice_date: ['', Validators.compose([Validators.required])],
+      invoiceDate: ['', Validators.compose([Validators.required])],
+      invoiceNo: '',
       form: ['', Validators.compose([Validators.required])],
       serial: ['', Validators.compose([Validators.required])],
-      customer_code: '',
-      customer_email: '',
-      customer_org: '',
-      paymentType: '',
-      customer_bank_account: '',
-      customer_bank: '',
-      customer_address: '',
+      customerCode: ['', Validators.compose([Validators.required])],
+      customerName: ['', Validators.compose([Validators.required])],
+      customerTax: ['', Validators.compose([Validators.required])],
+      customerEmail: ['', Validators.compose([Validators.required, Validators.email])],
+      orderNo: ['', Validators.compose([Validators.required])],
+      customerOrg: ['', Validators.compose([Validators.required])],
+      paymentType: ['', Validators.compose([Validators.required])],
+      customerBankAccount: '',
+      customerBank: '',
+      status: '',
+      customerAddress: ['', Validators.compose([Validators.required, Validators.minLength(10)])],
       items: this.formBuilder.array([])
     });
   }
@@ -586,7 +613,7 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private formSetDefault() {
     this.addForm.patchValue({
-      invoice_date: new Date()
+      invoiceDate: new Date()
     });
   }
 
@@ -645,27 +672,5 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
     if (totalPrice && totalVat) {
       this.finalTotalPrice[idx] = totalPrice + totalVat - totalCkVal;
     }
-  }
-
-  private errorFields(dataForm: any) {
-    const listErr = new Array<string>();
-    if (!dataForm.invoice_date) {
-      listErr.push('Ngày lập');
-    }
-    if (!dataForm.form) {
-      listErr.push('Mẫu số');
-    }
-    if (!dataForm.serial) {
-      listErr.push('Ký hiệu');
-    }
-
-    if (!this.customerPicked) {
-      listErr.push('Mã khách hàng | Mã số thuế');
-    }
-
-    if (!dataForm.paymentType) {
-      listErr.push('Hình thức thanh toán');
-    }
-    return listErr;
   }
 }

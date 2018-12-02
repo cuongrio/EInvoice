@@ -9,7 +9,6 @@ body.modal-open{
   display: flex !important;
   justify-content: center !important;
   align-items: center !important; 
-  display: none;
 
   &.show{
     display: flex !important;
@@ -21,6 +20,7 @@ body.modal-open{
     display: flex !important;
     justify-content: center !important;
     align-items: center !important; 
+   // margin-top: calc(#{$navbar-height + 52px});
     min-width: 350px !important;
 
     &.modal-lg{
@@ -49,7 +49,7 @@ body.modal-open{
         -ms-flex-align: center;
         align-items: center; 
         font-weight: 600;
-        padding: 0.75rem 1rem !important;
+        padding: 0.75rem 1rem !important; 
 
         .modal-title{
           font-size: 14px !important;

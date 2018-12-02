@@ -1,70 +1,95 @@
 <div class="form-dialog">
-        <div class="modal-header">
-            <h4 class="modal-title pull-left {{class}}">
-                Tạo mới hàng hóa
-            </h4>
-            <button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <form class="customer-form" #ngAddForm="ngForm" [formGroup]="addForm" (ngSubmit)="onSubmit(addForm.value)">
-                <div class="row">
-                    <div class="col-md-6 col-lg-6">
-                        <div class="form-group row">
-                            <label class="col-sm-4 col-form-label">Mã hàng</label>
-                            <div class="col-sm-8">
-                                <input appAutofocus formControlName="code" type="text" class="form-control form-control-sm">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-6">
-                        <div class="form-group row">
-                            <label class="col-sm-4 col-form-label">Tên hàng</label>
-                            <div class="col-sm-8">
-                                <input formControlName="name" class="form-control form-control-sm" placeholder="Email">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-6">
-                        <div class="form-group row">
-                            <label class="col-sm-4 col-form-label">Nhóm</label>
-                            <div class="col-sm-8">
-                                <input formControlName="group" type="text" class="form-control form-control-sm">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-6">
-                        <div class="form-group row">
-                            <label class="col-sm-4 col-form-label">Đơn vị tính</label>
-                            <div class="col-sm-8">
-                                <input formControlName="unit" type="text" class="form-control form-control-sm">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-6">
-                        <div class="form-group row">
-                            <label class="col-sm-4 col-form-label">Giá bán</label>
-                            <div class="col-sm-8">
-                                <input formControlName="price" type="text" class="form-control form-control-sm">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-6">
-                        <div class="form-group row">
-                            <label class="col-sm-4 col-form-label">Mã thuế</label>
-                            <div class="col-sm-8">
-                                <input formControlName="vatCode" type="text" class="form-control form-control-sm">
-                            </div>
-                        </div>
-                    </div>
-                    
-                </div>
-            </form>
-        </div>
-    
-        <div class="modal-footer"> 
-            <button type="button" class="btn btn-primary pull-right">Lưu lại</button>
-            <button type="button" (click)="bsModalRef.hide()" class="btn btn-secondary pull-right">Bỏ qua</button>
-        </div>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left {{class}}">
+            {{title}}
+        </h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+        </button>
     </div>
+    <div class="modal-body">
+        <form class="customer-form" #ngAddForm="ngForm" [formGroup]="addForm" (ngSubmit)="onSubmit(addForm.value)">
+            <div class="row">
+                <div class="col-md-6 col-lg-6">
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label text-right required">Mã hàng</label>
+                        <div class="col-sm-8">
+                            <input appAutofocus formControlName="goods_code" type="text" class="form-control form-control-sm"
+                                [ngClass]="{ 'is-invalid': submitted && addForm.controls['goods_code'].errors }">
+                            <app-control-message *ngIf="submitted" [control]="addForm.controls['goods_code']"></app-control-message>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-6">
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label text-right required">Đơn vị tính</label>
+                        <div class="col-sm-8">
+                            <input formControlName="unit" type="text" class="form-control form-control-sm" [ngClass]="{ 'is-invalid': submitted && addForm.controls['unit'].errors }">
+                            <app-control-message *ngIf="submitted" [control]="addForm.controls['unit']"></app-control-message>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 col-lg-12">
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label text-right required">Tên hàng</label>
+                        <div class="col-sm-10">
+                            <input formControlName="goods_name" class="form-control form-control-sm" [ngClass]="{ 'is-invalid': submitted && addForm.controls['goods_name'].errors }">
+                            <app-control-message *ngIf="submitted" [control]="addForm.controls['goods_name']"></app-control-message>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-6">
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label text-right required">Nhóm</label>
+                        <div class="col-sm-8">
+                            <input formControlName="goods_group" type="text" class="form-control form-control-sm"
+                                [ngClass]="{ 'is-invalid': submitted && addForm.controls['goods_group'].errors }">
+                            <app-control-message *ngIf="submitted" [control]="addForm.controls['goods_group']"></app-control-message>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-6">
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label text-right required">Giá bán</label>
+                        <div class="col-sm-8">
+                            <input formControlName="price" type="text" numbersOnly currencyMask [options]="{ prefix: 'đ', allowNegative: false, precision: 0  }"
+                                class="form-control form-control-sm" [ngClass]="{ 'is-invalid': submitted && addForm.controls['price'].errors }">
+                            <app-control-message *ngIf="submitted" [control]="addForm.controls['price']"></app-control-message>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-6">
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label text-right required">Mã thuế</label>
+                        <div class="col-sm-8">
+                            <input formControlName="tax_rate_code" list="vatOptions" class="form-control form-control-sm"
+                                [ngClass]="{ 'is-invalid': submitted && addForm.controls['tax_rate_code'].errors }">
+                            <datalist id="vatOptions">
+                                <option *ngFor="let vat of comboTaxRate" value="{{vat.code}}">{{vat.description}}</option>
+                            </datalist>
+                            <app-control-message *ngIf="submitted" [control]="addForm.controls['tax_rate_code']"></app-control-message>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-6">
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label text-right">Gía trị</label>
+                        <div class="col-sm-8">
+                            <input formControlName="tax_rate" type="text" readonly="readonly" class="form-control form-control-sm">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" (click)="ngAddForm.ngSubmit.emit()" class="btn btn-md btn-success pull-right">
+            <i class="fas fa-save"></i> Lưu
+        </button>
+        <button type="button" (click)="bsModalRef.hide()" class="btn btn-md btn-light pull-right">
+            <i class="fas fa-share-square"></i> Bỏ qua
+        </button>
+    </div>
+</div>

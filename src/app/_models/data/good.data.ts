@@ -1,4 +1,4 @@
-export class Good {
+export class GoodData {
   goods_id: string;
   tenant_id: string;
   goods_code: string;
