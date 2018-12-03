@@ -1,33 +1,32 @@
 /* Modals */
 /* Modals */
-body.modal-open{
+body.modal-open {
   padding-right: 0 !important;
 }
-
 
 .modal {
   display: flex !important;
   justify-content: center !important;
-  align-items: center !important; 
+  align-items: center !important;
 
-  &.show{
+  &.show {
     display: flex !important;
     justify-content: center !important;
-    align-items: center !important; 
+    align-items: center !important;
   }
 
   .modal-dialog {
     display: flex !important;
     justify-content: center !important;
-    align-items: center !important; 
-   // margin-top: calc(#{$navbar-height + 52px});
+    align-items: center !important;
+    // margin-top: calc(#{$navbar-height + 52px});
     min-width: 350px !important;
 
-    &.modal-lg{
+    &.modal-lg {
       width: 800px !important;
       min-width: 600px !important;
 
-      .modal-body{
+      .modal-body {
         padding: 25px 38px;
       }
     }
@@ -36,29 +35,29 @@ body.modal-open{
       border: 0px !important;
       border-radius: 0px !important;
       background: #fff;
-      box-shadow: 0 3px 13px rgba(0,0,0,.5);
-      
-      .modal-header { 
+      box-shadow: 0 3px 13px rgba(0, 0, 0, 0.5);
+
+      .modal-header {
         display: -webkit-box;
         display: -ms-flexbox;
         display: flex;
         -webkit-box-pack: justify;
         -ms-flex-pack: justify;
-        justify-content: space-between; 
+        justify-content: space-between;
         -webkit-box-align: center;
         -ms-flex-align: center;
-        align-items: center; 
+        align-items: center;
         font-weight: 600;
-        padding: 0.75rem 1rem !important; 
+        padding: 0.75rem 1rem !important;
 
-        .modal-title{
+        .modal-title {
           font-size: 14px !important;
 
-          &.error{
-            color: #D8000C;
-            i{
+          &.error {
+            color: #d8000c;
+            i {
               margin-right: 4px;
-              color: #D8000C;
+              color: #d8000c;
             }
           }
         }
@@ -83,8 +82,8 @@ body.modal-open{
   }
 }
 
-.modal-backdrop{
-  &.show{
-    background: rgba(5,6,19,.64) !important;
+.modal-backdrop {
+  &.show {
+    background: rgba(5, 6, 19, 0.64) !important;
   }
 }

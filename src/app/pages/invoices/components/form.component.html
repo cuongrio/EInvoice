@@ -27,7 +27,8 @@
             <button type="button" [disabled]="disabledAdd" (click)="addNewButtonClicked()" class="btn btn-md btn-primary">
               <i class="fas fa-plus"></i> Thêm
             </button>
-            <button type="button" [disabled]="disabledEdit" class="btn btn-md btn-outline-primary"><i class="fas fa-edit"></i> Sửa</button>
+            <button type="button" [disabled]="disabledEdit" class="btn btn-md btn-outline-primary"><i class="fas fa-edit"></i>
+              Sửa</button>
             <button type="button" (click)="ngAddForm.ngSubmit.emit()" class="btn btn-md btn-success">
               <i class="fas fa-save"></i> Lưu
             </button>
@@ -49,9 +50,11 @@
                 </select>
               </div>
             </ng-template>
-            <button (click)="inCDClicked()" [disabled]="disabledPrintTranform" type="button" class="btn btn-md btn-outline-primary"><i class="fas fa-print"></i>
+            <button (click)="inCDClicked()" [disabled]="disabledPrintTranform" type="button" class="btn btn-md btn-outline-primary"><i
+                class="fas fa-print"></i>
               In CĐ</button>
-            <button (click)="inCDClicked()" [disabled]="disabledAdjust" type="button" class="btn btn-md btn-outline-primary"><i class="fas fa-print"></i>
+            <button (click)="inCDClicked()" [disabled]="disabledAdjust" type="button" class="btn btn-md btn-outline-primary"><i
+                class="fas fa-print"></i>
               Điều chỉnh</button>
             <button routerLink="/invoices" type="button" class="btn btn-md btn-light">
               <i class="fas fa-share-square"></i> Thoát
@@ -65,8 +68,8 @@
           <div class="card card-shadow px-2">
             <div class="card-body invoice__wrapper">
               <div *ngIf="adjust" class="alert alert-danger">
-                Đang viết hóa đơn điều chỉnh cho hóa đơn số: 
-                  <a routerLink="/invoices/update/{{invoiceId}}">#033939398</a>, mẫu: 322323, ký
+                Đang viết hóa đơn điều chỉnh cho hóa đơn số:
+                <a routerLink="/invoices/update/{{invoiceId}}">#033939398</a>, mẫu: 322323, ký
                 hiệu: 3332232
                 <a class="btn btn-md btn-light">Quay lại</a>
               </div>
@@ -117,8 +120,8 @@
                           <!-- <ng-select [allowClear]="true" [items]="comboForm" (selected)="selected($event)" (removed)="removed($event)"
                             (typed)="typed($event)" (data)="refreshValue($event)">
                           </ng-select> -->
-                          <ngx-select-dropdown [multiple]="false" (open)="loadFormBox()"
-                            (valueChange)="onFormChange($event)" [(value)]="formPicked" [config]="configCode" [options]="comboForm">
+                          <ngx-select-dropdown [multiple]="false" (open)="loadFormBox()" (valueChange)="onFormChange($event)"
+                            [config]="configSingleBox" [options]="comboForm">
                           </ngx-select-dropdown>
                           <app-control-message *ngIf="submitted" [control]="addForm.controls['form']"></app-control-message>
                         </div>
@@ -133,8 +136,8 @@
                             [ngClass]="{ 'is-invalid': submitted && addForm.controls['serial'].errors }">
                             <option [value]="op.code" *ngFor="let op of comboSerial">{{ op.value }}</option>
                           </select> -->
-                          <ngx-select-dropdown [multiple]="false" (open)="loadSerialBox()" [(value)]="serialPicked" 
-                            [config]="configCode" [options]="comboSerial">
+                          <ngx-select-dropdown [(value)]="serialPicked" [multiple]="false" (valueChange)="onSerialChange($event)"
+                            [config]="configSingleBox" [options]="comboSerial">
                           </ngx-select-dropdown>
                           <app-control-message *ngIf="submitted" [control]="addForm.controls['serial']"></app-control-message>
                         </div>

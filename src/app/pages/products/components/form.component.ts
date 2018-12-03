@@ -15,12 +15,7 @@ export class ProductFormComponent implements OnInit {
   public submitted = false;
   public dataForm: any;
 
-  constructor(
-    private goodService: GoodService,
-    private formBuilder: FormBuilder,
-    public bsModalRef: BsModalRef) {
-
-  }
+  constructor(private goodService: GoodService, private formBuilder: FormBuilder, public bsModalRef: BsModalRef) {}
   ngOnInit() {
     this.initForm();
 
@@ -42,19 +37,24 @@ export class ProductFormComponent implements OnInit {
     Object.assign(product, dataForm);
 
     if (product.goods_id) {
-      this.goodService.update(product).subscribe(data => {
-        this.bsModalRef.hide();
-      }, err => {
-        this.errorMessage = err;
-      });
+      this.goodService.update(product).subscribe(
+        data => {
+          this.bsModalRef.hide();
+        },
+        err => {
+          this.errorMessage = err;
+        }
+      );
     } else {
-      this.goodService.create(product).subscribe(data => {
-        this.bsModalRef.hide();
-      }, err => {
-        this.errorMessage = err;
-      });
+      this.goodService.create(product).subscribe(
+        data => {
+          this.bsModalRef.hide();
+        },
+        err => {
+          this.errorMessage = err;
+        }
+      );
     }
-
   }
   private initForm() {
     this.addForm = this.formBuilder.group({

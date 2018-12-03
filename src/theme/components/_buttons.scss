@@ -3,6 +3,12 @@
   font-size: $btn-font-size;
   font-family: $type-1;
 
+  &:disabled{
+    color: #000 !important;
+    background-color: lightgrey !important;
+    border-color: gray !important;
+  }
+
   i {
     margin-right: 0.3125rem;
   }

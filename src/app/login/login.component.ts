@@ -20,8 +20,7 @@ export class LoginComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private authenticationService: AuthenticationService
-  ) {
-  }
+  ) {}
 
   ngOnInit() {
     this.createForm();
@@ -30,21 +29,27 @@ export class LoginComponent implements OnInit {
   onSubmit(dataForm: UserModel) {
     console.log('dataForm: ' + dataForm);
     this.isLoading = true;
-    this.authenticationService.login(dataForm)
-      .pipe(finalize(() => {
-        this.loginForm.markAsPristine();
-        this.isLoading = false;
-      }))
-      .subscribe((credentials) => {
-        const userLogged = credentials as UserModel;
-        this.authenticationService.setCredentials(userLogged);
-        this.route.queryParams.subscribe(
-          params => this.router.navigate([params.redirect || '/'], { replaceUrl: true })
-        );
-      }, error => {
-        this.error = error;
-        this.ref.markForCheck();
-      });
+    this.authenticationService
+      .login(dataForm)
+      .pipe(
+        finalize(() => {
+          this.loginForm.markAsPristine();
+          this.isLoading = false;
+        })
+      )
+      .subscribe(
+        credentials => {
+          const userLogged = credentials as UserModel;
+          this.authenticationService.setCredentials(userLogged);
+          this.route.queryParams.subscribe(params =>
+            this.router.navigate([params.redirect || '/'], { replaceUrl: true })
+          );
+        },
+        error => {
+          this.error = error;
+          this.ref.markForCheck();
+        }
+      );
   }
 
   private createForm() {

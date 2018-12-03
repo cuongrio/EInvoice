@@ -19,9 +19,8 @@ export class CustomerFormComponent implements OnInit {
   constructor(
     private customerService: CustomerService,
     private formBuilder: FormBuilder,
-    public bsModalRef: BsModalRef) {
-
-  }
+    public bsModalRef: BsModalRef
+  ) {}
   ngOnInit() {
     console.log('form init');
     this.initForm();
@@ -44,17 +43,23 @@ export class CustomerFormComponent implements OnInit {
     Object.assign(customer, dataForm);
 
     if (customer.customer_id) {
-      this.customerService.update(customer).subscribe(data => {
-        this.bsModalRef.hide();
-      }, err => {
-        this.errorMessage = err;
-      });
+      this.customerService.update(customer).subscribe(
+        data => {
+          this.bsModalRef.hide();
+        },
+        err => {
+          this.errorMessage = err;
+        }
+      );
     } else {
-      this.customerService.create(customer).subscribe(data => {
-        this.bsModalRef.hide();
-      }, err => {
-        this.errorMessage = err;
-      });
+      this.customerService.create(customer).subscribe(
+        data => {
+          this.bsModalRef.hide();
+        },
+        err => {
+          this.errorMessage = err;
+        }
+      );
     }
   }
 
@@ -71,5 +76,4 @@ export class CustomerFormComponent implements OnInit {
       phone: ['', Validators.compose([Validators.required])]
     });
   }
-
 }

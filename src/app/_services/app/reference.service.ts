@@ -5,22 +5,18 @@ import { AppConstant } from '@app/_mock/mock.data';
 import { of } from 'rxjs';
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class ReferenceService {
+  constructor(private appConstant: AppConstant, private appService: AppService) {}
 
-    constructor(
-        private appConstant: AppConstant,
-        private appService: AppService
-        ) { }
+  /***TENANT */
+  tenanInfo() {
+    return this.appService.get(`${environment.serverUrl}/1`);
+  }
 
-    /***TENANT */
-    tenanInfo() {
-        return this.appService.get(`${environment.serverUrl}/1`);
-    }
-
-    referenceInfo() {
-        // return this.appService.get(`${environment.serverUrl}/references`);
-        return of(this.appConstant.references);
-    }
+  referenceInfo() {
+    // return this.appService.get(`${environment.serverUrl}/references`);
+    return of(this.appConstant.references);
+  }
 }

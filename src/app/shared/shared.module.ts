@@ -15,4 +15,4 @@ import { RouterModule } from '@angular/router';
   entryComponents: [AlertComponent],
   exports: [LoaderComponent, HeaderComponent, FooterComponent, ControlMessageComponent, AlertComponent]
 })
-export class SharedModule { }
+export class SharedModule {}

@@ -6,34 +6,28 @@ import { AppService } from '@app/_services/core/app.service';
 import { AppConstant } from '@app/_mock/mock.data';
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class GoodService {
+  constructor(private appConstant: AppConstant, private appService: AppService) {}
 
-    constructor(
-        private appConstant: AppConstant,
-        private appService: AppService
-        ) { }
+  /**** LIST *** */
+  getList() {
+    // return this.appService.get(`${environment.serverUrl}/goods`);
+    return of(this.appConstant.goodList);
+  }
 
-    /**** LIST *** */
-    getList() {
-        // return this.appService.get(`${environment.serverUrl}/goods`);
-        return of(this.appConstant.goodList);
-    }
+  create(product: ProductModel) {
+    return this.appService.post(`${environment.serverUrl}/goods/`, product);
+  }
 
-    create(product: ProductModel) {
-        return this.appService.post(`${environment.serverUrl}/goods/`, product);
-    }
+  update(product: ProductModel) {
+    return this.appService.put(`${environment.serverUrl}/goods/`, product);
+  }
 
-    update(product: ProductModel) {
-        return this.appService.put(`${environment.serverUrl}/goods/`, product);
-    }
+  uploadFile() {}
 
-    uploadFile() {
-
-    }
-
-    downloadFile() {
-        return this.appService.get(`${environment.serverUrl}/goods/download`);
-    }
+  downloadFile() {
+    return this.appService.get(`${environment.serverUrl}/goods/download`);
+  }
 }

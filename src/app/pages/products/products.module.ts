@@ -27,7 +27,6 @@ import { ValidationService, GoodService } from '@app/_services';
 
 @NgModule({
   imports: [
-
     CommonModule,
 
     RouterModule.forChild(ProductsRoutes),
@@ -48,18 +47,8 @@ import { ValidationService, GoodService } from '@app/_services';
 
     SharedModule
   ],
-  entryComponents: [
-    ProductFormComponent
-  ],
-  declarations: [
-    ProductsComponent,
-    ProductFormComponent
-  ],
-  providers: [
-    GoodService,
-    UtilsService,
-    DatePipe,
-    ValidationService
-  ]
+  entryComponents: [ProductFormComponent],
+  declarations: [ProductsComponent, ProductFormComponent],
+  providers: [GoodService, UtilsService, DatePipe, ValidationService]
 })
-export class ProductsModule { }
+export class ProductsModule {}

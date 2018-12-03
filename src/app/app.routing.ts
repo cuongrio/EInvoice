@@ -19,7 +19,7 @@ const routes: Routes = [
   {
     path: '',
     component: PageLayoutComponent,
-    canActivate: [AuthenticationGuard],
+    // canActivate: [AuthenticationGuard],
     children: [
       {
         path: 'dashboard',
@@ -56,19 +56,23 @@ const routes: Routes = [
     path: 'logout',
     component: LogoutComponent,
     data: { title: 'Đăng xuất' }
-  }, {
+  },
+  {
     path: '404',
     component: NotFoundComponent,
     data: { title: 'Xin lỗi, Trang không tồn tại!!!' }
-  }, {
+  },
+  {
     path: '4xx',
     component: BadRequestComponent,
     data: { title: 'Xin lỗi, Server không xử lý yêu cầu!!!' }
-  }, {
+  },
+  {
     path: '500',
     component: ServerErrorComponent,
     data: { title: 'Xin lỗi, Đã có lỗi xảy ra!!!' }
-  }, {
+  },
+  {
     path: '**',
     redirectTo: '404'
   }
@@ -79,4 +83,4 @@ const routes: Routes = [
   exports: [RouterModule],
   providers: []
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

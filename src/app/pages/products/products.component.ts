@@ -15,7 +15,6 @@ declare var $: any;
   templateUrl: './products.component.html'
 })
 export class ProductsComponent implements OnInit, AfterViewInit {
-
   public bsConfig = { dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-blue' };
   public modalRef: BsModalRef;
 
@@ -37,7 +36,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
     private productService: GoodService,
     private formBuilder: FormBuilder,
     private modalService: BsModalService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.initDefault();
@@ -59,39 +58,27 @@ export class ProductsComponent implements OnInit, AfterViewInit {
     localStorage.setItem('productsearch', JSON.stringify(this.expandSearch));
   }
 
-  public onSubmit(form: any) {
-
-  }
+  public onSubmit(form: any) {}
 
   public addNewClicked() {
     this.modalRef = this.modalService.show(ProductFormComponent, { class: 'modal-lg' });
   }
 
-  public editClicked() {
+  public editClicked() {}
 
-  }
+  public deleteClicked() {}
 
-  public deleteClicked() {
+  public copyClicked() {}
 
-  }
+  public onPageChange(page: number) {}
 
-  public copyClicked() {
+  public deleteRow() {}
 
-  }
-
-  public onPageChange(page: number) {
-
-  }
-
-  public deleteRow() {
-
-  }
-
-  public editRow() { }
+  public editRow() {}
 
   private getCheckboxesValue() {
     const itemsChecked = new Array<string>();
-    $('input:checkbox[name=stickchoice]:checked').each(function () {
+    $('input:checkbox[name=stickchoice]:checked').each(function() {
       const item: string = $(this).val();
       itemsChecked.push(item);
     });
@@ -138,7 +125,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
       code: '',
       name: '',
       group: '',
-      unit: '',
+      unit: ''
     });
   }
 
@@ -162,20 +149,27 @@ export class ProductsComponent implements OnInit, AfterViewInit {
           orderable: false,
           data: null,
           defaultContent: ''
-        }, {
+        },
+        {
           data: 'goods_code'
-        }, {
+        },
+        {
           data: 'goods_name'
-        }, {
+        },
+        {
           data: 'unit'
-        }, {
+        },
+        {
           data: 'price'
-        }, {
+        },
+        {
           data: 'tax_rate'
-        }, {
+        },
+        {
           data: 'goods_group'
-        }, {
-          data: function (row: any, type: any) {
+        },
+        {
+          data: function(row: any, type: any) {
             if (type === 'display' && row.insert_date && row.insert_date !== 'null') {
               const dateFormate = moment(row.insert_date).format('DD/MM/YYYY');
               return `<span>${dateFormate}</span>`;
@@ -189,7 +183,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
         style: 'multi'
       },
       order: [[2, 'desc']],
-      drawCallback: function () {
+      drawCallback: function() {
         const pagination = $(this)
           .closest('.dataTables_wrapper')
           .find('.dataTables_paginate');

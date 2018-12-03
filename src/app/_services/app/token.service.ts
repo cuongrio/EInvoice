@@ -7,10 +7,7 @@ import { of } from 'rxjs';
   providedIn: 'root'
 })
 export class TokenService {
-
-  constructor(
-    private appConstant: AppConstant,
-    private appService: AppService) { }
+  constructor(private appConstant: AppConstant, private appService: AppService) {}
 
   listToken() {
     // return this.appService.get(`${environment.pluginUrl}/token`);

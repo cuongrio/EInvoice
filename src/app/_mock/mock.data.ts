@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 @Injectable()
 export class AppConstant {
-    public listToken = JSON.parse(`
+  public listToken = JSON.parse(`
     [
         {
             "alias": "plugintest",
@@ -13,7 +13,7 @@ export class AppConstant {
         }
     ]
     `);
-    public customerList = JSON.parse(`
+  public customerList = JSON.parse(`
     [
         {
             "customer_id": 1,
@@ -115,7 +115,7 @@ export class AppConstant {
         }
     ]
     `);
-    public goodList = JSON.parse(`
+  public goodList = JSON.parse(`
     [
         {
             "goods_id": 1,
@@ -442,7 +442,7 @@ export class AppConstant {
             "insert_date": "2018-12-01T09:06:57.000+0000"
         }
     ]`);
-    public references = JSON.parse(`
+  public references = JSON.parse(`
     [
         {
             "type": "COMBO_PAYMENT",
@@ -584,7 +584,7 @@ export class AppConstant {
         }
     ]
     `);
-    public invoiceList = JSON.parse(`{
+  public invoiceList = JSON.parse(`{
         "page": 0,
         "total_elements": 20,
         "total_pages": 7,
@@ -1154,6 +1154,3 @@ export class AppConstant {
         ]
     }`);
 }
-
-
-

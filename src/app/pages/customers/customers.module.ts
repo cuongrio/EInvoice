@@ -28,7 +28,6 @@ import { CustomersRoutes } from './customers.routing';
 
 @NgModule({
   imports: [
-
     CommonModule,
 
     RouterModule.forChild(CustomersRoutes),
@@ -49,18 +48,8 @@ import { CustomersRoutes } from './customers.routing';
 
     SharedModule
   ],
-  entryComponents: [
-    CustomerFormComponent
-  ],
-  declarations: [
-    CustomersComponent,
-    CustomerFormComponent
-  ],
-  providers: [
-    CustomerService,
-    UtilsService,
-    DatePipe,
-    ValidationService
-  ]
+  entryComponents: [CustomerFormComponent],
+  declarations: [CustomersComponent, CustomerFormComponent],
+  providers: [CustomerService, UtilsService, DatePipe, ValidationService]
 })
-export class CustomersModule { }
+export class CustomersModule {}

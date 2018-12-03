@@ -1,5 +1,4 @@
-﻿
-// model
+﻿// model
 export * from './user.model';
 export * from './invoice.model';
 export * from './customer.model';
@@ -17,4 +16,3 @@ export * from './data/invoice.list.data';
 export * from './param/customer.param';
 export * from './param/good.param';
 export * from './param/invoice.param';
-

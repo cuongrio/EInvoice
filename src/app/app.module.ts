@@ -47,7 +47,7 @@ import { AppConstant } from './_mock/mock.data';
     BadRequestComponent,
     NumberDirective,
     AutofocusDirective,
-    SlTruncatePipe,
+    SlTruncatePipe
   ],
   imports: [
     BrowserModule,
@@ -66,13 +66,7 @@ import { AppConstant } from './_mock/mock.data';
     NgProgressModule.forRoot()
   ],
 
-  providers: [
-    ValidationService,
-    CookieService,
-    HttpService,
-    AppService,
-    AppConstant
-  ],
+  providers: [ValidationService, CookieService, HttpService, AppService, AppConstant],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

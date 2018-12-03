@@ -1,8 +1,8 @@
 ﻿export class UserModel {
-  username: string;
+  username?: string;
   password?: string;
   name?: string;
-  tenant: string;
-  token: string;
+  tenant?: string;
+  token?: string;
   remember?: boolean;
 }

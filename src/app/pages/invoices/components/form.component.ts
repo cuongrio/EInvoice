@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, TemplateRef, ChangeDetectionStrategy, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, TemplateRef, ChangeDetectionStrategy, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, FormArray, Validators, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, Observable, of } from 'rxjs';
@@ -38,9 +38,8 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   public modalRef: BsModalRef;
   public bsConfig = { dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-blue' };
 
-  public customerPicked: CustomerData;
-  public formPicked: SelectData;
   public serialPicked: SelectData;
+  public customerPicked: CustomerData;
 
   public references: Array<SelectData>;
 
@@ -54,6 +53,15 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   public totalPrice = new Array<number>();
   public totalVat = new Array<number>();
   public finalTotalPrice = new Array<number>();
+
+  public configSingleBox = {
+    noResultsFound: 'Không có dữ liệu',
+    showNotFound: false,
+    placeholder: ' ',
+    toggleDropdown: false,
+    displayKey: 'select_item',
+    search: false
+  };
 
   public configCode = {
     searchPlaceholder: 'Tìm kiếm',
@@ -105,6 +113,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
 
   constructor(
+    private ref: ChangeDetectorRef,
     private router: Router,
     private formBuilder: FormBuilder,
     private invoiceService: InvoiceService,
@@ -211,13 +220,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     );
   }
 
-  public onCustomerTaxChange(dataArr: CustomerData[]) {
-    this.initDataForm(dataArr);
-  }
-
-  public onCustomerChange(dataArr: CustomerData[]) {
-    this.initDataForm(dataArr);
-  }
 
   public addNewButtonClicked() {
     this.customerPicked = null;
@@ -352,26 +354,60 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  public onFormChange(formValue: any) {
-    console.log('formValue: ' + JSON.stringify(formValue));
-    if (formValue) {
-      const selectData = new SelectData();
-      Object.assign(selectData, formValue[0]);
+  public onCustomerTaxChange(customerValue: any) {
+    const customer = new CustomerData();
+    Object.assign(customer, customerValue[0]);
+    this.addForm.patchValue({
+      customerTax: customer.tax_code
+    });
 
-      this.initSerialBox(selectData.code);
-    }
+    this.initDataForm(customer);
   }
 
-  public initSerialBox(code: string) {
-    const comboType = `COMBO_SERIAL_${code}`;
-    console.log('...' + comboType);
-    this.references.forEach((item: SelectData, index: number) => {
-      if (item.type === comboType) {
-        item.select_item = item.code;
-        this.comboSerial.push(item);
-      }
+  public onCustomerChange(customerValue: any) {
+    const customer = new CustomerData();
+    Object.assign(customer, customerValue[0]);
+    this.addForm.patchValue({
+      customerCode: customer.customer_code
     });
-    console.log(this.comboSerial);
+
+    this.initDataForm(customer);
+  }
+
+  public onFormChange(formValue: any) {
+    const selectData = new SelectData();
+    this.comboSerial = new Array<SelectData>();
+    this.serialPicked = null;
+
+    if (formValue && formValue.length > 0) {
+      Object.assign(selectData, formValue[0]);
+      const comboType = `COMBO_SERIAL_${selectData.code}`;
+
+      this.references.forEach((item: SelectData, index: number) => {
+        if (item.type === comboType) {
+          item.select_item = item.code;
+          this.comboSerial.push(item);
+        }
+      });
+    }
+    this.addForm.patchValue({
+      form: selectData.code
+    });
+    this.ref.markForCheck();
+    this.ref.detectChanges();
+  }
+
+  public onSerialChange(serialValue: any) {
+    const selectData = new SelectData();
+    Object.assign(selectData, serialValue[0]);
+    this.addForm.patchValue({
+      serial: selectData.code
+    });
+  }
+
+  public loadSerialBox() {
+    this.ref.markForCheck();
+    this.ref.detectChanges();
   }
 
   public loadFormBox() {
@@ -465,7 +501,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     });
   }
 
-
   private loadCustomers() {
     if (this.customerArr && this.customerArr.length > 0) {
       return;
@@ -502,35 +537,27 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
           this.comboForm.push(selectItem);
         }
       }
-
-      if (this.comboForm.length > 0) {
-        this.formPicked = this.comboForm[0];
-        this.addForm.patchValue({
-          form: this.formPicked
-        });
-      }
     });
   }
 
-  private initDataForm(dataArr: CustomerData[]) {
-    if (dataArr && dataArr.length > 0) {
-      const customerPicked = dataArr[0];
-
-      // set form value
+  private initDataForm(customer: CustomerData) {
+    if (customer) {
       this.addForm.patchValue({
-        customerEmail: customerPicked.email,
-        customerOrg: customerPicked.org,
-        customerCode: customerPicked.customer_code,
-        customerName: customerPicked.customer_name,
-        customerBankAccount: customerPicked.bank_account,
-        customerBank: customerPicked.bank,
-        customerAddress: customerPicked.address
+        customerEmail: customer.email,
+        customerOrg: customer.org,
+        customerTax: customer.tax_code,
+        customerCode: customer.customer_code,
+        customerName: customer.customer_name,
+        customerBankAccount: customer.bank_account,
+        customerBank: customer.bank,
+        customerAddress: customer.address
       });
     } else {
       this.addForm.patchValue({
         customerEmail: '',
         customerName: '',
         customerCode: '',
+        customerTax: '',
         customerOrg: '',
         customerBankAccount: '',
         customerBank: '',
@@ -630,7 +657,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     while (formArray.length !== 0) {
       formArray.removeAt(0);
     }
-  }
+  };
 
   private formSetDefault() {
     this.addForm.patchValue({

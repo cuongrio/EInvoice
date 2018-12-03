@@ -18,7 +18,6 @@ type ArrayObject = Array<{ code: string; value: string }>;
   templateUrl: './customers.component.html'
 })
 export class CustomersComponent implements OnInit, AfterViewInit {
-
   public bsConfig = { dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-blue' };
   public modalRef: BsModalRef;
 
@@ -40,7 +39,7 @@ export class CustomersComponent implements OnInit, AfterViewInit {
     private customerService: CustomerService,
     private formBuilder: FormBuilder,
     private modalService: BsModalService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.initDefault();
@@ -73,52 +72,49 @@ export class CustomersComponent implements OnInit, AfterViewInit {
     localStorage.setItem('customerSearch', JSON.stringify(this.expandSearch));
   }
 
-  public onSubmit(form: any) {
-
-  }
+  public onSubmit(form: any) {}
 
   public addNewClicked() {
     this.modalRef = this.modalService.show(CustomerFormComponent, { class: 'modal-lg' });
   }
 
-  public editClicked() {
+  public editClicked() {}
 
-  }
+  public deleteClicked() {}
 
-  public deleteClicked() {
+  public copyClicked() {}
 
-  }
+  public onPageChange(page: number) {}
 
-  public copyClicked() {
+  public deleteRow() {}
 
-  }
-
-  public onPageChange(page: number) {
-
-  }
-
-  public deleteRow() {
-
-  }
-
-  public editRow() { }
+  public editRow() {}
 
   private highlight() {
-    $('#customerTable tbody')
-      .on('mouseenter', 'td', function () {
-        const colIdx = $('#customerTable')
-          .dataTable().cell(this).index().column;
+    $('#customerTable tbody').on('mouseenter', 'td', function() {
+      const colIdx = $('#customerTable')
+        .dataTable()
+        .cell(this)
+        .index().column;
 
-        $($('#customerTable')
-          .dataTable().cells().nodes()).removeClass('highlight');
-        $($('#customerTable')
-          .dataTable().column(colIdx).nodes()).addClass('highlight');
-      });
+      $(
+        $('#customerTable')
+          .dataTable()
+          .cells()
+          .nodes()
+      ).removeClass('highlight');
+      $(
+        $('#customerTable')
+          .dataTable()
+          .column(colIdx)
+          .nodes()
+      ).addClass('highlight');
+    });
   }
 
   private getCheckboxesValue() {
     const itemsChecked = new Array<string>();
-    $('input:checkbox[name=stickchoice]:checked').each(function () {
+    $('input:checkbox[name=stickchoice]:checked').each(function() {
       const item: string = $(this).val();
       itemsChecked.push(item);
     });
@@ -183,29 +179,39 @@ export class CustomersComponent implements OnInit, AfterViewInit {
       language: {
         emptyTable: 'Không có dữ liệu'
       },
-      columns: [{
-        data: 'customer_code'
-      }, {
-        data: 'customer_name'
-      }, {
-        data: 'org'
-      }, {
-        data: 'tax_code'
-      }, {
-        data: 'address'
-      }, {
-        data: 'bank_account'
-      }, {
-        data: 'bank'
-      }, {
-        data: 'phone'
-      }, {
-        data: 'email'
-      }],
+      columns: [
+        {
+          data: 'customer_code'
+        },
+        {
+          data: 'customer_name'
+        },
+        {
+          data: 'org'
+        },
+        {
+          data: 'tax_code'
+        },
+        {
+          data: 'address'
+        },
+        {
+          data: 'bank_account'
+        },
+        {
+          data: 'bank'
+        },
+        {
+          data: 'phone'
+        },
+        {
+          data: 'email'
+        }
+      ],
       select: {
         style: 'multi'
       },
-      drawCallback: function () {
+      drawCallback: function() {
         const pagination = $(this)
           .closest('.dataTables_wrapper')
           .find('.dataTables_paginate');

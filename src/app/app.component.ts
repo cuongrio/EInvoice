@@ -18,14 +18,12 @@ import { UserModel } from './_models';
   preserveWhitespaces: false
 })
 export class AppComponent implements OnInit {
-
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private titleService: Title,
     private translateService: TranslateService
-  ) {
-  }
+  ) {}
 
   ngOnInit() {
     const onNavigationEnd = this.router.events.pipe(filter(event => event instanceof NavigationEnd));

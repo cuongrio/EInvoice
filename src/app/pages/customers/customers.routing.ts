@@ -7,5 +7,5 @@ export const CustomersRoutes: Routes = [
     path: '',
     component: CustomersComponent,
     data: { title: 'Danh mục khách hàng' }
-  },
+  }
 ];

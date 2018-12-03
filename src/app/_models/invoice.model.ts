@@ -1,7 +1,6 @@
 import { CustomerData } from './data/customer.data';
 import { ProductData } from './data/product.data';
 
-
 export class InvoiceModel {
   form: string;
   serial: string;

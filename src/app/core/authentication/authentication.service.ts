@@ -14,9 +14,7 @@ const credentialsKey = 'credentials';
 export class AuthenticationService {
   private _credentials: UserModel | null;
 
-  constructor(private httpService: HttpService,
-    private cookieService: CookieService) {
-
+  constructor(private httpService: HttpService, private cookieService: CookieService) {
     // check on cookie and session
     const savedCredentials = cookieService.get(credentialsKey) || sessionStorage.getItem(credentialsKey);
     if (savedCredentials) {

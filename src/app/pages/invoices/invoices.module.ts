@@ -17,7 +17,6 @@ import { DatePipe } from '@angular/common';
 import { InvoicesComponent } from './invoices.component';
 import { InvoiceFormComponent } from './components/form.component';
 import { InvoiceService, ValidationService, GoodService, CustomerService } from './../../_services';
-import { InvoiceDetailComponent } from './components/detail.component';
 import { SelectDropDownModule } from 'ngx-select-dropdown';
 import { SelectModule } from 'ng2-select';
 
@@ -28,7 +27,6 @@ import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   imports: [
-
     CommonModule,
 
     RouterModule.forChild(InvoicesRoutes),
@@ -49,18 +47,7 @@ import { HttpClientModule } from '@angular/common/http';
 
     SharedModule
   ],
-  declarations: [
-    InvoicesComponent,
-    InvoiceDetailComponent,
-    InvoiceFormComponent
-  ],
-  providers: [
-    ValidationService,
-    InvoiceService,
-    GoodService,
-    CustomerService,
-    UtilsService,
-    DatePipe
-  ]
+  declarations: [InvoicesComponent, InvoiceFormComponent],
+  providers: [ValidationService, InvoiceService, GoodService, CustomerService, UtilsService, DatePipe]
 })
 export class InvoicesModule { }
