@@ -7,10 +7,13 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { RouterModule } from '@angular/router';
 import { AppRoutingModule } from './app.routing';
-import { TranslateModule } from '@ngx-translate/core';
+
+import { LoadingBarModule } from '@ngx-loading-bar/core';
+import { LoadingBarHttpModule } from '@ngx-loading-bar/http';
+import { LoadingBarHttpClientModule } from '@ngx-loading-bar/http-client';
+import { LoadingBarRouterModule } from '@ngx-loading-bar/router';
 
 // vendor module
-import { NgProgressModule } from '@ngx-progressbar/core';
 import { AlertModule } from 'ngx-bootstrap';
 import { SharedModule } from '@app/shared';
 
@@ -57,13 +60,14 @@ import { AppConstant } from './_mock/mock.data';
     HttpClientModule,
     RouterModule,
     AppRoutingModule,
-    NgProgressModule,
     CoreModule,
     SharedModule,
     AppRoutingModule,
-    TranslateModule.forRoot(),
     AlertModule.forRoot(),
-    NgProgressModule.forRoot()
+    LoadingBarModule,
+    LoadingBarHttpModule,
+    LoadingBarHttpClientModule,
+    LoadingBarRouterModule
   ],
 
   providers: [ValidationService, CookieService, HttpService, AppService, AppConstant],

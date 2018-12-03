@@ -149,29 +149,28 @@
                   <button type="button" routerLink="/invoices/createNew" class="btn btn-md btn-success">
                     <i class="fas fa-plus"></i> Thêm
                   </button>
-                  <button type="button" (click)="editRow()" class="btn  btn-md btn-outline-primary">
+                  <button id="openButton" type="button" (click)="openRowClicked()" class="btn  btn-md btn-outline-primary">
                     <i class="fas fa-edit"></i> Mở
                   </button>
-                 
-                  <button type="button" class="btn  btn-md btn-outline-primary" title="Sao chép">
+                  <button id="copyButton" type="button" (click)="copyRowClicked()" class="btn btn-md btn-outline-primary" title="Sao chép">
                     <i class="fas fa-copy"></i> Sao chép
                   </button>
-                  <button type="button" class="btn  btn-md btn-outline-primary">
+                  <button id="printButton" type="button" (click)="printRowClicked()" class="btn btn-md btn-outline-primary">
                     <i class="fas fa-print"></i> In
                   </button>
-                  <button type="button" class="btn  btn-md btn-outline-primary">
+                  <button id="printTranformButton" (click)="printTransformRowClicked()" type="button" class="btn btn-md btn-outline-primary">
                     <i class="fas fa-retweet"></i> In chuyển đổi
                   </button>
-                  <button type="button" class="btn  btn-md btn-outline-primary">
+                  <button id="signButton" type="button" (click)="signClicked()" class="btn btn-md btn-outline-primary">
                     <i class="fas fa-key"></i> Ký
                   </button>
-                  <button type="button" routerLink="/invoices/createNew" class="btn btn-md btn-success">
+                  <button id="approveButton" type="button" (click)="approveClicked()" class="btn btn-md btn-success">
                     <i class="fas fa-plus"></i> Duyệt
                   </button>
-                  <button type="button" class="btn  btn-md btn-outline-primary">
+                  <button id="receiveExcelButton" type="button" (click)="receiveExcelClicked()" class="btn btn-md btn-outline-primary">
                     <i class="fas fa-file-excel"></i> Nhận Excel
-                  </button> 
-                  <button type="button" (click)="deleteRow()" class="btn  btn-md btn-outline-danger">
+                  </button>
+                  <button id="disposeButton" type="button" (click)="disposeClicked()" class="btn btn-md btn-outline-danger">
                     <i class="fas fa-trash"></i> Hủy hóa đơn
                   </button>
 
@@ -180,7 +179,7 @@
             </div>
 
             <div class="table-wrapper">
-              <table id="invoiceTable" class="table display dataTable">
+              <table id="invoiceTable" class="table display dataTable invoiceTable">
                 <thead>
                   <tr>
                     <th></th>

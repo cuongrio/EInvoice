@@ -536,6 +536,19 @@ legend.scheduler-border {
   min-height: 150px !important;
 }
 
+/***INVOICE SCREEN**/
+.table.dataTable{
+  &.invoiceTable{
+    td {
+      padding: 5px 5px !important;
+    }
+  }
+
+  tr.selected{
+    background: aliceblue;
+  }
+}
+
 /***LOGIN FORM***/
 .page-login {
   .content-wrapper {

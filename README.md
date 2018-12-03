@@ -91,8 +91,8 @@ HOA DON
 
 
 
-
-
+https://github.com/aitboudad/ngx-loading-bar/blob/master/demo/src/app/app.module.ts
+https://aitboudad.github.io/ngx-loading-bar/home
 
 
 

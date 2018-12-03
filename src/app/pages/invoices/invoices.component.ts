@@ -1,5 +1,5 @@
-import { Component, OnInit, HostListener, AfterViewInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import * as moment from 'moment';
@@ -14,7 +14,7 @@ type ArrayObject = Array<{ code: string; value: string }>;
   selector: 'app-invoices',
   templateUrl: './invoices.component.html'
 })
-export class InvoicesComponent implements OnInit, AfterViewInit {
+export class InvoicesComponent implements OnInit {
   public sortArr: string[] = ['ASC', 'DESC'];
   public sortByArr: ArrayObject = [
     { code: 'invoiceNo', value: 'Số hóa đơn' },
@@ -49,7 +49,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
     private activeRouter: ActivatedRoute,
     private invoiceService: InvoiceService,
     private formBuilder: FormBuilder
-  ) {}
+  ) { }
 
   ngOnInit() {
     console.log('init');
@@ -57,10 +57,6 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
     this.initDataTable();
     this.initForm();
     this.initPageHandlerInRouter();
-  }
-
-  ngAfterViewInit() {
-    this.initSelectBox();
   }
 
   // @HostListener('document:keypress', ['$event'])
@@ -112,16 +108,52 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
     }
   }
 
-  public deleteRow() {
-    const itemsChecked = this.getCheckboxesValue();
-    console.log('item: ' + itemsChecked);
+  // BUTTON ACTION
+  public openRowClicked() {
+    const item = this.getCheckboxesValue();
+    console.log('item: ' + item);
   }
 
-  public editRow() {}
+  public copyRowClicked(){
+    const item = this.getCheckboxesValue();
+    console.log('item: ' + item);
+  }
+
+  public printRowClicked(){
+    const item = this.getCheckboxesValue();
+    console.log('item: ' + item);
+  }
+
+  public printTransformRowClicked(){
+    const item = this.getCheckboxesValue();
+    console.log('item: ' + item);
+  }
+
+  public signClicked(){
+    const item = this.getCheckboxesValue();
+    console.log('item: ' + item);
+  }
+
+  public approveClicked(){
+    const item = this.getCheckboxesValue();
+    console.log('item: ' + item);
+  }
+
+  public receiveExcelClicked(){
+    const item = this.getCheckboxesValue();
+    console.log('item: ' + item);
+  }
+
+  public disposeClicked(){
+    const item = this.getCheckboxesValue();
+    console.log('item: ' + item);
+  }
+
+  // END BUTTON ACTION
 
   private getCheckboxesValue() {
     const itemsChecked = new Array<string>();
-    $('input:checkbox[name=stickchoice]:checked').each(function() {
+    $('input:checkbox[name=stickchoice]:checked').each(function () {
       const item: string = $(this).val();
       itemsChecked.push(item);
     });
@@ -151,10 +183,6 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
     } else {
       this.expandSearch = false;
     }
-  }
-
-  private initSelectBox() {
-    $('select').select2({ minimumResultsForSearch: Infinity });
   }
 
   private callServiceAndBindTable(params: InvoiceParam) {
@@ -227,7 +255,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
         {
           width: '80px',
           targets: 1,
-          render: function(data: any) {
+          render: function (data: any) {
             return '<label class="badge badge-info">' + data + '</label>';
           }
         },
@@ -246,7 +274,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
         {
           width: '50px',
           targets: 6,
-          render: function(data: any) {
+          render: function (data: any) {
             if (data && data !== 'null') {
               return '<span class="number-format">' + data + '</span>';
             } else {
@@ -257,7 +285,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
         {
           width: '50px',
           targets: 7,
-          render: function(data: any) {
+          render: function (data: any) {
             if (data && data !== 'null') {
               return '<span class="number-format">' + data + '</span>';
             } else {
@@ -268,7 +296,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
         {
           width: '80px',
           targets: 8,
-          render: function(data: any) {
+          render: function (data: any) {
             if (data && data !== 'null') {
               return '<span class="number-format">' + data + '</span>';
             } else {
@@ -292,7 +320,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
           data: 'invoice_no'
         },
         {
-          data: function(row: any, type: any) {
+          data: function (row: any, type: any) {
             if (type === 'display' && row.invoice_date && row.invoice_date !== 'null') {
               const dateFormate = moment(row.invoice_date).format('DD/MM/YYYY');
               return `<span>${dateFormate}</span>`;
@@ -302,7 +330,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
           }
         },
         {
-          data: function(row: any, type: any) {
+          data: function (row: any, type: any) {
             if (type === 'display' && row.customer && row.customer !== 'null') {
               return row.customer.customer_name;
             } else {
@@ -311,7 +339,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
           }
         },
         {
-          data: function(row: any, type: any) {
+          data: function (row: any, type: any) {
             if (type === 'display' && row.customer && row.customer !== 'null') {
               return row.customer.tax_code;
             } else {
@@ -320,7 +348,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
           }
         },
         {
-          data: function(row: any, type: any) {
+          data: function (row: any, type: any) {
             if (type === 'display' && row.customer && row.customer !== 'null') {
               return row.customer.address;
             } else {
@@ -333,7 +361,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
         { data: 'total' },
         {
           orderable: false,
-          data: function(row: any, type: any) {
+          data: function (row: any, type: any) {
             if (type === 'display' && row.invoice_id && row.invoice_id !== 'null') {
               return `
                 <div class="form-check">
@@ -349,10 +377,12 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
         }
       ],
       select: {
-        style: 'multi'
+        style: 'single',
+        items: 'cells',
+        info: false
       },
       order: [[2, 'desc']],
-      drawCallback: function() {
+      drawCallback: function () {
         const pagination = $(this)
           .closest('.dataTables_wrapper')
           .find('.dataTables_paginate');
@@ -365,14 +395,14 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
       const url = `http://178.128.123.223:8080/1/invoices/${invoiceId}`;
       $.ajax({
         url: url,
-        beforeSend: function(xhr: any) {
+        beforeSend: function (xhr: any) {
           xhr.setRequestHeader('Authorization', 'Bearer ' + token);
         }
       })
-        .done(function(data: any) {
+        .done(function (data: any) {
           callback(data.items);
         })
-        .fail(function(jqXHR: any, textStatus: any) {
+        .fail(function (jqXHR: any, textStatus: any) {
           alert('Đã xảy ra lỗi: ' + textStatus);
         });
     }
@@ -381,7 +411,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
       let contentItemHtml = ``;
       if (items && items.length > 0) {
         let lineItem = ``;
-        items.forEach(function(entry: any) {
+        items.forEach(function (entry: any) {
           lineItem += `
             <tr>
               <td>${entry.item_line}</td>
@@ -430,8 +460,56 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
         `</fieldset>`
       );
     }
+
+    // disabled all button
+    $('#openButton').prop('disabled', true);
+    $('#copyButton').prop('disabled', true);
+    $('#printButton').prop('disabled', true);
+    $('#printTranformButton').prop('disabled', true);
+    $('#signButton').prop('disabled', true);
+    $('#approveButton').prop('disabled', true);
+    $('#disposeButton').prop('disabled', true);
+
+    // selected row
+    $('#invoiceTable tbody').on('click', 'tr', function () {
+      $('input:checkbox[name=stickchoice]').each(function () {
+        $(this).prop('checked', false);
+      });
+
+      if ($(this).hasClass('selected')) {
+        $(this).removeClass('selected');
+        $(this).find('input:checkbox[name=stickchoice]').prop('checked', false);
+
+        $('#openButton').prop('disabled', true);
+        $('#copyButton').prop('disabled', true);
+        $('#printButton').prop('disabled', true);
+        $('#printTranformButton').prop('disabled', true);
+        $('#signButton').prop('disabled', true);
+        $('#approveButton').prop('disabled', true);
+        $('#disposeButton').prop('disabled', true);
+      }
+      else {
+        table.$('tr.selected').removeClass('selected');
+        $(this).addClass('selected');
+        $(this).find('input:checkbox[name=stickchoice]').prop('checked', true);
+
+        // enable button
+        $('#openButton').prop('disabled', false);
+        $('#copyButton').prop('disabled', false);
+        $('#printButton').prop('disabled', false);
+        $('#printTranformButton').prop('disabled', false);
+        $('#signButton').prop('disabled', false);
+        $('#approveButton').prop('disabled', false);
+        $('#disposeButton').prop('disabled', false);
+      }
+    });
+
+    // $('#button').click(function () {
+    //   table.row('.selected').remove().draw(false);
+    // });
+
     // Add event listener for opening and closing details
-    $('#invoiceTable tbody').on('click', 'td.details-control', function() {
+    $('#invoiceTable tbody').on('click', 'td.details-control', function () {
       const tr = $(this).closest('tr');
 
       const row = table.row(tr);
@@ -441,7 +519,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
         tr.removeClass('tr-expand');
       } else {
         // call API
-        getProductItemByInvoice(row.data().invoice_id, function(items: any) {
+        getProductItemByInvoice(row.data().invoice_id, function (items: any) {
           row.child(formatEinvoiceRow(items)).show();
           tr.addClass('tr-expand');
         });

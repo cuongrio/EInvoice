@@ -648,7 +648,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
       customerBankAccount: '',
       customerBank: '',
       status: '',
-      customerAddress: ['', Validators.compose([Validators.required, Validators.minLength(10)])],
+      customerAddress:['', Validators.compose([Validators.required])],
       items: this.formBuilder.array([])
     });
   }

@@ -18,7 +18,6 @@ import { SelectDropDownModule } from 'ngx-select-dropdown';
 import { SelectModule } from 'ng2-select';
 
 import { HttpClientModule } from '@angular/common/http';
-import { NgProgressModule } from '@ngx-progressbar/core';
 
 import { NgxCurrencyModule } from 'ngx-currency';
 import { UtilsService } from '@app/_services/utils/utils.service';
@@ -38,7 +37,6 @@ import { CustomersRoutes } from './customers.routing';
     HttpClientModule,
     AlertModule.forRoot(),
     NgxCurrencyModule,
-    NgProgressModule.forRoot(),
     NgbModule,
     TooltipModule.forRoot(),
     PaginationModule.forRoot(),
