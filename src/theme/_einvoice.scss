@@ -63,7 +63,7 @@
 }
 
 .required:after {
-  content: " (*)";
+  content: "*";
 }
 
 .ngx-dropdown-container {
@@ -93,9 +93,9 @@
       margin-top: 5px !important;
 
       li {
-        padding: 4px !important;
+        padding: 7px 10px !important;
         line-height: 20px;
-        height: 26px !important;
+        height: 28px !important;
         overflow: hidden !important;
         word-break: break-all;
         span {
@@ -163,11 +163,6 @@
   }
 }
 
-.alert {
-  &.alert-dange{
-    border-radius: 0 !important;
-  }
-}
 
 // button md
 .input-group {
@@ -644,7 +639,7 @@ label.error {
 /***INVOICE FORM***/
 .invoice__wrapper {
   &.card-body {
-    padding: 40px 16px !important;
+    padding: 16px !important;
   }
   .navbar-action {
     margin-top: 20px;

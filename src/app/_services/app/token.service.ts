@@ -1,15 +1,19 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { environment } from './../../../environments/environment';
+import { AppService } from '../core/app.service';
+import { AppConstant } from '@app/_mock/mock.data';
+import { of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TokenService {
 
-  constructor(private httpClient: HttpClient) { }
+  constructor(
+    private appConstant: AppConstant,
+    private appService: AppService) { }
 
   listToken() {
-    return this.httpClient.get(`${environment.pluginUrl}/token`);
+    // return this.appService.get(`${environment.pluginUrl}/token`);
+    return of(this.appConstant.listToken);
   }
 }

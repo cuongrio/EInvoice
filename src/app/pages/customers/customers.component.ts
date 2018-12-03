@@ -44,13 +44,14 @@ export class CustomersComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.initDefault();
+    this.createForm();
     this.initDataTable();
-    this.initForm();
     this.initPageHandlerInRouter();
   }
 
   ngAfterViewInit() {
     this.initSelectBox();
+    // this.highlight();
   }
 
   // @HostListener('document:keypress', ['$event'])
@@ -102,6 +103,19 @@ export class CustomersComponent implements OnInit, AfterViewInit {
 
   public editRow() { }
 
+  private highlight() {
+    $('#customerTable tbody')
+      .on('mouseenter', 'td', function () {
+        const colIdx = $('#customerTable')
+          .dataTable().cell(this).index().column;
+
+        $($('#customerTable')
+          .dataTable().cells().nodes()).removeClass('highlight');
+        $($('#customerTable')
+          .dataTable().column(colIdx).nodes()).addClass('highlight');
+      });
+  }
+
   private getCheckboxesValue() {
     const itemsChecked = new Array<string>();
     $('input:checkbox[name=stickchoice]:checked').each(function () {
@@ -146,12 +160,12 @@ export class CustomersComponent implements OnInit, AfterViewInit {
     $('select').select2({ minimumResultsForSearch: Infinity });
   }
 
-  private initForm() {
+  private createForm() {
     this.searchForm = this.formBuilder.group({
-      code: '',
-      name: '',
+      customer_code: '',
+      customer_name: '',
       phone: '',
-      taxCode: ''
+      tax_code: ''
     });
   }
 
@@ -167,39 +181,30 @@ export class CustomersComponent implements OnInit, AfterViewInit {
       scrollX: true,
       iDisplayLength: 20,
       language: {
-        emptyTable: 'Không có dữ liệu',
+        emptyTable: 'Không có dữ liệu'
       },
-      columns: [
-        {
-          className: 'details-control',
-          orderable: false,
-          data: null,
-          defaultContent: ''
-        }, {
-          data: 'customer_code'
-        }, {
-          data: 'customer_name'
-        }, {
-          data: 'address'
-        }, {
-          data: 'phone'
-        }, {
-          data: 'email'
-        }, {
-          data: 'tax_code'
-        }, {
-          data: 'org'
-        }, {
-          data: 'bank_account'
-        }, {
-          data: 'bank'
-        }
-
-      ],
+      columns: [{
+        data: 'customer_code'
+      }, {
+        data: 'customer_name'
+      }, {
+        data: 'org'
+      }, {
+        data: 'tax_code'
+      }, {
+        data: 'address'
+      }, {
+        data: 'bank_account'
+      }, {
+        data: 'bank'
+      }, {
+        data: 'phone'
+      }, {
+        data: 'email'
+      }],
       select: {
         style: 'multi'
       },
-      order: [[2, 'desc']],
       drawCallback: function () {
         const pagination = $(this)
           .closest('.dataTables_wrapper')

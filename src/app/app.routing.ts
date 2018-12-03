@@ -5,11 +5,10 @@ import { Routes, RouterModule } from '@angular/router';
 import { PageLayoutComponent } from './pages/page-layout.component';
 import { LoginComponent } from './login/login.component';
 import { LogoutComponent } from './logout/logout.component';
-import { Page404Component } from './page404/page404.component';
-import { RegisterComponent } from './register/register.component';
-import { Exception500Component } from './exception/exception-500.component';
-
-import { AuthGuard } from './_guards';
+import { NotFoundComponent } from './exception/not-found.component';
+import { BadRequestComponent } from './exception/bad-request.component';
+import { ServerErrorComponent } from './exception/server-error.component';
+import { AuthenticationGuard } from './core/authentication/authentication.guard';
 
 const routes: Routes = [
   {
@@ -20,37 +19,31 @@ const routes: Routes = [
   {
     path: '',
     component: PageLayoutComponent,
-    canActivate: [AuthGuard],
+    canActivate: [AuthenticationGuard],
     children: [
       {
         path: 'dashboard',
-        loadChildren: './pages/dashboard/dashboard.module#DashboardModule',
-        canActivate: [AuthGuard]
+        loadChildren: './pages/dashboard/dashboard.module#DashboardModule'
       },
       {
         path: 'customers',
-        loadChildren: './pages/customers/customers.module#CustomersModule',
-        canActivate: [AuthGuard]
+        loadChildren: './pages/customers/customers.module#CustomersModule'
       },
       {
         path: 'products',
-        loadChildren: './pages/products/products.module#ProductsModule',
-        canActivate: [AuthGuard]
+        loadChildren: './pages/products/products.module#ProductsModule'
       },
       {
         path: 'invoices',
-        loadChildren: './pages/invoices/invoices.module#InvoicesModule',
-        canActivate: [AuthGuard]
+        loadChildren: './pages/invoices/invoices.module#InvoicesModule'
       },
       {
         path: 'info',
-        loadChildren: './pages/info/info.module#InfoModule',
-        canActivate: [AuthGuard]
+        loadChildren: './pages/info/info.module#InfoModule'
       },
       {
         path: 'report',
-        loadChildren: './pages/report/report.module#ReportModule',
-        canActivate: [AuthGuard]
+        loadChildren: './pages/report/report.module#ReportModule'
       }
     ]
   },
@@ -63,23 +56,19 @@ const routes: Routes = [
     path: 'logout',
     component: LogoutComponent,
     data: { title: 'Đăng xuất' }
-  },
-  // {
-  //   path: 'register',
-  //   component: RegisterComponent,
-  //   data: { title: 'Thông tin đăng ký' }
-  // },
-  {
+  }, {
     path: '404',
-    component: Page404Component,
-    data: { title: 'Trang không tồn tại' }
-  },
-  {
+    component: NotFoundComponent,
+    data: { title: 'Xin lỗi, Trang không tồn tại!!!' }
+  }, {
+    path: '4xx',
+    component: BadRequestComponent,
+    data: { title: 'Xin lỗi, Server không xử lý yêu cầu!!!' }
+  }, {
     path: '500',
-    component: Exception500Component,
-    data: { title: 'Đã xảy ra lỗi' }
-  },
-  {
+    component: ServerErrorComponent,
+    data: { title: 'Xin lỗi, Đã có lỗi xảy ra!!!' }
+  }, {
     path: '**',
     redirectTo: '404'
   }
@@ -90,4 +79,4 @@ const routes: Routes = [
   exports: [RouterModule],
   providers: []
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

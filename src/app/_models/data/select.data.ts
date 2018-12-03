@@ -3,4 +3,5 @@ export class SelectData {
   type?: string;
   value: string;
   description?: string;
+  select_item?: string;
 }

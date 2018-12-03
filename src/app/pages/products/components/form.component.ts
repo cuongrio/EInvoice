@@ -1,8 +1,8 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { FormGroup, FormArray, Validators, FormBuilder } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { ProductModel } from '@app/_models';
 import { GoodService } from './../../../_services/app/good.service';
+import { ProductModel } from '@app/_models';
 
 @Component({
   selector: 'app-product-form',
@@ -13,7 +13,7 @@ export class ProductFormComponent implements OnInit {
   public addForm: FormGroup;
   public errorMessage: string;
   public submitted = false;
-  public dataForm: ProductModel;
+  public dataForm: any;
 
   constructor(
     private goodService: GoodService,

@@ -54,3 +54,65 @@ ctr+F : mở cái form search.
 	"start": "ng serve",
 	"postinstall": "npm run prettier -s"
 }
+
+#####
+HOA DON
+1. xem
+	InvoiceService -> preview
+	
+2. In thể hiện
+	InvoiceService -> print
+	dowload -> print
+
+3. In CĐ
+	InvoiceService -> tranform
+		sau ký | trạng thái từ approved, signed
+		
+4. Sửa -> Mở
+
+5. hóa đơn ký rồi -> disabled nút
+
+6. sign. goi theo thu tu 4 ham. fill=all
+
+7. approve: ki xong duyet. 
+
+8. dispose huy. 
+	-> chọn dòng -> hủy
+	
+9. Điều chỉnh 
+	-> giữ nguyên thông tin khách hàng
+	-> xóa items
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

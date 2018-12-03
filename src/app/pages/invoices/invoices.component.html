@@ -150,12 +150,9 @@
                     <i class="fas fa-plus"></i> Thêm
                   </button>
                   <button type="button" (click)="editRow()" class="btn  btn-md btn-outline-primary">
-                    <i class="fas fa-edit"></i> Sửa
+                    <i class="fas fa-edit"></i> Mở
                   </button>
-                  <button type="button" (click)="deleteRow()" class="btn  btn-md btn-outline-danger">
-                    <i class="fas fa-trash"></i> Xóa
-                  </button>
-
+                 
                   <button type="button" class="btn  btn-md btn-outline-primary" title="Sao chép">
                     <i class="fas fa-copy"></i> Sao chép
                   </button>
@@ -163,14 +160,21 @@
                     <i class="fas fa-print"></i> In
                   </button>
                   <button type="button" class="btn  btn-md btn-outline-primary">
+                    <i class="fas fa-retweet"></i> In chuyển đổi
+                  </button>
+                  <button type="button" class="btn  btn-md btn-outline-primary">
                     <i class="fas fa-key"></i> Ký
+                  </button>
+                  <button type="button" routerLink="/invoices/createNew" class="btn btn-md btn-success">
+                    <i class="fas fa-plus"></i> Duyệt
                   </button>
                   <button type="button" class="btn  btn-md btn-outline-primary">
                     <i class="fas fa-file-excel"></i> Nhận Excel
+                  </button> 
+                  <button type="button" (click)="deleteRow()" class="btn  btn-md btn-outline-danger">
+                    <i class="fas fa-trash"></i> Hủy hóa đơn
                   </button>
-                  <button type="button" class="btn  btn-md btn-outline-primary">
-                    <i class="fas fa-retweet"></i> In chuyển đổi
-                  </button>
+
                 </div>
               </div>
             </div>
@@ -191,20 +195,6 @@
                     <th></th>
                   </tr>
                 </thead>
-                <tfoot>
-                  <tr>
-                    <th></th>
-                    <th>Số hóa đơn</th>
-                    <th>Ngày HĐ</th>
-                    <th>Khách hàng</th>
-                    <th>MST</th>
-                    <th>Địa chỉ</th>
-                    <th class="text-right">%VAT</th>
-                    <th class="text-right">TS thuế</th>
-                    <th class="text-right">Tổng tiền</th>
-                    <th></th>
-                  </tr>
-                </tfoot>
               </table>
             </div>
             <div class="ngb-pagination">

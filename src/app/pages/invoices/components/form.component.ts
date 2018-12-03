@@ -1,14 +1,14 @@
 import { Component, OnInit, OnDestroy, TemplateRef, ChangeDetectionStrategy, AfterViewInit } from '@angular/core';
 import { FormGroup, FormArray, Validators, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable, of } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import { AlertComponent } from '@app//shared/alert/alert.component';
 import { UtilsService } from '@app/_services/utils/utils.service';
 import { InvoiceService } from './../../../_services/app/invoice.service';
 import { CustomerData } from './../../../_models/data/customer.data';
-import { SelectData, GoodData, InvoiceModel, ProductData } from '@app/_models';
+import { SelectData, GoodData, InvoiceModel, ProductData, ProductModel } from '@app/_models';
 import { CustomerService } from './../../../_services/app/customer.service';
 import { GoodService } from '@app/_services';
 import { ReferenceService } from './../../../_services/app/reference.service';
@@ -20,17 +20,27 @@ declare var $: any;
   templateUrl: './form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
+export class InvoiceFormComponent implements OnInit, OnDestroy {
+  public invoiceId: string;
+  public adjust = false;
+
+  // button status
+  public disabledAdd = true;
+  public disabledEdit = true;
+  public disabledSign = true;
+  public disabledPrintTranform = true;
+  public disabledAdjust = true;
+
   public addForm: FormGroup;
   public submitted = false;
-  public invoiceItem: any;
+
   public columNo = 10;
   public modalRef: BsModalRef;
   public bsConfig = { dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-blue' };
 
   public customerPicked: CustomerData;
-  public formPicked: string;
-  public serialPicked: string;
+  public formPicked: SelectData;
+  public serialPicked: SelectData;
 
   public references: Array<SelectData>;
 
@@ -127,23 +137,6 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  ngAfterViewInit() {
-    $('select').select2({
-      minimumResultsForSearch: Infinity,
-      simple_tags: true,
-      language: {
-        noResults: function () {
-          return 'Không có dữ liệu';
-        }
-      }
-    });
-
-    $('#formSelectId').on('select2:selecting', function (e: any) {
-      console.log(e);
-    });
-    // what
-  }
-
   ngOnDestroy() {
     this.subscription.unsubscribe();
   }
@@ -182,11 +175,11 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // update customer
     invoiceModel.customer = new CustomerData();
-    invoiceModel.customer.customer_name = dataForm.customer_name;
-    invoiceModel.customer.org = dataForm.customer_org;
-    invoiceModel.customer.bank = dataForm.customer_bank;
-    invoiceModel.customer.bank_account = dataForm.customer_bank_account;
-    invoiceModel.customer.address = dataForm.customer_address;
+    invoiceModel.customer.customer_name = dataForm.customerName;
+    invoiceModel.customer.org = dataForm.customerOrg;
+    invoiceModel.customer.bank = dataForm.customerBank;
+    invoiceModel.customer.bank_account = dataForm.customerBankAccount;
+    invoiceModel.customer.address = dataForm.customerAddress;
     invoiceModel.customer.phone = this.customerPicked.phone;
 
     // paymentType
@@ -360,7 +353,34 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public onFormChange(formValue: any) {
-    console.log('formValue');
+    console.log('formValue: ' + JSON.stringify(formValue));
+    if (formValue) {
+      const selectData = new SelectData();
+      Object.assign(selectData, formValue[0]);
+
+      this.initSerialBox(selectData.code);
+    }
+  }
+
+  public initSerialBox(code: string) {
+    const comboType = `COMBO_SERIAL_${code}`;
+    console.log('...' + comboType);
+    this.references.forEach((item: SelectData, index: number) => {
+      if (item.type === comboType) {
+        item.select_item = item.code;
+        this.comboSerial.push(item);
+      }
+    });
+    console.log(this.comboSerial);
+  }
+
+  public loadFormBox() {
+    if (this.comboForm && this.comboForm.length > 0) {
+      return;
+    }
+    if (!this.references) {
+      this.loadReferences();
+    }
   }
 
   getSumFinalTotal(): number {
@@ -445,8 +465,8 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
+
   private loadCustomers() {
-    console.log('this.customerArr: ' + this.customerArr);
     if (this.customerArr && this.customerArr.length > 0) {
       return;
     }
@@ -478,12 +498,13 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
         }
 
         if (selectItem.type === 'COMBO_FORM') {
+          selectItem.select_item = selectItem.value;
           this.comboForm.push(selectItem);
         }
       }
 
       if (this.comboForm.length > 0) {
-        this.formPicked = this.comboForm[0].code;
+        this.formPicked = this.comboForm[0];
         this.addForm.patchValue({
           form: this.formPicked
         });
@@ -497,19 +518,23 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
       // set form value
       this.addForm.patchValue({
-        customer_email: customerPicked.email,
-        customer_org: customerPicked.org,
-        customer_bank_account: customerPicked.bank_account,
-        customer_bank: customerPicked.bank,
-        customer_address: customerPicked.address
+        customerEmail: customerPicked.email,
+        customerOrg: customerPicked.org,
+        customerCode: customerPicked.customer_code,
+        customerName: customerPicked.customer_name,
+        customerBankAccount: customerPicked.bank_account,
+        customerBank: customerPicked.bank,
+        customerAddress: customerPicked.address
       });
     } else {
       this.addForm.patchValue({
-        customer_email: '',
-        customer_org: '',
-        customer_bank_account: '',
-        customer_bank: '',
-        customer_address: ''
+        customerEmail: '',
+        customerName: '',
+        customerCode: '',
+        customerOrg: '',
+        customerBankAccount: '',
+        customerBank: '',
+        customerAddress: ''
       });
     }
   }
@@ -517,11 +542,7 @@ export class InvoiceFormComponent implements OnInit, AfterViewInit, OnDestroy {
   private initRouter() {
     this.subscription = this.activatedRoute.params.subscribe((params: any) => {
       if (params.id) {
-        // get service
-        this.invoiceItem = {};
-        this.invoiceItem.invoice_id = params.id;
-      } else {
-        this.invoiceItem = {};
+        this.invoiceId = params.id;
       }
     });
   }

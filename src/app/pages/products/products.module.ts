@@ -14,7 +14,6 @@ import { AlertModule } from 'ngx-bootstrap';
 
 import { ProductsRoutes } from './products.routing';
 import { DatePipe } from '@angular/common';
-import { AppConfig } from '@app/app.config';
 import { SelectDropDownModule } from 'ngx-select-dropdown';
 import { SelectModule } from 'ng2-select';
 
@@ -60,7 +59,6 @@ import { ValidationService, GoodService } from '@app/_services';
     GoodService,
     UtilsService,
     DatePipe,
-    AppConfig,
     ValidationService
   ]
 })

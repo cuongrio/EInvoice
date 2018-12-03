@@ -1,18 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-
-export interface Credentials {
-  // Customize received credentials here
-  username: string;
-  token: string;
-}
-
-export interface LoginContext {
-  username: string;
-  password: string;
-  remember?: boolean;
-}
-
+import { environment } from '@env/environment';
+import { CookieService } from 'ngx-cookie-service';
+import { UserModel } from '@app/_models';
+import { HttpService } from '..';
+import { of } from 'rxjs';
 const credentialsKey = 'credentials';
 
 /**
@@ -21,10 +12,13 @@ const credentialsKey = 'credentials';
  */
 @Injectable()
 export class AuthenticationService {
-  private _credentials: Credentials | null;
+  private _credentials: UserModel | null;
 
-  constructor() {
-    const savedCredentials = sessionStorage.getItem(credentialsKey) || localStorage.getItem(credentialsKey);
+  constructor(private httpService: HttpService,
+    private cookieService: CookieService) {
+
+    // check on cookie and session
+    const savedCredentials = cookieService.get(credentialsKey) || sessionStorage.getItem(credentialsKey);
     if (savedCredentials) {
       this._credentials = JSON.parse(savedCredentials);
     }
@@ -35,23 +29,19 @@ export class AuthenticationService {
    * @param context The login parameters.
    * @return The user credentials.
    */
-  login(context: LoginContext): Observable<Credentials> {
-    // Replace by proper authentication call
-    const data = {
-      username: context.username,
-      token: '123456'
-    };
-    this.setCredentials(data, context.remember);
-    return of(data);
+  login(user: UserModel) {
+    return this.httpService.post(`${environment.serverUrl}/login`, {
+      username: user.username,
+      password: user.password
+    });
   }
 
   /**
    * Logs out the user and clear credentials.
    * @return True if the user was logged out successfully.
    */
-  logout(): Observable<boolean> {
-    // Customize credentials invalidation here
-    this.setCredentials();
+  logout() {
+    this._credentials = null;
     return of(true);
   }
 
@@ -67,7 +57,7 @@ export class AuthenticationService {
    * Gets the user credentials.
    * @return The user credentials or null if the user is not authenticated.
    */
-  get credentials(): Credentials | null {
+  get credentials(): UserModel | null {
     return this._credentials;
   }
 
@@ -78,15 +68,17 @@ export class AuthenticationService {
    * @param credentials The user credentials.
    * @param remember True to remember credentials across sessions.
    */
-  private setCredentials(credentials?: Credentials, remember?: boolean) {
-    this._credentials = credentials || null;
+  public setCredentials(userLogged?: UserModel, remember?: boolean) {
+    this._credentials = userLogged || null;
 
-    if (credentials) {
-      const storage = remember ? localStorage : sessionStorage;
-      storage.setItem(credentialsKey, JSON.stringify(credentials));
+    if (userLogged) {
+      this.cookieService.set(credentialsKey, JSON.stringify(userLogged));
+      if (remember) {
+        sessionStorage.setItem(credentialsKey, JSON.stringify(userLogged));
+      }
     } else {
       sessionStorage.removeItem(credentialsKey);
-      localStorage.removeItem(credentialsKey);
+      this.cookieService.delete(credentialsKey);
     }
   }
 }

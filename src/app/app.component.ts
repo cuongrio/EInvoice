@@ -6,11 +6,9 @@ import { merge } from 'rxjs';
 import { filter, map, mergeMap } from 'rxjs/operators';
 
 import { environment } from '@env/environment';
-import { Logger, I18nService } from '@app/core';
 
 // services
-import { AuthenticationService } from './_services';
-import { User } from './_models';
+import { UserModel } from './_models';
 
 @Component({
   selector: 'app-root',
@@ -20,27 +18,16 @@ import { User } from './_models';
   preserveWhitespaces: false
 })
 export class AppComponent implements OnInit {
-  currentUser: User;
 
   constructor(
     private router: Router,
-    private authenticationService: AuthenticationService,
     private activatedRoute: ActivatedRoute,
     private titleService: Title,
-    private translateService: TranslateService,
-    private i18nService: I18nService
+    private translateService: TranslateService
   ) {
-    this.authenticationService.currentUser.subscribe(x => (this.currentUser = x));
   }
 
   ngOnInit() {
-    if (environment.production) {
-      Logger.enableProductionMode();
-    }
-
-    // Setup translations
-    this.i18nService.init(environment.defaultLanguage, environment.supportedLanguages);
-
     const onNavigationEnd = this.router.events.pipe(filter(event => event instanceof NavigationEnd));
 
     // Change page title on navigation or language change, based on route data

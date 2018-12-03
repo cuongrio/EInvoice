@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthenticationService } from '@app/_services/authenticate/authentication.service';
 import { UserModel } from '@app/_models';
+import { AuthenticationService } from '@app/core/authentication/authentication.service';
 
 declare var $: any;
 
@@ -32,7 +32,7 @@ export class HeaderComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.menuItems = ROUTES.filter(menuItem => menuItem);
-    this.userLogged = this.authenticationService.currentUserValue;
+    this.userLogged = this.authenticationService.credentials;
   }
 
   ngAfterViewInit() {

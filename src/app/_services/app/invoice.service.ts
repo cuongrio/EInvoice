@@ -1,111 +1,121 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from './../../../environments/environment';
 import { InvoiceModel } from '@app/_models';
 import { InvoiceParam } from './../../_models/param/invoice.param';
+import { AppService } from '../core/app.service';
+import { HttpParams } from '@angular/common/http';
+import { of } from 'rxjs';
+import { AppConstant } from '@app/_mock/mock.data';
 
 @Injectable({
     providedIn: 'root'
 })
 export class InvoiceService {
 
-    constructor(private httpClient: HttpClient) { }
+    constructor(
+        private appConstant: AppConstant,
+        private appService: AppService
+        ) { }
 
     /** PDF */
     preview(invoiceModel: InvoiceModel) {
-        return this.httpClient.post(`${environment.serverUrl}/invoices/preview`, invoiceModel);
+        return this.appService.post(`/invoices/preview`, invoiceModel);
     }
 
     print(invoiceId: number) {
-        return this.httpClient.get(`${environment.serverUrl}/invoices/${invoiceId}/print`);
+        return this.appService.get(`/invoices/${invoiceId}/print`);
     }
 
     download(invoiceId: number) {
-        return this.httpClient.get(`${environment.serverUrl}/invoices/${invoiceId}/download`);
+        return this.appService.get(`/invoices/${invoiceId}/download`);
     }
 
     transform(invoiceId: number) {
-        return this.httpClient.post(`${environment.serverUrl}/invoices/${invoiceId}/transform`, {});
+        return this.appService.post(`/invoices/${invoiceId}/transform`, {});
     }
 
     /** INVOICE */
     createInvoice(invoiceModel: InvoiceModel) {
-        return this.httpClient.post(`${environment.serverUrl}/invoices/`, invoiceModel);
+        return this.appService.post(`/invoices/`, invoiceModel);
     }
 
     updateInvoice(invoiceModel: InvoiceModel) {
-        return this.httpClient.put(`${environment.serverUrl}/invoices/`, invoiceModel);
+        return this.appService.put(`/invoices/`, invoiceModel);
     }
 
     approveInvoice(invoiceId: number) {
-        return this.httpClient.post(`${environment.serverUrl}/invoices/${invoiceId}/approve`, {});
+        return this.appService.post(`/invoices/${invoiceId}/approve`, {});
     }
 
     ajustInvoice(invoiceId: number, invoiceModel: InvoiceModel) {
-        return this.httpClient.post(`${environment.serverUrl}/invoices/${invoiceId}/adjust`, invoiceModel);
+        return this.appService.post(`/invoices/${invoiceId}/adjust`, invoiceModel);
     }
 
     retrieveInvoiceById(invoiceId: number) {
-        return this.httpClient.get(`${environment.serverUrl}/invoices/${invoiceId}`);
+        return this.appService.get(`/invoices/${invoiceId}`);
     }
 
     disposeInvoice(invoiceId: number) {
-        return this.httpClient.delete(`${environment.serverUrl}/invoices/${invoiceId}`);
+        return this.appService.delete(`/invoices/${invoiceId}`);
     }
 
     disposeSignedInvoice(invoiceId: number) {
-        return this.httpClient.delete(`${environment.serverUrl}/invoices/${invoiceId}/signed`);
+        return this.appService.delete(`/invoices/${invoiceId}/signed`);
     }
 
     queryInvoices(invoiceParam?: InvoiceParam) {
+
         if (invoiceParam) {
-            let params = new HttpParams();
+            const params = new HttpParams();
 
             if (invoiceParam.sort) {
-                params = params.append('sort', invoiceParam.sort);
+                params.set('sort', invoiceParam.sort);
             }
             if (invoiceParam.sortBy) {
-                params = params.append('sortBy', invoiceParam.sortBy);
+                params.set('sortBy', invoiceParam.sortBy);
             }
             if (invoiceParam.size) {
-                params = params.append('size', invoiceParam.size);
+                params.set('size', invoiceParam.size);
             }
             if (invoiceParam.page) {
                 const currentPage = JSON.stringify(parseInt(invoiceParam.page, 0) - 1);
-                params = params.append('page', currentPage);
+                params.set('page', currentPage);
             }
             if (invoiceParam.fromDate) {
-                params = params.append('fromDate', invoiceParam.fromDate);
+                params.set('fromDate', invoiceParam.fromDate);
             }
             if (invoiceParam.toDate) {
-                params = params.append('toDate', invoiceParam.toDate);
+                params.set('toDate', invoiceParam.toDate);
             }
             if (invoiceParam.invoiceNo) {
-                params = params.append('invoiceNo', invoiceParam.invoiceNo);
+                params.set('invoiceNo', invoiceParam.invoiceNo);
             }
             if (invoiceParam.form) {
-                params = params.append('form', invoiceParam.form);
+                params.set('form', invoiceParam.form);
             }
             if (invoiceParam.serial) {
-                params = params.append('serial', invoiceParam.serial);
+                params.set('serial', invoiceParam.serial);
             }
             if (invoiceParam.orgTaxCode) {
-                params = params.append('orgTaxCode', invoiceParam.orgTaxCode);
+                params.set('orgTaxCode', invoiceParam.orgTaxCode);
             }
-            return this.httpClient.get(`${environment.serverUrl}/invoices`, { params: params });
+            console.log('params: ' + JSON.stringify(params));
+            return this.appService.get(`/invoices`, params);
         }
-        return this.httpClient.get(`${environment.serverUrl}/invoices`);
+        return this.appService.get(`/invoices`);
+
+        // return of(this.appConstant.invoiceList);
     }
 
     /** END INVOICE */
 
     /*** SIGNED */
     listToken() {
-        return this.httpClient.get(`${environment.pluginUrl}/token`);
+        return this.appService.get(`${environment.pluginUrl}/token`);
     }
 
     sign(invoiceId: number) {
-        return this.httpClient.post(`${environment.serverUrl}/invoices/${invoiceId}/sign`, {});
+        return this.appService.post(`/invoices/${invoiceId}/sign`, {});
     }
 
     signByToken(alias: string, pdfbase64: string, signatureImage: string, location: string, ahdsign: string) {
@@ -116,10 +126,10 @@ export class InvoiceService {
         body = body.set('location', location);
         body = body.set('ahdsign', ahdsign);
 
-        return this.httpClient.post(`${environment.pluginUrl}/token`, body);
+        return this.appService.post(`${environment.pluginUrl}/token`, body);
     }
 
     signed(invoiceId: number, signEncode: string) {
-        return this.httpClient.post(`${environment.serverUrl}/invoices/${invoiceId}/signed`, signEncode);
+        return this.appService.post(`/invoices/${invoiceId}/signed`, signEncode);
     }
 }

@@ -6,6 +6,3 @@ export * from './app/token.service';
 
 export * from './core/validator.service';
 export * from './utils/utils.service';
-
-
-export * from './authenticate/authentication.service';
