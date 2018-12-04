@@ -1,10 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import * as moment from 'moment';
 import { InvoiceService } from '@app/_services';
 import { InvoiceParam, InvoiceListData } from '@app/_models';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { AuthenticationService } from '@app/core/authentication/authentication.service';
+import { environment } from '@env/environment';
+import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
+
+import { AlertComponent } from '@app//shared/alert/alert.component';
 
 declare var $: any;
 
@@ -25,7 +31,7 @@ export class InvoicesComponent implements OnInit {
   ];
 
   public bsConfig = { dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-blue' };
-
+  public modalRef: BsModalRef;
   // expand search
   public expandSearch: boolean;
   public searchForm: FormGroup;
@@ -43,31 +49,30 @@ export class InvoicesComponent implements OnInit {
   private defaultSort = 'ASC';
   private defaultSortBy = 'invoiceNo';
 
+  private token: string;
+  private tenant: string;
+  private detailApi: string;
+
   constructor(
+    private modalService: BsModalService,
     private datePipe: DatePipe,
     private router: Router,
+    private authenticationService: AuthenticationService,
     private activeRouter: ActivatedRoute,
     private invoiceService: InvoiceService,
     private formBuilder: FormBuilder
-  ) { }
+  ) {
+    this.token = authenticationService.credentials.token;
+    this.tenant = authenticationService.credentials.tenant;
+    this.detailApi = `${environment.serverUrl}/${this.tenant}/invoices`;
+  }
 
   ngOnInit() {
-    console.log('init');
     this.initDefault();
     this.initDataTable();
     this.initForm();
     this.initPageHandlerInRouter();
   }
-
-  // @HostListener('document:keypress', ['$event'])
-  // handleKeyboardEvent(event: KeyboardEvent) {
-  //   if (event.key === 'f') {
-  //     this.expandSearchClicked();
-  //   }
-  //   if (event.key === 'Enter' && this.expandSearch === true) {
-  //     this.onSubmit(this.searchForm.value);
-  //   }
-  // }
 
   public expandSearchClicked() {
     if (this.expandSearch) {
@@ -76,6 +81,10 @@ export class InvoicesComponent implements OnInit {
       this.expandSearch = true;
     }
     localStorage.setItem('expandSearch', JSON.stringify(this.expandSearch));
+  }
+
+  openModal(template: TemplateRef<any>) {
+    this.modalRef = this.modalService.show(template, { class: 'modal-sm' });
   }
 
   public onSubmit(form: any) {
@@ -110,43 +119,101 @@ export class InvoicesComponent implements OnInit {
 
   // BUTTON ACTION
   public openRowClicked() {
+    const invoiceId = this.getCheckboxesValue();
+    this.router.navigate([`/invoices/open/${invoiceId}`]);
+  }
+
+  public copyRowClicked() {
     const item = this.getCheckboxesValue();
     console.log('item: ' + item);
   }
 
-  public copyRowClicked(){
-    const item = this.getCheckboxesValue();
-    console.log('item: ' + item);
+  public printRowClicked() {
+    const invoiceId = +this.getCheckboxesValue();
+    this.invoiceService.print(invoiceId).subscribe(data => {
+      console.log('data: ' + JSON.stringify(data));
+    });
   }
 
-  public printRowClicked(){
-    const item = this.getCheckboxesValue();
-    console.log('item: ' + item);
+  public printTransformRowClicked() {
+    const invoiceId = +this.getCheckboxesValue();
+    this.invoiceService.printTransform(invoiceId).subscribe(data => {
+      console.log('data: ' + JSON.stringify(data));
+    });
   }
 
-  public printTransformRowClicked(){
-    const item = this.getCheckboxesValue();
-    console.log('item: ' + item);
+  public signClicked() {
+    const invoiceId = +this.getCheckboxesValue();
+    // 1. get list token
+    this.invoiceService.listToken().subscribe((data: Array<any>) => {
+      console.log(JSON.stringify(data));
+    });
+
+    // this.invoiceService.sign(invoiceId).subscribe(data => {
+    //   console.log('data: ' + JSON.stringify(data));
+    // });
   }
 
-  public signClicked(){
-    const item = this.getCheckboxesValue();
-    console.log('item: ' + item);
+  public approveClicked() {
+    const invoiceId = +this.getCheckboxesValue();
+    this.invoiceService.approveInvoice(invoiceId).subscribe(data => {
+      console.log(JSON.stringify(data));
+    }, err => {
+      const initialState = {
+        message: 'Something went wrong',
+        title: 'Đã có lỗi!',
+        class: 'error'
+      };
+
+      if (err.error) {
+        initialState.message = err.error.message;
+      }
+      this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+    });
   }
 
-  public approveClicked(){
-    const item = this.getCheckboxesValue();
-    console.log('item: ' + item);
+  public receiveExcelClicked() {
+    const invoiceId = +this.getCheckboxesValue();
+    this.invoiceService.disposeInvoice(invoiceId).subscribe(data => {
+      console.log(JSON.stringify(data));
+    }, err => {
+      const initialState = {
+        message: 'Something went wrong',
+        title: 'Đã có lỗi!',
+        class: 'error'
+      };
+
+      if (err.error) {
+        initialState.message = err.error.message;
+      }
+      this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+    });
   }
 
-  public receiveExcelClicked(){
-    const item = this.getCheckboxesValue();
-    console.log('item: ' + item);
-  }
+  public disposeConfirmClicked() {
+    const invoiceId = +this.getCheckboxesValue();
+    this.invoiceService.disposeInvoice(invoiceId).subscribe(data => {
+      this.modalRef.hide();
+      const initialState = {
+        message: 'Đã hủy hóa đơn thành công!',
+        title: 'Thành công!',
+        class: 'success',
+        highlight: `Hóa đơn #${data.invoice_id}`
+      };
+      this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+    }, err => {
+      this.modalRef.hide();
+      const initialState = {
+        message: 'Something went wrong',
+        title: 'Đã có lỗi!',
+        class: 'error'
+      };
 
-  public disposeClicked(){
-    const item = this.getCheckboxesValue();
-    console.log('item: ' + item);
+      if (err.error) {
+        initialState.message = err.error.message;
+      }
+      this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+    });
   }
 
   // END BUTTON ACTION
@@ -186,23 +253,24 @@ export class InvoicesComponent implements OnInit {
   }
 
   private callServiceAndBindTable(params: InvoiceParam) {
-    this.invoiceService.queryInvoices(params).subscribe(data => {
-      if (data) {
-        const invoiceList = data as InvoiceListData;
-        if (invoiceList.contents.length > 0) {
-          this.totalElements = invoiceList.total_elements;
-          this.totalPages = invoiceList.total_pages;
-          this.totalItems = invoiceList.total_pages * this.itemsPerPage;
+    this.invoiceService.queryInvoices(params).subscribe(
+      (data: any) => {
+        if (data) {
+          const invoiceList = data as InvoiceListData;
+          if (invoiceList.contents.length > 0) {
+            this.totalElements = invoiceList.total_elements;
+            this.totalPages = invoiceList.total_pages;
+            this.totalItems = invoiceList.total_pages * this.itemsPerPage;
 
-          $('#invoiceTable')
-            .dataTable()
-            .fnClearTable();
-          $('#invoiceTable')
-            .dataTable()
-            .fnAddData(invoiceList.contents);
+            $('#invoiceTable')
+              .dataTable()
+              .fnClearTable();
+            $('#invoiceTable')
+              .dataTable()
+              .fnAddData(invoiceList.contents);
+          }
         }
-      }
-    });
+      });
   }
 
   private initForm() {
@@ -234,17 +302,10 @@ export class InvoicesComponent implements OnInit {
       scrollX: true,
       iDisplayLength: 20,
       language: {
-        searchPlaceholder: 'Lọc trong danh sách...',
-        sSearch: '',
-        lengthMenu: 'Hiển thị  _MENU_ dòng/trang',
-        info: 'Trang hiện tại _PAGE_/ _PAGES_',
-        emptyTable: 'Không có dữ liệu',
-        paginate: {
-          previous: '<',
-          next: '>',
-          first: '<<',
-          last: '>>'
-        }
+        emptyTable: 'Không có dữ liệu'
+      },
+      createdRow: function (row: any, data: any, index: number) {
+        $(row).addClass('row-parent');
       },
       columnDefs: [
         {
@@ -346,8 +407,7 @@ export class InvoicesComponent implements OnInit {
               return '<span></span>';
             }
           }
-        },
-        {
+        }, {
           data: function (row: any, type: any) {
             if (type === 'display' && row.customer && row.customer !== 'null') {
               return row.customer.address;
@@ -355,11 +415,31 @@ export class InvoicesComponent implements OnInit {
               return '<span></span>';
             }
           }
-        },
-        { data: 'total_tax' },
-        { data: 'total_tax' },
-        { data: 'total' },
-        {
+        }, {
+          data: function (row: any, type: any) {
+            if (type === 'display') {
+              return formatCurrency(row.total_before_tax);
+            } else {
+              return '<span></span>';
+            }
+          }
+        }, {
+          data: function (row: any, type: any) {
+            if (type === 'display') {
+              return formatCurrency(row.total_tax);
+            } else {
+              return '<span></span>';
+            }
+          }
+        }, {
+          data: function (row: any, type: any) {
+            if (type === 'display') {
+              return formatCurrency(row.total);
+            } else {
+              return '<span></span>';
+            }
+          }
+        }, {
           orderable: false,
           data: function (row: any, type: any) {
             if (type === 'display' && row.invoice_id && row.invoice_id !== 'null') {
@@ -391,8 +471,13 @@ export class InvoicesComponent implements OnInit {
     });
 
     function getProductItemByInvoice(invoiceId: string, callback: any) {
-      const token = 'abcxyz';
-      const url = `http://178.128.123.223:8080/1/invoices/${invoiceId}`;
+      const userLoggedJson = $.cookie('credentials') || sessionStorage.getItem('credentials');
+      const userModel = $.parseJSON(userLoggedJson);
+
+      const token = userModel.token;
+      const tenant = userModel.tenant;
+
+      const url = `http://178.128.123.223:8080/${tenant}/invoices/${invoiceId}`;
       $.ajax({
         url: url,
         beforeSend: function (xhr: any) {
@@ -407,28 +492,65 @@ export class InvoicesComponent implements OnInit {
         });
     }
 
+    function bindButtonStatus(status: boolean) {
+      $('#openButton').prop('disabled', status);
+      $('#copyButton').prop('disabled', status);
+      $('#printButton').prop('disabled', status);
+      $('#printTranformButton').prop('disabled', status);
+      $('#signButton').prop('disabled', status);
+      $('#approveButton').prop('disabled', status);
+      $('#disposeButton').prop('disabled', status);
+    }
+
+    function formatCurrency(price: number) {
+      if (price > 0) {
+        return price.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+      }
+      return price;
+    }
+
     function formatEinvoiceRow(items: any) {
       let contentItemHtml = ``;
       if (items && items.length > 0) {
         let lineItem = ``;
         items.forEach(function (entry: any) {
+          let priceFormat = entry.price;
+          if (priceFormat > 0) {
+            priceFormat = formatCurrency(priceFormat);
+          }
+
+          let taxFormat = entry.tax;
+          if (taxFormat > 0) {
+            taxFormat = formatCurrency(taxFormat);
+          }
+
+          let priceWtFormat = entry.price_wt;
+          if (priceWtFormat > 0) {
+            priceWtFormat = formatCurrency(priceWtFormat);
+          }
+
+          let amountFormat = entry.amount;
+          if (amountFormat > 0) {
+            amountFormat = formatCurrency(amountFormat);
+          }
+
           lineItem += `
             <tr>
               <td>${entry.item_line}</td>
               <td>${entry.item_code}</td>
               <td>${entry.item_name}</td>
               <td>${entry.unit}</td>
-              <td class="text-right">${entry.price}</td>
-              <td class="text-right">${entry.tax}</td>
-              <td class="text-right">${entry.price_wt}</td>
+              <td class="text-right">${priceFormat}</td>
+              <td class="text-right">${taxFormat}</td>
+              <td class="text-right">${priceWtFormat}</td>
               <td class="text-right">${entry.quantity}</td>
-              <td class="text-right">${entry.amount}</td>
+              <td class="text-right">${amountFormat}</td>
             </tr>
           `;
         });
 
         contentItemHtml =
-          `<table class="table table-responsive">
+          `<table class="table display dataTable">
           <thead>
             <tr>
               <th>Dòng</th>
@@ -462,68 +584,63 @@ export class InvoicesComponent implements OnInit {
     }
 
     // disabled all button
-    $('#openButton').prop('disabled', true);
-    $('#copyButton').prop('disabled', true);
-    $('#printButton').prop('disabled', true);
-    $('#printTranformButton').prop('disabled', true);
-    $('#signButton').prop('disabled', true);
-    $('#approveButton').prop('disabled', true);
-    $('#disposeButton').prop('disabled', true);
+    bindButtonStatus(true);
 
     // selected row
-    $('#invoiceTable tbody').on('click', 'tr', function () {
+    $('#invoiceTable tbody').on('click', 'tr.row-parent', function () {
+      console.log('click tr');
       $('input:checkbox[name=stickchoice]').each(function () {
         $(this).prop('checked', false);
       });
 
+      // find expand
+      console.log($(this));
+
       if ($(this).hasClass('selected')) {
         $(this).removeClass('selected');
-        $(this).find('input:checkbox[name=stickchoice]').prop('checked', false);
+        $(this)
+          .find('input:checkbox[name=stickchoice]')
+          .prop('checked', false);
 
-        $('#openButton').prop('disabled', true);
-        $('#copyButton').prop('disabled', true);
-        $('#printButton').prop('disabled', true);
-        $('#printTranformButton').prop('disabled', true);
-        $('#signButton').prop('disabled', true);
-        $('#approveButton').prop('disabled', true);
-        $('#disposeButton').prop('disabled', true);
-      }
-      else {
+        bindButtonStatus(true);
+      } else {
         table.$('tr.selected').removeClass('selected');
         $(this).addClass('selected');
-        $(this).find('input:checkbox[name=stickchoice]').prop('checked', true);
+        $(this)
+          .find('input:checkbox[name=stickchoice]')
+          .prop('checked', true);
 
-        // enable button
-        $('#openButton').prop('disabled', false);
-        $('#copyButton').prop('disabled', false);
-        $('#printButton').prop('disabled', false);
-        $('#printTranformButton').prop('disabled', false);
-        $('#signButton').prop('disabled', false);
-        $('#approveButton').prop('disabled', false);
-        $('#disposeButton').prop('disabled', false);
+        bindButtonStatus(false);
       }
+      return false;
     });
 
-    // $('#button').click(function () {
-    //   table.row('.selected').remove().draw(false);
-    // });
-
     // Add event listener for opening and closing details
-    $('#invoiceTable tbody').on('click', 'td.details-control', function () {
+    $('#invoiceTable tbody').on('click', 'td.details-control', function (e: any) {
+      e.preventDefault();
+      console.log('click td');
       const tr = $(this).closest('tr');
-
       const row = table.row(tr);
+
+      console.log(tr.classList);
 
       if (row.child.isShown()) {
         row.child.hide();
         tr.removeClass('tr-expand');
       } else {
+        // reset all
+        const otherTr = $('tr.tr-expand');
+        const otherRow = table.row(otherTr);
+        otherTr.removeClass('tr-expand');
+        otherRow.child.hide();
+
         // call API
         getProductItemByInvoice(row.data().invoice_id, function (items: any) {
           row.child(formatEinvoiceRow(items)).show();
           tr.addClass('tr-expand');
         });
       }
+      return false;
     });
   }
 

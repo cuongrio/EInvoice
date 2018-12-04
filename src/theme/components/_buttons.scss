@@ -3,10 +3,10 @@
   font-size: $btn-font-size;
   font-family: $type-1;
 
-  &:disabled{
+  &:disabled {
     color: #000 !important;
-    background-color: lightgrey !important;
-    border-color: gray !important;
+    background-color: #e9ecef !important;
+    border-color: #a4a4a4 !important;
   }
 
   i {

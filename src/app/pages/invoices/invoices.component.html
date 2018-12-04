@@ -165,15 +165,21 @@
                     <i class="fas fa-key"></i> Ký
                   </button>
                   <button id="approveButton" type="button" (click)="approveClicked()" class="btn btn-md btn-success">
-                    <i class="fas fa-plus"></i> Duyệt
+                      <i class="fas fa-check"></i> Duyệt
                   </button>
                   <button id="receiveExcelButton" type="button" (click)="receiveExcelClicked()" class="btn btn-md btn-outline-primary">
                     <i class="fas fa-file-excel"></i> Nhận Excel
                   </button>
-                  <button id="disposeButton" type="button" (click)="disposeClicked()" class="btn btn-md btn-outline-danger">
+                  <button id="disposeButton" type="button" (click)="openModal(disposeConfirm)"  class="btn btn-md btn-outline-danger">
                     <i class="fas fa-trash"></i> Hủy hóa đơn
                   </button>
-
+                  <ng-template #disposeConfirm>
+                      <div class="modal-body text-center">
+                        <p>Xác nhận hủy hóa đơn?</p>
+                        <button type="button" class="btn btn-primary mr-1" (click)="disposeConfirmClicked()" >Đồng ý</button>
+                        <button type="button" class="btn btn-default" (click)="modalRef.hide()" >Bỏ qua</button>
+                      </div>
+                    </ng-template>
                 </div>
               </div>
             </div>

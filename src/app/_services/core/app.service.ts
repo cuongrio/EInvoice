@@ -13,7 +13,7 @@ export class AppService {
     private router: Router,
     private httpService: HttpService,
     private authenticationService: AuthenticationService
-  ) {}
+  ) { }
 
   public get(url: string, httpParams?: HttpParams): Observable<any> {
     // check url
@@ -23,10 +23,8 @@ export class AppService {
     }
 
     return this.httpService.request('GET', tenantUrl, {
-      //headers: this.appendHeader,
-      params: httpParams,
-      responseType: 'json',
-      withCredentials: true
+      headers: this.appendHeader(),
+      params: httpParams ? httpParams : {}
     });
   }
 
@@ -37,10 +35,8 @@ export class AppService {
       this.router.navigate(['/login']);
     }
     return this.httpService.request('POST', tenantUrl, {
-      headers: this.appendHeader,
-      body: JSON.stringify(body),
-      responseType: 'json',
-      withCredentials: true
+      headers: this.appendHeader(),
+      body: JSON.stringify(body)
     });
   }
 
@@ -51,10 +47,8 @@ export class AppService {
       this.router.navigate(['/login']);
     }
     return this.httpService.request('PUT', url, {
-      headers: this.appendHeader,
-      body: JSON.stringify(body),
-      responseType: 'json',
-      withCredentials: true
+      headers: this.appendHeader(),
+      body: JSON.stringify(body)
     });
   }
 
@@ -66,28 +60,29 @@ export class AppService {
     }
 
     return this.httpService.request('DELETE', tenantUrl, {
-      headers: this.appendHeader,
-      responseType: 'json',
-      withCredentials: true
+      headers: this.appendHeader()
     });
   }
 
   private appendHeader(): HttpHeaders {
-    const headers = new HttpHeaders();
-    headers.set('content-type', 'application/json');
-
     const credentials: UserModel = this.authenticationService.credentials;
     if (credentials) {
       const token = credentials.token;
       if (token !== null) {
-        headers.set('Authorization', 'Bearer ' + token);
+        console.log('token: ' + token);
+        const headers = new HttpHeaders({
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        });
+        return headers;
       }
+    } else {
+      this.router.navigate(['/login']);
     }
-    return headers;
   }
 
   private getTenantUrl(url: string) {
-    if (!url.startsWith('http')) {
+    if (url.indexOf('ahoadonplugin') === -1) {
       const credentials: UserModel = this.authenticationService.credentials;
       if (credentials) {
         return `${environment.serverUrl}/${credentials.tenant}${url}`;

@@ -1,16 +1,20 @@
 <div class="alert-dialog">
     <div class="modal-header">
         <h4 class="modal-title pull-left {{class}}">
-            <i class="fas fa-exclamation"></i> {{title}}
+            {{title}}
         </h4>
         <button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
     <div class="modal-body">
-        <p *ngIf="message" class="alert-message">{{message}}</p>
-        <ul *ngIf="list.length">
-            <li *ngFor="let item of list">{{item}}</li>
-        </ul>
+        <div class="d-flex flex-row">
+            <img *ngIf="class==='success'" src="./assets/images/success.png" class="img-sm" alt="sucess image">
+            <img *ngIf="class==='error'" src="./assets/images/sorry.png" class="img-sm" alt="error image">
+            <div class="ml-3">
+                <h6 *ngIf="highlight">{{highlight}}</h6>
+                <p class="text-muted">{{message}}</p>
+            </div>
+        </div>
     </div>
 </div>

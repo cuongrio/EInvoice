@@ -50,15 +50,19 @@
 
 .theme-blue {
   .bs-datepicker-head {
-    background: #439aff !important;
+    background: aliceblue !important;
   }
 
   .bs-datepicker-head button {
-    color: #fff !important;
+    color: #333 !important;
+    font-weight: 600;
     .next span,
     .previous span {
       font-size: 24px !important;
     }
+  }
+  .bs-datepicker-body table th{
+    color: #333 !important;
   }
 }
 
@@ -212,6 +216,10 @@ legend.scheduler-border {
   float: right;
 }
 
+.td-bg-sum{
+  background: #e9ecef;
+}
+
 .bs-datepicker-container {
   padding: 0px !important;
 
@@ -226,30 +234,31 @@ legend.scheduler-border {
 }
 
 .scheduler-border {
+  padding: 0px 12px !important;
   .table {
-    background: aliceblue;
+    background: #d3e4ff;
     td {
       line-height: 1.4;
     }
     thead > tr > th {
-      border-bottom: 1px solid #ddd;
+      border-bottom: 1px solid #999;
     }
   }
 }
 
-// table {
-//   th,
-//   td {
-//     font-size: 13px !important;
-//   }
+table {
+  th,
+  td {
+    font-size: 13px !important;
+  }
 
-//   tr.tr-expand + tr {
-//     background: aliceblue;
-//     > td {
-//       padding: 12px 20px !important;
-//     }
-//   }
-// }
+  tr.tr-expand + tr {
+    background: #d3e4ff;
+    > td {
+      padding: 20px !important;
+    }
+  }
+}
 
 /****SCROLLBAR***/
 .select2-results__options {
@@ -301,7 +310,7 @@ legend.scheduler-border {
       form {
         .form-control {
           border: 1px solid #d9d9d9;
-          font-weight: 600;
+          font-weight: 500;
         }
       }
     }
@@ -537,15 +546,15 @@ legend.scheduler-border {
 }
 
 /***INVOICE SCREEN**/
-.table.dataTable{
-  &.invoiceTable{
+.table.dataTable {
+  &.invoiceTable {
     td {
       padding: 5px 5px !important;
     }
   }
 
-  tr.selected{
-    background: aliceblue;
+  tr.selected {
+    background: #d3e4ff;
   }
 }
 
@@ -584,9 +593,11 @@ legend.scheduler-border {
   padding: 0px 120px;
 }
 
-.td-expand-line {
-  padding: 4px !important;
-  background: #e9ecef;
+.tb-footer {
+  th{
+    padding: 4px !important;
+    background: #e9ecef;
+  }
 }
 
 .modal-backdrop {
@@ -643,8 +654,49 @@ label.error {
 .ngx-dropdown-container {
   .ngx-dropdown-button {
     width: 100%;
-    height: 32px;
-    padding: 5px 10px 5px 10px;
+    height: 31px;
+    padding: 5px 7px;
+    > span[_ngcontent-c2]:first-child{
+      display: none;
+    }
+  }
+}
+
+.ngx-dropdown-list-container {
+  min-width: 186px;
+  right: -1px !important;
+}
+
+.form-control-custom{
+  background: aliceblue !important;
+}
+
+.input-group{
+  .input-group-append{
+    .btn{
+      width: 31px;
+    }
+  }
+  &.c-group{
+    .input-group-prepend{
+      width: -webkit-calc(100% - 30px);
+      width:    -moz-calc(100% - 30px);
+      width:         calc(100% - 30px);
+      .form-control{
+        border-top-right-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+      }
+    }
+    .ngx-dropdown-container{
+      width: 30px;
+    }
+    ngx-select-dropdown{
+      .ngx-dropdown-button{
+        border-top-left-radius: 0 !important;
+        border-bottom-left-radius: 0 !important;
+        height: 31px;
+      }
+    }
   }
 }
 
@@ -703,7 +755,7 @@ label.error {
 
     .product-item__wrapper {
       min-height: 280px;
-      .table th {
+      .table thead th {
         padding: 16px 4px !important;
       }
       .form-control {
@@ -722,7 +774,10 @@ label.error {
         }
       }
       .product-line {
-        position: relative;
+        position: relative; 
+        .form-control{
+          border-radius: 0 !important;
+        } 
 
         .ngx-dropdown-button {
           border: 0 !important;
@@ -781,6 +836,10 @@ label.error {
 
         .invoice-no__item {
           padding-left: 5px !important;
+
+          .ngx-dropdown-list-container{
+            right: unset !important;
+          }
 
           .line-title {
             width: 100%;

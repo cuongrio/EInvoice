@@ -1,4 +1,11 @@
-import { Component, OnInit, OnDestroy, TemplateRef, ChangeDetectionStrategy, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  TemplateRef,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef
+} from '@angular/core';
 import { FormGroup, FormArray, Validators, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, Observable, of } from 'rxjs';
@@ -14,6 +21,7 @@ import { GoodService } from '@app/_services';
 import { ReferenceService } from './../../../_services/app/reference.service';
 
 declare var $: any;
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-invoice-form',
@@ -21,12 +29,13 @@ declare var $: any;
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class InvoiceFormComponent implements OnInit, OnDestroy {
-  public invoiceId: string;
+  public invoiceId: number;
   public adjust = false;
 
+  public isPreview = false;
   // button status
+  public disabledInCD = true;
   public disabledAdd = true;
-  public disabledEdit = true;
   public disabledSign = true;
   public disabledPrintTranform = true;
   public disabledAdjust = true;
@@ -34,31 +43,34 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   public addForm: FormGroup;
   public submitted = false;
 
-  public columNo = 10;
+  public viewCustomerCode = false;
+
+  public columNo = 12;
   public modalRef: BsModalRef;
   public bsConfig = { dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-blue' };
 
+  public formPicked: SelectData;
   public serialPicked: SelectData;
-  public customerPicked: CustomerData;
-
+  public customerPicked: CustomerData[];
   public references: Array<SelectData>;
-
   public noItemLine = false;
-
   public hiddenExColumn = true;
-
   public listTokenDummy = new Array<SelectData>();
 
-  // total price
-  public totalPrice = new Array<number>();
-  public totalVat = new Array<number>();
-  public finalTotalPrice = new Array<number>();
+  // amount
+  public totalAmount = new Array<number>();
+  public totalPriceTax = new Array<number>();
+  public totalPriceWt = new Array<number>();
+  public priceOrigin = new Array<number>();
+  public totalAmoutWt = new Array<number>();
+  public totalQuantityTax = new Array<number>();
+
 
   public configSingleBox = {
     noResultsFound: 'Không có dữ liệu',
-    showNotFound: false,
+    showNotFound: true,
     placeholder: ' ',
-    toggleDropdown: false,
+    toggleDropdown: true,
     displayKey: 'select_item',
     search: false
   };
@@ -100,6 +112,9 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     sourceField: ['value']
   };
 
+  public pickingCustomerCode = false;
+  public pickingCustomerTax = false;
+
   // combobox
   public taxRateArr: Array<SelectData>;
   public customerArr: Array<CustomerData>;
@@ -134,20 +149,20 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     this.loadGoods();
     this.loadHttt();
     this.stickyButtonAdd();
-
-    this.listTokenDummy.push({
-      code: 'token1',
-      value: 'token1'
-    });
-
-    this.listTokenDummy.push({
-      code: 'token2',
-      value: 'token2'
-    });
   }
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+
+  adjustClicked() {
+    this.clearFormArray(this.itemFormArray);
+    this.stickyButtonAdd();
+    this.totalAmount = new Array<number>();
+    this.totalAmoutWt = new Array<number>();
+    this.totalPriceTax = new Array<number>();
+    this.totalQuantityTax = new Array<number>();
+    this.priceOrigin = new Array<number>();
   }
 
   cancelClicked() {
@@ -157,30 +172,30 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
   onSubmit(dataForm: any) {
     this.submitted = true;
-    this.submitted = true;
+    let dataFormItems: any;
+    this.noItemLine = true;
 
-    if (!dataForm.items) {
-      this.noItemLine = true;
-    } else {
-      const items = dataForm.items.filter((elemnent: any, index: number, array: any) => {
-        return elemnent.item_code !== null && elemnent.item_code !== '';
+    if (dataForm.items && dataForm.items.length > 0) {
+      dataFormItems = dataForm.items.filter((elemnent: any, index: number, array: any) => {
+        return elemnent.item_name && elemnent.item_name.length > 0;
       });
 
-      if (!items || items.length === 0) {
+      if (dataFormItems && dataFormItems.length > 0) {
+        this.noItemLine = false;
+      } else {
         this.noItemLine = true;
       }
     }
-
-    if (this.addForm.invalid) {
+    this.ref.markForCheck();
+    if (this.addForm.invalid || this.noItemLine) {
       return;
     }
-
-    this.noItemLine = false;
     const invoiceModel = new InvoiceModel();
-
+    // general
     invoiceModel.form = dataForm.form;
     invoiceModel.serial = dataForm.serial;
-    invoiceModel.invoice_date = dataForm.invoice_date;
+    const dateFormate = moment(dataForm.invoiceDate).format('YYYY-MM-DD');
+    invoiceModel.invoice_date = dateFormate;
 
     // update customer
     invoiceModel.customer = new CustomerData();
@@ -189,171 +204,99 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     invoiceModel.customer.bank = dataForm.customerBank;
     invoiceModel.customer.bank_account = dataForm.customerBankAccount;
     invoiceModel.customer.address = dataForm.customerAddress;
-    invoiceModel.customer.phone = this.customerPicked.phone;
+    invoiceModel.customer.phone = this.customerPicked[0].phone;
 
     // paymentType
     invoiceModel.paymentType = dataForm.paymentType;
 
-    if (dataForm.items && dataForm.items.length > 0) {
-      invoiceModel.items = dataForm.items.filter((elemnent: any, index: number, array: any) => {
-        return elemnent.item_code !== null && elemnent.item_code !== '';
-      });
-    }
-    invoiceModel.total_before_tax = this.sumPriceArr(this.totalPrice);
-    invoiceModel.total_tax = this.sumPriceArr(this.totalVat);
-    invoiceModel.total = this.sumPriceArr(this.finalTotalPrice);
 
-    console.log('before: ' + JSON.stringify(invoiceModel));
+    invoiceModel.total_before_tax = this.sumTotalAmount();
+    invoiceModel.total_tax = this.sumTotalQuantityTax();
+    invoiceModel.total = this.sumTotalAmountWt();
 
-    return this.invoiceService.createInvoice(invoiceModel).subscribe(
-      data => {
-        console.log('submiited: ' + JSON.stringify(data));
-      },
-      err => {
+    // set items
+    invoiceModel.items = dataFormItems;
+    invoiceModel.items.forEach((item: ProductData, indx: number) => {
+      item.tax_rate_code = this.getVatCode(item.tax_rate + '');
+      console.log(item.tax_rate_code);
+      item.tax = +this.totalPriceTax[indx];
+      item.price_wt = +this.totalPriceWt[indx];
+      item.amount = +this.totalAmount[indx];
+      item.amount_wt = +this.totalAmoutWt[indx];
+    });
+
+    if (this.isPreview) {
+      this.invoiceService.preview(invoiceModel).subscribe(data => {
+        console.log('data: ' + JSON.stringify(data));
+      }, err => {
+        const initialState = {
+          message: 'Không thể tạo hóa đơn!',
+          title: 'Đã có lỗi!',
+          class: 'error'
+        };
+
         if (err.error) {
-          console.log(err);
-          alert(err.error.error + '!!! \n' + err.error.message);
-        } else {
-          alert('Đã xảy ra lỗi!!!\nVui lòng liên hệ với administrator.');
+          initialState.message = err.error.message;
         }
-      }
-    );
-  }
+        this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+        this.submitted = false;
+      });
+    } else {
+      return this.invoiceService.createInvoice(invoiceModel).subscribe(
+        data => {
+          const initialState = {
+            message: 'Đã tạo hóa đơn thành công!',
+            title: 'Thành công!',
+            class: 'success',
+            highlight: `Hóa đơn #${data.invoice_id}`
+          };
+          this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+          this.submitted = false;
+          this.resetForm();
+        },
+        err => {
+          const initialState = {
+            message: 'Không thể tạo hóa đơn!',
+            title: 'Đã có lỗi!',
+            class: 'error'
+          };
 
+          if (err.error) {
+            initialState.message = err.error.message;
+          }
+          this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+          this.submitted = false;
+        }
+      );
+    }
+  }
 
   public addNewButtonClicked() {
-    this.customerPicked = null;
-    this.totalPrice = new Array<number>();
-    this.totalVat = new Array<number>();
-    this.finalTotalPrice = new Array<number>();
-    this.clearFormArray(this.itemFormArray);
-    this.addForm.reset();
-
-    // set default
-    this.formSetDefault();
-    this.loadCustomers();
-    this.loadGoods();
-    this.stickyButtonAdd();
+    this.resetForm();
+    this.submitted = false;
   }
 
-  public async signInvoiceClicked(template: TemplateRef<any>) {
-    let listToken: Array<any>;
+  public signInvoiceClicked(template: TemplateRef<any>) {
+
     // 1. get list token
-    await this.invoiceService.listToken().subscribe(data => {
-      // show choice token
-      listToken = data as Array<any>;
+    this.invoiceService.listToken().subscribe(data => {
+     console.log('data: ' + JSON.stringify(data));
     });
     console.log('list token');
-    console.log(JSON.stringify(listToken));
+  }
 
-    // if (listToken && listToken.length > 0) {
-    this.modalRef = this.modalService.show(template);
-    // } else {
-    //   this.signedInvoiceAction(0);
-    // }
+  /***** BUTTON CLICKED */
+  public hiddenColumnClicked() {
+    this.hiddenExColumn = !this.hiddenExColumn;
   }
 
   public inCDClicked() {
-    const initialState = {
-      message: 'Open a modal with component',
-      title: 'Modal with component',
-      class: 'error'
-    };
-    this.modalRef = this.modalService.show(AlertComponent, { initialState });
+    this.invoiceService.printTransform(this.invoiceId).subscribe(data => {
+
+    });
   }
 
-  public onGoodlineChange(dataArr: GoodData[], idx: number) {
-    if (dataArr && dataArr.length > 0) {
-      const good = dataArr[0];
-      const controlArray = <FormArray>this.addForm.get('items');
-      controlArray.controls[idx].get('item_line').setValue(idx + 1);
-      controlArray.controls[idx].get('item_code').setValue(good.goods_code);
-      controlArray.controls[idx].get('item_name').setValue(good.goods_name);
-      controlArray.controls[idx].get('unit').setValue(good.unit);
-      controlArray.controls[idx].get('price').setValue(good.price);
-      controlArray.controls[idx].get('tax_rate').setValue(good.tax_rate);
-
-      this.totalPricePopulator(idx);
-      this.totalVatPopulator(idx);
-      this.finalTotalPricePopulator(idx);
-    }
-  }
-
-  public hiddenColumnClicked() {
-    this.hiddenExColumn = !this.hiddenExColumn;
-    if (this.hiddenExColumn) {
-      this.columNo = 10;
-    } else {
-      this.columNo = 12;
-    }
-  }
-
-  public get itemFormArray(): FormArray {
-    return this.addForm.get('items') as FormArray;
-  }
-
-  public deleteLineClicked(idx: number) {
-    this.stickyButtonDelete(idx);
-  }
-
-  public addMoreLineClicked() {
-    this.stickyButtonAdd();
-  }
-
-  /*** TOTAL PRICE */
-  public quantityValueChange(value: number, idx: number) {
-    const controlArray = <FormArray>this.addForm.get('items');
-    const itemCode = controlArray.controls[idx].get('item_code').value;
-    if (itemCode) {
-      this.totalPricePopulator(idx, value, null);
-    }
-  }
-
-  public priceValueChange(value: number, idx: number) {
-    const controlArray = <FormArray>this.addForm.get('items');
-    const itemCode = controlArray.controls[idx].get('item_code').value;
-    if (itemCode) {
-      this.totalPricePopulator(idx, null, value);
-    }
-  }
-
-  public ckValueChange(value: number, idx: number) {
-    const controlArray = <FormArray>this.addForm.get('items');
-    const itemCode = controlArray.controls[idx].get('item_code').value;
-    if (itemCode) {
-      const totalPrice = this.totalPrice[idx];
-      if (totalPrice && totalPrice > 0) {
-        const totalCk = (totalPrice * value) / 100;
-        controlArray.controls[idx].get('total_ck').setValue(totalCk);
-        this.totalVatPopulator(idx, null, totalCk);
-        this.finalTotalPricePopulator(idx, totalCk);
-      }
-    }
-  }
-
-  public totalCkValueChange(value: number, idx: number) {
-    const controlArray = <FormArray>this.addForm.get('items');
-    const itemCode = controlArray.controls[idx].get('item_code').value;
-    if (itemCode) {
-      const totalPrice = this.totalPrice[idx];
-      if (value > 0 && totalPrice && totalPrice > 0) {
-        const ck = (value * 100) / totalPrice;
-        controlArray.controls[idx].get('ck').setValue(ck);
-        this.finalTotalPricePopulator(idx, value);
-      }
-      this.totalVatPopulator(idx, null, value);
-    }
-  }
-
-  public taxRateValueChange(value: number, idx: number) {
-    const controlArray = <FormArray>this.addForm.get('items');
-    const itemCode = controlArray.controls[idx].get('item_code').value;
-    if (itemCode) {
-      this.totalVatPopulator(idx, null, null);
-      this.finalTotalPricePopulator(idx, null);
-    }
-  }
-
+  /*** CUSTOMER CHANGE */
   public onCustomerTaxChange(customerValue: any) {
     const customer = new CustomerData();
     Object.assign(customer, customerValue[0]);
@@ -364,7 +307,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     this.initDataForm(customer);
   }
 
-  public onCustomerChange(customerValue: any) {
+  public onCustomerCodeChange(customerValue: any) {
     const customer = new CustomerData();
     Object.assign(customer, customerValue[0]);
     this.addForm.patchValue({
@@ -372,6 +315,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     });
 
     this.initDataForm(customer);
+    this.ref.markForCheck();
   }
 
   public onFormChange(formValue: any) {
@@ -405,13 +349,105 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**** GOOD CHANGE */
+  public onGoodlineChange(dataArr: GoodData[], idx: number) {
+    if (dataArr && dataArr.length > 0) {
+      const good = dataArr[0];
+      const controlArray = this.itemFormArray;
+      controlArray.controls[idx].get('item_line').setValue(idx + 1);
+      controlArray.controls[idx].get('item_code').setValue(good.goods_code);
+      controlArray.controls[idx].get('item_name').setValue(good.goods_name);
+      controlArray.controls[idx].get('unit').setValue(good.unit);
+      controlArray.controls[idx].get('price').setValue(good.price);
+      controlArray.controls[idx].get('tax_rate').setValue(good.tax_rate);
+
+      this.noItemLine = false;
+      this.priceOrigin[idx] = good.price;
+      this.priceTaxPopulator(idx, good.price, good.tax_rate);
+      this.priceWtPopulator(idx, good.price);
+    }
+  }
+
+  public get itemFormArray(): FormArray {
+    return this.addForm.get('items') as FormArray;
+  }
+
+  public deleteLineClicked(idx: number) {
+    this.itemFormArray.removeAt(idx);
+    // remove sum
+    this.totalAmount.splice(idx, 1);
+    this.totalAmoutWt.splice(idx, 1);
+    this.totalPriceTax.splice(idx, 1);
+    this.totalPriceWt.splice(idx, 1);
+    this.totalQuantityTax.splice(idx, 1);
+    this.priceOrigin.splice(idx, 1);
+  }
+
+  public addMoreLineClicked() {
+    this.stickyButtonAdd();
+  }
+
+
+  /*** TOTAL PRICE */
+  // tinh lai amount, amountwt
+  public quantityValueChange(quantity: number, idx: number) {
+    const price = this.itemFormArray.controls[idx].get('price').value;
+    const ck = this.itemFormArray.controls[idx].get('ck').value;
+    this.recaculator(idx, ck, price, quantity);
+  }
+
+  // tinh lai tax, amount, priceWt
+  public priceValueChange(price: number, idx: number) {
+    const ck = this.itemFormArray.controls[idx].get('ck').value;
+    const quantity = this.itemFormArray.controls[idx].get('quantity').value;
+    const taxRate = this.itemFormArray.controls[idx].get('tax_rate').value;
+
+    this.priceTaxPopulator(idx, price, taxRate);
+    this.priceWtPopulator(idx, price);
+    this.recaculator(idx, ck, price, quantity);
+  }
+
+  // total vat -> tinh lai tax
+  public taxRateValueChange(taxRate: number, idx: number) {
+    const price = this.itemFormArray.controls[idx].get('price').value;
+    const ck = this.itemFormArray.controls[idx].get('ck').value;
+    const quantity = this.itemFormArray.controls[idx].get('quantity').value;
+    const taxRateCode = this.getVatCode(taxRate + '');
+    // set tax rate
+    this.itemFormArray.controls[idx].get('tax_rate_code').setValue(taxRateCode);
+
+    this.priceTaxPopulator(idx, price, taxRate);
+    this.priceWtPopulator(idx, price);
+    this.recaculator(idx, ck, price, quantity);
+  }
+
+  // cho
+  public ckValueChange(ck: number, idx: number) {
+    const quantity = this.itemFormArray.controls[idx].get('quantity').value;
+    const price = this.itemFormArray.controls[idx].get('price').value;
+    this.totalCKPopulator(idx, ck, price, quantity);
+
+    // reload all
+    this.recaculator(idx, ck, price, quantity);
+  }
+
+  // cho
+  public totalCkValueChange(totalCk: number, idx: number) {
+    const quantity = this.itemFormArray.controls[idx].get('quantity').value;
+    const price = this.itemFormArray.controls[idx].get('price').value;
+    const ck = this.itemFormArray.controls[idx].get('ck').value;
+    this.recaculator(idx, ck, price, quantity);
+  }
+
   public loadSerialBox() {
     this.ref.markForCheck();
     this.ref.detectChanges();
   }
 
   public loadFormBox() {
+    console.log(JSON.stringify(this.comboForm));
     if (this.comboForm && this.comboForm.length > 0) {
+      console.log('return' + this.comboForm[0].code);
       return;
     }
     if (!this.references) {
@@ -419,31 +455,60 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  getSumFinalTotal(): number {
-    let sumPrice = 0;
-    this.finalTotalPrice.forEach((price: number, index: number) => {
-      sumPrice += price;
-    });
-    if (sumPrice === 0) {
-      return null;
-    }
-    return sumPrice;
+  sumTotalPriceTax(): number {
+    return this.sumColumn(this.totalPriceTax);
   }
 
-  getSumVatTotal(): number {
-    let sumPrice = 0;
-    this.totalVat.forEach((price: number, index: number) => {
-      sumPrice += price;
-    });
-    if (sumPrice === 0) {
-      return null;
-    }
-    return sumPrice;
+  sumTotalQuantityTax(): number {
+    return this.sumColumn(this.totalQuantityTax);
   }
 
-  getSumTotalPrice(): number {
+  sumTotalAmountWt(): number {
+    return this.sumColumn(this.totalAmoutWt);
+  }
+
+  sumTotalAmount(): number {
+    return this.sumColumn(this.totalAmount);
+  }
+
+  private resetForm() {
+    this.customerPicked = null;
+    this.totalAmount = new Array<number>();
+    this.totalAmoutWt = new Array<number>();
+    this.totalPriceTax = new Array<number>();
+    this.totalQuantityTax = new Array<number>();
+    this.priceOrigin = new Array<number>();
+    this.noItemLine = false;
+
+    this.clearFormArray(this.itemFormArray);
+    this.addForm.reset();
+
+    // set default
+    this.formSetDefault();
+    this.loadCustomers();
+    this.loadGoods();
+    this.stickyButtonAdd();
+  }
+
+  private getVatCode(value: string): string {
+    for (let i = 0; i < this.comboTaxRate.length; i++) {
+      if (this.comboTaxRate[i].value === value) {
+        return this.comboTaxRate[i].code;
+      }
+    }
+  }
+
+  private recaculator(idx: number, ck: number, price: number, quantity: number) {
+    // reload all
+    this.amountPopulator(idx, price, quantity);
+    this.amountWtPopulator(idx, quantity);
+    this.totalCKPopulator(idx, ck, price, quantity);
+    this.totalQuantityTaxPopulator(idx, quantity);
+  }
+
+  private sumColumn(columns: Array<number>) {
     let sumPrice = 0;
-    this.totalPrice.forEach((price: number, index: number) => {
+    columns.forEach((price: number, index: number) => {
       sumPrice += price;
     });
     if (sumPrice === 0) {
@@ -481,7 +546,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.goodService.getList().subscribe(items => {
+    this.goodService.getList().subscribe((items: GoodData[]) => {
       const goods = items as GoodData[];
       this.goodArr = new Array<GoodData>();
 
@@ -506,7 +571,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.customerService.getList().subscribe(items => {
+    this.customerService.getList().subscribe((items: CustomerData[]) => {
       const customers = items as CustomerData[];
       this.customerArr = new Array<CustomerData>();
 
@@ -520,9 +585,11 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   }
 
   private loadReferences() {
-    this.referenceService.referenceInfo().subscribe(items => {
+    this.referenceService.referenceInfo().subscribe((items: SelectData[]) => {
       const selectItems = items as SelectData[];
       this.references = selectItems;
+      this.comboForm = new Array<SelectData>();
+      this.comboTaxRate = new Array<SelectData>();
 
       for (let i = 0; i < selectItems.length; i++) {
         const selectItem = new SelectData();
@@ -568,21 +635,71 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
   private initRouter() {
     this.subscription = this.activatedRoute.params.subscribe((params: any) => {
+      this.disabledAdd = false;
+
       if (params.id) {
         this.invoiceId = params.id;
+        this.disabledAdd = true;
+        this.disabledAdjust = false;
+
+        this.invoiceService.retrieveInvoiceById(this.invoiceId).subscribe(data => {
+          this.setFormWithDefaultData(data);
+          if (data.status === 'CREATED') {
+            this.disabledSign = false;
+          }
+          if (data.status === 'APPROVED' || data.status === 'SIGNED') {
+            this.disabledInCD = false;
+          }
+        });
       }
     });
   }
 
-  private sumPriceArr(prices: Array<number>) {
-    if (prices && prices.length > 0) {
-      let sumPrice = 0;
-      prices.forEach((price: number, index: number) => {
-        sumPrice += price;
-      });
-      return sumPrice;
-    }
-    return 0;
+  private setFormWithDefaultData(data: any) {
+    this.totalPriceTax = new Array<number>();
+    this.totalQuantityTax = new Array<number>();
+    this.totalAmount = new Array<number>();
+    this.totalAmoutWt = new Array<number>();
+
+    const invoiceDate = moment(data.invoice_date).format('DD-MM-YYYY');
+
+    this.addForm.patchValue({
+      invoiceDate: invoiceDate,
+      invoiceId: data.invoice_id,
+      invoiceNo: data.invoice_no,
+      customerTax: data.customer.tax_code,
+      customerEmail: data.customer.email,
+      customerName: data.customer.customer_name,
+      customerOrg: data.customer.org,
+      customerBankAccount: data.customer.bank_account,
+      customerBank: data.customer.bank,
+      customerAddress: data.customer.address,
+      form: data.form,
+      serial: data.serial,
+      status: data.status
+    });
+
+    const controlArray = this.itemFormArray;
+    data.items.forEach((item: any, idx: number) => {
+      controlArray.controls[idx].get('item_line').setValue(idx + 1);
+      controlArray.controls[idx].get('item_code').setValue(item.item_code);
+
+      controlArray.controls[idx].get('item_name').setValue(item.item_name);
+      controlArray.controls[idx].get('unit').setValue(item.unit);
+      controlArray.controls[idx].get('price').setValue(item.price);
+      controlArray.controls[idx].get('tax_rate').setValue(item.tax_rate);
+      controlArray.controls[idx].get('quantity').setValue(item.quantity);
+      controlArray.controls[idx].get('ck').setValue(0);
+      controlArray.controls[idx].get('total_ck').setValue(0);
+
+      this.totalPriceTax.splice(idx, 0, item.tax);
+      this.totalPriceWt.splice(idx, 0, item.price_wt);
+      this.totalAmount.splice(idx, 0, item.amount);
+      this.totalAmoutWt.splice(idx, 0, item.amount_wt);
+      this.totalQuantityTax.splice(idx, 0, item.tax * item.quantity);
+    });
+
+    console.log(JSON.stringify(data.items));
   }
 
   private stickyButtonAdd() {
@@ -591,22 +708,24 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
       item_code: '',
       item_name: '',
       unit: '',
-      quantity: null,
       price: null,
+      tax_rate: null,
+      tax_rate_code: '',
+      quantity: null,
       ck: null,
-      total_ck: null,
-      tax_rate: null
+      total_ck: null
     };
 
     const fg = this.formBuilder.group(emptyProductLine);
     this.itemFormArray.push(fg);
-    this.totalPrice.push(null);
-    this.finalTotalPrice.push(null);
-    this.totalVat.push(null);
-  }
 
-  private stickyButtonDelete(idx: number) {
-    this.itemFormArray.removeAt(idx);
+    // init first value
+    this.totalAmount.push(null);
+    this.totalPriceWt.push(null);
+    this.totalPriceTax.push(null);
+    this.totalQuantityTax.push(null);
+    this.totalAmoutWt.push(null);
+    this.priceOrigin.push(null);
   }
 
   // https://www.concretepage.com/angular-2/angular-2-4-formbuilder-example
@@ -635,20 +754,20 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   private createItemsForm() {
     this.addForm = this.formBuilder.group({
       invoiceDate: ['', Validators.compose([Validators.required])],
-      invoiceNo: '',
+      invoiceId: '',
       form: ['', Validators.compose([Validators.required])],
       serial: ['', Validators.compose([Validators.required])],
       customerCode: ['', Validators.compose([Validators.required])],
       customerName: ['', Validators.compose([Validators.required])],
       customerTax: ['', Validators.compose([Validators.required])],
       customerEmail: ['', Validators.compose([Validators.required, Validators.email])],
-      orderNo: ['', Validators.compose([Validators.required])],
+      invoiceNo: ['', Validators.compose([Validators.required])],
       customerOrg: ['', Validators.compose([Validators.required])],
       paymentType: ['', Validators.compose([Validators.required])],
       customerBankAccount: '',
       customerBank: '',
       status: '',
-      customerAddress:['', Validators.compose([Validators.required])],
+      customerAddress: ['', Validators.compose([Validators.required])],
       items: this.formBuilder.array([])
     });
   }
@@ -657,7 +776,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     while (formArray.length !== 0) {
       formArray.removeAt(0);
     }
-  };
+  }
 
   private formSetDefault() {
     this.addForm.patchValue({
@@ -665,60 +784,65 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     });
   }
 
-  private totalPricePopulator(idx: number, quantityVal: number = 0, priceVal: number = 0) {
-    const controlArray = <FormArray>this.addForm.get('items');
-    let quantity = quantityVal;
-    let price = priceVal;
+  /**************
+   * FUNCTION CACULATOR
+   */
+  private amountPopulator(idx: number, price: number, quantity: number) {
+    price = price > 0 ? price : 0;
+    quantity = quantity > 0 ? quantity : 0;
+    const amount = price * quantity;
+    this.totalAmount[idx] = amount;
+  }
+  private amountWtPopulator(idx: number, quantity: number) {
+    quantity = quantity > 0 ? quantity : 0;
+    const priceWt = this.totalPriceWt[idx] > 0 ? this.totalPriceWt[idx] : 0;
+    const amountWt = priceWt * quantity;
 
-    if (quantity === null || quantity === 0) {
-      quantity = controlArray.controls[idx].get('quantity').value;
-    }
-    if (price === null || price === 0) {
-      price = controlArray.controls[idx].get('price').value;
-    }
+    this.totalAmoutWt[idx] = amountWt;
+  }
 
-    if (quantity > 0 && price > 0) {
-      this.totalPrice[idx] = quantity * price;
-      this.totalVatPopulator(idx);
-      this.finalTotalPricePopulator(idx);
+  private priceTaxPopulator(idx: number, price: number, taxRate: number) {
+    price = price > 0 ? price : 0;
+    taxRate = taxRate > 0 ? taxRate : 0;
+    const tax = (price * taxRate) / 100;
+    this.totalPriceTax[idx] = tax;
+  }
+
+  private totalQuantityTaxPopulator(idx: number, quantity: number) {
+    quantity = quantity > 0 ? quantity : 0;
+    const tax = this.totalPriceTax[idx] > 0 ? this.totalPriceTax[idx] : 0;
+    this.totalQuantityTax[idx] = quantity * tax;
+  }
+
+  private priceWtPopulator(idx: number, price: number) {
+    price = price > 0 ? price : 0;
+    const tax = this.totalPriceTax[idx] > 0 ? this.totalPriceTax[idx] : 0;
+    this.totalPriceWt[idx] = price + tax;
+  }
+
+  private totalCKPopulator(idx: number, ckPercentage: number, price: number, quantity: number) {
+    price = price > 0 ? price : 0;
+    quantity = quantity > 0 ? quantity : 0;
+    ckPercentage = ckPercentage > 0 ? ckPercentage : 0;
+
+    const totalCk = (price * quantity * ckPercentage) / 100;
+    this.itemFormArray.controls[idx].get('total_ck').setValue(totalCk);
+
+    if (ckPercentage > 0) {
+      const newPrice = price - totalCk;
+      this.itemFormArray.controls[idx].get('price').setValue(newPrice);
+    } else {
+      this.itemFormArray.controls[idx].get('price').setValue(this.priceOrigin[idx]);
     }
   }
 
-  private totalVatPopulator(idx: number, vatVal: number = 0, totalCkVal: number = 0) {
-    const totalPrice = this.totalPrice[idx];
-    let vat = vatVal;
-    let totalCk: number = totalCkVal;
-
-    if (totalPrice && totalPrice > 0) {
-      const controlArray = <FormArray>this.addForm.get('items');
-
-      if (vat === null || vat === 0) {
-        vat = controlArray.controls[idx].get('tax_rate').value;
-        if (vat === null) {
-          vat = 0;
-        }
-      }
-
-      if (totalCk === null || totalCk === 0) {
-        totalCk = controlArray.controls[idx].get('total_ck').value;
-        if (totalCk === null) {
-          totalCk = 0;
-        }
-      }
-
-      if (vat > 0) {
-        this.totalVat[idx] = ((totalPrice - totalCk) * vat) / 100;
-      } else {
-        this.totalVat[idx] = 0;
-      }
-    }
-  }
-
-  private finalTotalPricePopulator(idx: number, totalCkVal: number = 0) {
-    const totalPrice = this.totalPrice[idx];
-    const totalVat = this.totalVat[idx];
-    if (totalPrice && totalVat) {
-      this.finalTotalPrice[idx] = totalPrice + totalVat - totalCkVal;
+  private pricePopulator(idx: number, oldPrice: number, ck: number, totalCK: number) {
+    if (oldPrice > 0 && ck > 0 && totalCK > 0) {
+      totalCK = totalCK > 0 ? totalCK : 0;
+      const newPrice = oldPrice - totalCK;
+      this.itemFormArray.controls[idx].get('price').setValue(newPrice);
+    } else {
+      this.itemFormArray.controls[idx].get('price').setValue(this.priceOrigin[idx]);
     }
   }
 }

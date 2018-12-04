@@ -48,4 +48,4 @@ import { HttpClientModule } from '@angular/common/http';
   declarations: [InvoicesComponent, InvoiceFormComponent],
   providers: [ValidationService, InvoiceService, GoodService, CustomerService, UtilsService, DatePipe]
 })
-export class InvoicesModule { }
+export class InvoicesModule {}

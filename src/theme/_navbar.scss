@@ -280,6 +280,13 @@
       box-shadow: 1px 0px 20px rgba(0, 0, 0, 0.08);
       -webkit-box-shadow: 1px 0px 20px rgba(0, 0, 0, 0.08);
       -moz-box-shadow: 1px 0px 20px rgba(0, 0, 0, 0.08);
+
+      -webkit-transition: height 0.3s;
+      -moz-transition: height 0.3s;
+      transition: height 0.3s;
+      text-align:center;
+      line-height:60px;
+
       @include media-breakpoint-down(md) {
         display: none;
         &.header-toggled {

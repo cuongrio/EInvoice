@@ -84,6 +84,63 @@ HOA DON
 	-> xóa items
 	
 	
+this.router.navigate(['/login']);
+
+if (error.status === 401 || error.status === 402 || error.status === 403) {
+	this.router.navigate(['4xx']);
+}
+return Observable.throw(error || 'SERVER ERROR');
+	
+
+====================================================
+{
+	"form": "1",
+	"serial": "1",
+	"invoice_date": "2018-11-25",
+	"customer": {
+		"customer_name": "Phạm Ngọc Hoài",
+		"org": "Công ty TNHH Nova",
+		"tax_code": "143243242342",
+		"bank_account": "111222333",
+		"bank": "Ngân hàng Vietcombank",
+		"email": "hoaipn@gmail.com",
+		"address": "Vui vui",
+		"phone": "092834833"
+	},
+	"total_before_tax": 50000,  // amount1+amount2
+	"total_tax": 5000, //(tax1*quantity) + (tax2*uantity)
+	"total": 55000,  // tong tien phai tra = amount_wt1 + amount_wt2
+	"items": [
+		{
+			"item_line": 1,
+			"item_code": "",
+			"item_name": "Tủ Lạnh Toshiba",
+			"unit": "Cái",
+			"price": 10000,
+			"tax": 1000,        // tien thue = price*tax_rate
+			"tax_rate": 10,     
+			"tax_rate_code": 10,
+			"price_wt": 11000,  // = price + tax  
+			"quantity": 2,
+			"amount": 20000, //=tong tien chua thue = price * quantity
+			"amount_wt": 22000  // = tong tien co thue = price_wt * quantity
+		},
+		{
+			"item_line": 2,
+			"item_code": "",
+			"item_name": "Dieu Hoa Toshiba",
+			"unit": "Cái",
+			"price": 30000,
+			"tax": 3000,        // tien thue = price*tax_rate
+			"tax_rate": 10,     
+			"tax_rate_code": 10,
+			"price_wt": 33000,  // = price + tax  
+			"quantity": 1,
+			"amount": 30000, //=tong tien chua thue = price * quantity
+			"amount_wt": 33000  // = tong tien co thue = price_wt * quantity
+		}
+	]
+}
 
 
 
@@ -91,8 +148,7 @@ HOA DON
 
 
 
-https://github.com/aitboudad/ngx-loading-bar/blob/master/demo/src/app/app.module.ts
-https://aitboudad.github.io/ngx-loading-bar/home
+
 
 
 

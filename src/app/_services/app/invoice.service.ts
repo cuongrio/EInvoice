@@ -11,7 +11,7 @@ import { AppConstant } from '@app/_mock/mock.data';
   providedIn: 'root'
 })
 export class InvoiceService {
-  constructor(private appConstant: AppConstant, private appService: AppService) {}
+  constructor(private appConstant: AppConstant, private appService: AppService) { }
 
   /** PDF */
   preview(invoiceModel: InvoiceModel) {
@@ -26,7 +26,7 @@ export class InvoiceService {
     return this.appService.get(`/invoices/${invoiceId}/download`);
   }
 
-  transform(invoiceId: number) {
+  printTransform(invoiceId: number) {
     return this.appService.post(`/invoices/${invoiceId}/transform`, {});
   }
 
@@ -60,53 +60,31 @@ export class InvoiceService {
   }
 
   queryInvoices(invoiceParam?: InvoiceParam) {
-    // if (invoiceParam) {
-    //   const params = new HttpParams();
+    if (invoiceParam) {
+      let httpParams = new HttpParams();
+      Object.keys(invoiceParam).forEach(function (key: any) {
+        console.log('key: ' + key + '||| ' + invoiceParam[key]);
+        if (invoiceParam[key]) {
+          if (key === 'page') {
+            httpParams = httpParams.append(key, JSON.stringify(parseInt(invoiceParam[key], 0) - 1));
+          } else {
+            httpParams = httpParams.append(key, invoiceParam[key]);
+          }
+        }
+      });
+      console.log('httpParams: ' + httpParams);
+      return this.appService.get(`/invoices`, httpParams);
+    }
+    return this.appService.get(`/invoices`);
 
-    //   if (invoiceParam.sort) {
-    //     params.set('sort', invoiceParam.sort);
-    //   }
-    //   if (invoiceParam.sortBy) {
-    //     params.set('sortBy', invoiceParam.sortBy);
-    //   }
-    //   if (invoiceParam.size) {
-    //     params.set('size', invoiceParam.size);
-    //   }
-    //   if (invoiceParam.page) {
-    //     const currentPage = JSON.stringify(parseInt(invoiceParam.page, 0) - 1);
-    //     params.set('page', currentPage);
-    //   }
-    //   if (invoiceParam.fromDate) {
-    //     params.set('fromDate', invoiceParam.fromDate);
-    //   }
-    //   if (invoiceParam.toDate) {
-    //     params.set('toDate', invoiceParam.toDate);
-    //   }
-    //   if (invoiceParam.invoiceNo) {
-    //     params.set('invoiceNo', invoiceParam.invoiceNo);
-    //   }
-    //   if (invoiceParam.form) {
-    //     params.set('form', invoiceParam.form);
-    //   }
-    //   if (invoiceParam.serial) {
-    //     params.set('serial', invoiceParam.serial);
-    //   }
-    //   if (invoiceParam.orgTaxCode) {
-    //     params.set('orgTaxCode', invoiceParam.orgTaxCode);
-    //   }
-    //   console.log('params: ' + JSON.stringify(params));
-    //   return this.appService.get(`/invoices`, params);
-    // }
-    // return this.appService.get(`/invoices`);
-
-    return of(this.appConstant.invoiceList);
+    // return of(this.appConstant.invoiceList);
   }
 
   /** END INVOICE */
 
   /*** SIGNED */
   listToken() {
-    return this.appService.get(`${environment.pluginUrl}/token`);
+    return this.appService.get(`${environment.pluginUrl}/token?fill=all`);
   }
 
   sign(invoiceId: number) {

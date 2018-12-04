@@ -32,15 +32,14 @@ export class HeaderComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.menuItems = ROUTES.filter(menuItem => menuItem);
-    // this.userLogged = this.authenticationService.credentials;
-    this.userLogged = {name: 'cuongrio'}
+    this.userLogged = this.authenticationService.credentials;
   }
 
   ngAfterViewInit() {
     $(window).scroll(function() {
       if (window.matchMedia('(min-width: 992px)').matches) {
         const header = '.navbar.horizontal-layout';
-        if ($(window).scrollTop() >= 70) {
+        if ($(window).scrollTop() >= 32) {
           $(header).addClass('fixed-on-scroll');
         } else {
           $(header).removeClass('fixed-on-scroll');

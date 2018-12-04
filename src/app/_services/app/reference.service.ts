@@ -12,11 +12,11 @@ export class ReferenceService {
 
   /***TENANT */
   tenanInfo() {
-    return this.appService.get(`${environment.serverUrl}/1`);
+    return this.appService.get(``);
   }
 
   referenceInfo() {
-    // return this.appService.get(`${environment.serverUrl}/references`);
-    return of(this.appConstant.references);
+    return this.appService.get(`/references`);
+    // return of(this.appConstant.references);
   }
 }

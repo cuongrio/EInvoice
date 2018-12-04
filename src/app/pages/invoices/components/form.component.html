@@ -5,7 +5,7 @@
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a routerLink="/">Trang chủ</a></li>
           <li class="breadcrumb-item"><a routerLink="/invoices">Danh sách hóa đơn</a></li>
-          <li *ngIf="invoiceId" class="breadcrumb-item active" aria-current="page">Sửa hóa đơn</li>
+          <li *ngIf="invoiceId" class="breadcrumb-item active" aria-current="page">Mở hóa đơn</li>
           <li *ngIf="!invoiceId" class="breadcrumb-item active" aria-current="page">Lập hóa đơn</li>
         </ol>
       </nav>
@@ -27,35 +27,22 @@
             <button type="button" [disabled]="disabledAdd" (click)="addNewButtonClicked()" class="btn btn-md btn-primary">
               <i class="fas fa-plus"></i> Thêm
             </button>
-            <button type="button" [disabled]="disabledEdit" class="btn btn-md btn-outline-primary"><i class="fas fa-edit"></i>
-              Sửa</button>
-            <button type="button" (click)="ngAddForm.ngSubmit.emit()" class="btn btn-md btn-success">
+            <button type="button" (click)="adjustClicked()" [disabled]="disabledAdjust" class="btn btn-md btn-outline-primary"><i
+                class="fas fa-edit"></i>
+              Điều chỉnh</button>
+            <button type="button" (click)="isPreview=false; ngAddForm.ngSubmit.emit()" class="btn btn-md btn-success">
               <i class="fas fa-save"></i> Lưu
             </button>
-            <button type="button" class="btn btn-md btn-outline-primary"><i class="fas fa-info"></i> Xem</button>
+            <button type="button" (click)="isPreview=true; ngAddForm.ngSubmit.emit()" class="btn btn-md btn-outline-primary"><i
+                class="fas fa-info"></i> Xem</button>
 
-            <button type="button" [disabled]="disabledSign" (click)="signInvoiceClicked(listTokenModal)" class="btn btn-md btn-outline-primary"><i
+            <button type="button" [disabled]="disabledSign" (click)="signInvoiceClicked()" class="btn btn-md btn-outline-primary"><i
                 class="fas fa-key"></i>
               Ký</button>
-            <ng-template #listTokenModal>
-              <div class="modal-header">
-                <h4 class="modal-title pull-left">Danh sách chữ ký</h4>
-                <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body mh-150">
-                <select class="ein-select form-control form-control-sm">
-                  <option [value]="op.code" *ngFor="let op of listTokenDummy">{{ op.value }}</option>
-                </select>
-              </div>
-            </ng-template>
-            <button (click)="inCDClicked()" [disabled]="disabledPrintTranform" type="button" class="btn btn-md btn-outline-primary"><i
+
+            <button [disabled]="disabledInCD" (click)="inCDClicked()" type="button" class="btn btn-md btn-outline-primary"><i
                 class="fas fa-print"></i>
               In CĐ</button>
-            <button (click)="inCDClicked()" [disabled]="disabledAdjust" type="button" class="btn btn-md btn-outline-primary"><i
-                class="fas fa-print"></i>
-              Điều chỉnh</button>
             <button routerLink="/invoices" type="button" class="btn btn-md btn-light">
               <i class="fas fa-share-square"></i> Thoát
             </button>
@@ -113,16 +100,14 @@
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label"><label class="required">Mẫu số</label></div>
                         <div class="col-md-8 col-lg-8">
-                          <!-- <select name="form" formControlName="form"
-                            class="ein-select form-control form-control-sm" [ngClass]="{ 'is-invalid': submitted && addForm.controls['form'].errors }">
-                            <option [value]="op.code" *ngFor="let op of comboForm">{{ op.value }}</option>
-                          </select> -->
-                          <!-- <ng-select [allowClear]="true" [items]="comboForm" (selected)="selected($event)" (removed)="removed($event)"
-                            (typed)="typed($event)" (data)="refreshValue($event)">
-                          </ng-select> -->
-                          <ngx-select-dropdown [multiple]="false" (open)="loadFormBox()" (valueChange)="onFormChange($event)"
-                            [config]="configSingleBox" [options]="comboForm">
-                          </ngx-select-dropdown>
+                          <div class="input-group input-group-sm c-group">
+                            <div class="input-group-prepend">
+                              <input formControlName="form" readonly="readonly" type="text" class="form-control form-control-sm form-control-custom" />
+                            </div>
+                            <ngx-select-dropdown [multiple]="false" (open)="loadFormBox()" (valueChange)="onFormChange($event)"
+                              [config]="configSingleBox" (value)="formPicked" [options]="comboForm">
+                            </ngx-select-dropdown>
+                          </div>
                           <app-control-message *ngIf="submitted" [control]="addForm.controls['form']"></app-control-message>
                         </div>
                       </div>
@@ -132,13 +117,14 @@
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label"><label class="required">Ký hiệu</label></div>
                         <div class="col-md-8 col-lg-8">
-                          <!-- <select formControlName="serial" class="ein-select form-control form-control-sm"
-                            [ngClass]="{ 'is-invalid': submitted && addForm.controls['serial'].errors }">
-                            <option [value]="op.code" *ngFor="let op of comboSerial">{{ op.value }}</option>
-                          </select> -->
-                          <ngx-select-dropdown [(value)]="serialPicked" [multiple]="false" (valueChange)="onSerialChange($event)"
-                            [config]="configSingleBox" [options]="comboSerial">
-                          </ngx-select-dropdown>
+                          <div class="input-group input-group-sm c-group">
+                            <div class="input-group-prepend">
+                              <input formControlName="serial" readonly="readonly" type="text" class="form-control form-control-sm form-control-custom" />
+                            </div>
+                            <ngx-select-dropdown (value)="serialPicked" [multiple]="false" (valueChange)="onSerialChange($event)"
+                              [config]="configSingleBox" [options]="comboSerial">
+                            </ngx-select-dropdown>
+                          </div>
                           <app-control-message *ngIf="submitted" [control]="addForm.controls['serial']"></app-control-message>
                         </div>
                       </div>
@@ -148,8 +134,13 @@
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label"><label class="required">Mã KH</label></div>
                         <div class="col-md-8 col-lg-8">
-                          <ngx-select-dropdown [multiple]="false" (open)="loadCustomers()" [(value)]="customerPicked"
-                            (valueChange)="onCustomerChange($event)" [config]="configCode" [options]="customerArr"></ngx-select-dropdown>
+                          <div class="input-group input-group-sm c-group">
+                            <div class="input-group-prepend">
+                              <input formControlName="customerCode" readonly="readonly" type="text" class="form-control form-control-sm form-control-custom" />
+                            </div>
+                            <ngx-select-dropdown [multiple]="false" (open)="loadCustomers()" [(value)]="customerPicked"
+                              (valueChange)="onCustomerCodeChange($event)" [config]="configCode" [options]="customerArr"></ngx-select-dropdown>
+                          </div>
                           <app-control-message *ngIf="submitted" [control]="addForm.controls['customerCode']"></app-control-message>
                         </div>
                       </div>
@@ -159,8 +150,13 @@
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label required"><label>Mã số thuế</label></div>
                         <div class="col-md-8 col-lg-8">
-                          <ngx-select-dropdown [multiple]="false" [(value)]="customerPicked" (valueChange)="onCustomerTaxChange($event)"
-                            [config]="configTaxCode" [options]="customerArr"></ngx-select-dropdown>
+                          <div class="input-group input-group-sm c-group">
+                            <div class="input-group-prepend">
+                              <input formControlName="customerTax" readonly="readonly" type="text" class="form-control form-control-sm form-control-custom" />
+                            </div>
+                            <ngx-select-dropdown [multiple]="false" [(value)]="customerPicked" (valueChange)="onCustomerTaxChange($event)"
+                              [config]="configTaxCode" [options]="customerArr"></ngx-select-dropdown>
+                          </div>
                           <app-control-message *ngIf="submitted" [control]="addForm.controls['customerTax']"></app-control-message>
                         </div>
                       </div>
@@ -181,9 +177,9 @@
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label required"><label>Mã ĐH</label></div>
                         <div class="col-md-8 col-lg-8">
-                          <input type="text" formControlName="orderNo" placeholder="Mã đơn hàng" class="form-control form-control-sm"
-                            [ngClass]="{ 'is-invalid': submitted && addForm.controls['orderNo'].errors }" />
-                          <app-control-message *ngIf="submitted" [control]="addForm.controls['orderNo']"></app-control-message>
+                          <input type="text" formControlName="invoiceNo" placeholder="Mã đơn hàng" class="form-control form-control-sm"
+                            [ngClass]="{ 'is-invalid': submitted && addForm.controls['invoiceNo'].errors }" />
+                          <app-control-message *ngIf="submitted" [control]="addForm.controls['invoiceNo']"></app-control-message>
                         </div>
                       </div>
                     </div>
@@ -271,16 +267,18 @@
                         <tr>
                           <th class="bg-smoke" style="width: 20px;">#</th>
                           <th style="width: 120px;">Mã HH</th>
-                          <th>Nội dung</th>
+                          <th style="width: 300px;">Nội dung</th>
                           <th style="width: 60px;">ĐVT</th>
                           <th style="width: 60px;" class="text-right">SL</th>
-                          <th style="width: 100px;" class="text-right">Giá</th>
-                          <th style="width: 120px;" class="text-right">Tiền</th>
+                          <th style="width: 120px;" class="text-right">Giá</th>
+                          <th style="width: 60px;" class="text-right">% VAT</th>
                           <th *ngIf="!hiddenExColumn" style="width: 60px;" class="text-right">% CK</th>
                           <th *ngIf="!hiddenExColumn" style="width: 120px;" class="text-right">Tiền CK</th>
-                          <th style="width: 60px;" class="text-right">% VAT</th>
-                          <th class="text-right">Tiền VAT</th>
-                          <th class="text-right">Tổng tiền</th>
+                          <th style="width: 120px;" class="text-right">Tiền thuế</th>
+                          <th style="width: 120px;" class="text-right">Tổng thuế</th>
+                          <th style="width: 120px;" class="text-right">Tổng tiền</th>
+                          <th style="width: 120px;" class="text-right">Sau thuế</th>
+
                         </tr>
                       </thead>
                       <tbody formArrayName="items">
@@ -289,15 +287,19 @@
                           <td class="no-padding bg-smoke text-center">
                             {{idx + 1}}
                           </td>
-                          <td class="no-padding invoice-no__item hideselect">
-                            <ngx-select-dropdown (valueChange)="onGoodlineChange($event, idx)" [multiple]="false"
-                              [config]="configGood" [options]="goodArr"></ngx-select-dropdown>
+                          <td class="no-padding invoice-no__item">
+                            <div class="input-group input-group-sm c-group">
+                              <div class="input-group-prepend">
+                                <input formControlName="item_code" readonly="readonly" type="text" class="form-control form-control-sm form-control-custom" />
+                              </div>
+                              <ngx-select-dropdown (valueChange)="onGoodlineChange($event, idx)" [multiple]="false"
+                                [config]="configGood" [options]="goodArr"></ngx-select-dropdown>
+                            </div>
                           </td>
                           <td class="no-padding">
                             <input formControlName="item_name" triggers="dblclick" [popover]="popContent" popoverTitle="Hiển thị thêm"
-                              [(ngModel)]="item['item_name']" [outsideClick]="true" [placement]="bottom"
-                              formControlName="item_name" class="form-control form-control-sm" name="item_item_name"
-                              type="text" />
+                              [(ngModel)]="item['item_name']" [outsideClick]="true" [placement]="bottom" class="form-control form-control-sm"
+                              name="item_item_name" type="text" />
                             <ng-template #popContent>
                               <textarea formControlName="item_name" [(ngModel)]="item['item_name']" class="form-control form-control-sm"
                                 rows="5" name="item_item_name_expand" type="text"></textarea>
@@ -310,39 +312,35 @@
                             <input formControlName="quantity" numbersOnly (input)="quantityValueChange($event.target.value, idx)"
                               class="form-control form-control-sm text-right" name="item_quantity" type="text" />
                           </td>
-
                           <td class="no-padding">
-                            <input formControlName="price" numbersOnly currencyMask [options]="{ prefix: 'đ', allowNegative: false, precision: 0  }"
+                            <input formControlName="price" numbersOnly currencyMask [options]="{ prefix: '', allowNegative: false, precision: 0  }"
                               (input)="priceValueChange($event.target.value, idx)" class="form-control form-control-sm text-right"
                               name="item_price" type="text" />
-                          </td>
-
-                          <td class="no-padding text-right">
-                            <label class="mt-2 mr-2">{{totalPrice[idx] | currency:'VND':'symbol':'4.2-2'}}</label>
-                          </td>
-
-                          <td [(hidden)]="hiddenExColumn" class="no-padding">
-                            <input formControlName="ck" numbersOnly (input)="ckValueChange($event.target.value, idx)"
-                              class="form-control form-control-sm text-right" type="text" />
-                          </td>
-                          <td [(hidden)]="hiddenExColumn" class="no-padding">
-                            <input formControlName="total_ck" currencyMask [options]="{ prefix: 'đ', allowNegative: false, precision: 0  }"
-                              numbersOnly (input)="totalCkValueChange($event.target.value, idx)" class="form-control form-control-sm text-right"
-                              type="text" />
                           </td>
                           <td class="no-padding vat-line">
                             <input formControlName="tax_rate" numbersOnly (input)="taxRateValueChange($event.target.value, idx)"
                               class="form-control form-control-sm text-right text-bold" list="vatOptions">
                           </td>
-                          <td class="no-padding text-right">
-                            <label class="mt-2 mr-2">{{totalVat[idx] |
-                              currency:'VND':'symbol':'4.2-2'}}
-                            </label>
+                          <td [(hidden)]="hiddenExColumn" class="no-padding">
+                            <input formControlName="ck" numbersOnly (input)="ckValueChange($event.target.value, idx)"
+                              class="form-control form-control-sm text-right" type="text" />
                           </td>
-
+                          <td [(hidden)]="hiddenExColumn" class="no-padding">
+                            <input formControlName="total_ck" currencyMask [options]="{ prefix: '', allowNegative: false, precision: 0  }"
+                              numbersOnly (input)="totalCkValueChange($event.target.value, idx)" class="form-control form-control-sm text-right"
+                              type="text" />
+                          </td>
                           <td class="no-padding text-right">
-                            <label class="mt-2 mr-2">{{finalTotalPrice[idx] |
-                              currency:'VND':'symbol':'4.2-2'}}</label>
+                            <label class="mt-2 mr-2">{{totalPriceTax[idx] | number:'.0-2'}}</label>
+                          </td>
+                          <td class="no-padding text-right">
+                            <label class="mt-2 mr-2">{{totalQuantityTax[idx] | number:'.0-2'}}</label>
+                          </td>
+                          <td class="no-padding text-right">
+                            <label class="mt-2 mr-2">{{totalAmount[idx] | number:'.0-2'}}</label>
+                          </td>
+                          <td class="no-padding text-right">
+                            <label class="mt-2 mr-2">{{totalAmoutWt[idx] | number:'.0-2'}}</label>
                           </td>
 
                           <div class="sticky-btn__td">
@@ -351,34 +349,34 @@
                             </a>
                           </div>
                         </tr>
-                        <tr>
-                          <td class="td-expand-line" [attr.colspan]="columNo">
-                            <button type="button" (click)="addMoreLineClicked()" class="btn btn-light btn-md">
-                              <i class="fas fa-plus"></i>Thêm dòng
-                            </button>
-                          </td>
-                        </tr>
+
                       </tbody>
                       <tfoot>
                         <tr class="tb-footer">
-                          <th class="bg-smoke" style="width: 20px;"></th>
-                          <th style="width: 120px;">Tổng</th>
+                          <th class="td-expand-line" colspan="2">
+                            <button type="button" (click)="addMoreLineClicked()" class="btn btn-light btn-md">
+                              <i class="fas fa-plus"></i>Thêm dòng
+                            </button>
+                          </th>
                           <th></th>
-                          <th style="width: 60px;"></th>
-                          <th style="width: 60px;" class="text-right"></th>
-                          <th style="width: 100px;" class="text-right"></th>
-                          <th style="width: 120px;" class="text-right">
-                            {{ getSumTotalPrice() | currency:'VND':'symbol':'4.2-2'}}
+                          <th></th>
+                          <th class="text-right"></th>
+                          <th class="text-right"></th>
+                          <th *ngIf="!hiddenExColumn" class="text-right"></th>
+                          <th *ngIf="!hiddenExColumn" class="text-right">
                           </th>
-                          <th *ngIf="!hiddenExColumn" style="width: 60px;" class="text-right"></th>
-                          <th *ngIf="!hiddenExColumn" style="width: 120px;" class="text-right">
+                          <th class="text-right"></th>
+                          <th class="text-right">
+                            {{ sumTotalPriceTax() | currency:'VND':'symbol':'4.0-2'}}
                           </th>
-                          <th style="width: 60px;" class="text-right"></th>
-                          <th style="width: 120px;" class="text-right">
-                            {{ getSumVatTotal() | currency:'VND':'symbol':'4.2-2'}}
+                          <th class="text-right">
+                            {{ sumTotalQuantityTax() | currency:'VND':'symbol':'4.0-2'}}
                           </th>
-                          <th style="width: 120px;" class="text-right">
-                            {{ getSumFinalTotal() | currency:'VND':'symbol':'4.2-2'}}
+                          <th class="text-right">
+                            {{ sumTotalAmount() | currency:'VND':'symbol':'4.0-2'}}
+                          </th>
+                          <th class="text-right">
+                            {{ sumTotalAmountWt() | currency:'VND':'symbol':'4.0-2'}}
                           </th>
                         </tr>
                       </tfoot>
@@ -386,7 +384,7 @@
                   </div>
                 </div>
                 <datalist id="vatOptions">
-                  <option *ngFor="let vat of comboTaxRate" value="{{vat.code}}">{{vat.description}}</option>
+                  <option *ngFor="let vat of comboTaxRate" value="{{vat.value}}">{{vat.code}}</option>
                 </datalist>
               </form>
             </div>

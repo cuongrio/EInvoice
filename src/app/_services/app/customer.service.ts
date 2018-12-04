@@ -13,15 +13,15 @@ export class CustomerService {
 
   // CUSTOMERS
   getList() {
-    // return this.appService.get(`${environment.serverUrl}/customers`);
-    return of(this.appConstant.customerList);
+    return this.appService.get(`/customers`);
+    // return of(this.appConstant.customerList);
   }
 
   create(customer: CustomerModel) {
-    return this.appService.post(`${environment.serverUrl}/customers/`, customer);
+    return this.appService.post(`/customers/`, customer);
   }
 
   update(customer: CustomerModel) {
-    return this.appService.put(`${environment.serverUrl}/customers/`, customer);
+    return this.appService.put(`/customers/`, customer);
   }
 }

@@ -13,21 +13,21 @@ export class GoodService {
 
   /**** LIST *** */
   getList() {
-    // return this.appService.get(`${environment.serverUrl}/goods`);
-    return of(this.appConstant.goodList);
+    return this.appService.get(`/goods`);
+    // return of(this.appConstant.goodList);
   }
 
   create(product: ProductModel) {
-    return this.appService.post(`${environment.serverUrl}/goods/`, product);
+    return this.appService.post(`/goods/`, product);
   }
 
   update(product: ProductModel) {
-    return this.appService.put(`${environment.serverUrl}/goods/`, product);
+    return this.appService.put(`/goods/`, product);
   }
 
   uploadFile() {}
 
   downloadFile() {
-    return this.appService.get(`${environment.serverUrl}/goods/download`);
+    return this.appService.get(`/goods/download`);
   }
 }

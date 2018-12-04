@@ -10,6 +10,7 @@ export class AlertComponent implements OnInit {
   public title: string;
   public message: string;
   public class: string;
+  public highlight: string;
   public list: any[] = [];
 
   constructor(public bsModalRef: BsModalRef) {}
