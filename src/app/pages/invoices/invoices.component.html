@@ -142,9 +142,11 @@
 
               <div class="col-12">
                 <div class="template-ein navbar-action">
-                  <button [hidden]="!expandSearch" type="button" form="ngForm" class="btn btn-md btn-info btn-search"
+                  <button [disabled]="isSearching" [hidden]="!expandSearch" type="button"
+                    class="btn btn-md btn-info btn-search"
                     (click)="ngSearchForm.ngSubmit.emit()">
-                    <i class="icon-magnifier"></i> Tìm kiếm
+                    <i *ngIf="!isSearching" class="icon-magnifier"></i> 
+                    <i *ngIf="isSearching" class="fa fa-spinner fa-spin"></i> Tìm kiếm
                   </button>
                   <button type="button" routerLink="/invoices/createNew" class="btn btn-md btn-success">
                     <i class="fas fa-plus"></i> Thêm
@@ -152,9 +154,11 @@
                   <button id="openButton" type="button" (click)="openRowClicked()" class="btn  btn-md btn-outline-primary">
                     <i class="fas fa-edit"></i> Mở
                   </button>
-                  <button id="copyButton" type="button" (click)="copyRowClicked()" class="btn btn-md btn-outline-primary"
-                    title="Sao chép">
-                    <i class="fas fa-copy"></i> Sao chép
+                  <button id="copyButton" type="button"
+                  class="btn btn-md btn-outline-primary">
+                    <i id="copyLoading" class="fa fa-spinner fa-spin"></i> 
+                    <i id="copyLoaded" class="fas fa-copy"></i> 
+                    Sao chép
                   </button>
                   <button id="printButton" type="button" (click)="printRowClicked()" class="btn btn-md btn-outline-primary">
                     <i class="fas fa-print"></i> In

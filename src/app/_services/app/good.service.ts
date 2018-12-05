@@ -9,7 +9,7 @@ import { AppConstant } from '@app/_mock/mock.data';
   providedIn: 'root'
 })
 export class GoodService {
-  constructor(private appConstant: AppConstant, private appService: AppService) {}
+  constructor(private appConstant: AppConstant, private appService: AppService) { }
 
   /**** LIST *** */
   getList() {
@@ -21,7 +21,7 @@ export class GoodService {
     return this.appService.post(`/goods/`, product);
   }
 
-  delete(goodId: number){
+  delete(goodId: number) {
     return of(this.appConstant.customerDetail);
   }
 
@@ -34,7 +34,7 @@ export class GoodService {
     return this.appService.put(`/goods/`, product);
   }
 
-  uploadFile() {}
+  uploadFile() { }
 
   downloadFile() {
     return this.appService.get(`/goods/download`);

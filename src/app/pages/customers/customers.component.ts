@@ -51,10 +51,10 @@ export class CustomersComponent implements OnInit, AfterViewInit {
     $('#copyLoading').hide();
 
     function copyToClipboard(text: string) {
-      var $temp = $("<input>");
-      $("body").append($temp);
+      const $temp = $('<input>');
+      $('body').append($temp);
       $temp.val(text).select();
-      document.execCommand("copy");
+      document.execCommand('copy');
       $temp.remove();
     }
 
@@ -66,7 +66,7 @@ export class CustomersComponent implements OnInit, AfterViewInit {
       $('#copyLoading').show();
       $('#copyLoaded').hide();
 
-      var row = $('#customerTable tbody').find('tr.selected')[0];
+      const row = $('#customerTable tbody').find('tr.selected')[0];
       let customerText = '';
       $(row).find('td').each(function (index: any) {
         const tdText = $(this).text();
@@ -93,8 +93,6 @@ export class CustomersComponent implements OnInit, AfterViewInit {
     }
     localStorage.setItem('customerSearch', JSON.stringify(this.expandSearch));
   }
-
-  public onSubmit(form: any) { }
 
   public addNewClicked() {
     const initialState = {
@@ -149,7 +147,7 @@ export class CustomersComponent implements OnInit, AfterViewInit {
       class: 'error'
     };
 
-    if (err.error) {
+    if (err.error && err.error.message) {
       initialState.message = err.error.message;
     }
     this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
@@ -257,21 +255,21 @@ export class CustomersComponent implements OnInit, AfterViewInit {
       columns: [
         {
           data: 'customer_code'
-        },{
+        }, {
           data: 'customer_name'
-        },{
+        }, {
           data: 'address'
-        },{
+        }, {
           data: 'phone'
-        },{
+        }, {
           data: 'email'
-        },{
+        }, {
           data: 'tax_code'
-        },{
+        }, {
           data: 'org'
         }, {
           data: 'bank_account'
-        },{
+        }, {
           data: 'bank'
         }, {
           orderable: false,

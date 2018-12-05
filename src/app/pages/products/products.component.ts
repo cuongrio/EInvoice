@@ -48,10 +48,10 @@ export class ProductsComponent implements OnInit, AfterViewInit {
     $('#copyLoading').hide();
 
     function copyToClipboard(text: string) {
-      var $temp = $("<input>");
-      $("body").append($temp);
+      const $temp = $('<input>');
+      $('body').append($temp);
       $temp.val(text).select();
-      document.execCommand("copy");
+      document.execCommand('copy');
       $temp.remove();
     }
 
@@ -63,7 +63,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
       $('#copyLoading').show();
       $('#copyLoaded').hide();
 
-      var row = $('#productTable tbody').find('tr.selected')[0];
+      const row = $('#productTable tbody').find('tr.selected')[0];
       let customerText = '';
       $(row).find('td').each(function (index: any) {
         const tdText = $(this).text();
@@ -82,7 +82,6 @@ export class ProductsComponent implements OnInit, AfterViewInit {
     });
   }
 
-
   public expandSearchClicked() {
     if (this.expandSearch) {
       this.expandSearch = false;
@@ -91,7 +90,20 @@ export class ProductsComponent implements OnInit, AfterViewInit {
     }
     localStorage.setItem('productsearch', JSON.stringify(this.expandSearch));
   }
-  
+
+  public openClicked() {
+    const goodId = +this.getCheckboxesValue();
+    this.productService.retrieveById(goodId).subscribe(data => {
+      const initialState = {
+        dataForm: data,
+        viewMode: true
+      };
+      console.log(JSON.stringify(initialState));
+      this.modalRef = this.modalService.show(ProductFormComponent, { class: 'modal-lg', initialState });
+    });
+
+  }
+
   public openModal(template: TemplateRef<any>) {
     this.modalRef = this.modalService.show(template, { class: 'modal-sm' });
   }
@@ -105,8 +117,8 @@ export class ProductsComponent implements OnInit, AfterViewInit {
   public editClicked() { }
 
   public deleteClicked() {
-    const customerId = +this.getCheckboxesValue();
-    this.productService.delete(customerId).subscribe(
+    const goodId = +this.getCheckboxesValue();
+    this.productService.delete(goodId).subscribe(
       data => {
         this.modalRef.hide();
         const initialState = {
@@ -212,7 +224,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
           width: '80px',
           targets: 0,
           orderable: true
-        },{
+        }, {
           width: '40px',
           targets: 2
         }, {
@@ -239,7 +251,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
       }, {
         data: 'unit'
       }, {
-        data: function(row: any, type: any) {
+        data: function (row: any, type: any) {
           if (type === 'display') {
             return `<p class="text-right">${formatCurrency(row.price)}</p>`;
           } else {
@@ -247,7 +259,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
           }
         }
       }, {
-        data: function(row: any, type: any) {
+        data: function (row: any, type: any) {
           if (type === 'display') {
             return `<p class="text-right">${row.tax_rate}%</p>`;
           } else {
@@ -265,7 +277,7 @@ export class ProductsComponent implements OnInit, AfterViewInit {
             return '<span></span>';
           }
         }
-      } , {
+      }, {
         orderable: false,
         data: function (row: any, type: any) {
           if (type === 'display' && row.goods_id && row.goods_id !== 'null') {

@@ -799,7 +799,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     while (formArray.length !== 0) {
       formArray.removeAt(0);
     }
-  };
+  }
 
   private formSetDefault() {
     this.addForm.patchValue({

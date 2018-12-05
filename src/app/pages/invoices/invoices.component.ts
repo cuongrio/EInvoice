@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, TemplateRef, ChangeDetectorRef, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DatePipe } from '@angular/common';
@@ -22,7 +22,7 @@ type ArrayObject = Array<{ code: string; value: string }>;
   selector: 'app-invoices',
   templateUrl: './invoices.component.html'
 })
-export class InvoicesComponent implements OnInit {
+export class InvoicesComponent implements OnInit, AfterViewInit {
   public sortArr: string[] = ['ASC', 'DESC'];
   public sortByArr: ArrayObject = [
     { code: 'invoiceNo', value: 'Số hóa đơn' },
@@ -31,6 +31,9 @@ export class InvoicesComponent implements OnInit {
     { code: 'serial', value: 'Số Serial' },
     { code: 'orgTaxCode', value: 'Mã số thuế' }
   ];
+
+  // searching button
+  public isSearching = false;
 
   public bsConfig = { dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-blue' };
   public modalRef: BsModalRef;
@@ -91,6 +94,46 @@ export class InvoicesComponent implements OnInit {
     this.initPageHandlerInRouter();
   }
 
+  ngAfterViewInit() {
+    $('#copyLoading').hide();
+
+    function copyToClipboard(text: string) {
+      const $temp = $('<input>');
+      $('body').append($temp);
+      $temp.val(text).select();
+      document.execCommand('copy');
+      $temp.remove();
+    }
+
+    // handle copy button
+    $('#copyButton').on('click', function (e: any) {
+      e.preventDefault();
+
+      // loading
+      $('#copyLoading').show();
+      $('#copyLoaded').hide();
+
+      const row = $('#invoiceTable tbody').find('tr.selected')[0];
+      let customerText = '';
+      $(row).find('td').each(function (index: any) {
+        const tdText = $(this).text();
+        if (tdText && tdText.trim().length > 0) {
+          if (index !== 1) {
+            customerText += ',';
+          }
+          customerText += tdText;
+        }
+      });
+      console.log(customerText);
+      copyToClipboard(customerText);
+
+      setTimeout(function () {
+        $('#copyLoading').hide();
+        $('#copyLoaded').show();
+      }, 500);
+    });
+  }
+
   public expandSearchClicked() {
     if (this.expandSearch) {
       this.expandSearch = false;
@@ -126,11 +169,19 @@ export class InvoicesComponent implements OnInit {
         dataToken.ahd_sign_base64
       )
       .toPromise();
-    this.invoiceService.signed(invoiceId, JSON.stringify(signToken)).subscribe(
-      data => {
-        console.log(data);
-      },
-      err => {
+    this.invoiceService.signed(invoiceId, JSON.stringify(signToken)).subscribe(data => {
+        this.invoiceService.signed(invoiceId, data).subscribe(res => {
+          const initialState = {
+            message: 'Đã ký thành công hóa đơn!',
+            title: 'Thông báo!',
+            class: 'success',
+            highlight: `Hóa đơn #${invoiceId}`
+          };
+          this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+        }, err => {
+          this.errorHandler(err);
+        });
+      }, err => {
         this.errorHandler(err);
       }
     );
@@ -138,6 +189,8 @@ export class InvoicesComponent implements OnInit {
 
   public onSubmit(form: any) {
     this.page = 1;
+    this.isSearching = true;
+
     const invoiceParam: InvoiceParam = this.formatForm(form);
     invoiceParam.page = JSON.stringify(this.page);
     localStorage.setItem('userquery', JSON.stringify(invoiceParam));
@@ -146,7 +199,7 @@ export class InvoicesComponent implements OnInit {
   }
 
   public onPageChange(page: number) {
-    console.log(this.previousPage + '---' + page);
+    this.isSearching = true;
     if (this.previousPage !== page) {
       this.previousPage = page;
       const userquery = localStorage.getItem('userquery');
@@ -158,7 +211,6 @@ export class InvoicesComponent implements OnInit {
       }
 
       invoiceParam.page = JSON.stringify(this.page);
-      console.log('invoiceParams: ' + JSON.stringify(invoiceParam));
 
       // call service
       this.router.navigate([], { replaceUrl: true, queryParams: invoiceParam });
@@ -203,11 +255,12 @@ export class InvoicesComponent implements OnInit {
         });
       }
       this.ref.markForCheck();
+    }, err => {
+      this.errorHandler(err);
     });
   }
 
   public signClicked() {
-    const invoiceId = +this.getCheckboxesValue();
     // 1. get list token
     this.tokenService.listToken().subscribe((data: Array<TokenData>) => {
       this.listTokenAvaiable = data;
@@ -263,7 +316,7 @@ export class InvoicesComponent implements OnInit {
 
   private getCheckboxesValue() {
     const itemsChecked = new Array<string>();
-    $('input:checkbox[name=stickchoice]:checked').each(function() {
+    $('input:checkbox[name=stickchoice]:checked').each(function () {
       const item: string = $(this).val();
       itemsChecked.push(item);
     });
@@ -325,6 +378,11 @@ export class InvoicesComponent implements OnInit {
             .fnAddData(invoiceList.contents);
         }
       }
+
+      this.isSearching = false;
+    }, err => {
+      this.isSearching = false;
+      this.errorHandler(err);
     });
   }
 
@@ -359,70 +417,70 @@ export class InvoicesComponent implements OnInit {
       language: {
         emptyTable: 'Không có dữ liệu'
       },
-      createdRow: function(row: any, data: any, index: number) {
+      createdRow: function (row: any, data: any, index: number) {
         $(row).addClass('row-parent');
       },
       columnDefs: [{
-          width: '20px',
-          targets: 0,
-          orderable: false
-        },
-        {
-          width: '80px',
-          targets: 1,
-          render: function(data: any) {
-            return '<label class="badge badge-info">' + data + '</label>';
-          }
-        },
-        {
-          width: '60px',
-          targets: 2
-        },
-        {
-          width: '80px',
-          targets: 3
-        },
-        {
-          width: '60px',
-          targets: 4
-        },
-        {
-          width: '50px',
-          targets: 6,
-          render: function(data: any) {
-            if (data && data !== 'null') {
-              return '<span class="number-format">' + data + '</span>';
-            } else {
-              return '<span></span>';
-            }
-          }
-        },
-        {
-          width: '50px',
-          targets: 7,
-          render: function(data: any) {
-            if (data && data !== 'null') {
-              return '<span class="number-format">' + data + '</span>';
-            } else {
-              return '<span></span>';
-            }
-          }
-        },
-        {
-          width: '80px',
-          targets: 8,
-          render: function(data: any) {
-            if (data && data !== 'null') {
-              return '<span class="number-format">' + data + '</span>';
-            } else {
-              return '<span></span>';
-            }
-          }
-        },
-        {
-          width: '20px',
-          targets: 9
+        width: '20px',
+        targets: 0,
+        orderable: false
+      },
+      {
+        width: '80px',
+        targets: 1,
+        render: function (data: any) {
+          return '<label class="badge badge-info">' + data + '</label>';
         }
+      },
+      {
+        width: '60px',
+        targets: 2
+      },
+      {
+        width: '80px',
+        targets: 3
+      },
+      {
+        width: '60px',
+        targets: 4
+      },
+      {
+        width: '50px',
+        targets: 6,
+        render: function (data: any) {
+          if (data && data !== 'null') {
+            return '<span class="number-format">' + data + '</span>';
+          } else {
+            return '<span></span>';
+          }
+        }
+      },
+      {
+        width: '50px',
+        targets: 7,
+        render: function (data: any) {
+          if (data && data !== 'null') {
+            return '<span class="number-format">' + data + '</span>';
+          } else {
+            return '<span></span>';
+          }
+        }
+      },
+      {
+        width: '80px',
+        targets: 8,
+        render: function (data: any) {
+          if (data && data !== 'null') {
+            return '<span class="number-format">' + data + '</span>';
+          } else {
+            return '<span></span>';
+          }
+        }
+      },
+      {
+        width: '20px',
+        targets: 9
+      }
       ],
       columns: [
         {
@@ -435,7 +493,7 @@ export class InvoicesComponent implements OnInit {
           data: 'invoice_no'
         },
         {
-          data: function(row: any, type: any) {
+          data: function (row: any, type: any) {
             if (type === 'display' && row.invoice_date && row.invoice_date !== 'null') {
               const dateFormate = moment(row.invoice_date).format('DD/MM/YYYY');
               return `<span>${dateFormate}</span>`;
@@ -445,7 +503,7 @@ export class InvoicesComponent implements OnInit {
           }
         },
         {
-          data: function(row: any, type: any) {
+          data: function (row: any, type: any) {
             if (type === 'display' && row.customer && row.customer !== 'null') {
               return row.customer.customer_name;
             } else {
@@ -454,7 +512,7 @@ export class InvoicesComponent implements OnInit {
           }
         },
         {
-          data: function(row: any, type: any) {
+          data: function (row: any, type: any) {
             if (type === 'display' && row.customer && row.customer !== 'null') {
               return row.customer.tax_code;
             } else {
@@ -463,7 +521,7 @@ export class InvoicesComponent implements OnInit {
           }
         },
         {
-          data: function(row: any, type: any) {
+          data: function (row: any, type: any) {
             if (type === 'display' && row.customer && row.customer !== 'null') {
               return row.customer.address;
             } else {
@@ -472,7 +530,7 @@ export class InvoicesComponent implements OnInit {
           }
         },
         {
-          data: function(row: any, type: any) {
+          data: function (row: any, type: any) {
             if (type === 'display') {
               return formatCurrency(row.total_before_tax);
             } else {
@@ -481,7 +539,7 @@ export class InvoicesComponent implements OnInit {
           }
         },
         {
-          data: function(row: any, type: any) {
+          data: function (row: any, type: any) {
             if (type === 'display') {
               return formatCurrency(row.total_tax);
             } else {
@@ -490,7 +548,7 @@ export class InvoicesComponent implements OnInit {
           }
         },
         {
-          data: function(row: any, type: any) {
+          data: function (row: any, type: any) {
             if (type === 'display') {
               return formatCurrency(row.total);
             } else {
@@ -500,7 +558,7 @@ export class InvoicesComponent implements OnInit {
         },
         {
           orderable: false,
-          data: function(row: any, type: any) {
+          data: function (row: any, type: any) {
             if (type === 'display' && row.invoice_id && row.invoice_id !== 'null') {
               return `
                 <div class="form-check">
@@ -521,7 +579,7 @@ export class InvoicesComponent implements OnInit {
         info: false
       },
       order: [[2, 'desc']],
-      drawCallback: function() {
+      drawCallback: function () {
         const pagination = $(this)
           .closest('.dataTables_wrapper')
           .find('.dataTables_paginate');
@@ -538,14 +596,14 @@ export class InvoicesComponent implements OnInit {
       const url = `${serverUrl}/invoices/${invoiceId}`;
       $.ajax({
         url: url,
-        beforeSend: function(xhr: any) {
+        beforeSend: function (xhr: any) {
           xhr.setRequestHeader('Authorization', 'Bearer ' + token);
         }
       })
-        .done(function(data: any) {
+        .done(function (data: any) {
           callback(data.items);
         })
-        .fail(function(jqXHR: any, textStatus: any) {
+        .fail(function (jqXHR: any, textStatus: any) {
           alert('Đã xảy ra lỗi: ' + textStatus);
         });
     }
@@ -571,7 +629,7 @@ export class InvoicesComponent implements OnInit {
       let contentItemHtml = ``;
       if (items && items.length > 0) {
         let lineItem = ``;
-        items.forEach(function(entry: any) {
+        items.forEach(function (entry: any) {
           let priceFormat = entry.price;
           if (priceFormat > 0) {
             priceFormat = formatCurrency(priceFormat);
@@ -645,9 +703,9 @@ export class InvoicesComponent implements OnInit {
     bindButtonStatus(true);
 
     // selected row
-    $('#invoiceTable tbody').on('click', 'tr.row-parent', function() {
+    $('#invoiceTable tbody').on('click', 'tr.row-parent', function () {
       console.log('click tr');
-      $('input:checkbox[name=stickchoice]').each(function() {
+      $('input:checkbox[name=stickchoice]').each(function () {
         $(this).prop('checked', false);
       });
 
@@ -674,7 +732,7 @@ export class InvoicesComponent implements OnInit {
     });
 
     // Add event listener for opening and closing details
-    $('#invoiceTable tbody').on('click', 'td.details-control', function(e: any) {
+    $('#invoiceTable tbody').on('click', 'td.details-control', function (e: any) {
       e.preventDefault();
       console.log('click td');
       const tr = $(this).closest('tr');
@@ -693,7 +751,7 @@ export class InvoicesComponent implements OnInit {
         otherRow.child.hide();
 
         // call API
-        getProductItemByInvoice(row.data().invoice_id, function(items: any) {
+        getProductItemByInvoice(row.data().invoice_id, function (items: any) {
           row.child(formatEinvoiceRow(items)).show();
           tr.addClass('tr-expand');
         });
