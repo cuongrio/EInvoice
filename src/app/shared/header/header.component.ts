@@ -32,7 +32,8 @@ export class HeaderComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.menuItems = ROUTES.filter(menuItem => menuItem);
-    this.userLogged = this.authenticationService.credentials;
+    // this.userLogged = this.authenticationService.credentials;
+    this.userLogged = {name: "CuongRIo"};
   }
 
   ngAfterViewInit() {

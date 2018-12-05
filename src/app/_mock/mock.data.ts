@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 @Injectable()
 export class AppConstant {
-  public listToken = JSON.parse(`
+    public listToken = JSON.parse(`
     [
         {
             "alias": "plugintest",
@@ -13,7 +13,23 @@ export class AppConstant {
         }
     ]
     `);
-  public customerList = JSON.parse(`
+    public customerDetail = JSON.parse(`
+    {
+        "customer_id": 1,
+        "tenant_id": 1,
+        "customer_code": "VT",
+        "customer_name": "Nguyễn Tuần Linh",
+        "org": "Công ty TNHH Viettel",
+        "tax_code": "183923383",
+        "address": "Hà Nội",
+        "bank_account": "12313123123",
+        "bank": "Ngân hàng quân đội",
+        "email": "admin@viettel.com",
+        "phone": "091383838",
+        "insert_date": "2018-11-25T17:50:05.000+0000"
+    }
+    `);
+    public customerList = JSON.parse(`
     [
         {
             "customer_id": 1,
@@ -115,7 +131,21 @@ export class AppConstant {
         }
     ]
     `);
-  public goodList = JSON.parse(`
+    public goodDetail = JSON.parse(`
+    {
+        "goods_id": 1,
+        "tenant_id": 1,
+        "goods_code": "TVSS24",
+        "goods_name": "Tivi Samsung 24inch",
+        "unit": "Cái",
+        "price": 15000000,
+        "tax_rate_code": "10",
+        "tax_rate": 10,
+        "goods_group": "HH",
+        "insert_date": "2018-11-25T11:17:23.000+0000"
+    }
+    `);
+    public goodList = JSON.parse(`
     [
         {
             "goods_id": 1,
@@ -442,7 +472,7 @@ export class AppConstant {
             "insert_date": "2018-12-01T09:06:57.000+0000"
         }
     ]`);
-  public references = JSON.parse(`
+    public references = JSON.parse(`
     [
         {
             "type": "COMBO_PAYMENT",
@@ -584,7 +614,7 @@ export class AppConstant {
         }
     ]
     `);
-  public invoiceList = JSON.parse(`{
+    public invoiceList = JSON.parse(`{
         "page": 0,
         "total_elements": 20,
         "total_pages": 7,

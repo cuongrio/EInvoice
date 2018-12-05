@@ -13,12 +13,21 @@ export class GoodService {
 
   /**** LIST *** */
   getList() {
-    return this.appService.get(`/goods`);
-    // return of(this.appConstant.goodList);
+    // return this.appService.get(`/goods`);
+    return of(this.appConstant.goodList);
   }
 
   create(product: ProductModel) {
     return this.appService.post(`/goods/`, product);
+  }
+
+  delete(goodId: number){
+    return of(this.appConstant.customerDetail);
+  }
+
+  retrieveById(goodId: number) {
+    // return this.appService.get(`/invoices/${invoiceId}`);
+    return of(this.appConstant.goodDetail);
   }
 
   update(product: ProductModel) {

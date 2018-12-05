@@ -5,7 +5,7 @@ import { UserModel } from '@app/_models';
 import { HttpService } from '..';
 import { of } from 'rxjs';
 const credentialsKey = 'credentials';
-
+const serverUrlKey = 'serverUrl';
 /**
  * Provides a base for authentication workflow.
  * The Credentials interface as well as login/logout methods should be replaced with proper implementation.
@@ -70,13 +70,19 @@ export class AuthenticationService {
     this._credentials = userLogged || null;
 
     if (userLogged) {
+      const serverUrl  = `${environment.serverUrl}/${userLogged.tenant}`;
       this.cookieService.set(credentialsKey, JSON.stringify(userLogged));
+      this.cookieService.set(serverUrlKey, serverUrl);
+      sessionStorage.setItem(serverUrlKey, serverUrl);
       if (remember) {
         sessionStorage.setItem(credentialsKey, JSON.stringify(userLogged));
       }
     } else {
       sessionStorage.removeItem(credentialsKey);
       this.cookieService.delete(credentialsKey);
+
+      sessionStorage.removeItem(serverUrlKey);
+      this.cookieService.delete(serverUrlKey);
     }
   }
 }

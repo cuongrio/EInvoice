@@ -20,15 +20,15 @@ body.modal-open {
     justify-content: center !important;
     align-items: center !important;
     min-width: 285px;
-    
-    &.modal-sm{
+
+    &.modal-sm {
       width: 350px !important;
     }
 
-    &.modal-token{
+    &.modal-token {
       width: 400px !important;
 
-      .btn-group{
+      .btn-group {
         margin: 24px auto;
         text-align: center;
         width: 100%;
@@ -39,12 +39,11 @@ body.modal-open {
       .ngx-dropdown-container {
         .ngx-dropdown-button {
           width: 100%;
-          > span[_ngcontent-c2]:first-child{
+          > span[_ngcontent-c2]:first-child {
             display: block !important;
           }
         }
       }
-
     }
 
     &.modal-lg {
@@ -74,14 +73,14 @@ body.modal-open {
         align-items: center;
         font-weight: 600;
         padding: 0.5rem 1rem !important;
+        border-bottom: 0 !important;
 
         .modal-title {
-          font-size: 13px !important;
-
+          text-transform: uppercase;
           &.error {
             color: #d8000c;
           }
-          &.success{
+          &.success {
             color: #7ed321;
           }
         }
@@ -97,7 +96,7 @@ body.modal-open {
 
       .modal-body {
         min-height: 120px;
-        img.img-sm{
+        img.img-sm {
           width: 45px !important;
           height: 45px !important;
           object-fit: scale-down;
@@ -105,6 +104,8 @@ body.modal-open {
       }
 
       .modal-footer {
+        background: #f3f4f6;
+        border-top: 0 !important;
         padding: $modal-footer-padding-y $modal-footer-padding-x;
       }
     }

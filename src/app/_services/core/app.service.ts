@@ -14,7 +14,7 @@ export class AppService {
     private router: Router,
     private httpService: HttpService,
     private authenticationService: AuthenticationService
-  ) { }
+  ) {}
 
   public postForPreview(url: string, body: Object): Observable<any> {
     // check url
@@ -28,23 +28,6 @@ export class AppService {
       responseType: 'arraybuffer'
     });
   }
-
-  public getWithNoToken(url: string): Observable<any> {
-    // check url
-    const tenantUrl = this.getTenantUrl(url);
-    if (tenantUrl === '') {
-      this.router.navigate(['/login']);
-    }
-
-    return this.httpService.request('GET', tenantUrl, {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods' : 'GET,PUT,POST,DELETE,PATCH,OPTIONS'
-      }),
-    });
-  }
-
 
   public get(url: string, httpParams?: HttpParams): Observable<any> {
     // check url
@@ -103,7 +86,7 @@ export class AppService {
         console.log('token: ' + token);
         const headers = new HttpHeaders({
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + token
+          Authorization: 'Bearer ' + token
         });
         return headers;
       }
@@ -112,7 +95,7 @@ export class AppService {
     }
   }
 
-  private getTenantUrl(url: string) {
+  public getTenantUrl(url: string) {
     if (url.indexOf('ahoadonplugin') === -1) {
       const credentials: UserModel = this.authenticationService.credentials;
       if (credentials) {

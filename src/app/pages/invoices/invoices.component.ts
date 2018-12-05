@@ -117,15 +117,23 @@ export class InvoicesComponent implements OnInit {
     localStorage.setItem('token-picked', JSON.stringify(this.tokenPicked));
     const invoiceId = +this.getCheckboxesValue();
     const dataToken = await this.invoiceService.sign(invoiceId).toPromise();
-    const signToken = await this.invoiceService.signByToken(
-      this.tokenPicked.alias, dataToken.pdf_base64,
-      dataToken.signature_img_base64, dataToken.location, dataToken.ahd_sign_base64).toPromise();
-    this.invoiceService.signed(invoiceId, JSON.stringify(signToken)).subscribe(data => {
-      console.log(data);
-    }, err => {
-      this.errorHandler(err);
-    });
-
+    const signToken = await this.invoiceService
+      .signByToken(
+        this.tokenPicked.alias,
+        dataToken.pdf_base64,
+        dataToken.signature_img_base64,
+        dataToken.location,
+        dataToken.ahd_sign_base64
+      )
+      .toPromise();
+    this.invoiceService.signed(invoiceId, JSON.stringify(signToken)).subscribe(
+      data => {
+        console.log(data);
+      },
+      err => {
+        this.errorHandler(err);
+      }
+    );
   }
 
   public onSubmit(form: any) {
@@ -209,44 +217,53 @@ export class InvoicesComponent implements OnInit {
 
   public approveClicked() {
     const invoiceId = +this.getCheckboxesValue();
-    this.invoiceService.approveInvoice(invoiceId).subscribe(data => {
-      console.log(JSON.stringify(data));
-    }, err => {
-      this.errorHandler(err);
-    });
+    this.invoiceService.approveInvoice(invoiceId).subscribe(
+      data => {
+        console.log(JSON.stringify(data));
+      },
+      err => {
+        this.errorHandler(err);
+      }
+    );
   }
 
   public receiveExcelClicked() {
     const invoiceId = +this.getCheckboxesValue();
-    this.invoiceService.disposeInvoice(invoiceId).subscribe(data => {
-      console.log(JSON.stringify(data));
-    }, err => {
-      this.errorHandler(err);
-    });
+    this.invoiceService.disposeInvoice(invoiceId).subscribe(
+      data => {
+        console.log(JSON.stringify(data));
+      },
+      err => {
+        this.errorHandler(err);
+      }
+    );
   }
 
   public disposeConfirmClicked() {
     const invoiceId = +this.getCheckboxesValue();
-    this.invoiceService.disposeInvoice(invoiceId).subscribe(data => {
-      this.modalRef.hide();
-      const initialState = {
-        message: 'Đã hủy hóa đơn thành công!',
-        title: 'Thành công!',
-        class: 'success',
-        highlight: `Hóa đơn #${data.invoice_id}`
-      };
-      this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
-    }, err => {
-      this.modalRef.hide();
-      this.errorHandler(err);
-    });
+    this.invoiceService.disposeInvoice(invoiceId).subscribe(
+      data => {
+        this.modalRef.hide();
+        const initialState = {
+          message: 'Đã hủy hóa đơn thành công!',
+          title: 'Thành công!',
+          class: 'success',
+          highlight: `Hóa đơn #${data.invoice_id}`
+        };
+        this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+      },
+      err => {
+        this.modalRef.hide();
+        this.errorHandler(err);
+      }
+    );
   }
 
   // END BUTTON ACTION
 
   private getCheckboxesValue() {
     const itemsChecked = new Array<string>();
-    $('input:checkbox[name=stickchoice]:checked').each(function () {
+    $('input:checkbox[name=stickchoice]:checked').each(function() {
       const item: string = $(this).val();
       itemsChecked.push(item);
     });
@@ -292,24 +309,23 @@ export class InvoicesComponent implements OnInit {
   }
 
   private callServiceAndBindTable(params: InvoiceParam) {
-    this.invoiceService.queryInvoices(params).subscribe(
-      (data: any) => {
-        if (data) {
-          const invoiceList = data as InvoiceListData;
-          if (invoiceList.contents.length > 0) {
-            this.totalElements = invoiceList.total_elements;
-            this.totalPages = invoiceList.total_pages;
-            this.totalItems = invoiceList.total_pages * this.itemsPerPage;
+    this.invoiceService.queryInvoices(params).subscribe((data: any) => {
+      if (data) {
+        const invoiceList = data as InvoiceListData;
+        if (invoiceList.contents.length > 0) {
+          this.totalElements = invoiceList.total_elements;
+          this.totalPages = invoiceList.total_pages;
+          this.totalItems = invoiceList.total_pages * this.itemsPerPage;
 
-            $('#invoiceTable')
-              .dataTable()
-              .fnClearTable();
-            $('#invoiceTable')
-              .dataTable()
-              .fnAddData(invoiceList.contents);
-          }
+          $('#invoiceTable')
+            .dataTable()
+            .fnClearTable();
+          $('#invoiceTable')
+            .dataTable()
+            .fnAddData(invoiceList.contents);
         }
-      });
+      }
+    });
   }
 
   private initForm() {
@@ -343,11 +359,10 @@ export class InvoicesComponent implements OnInit {
       language: {
         emptyTable: 'Không có dữ liệu'
       },
-      createdRow: function (row: any, data: any, index: number) {
+      createdRow: function(row: any, data: any, index: number) {
         $(row).addClass('row-parent');
       },
-      columnDefs: [
-        {
+      columnDefs: [{
           width: '20px',
           targets: 0,
           orderable: false
@@ -355,7 +370,7 @@ export class InvoicesComponent implements OnInit {
         {
           width: '80px',
           targets: 1,
-          render: function (data: any) {
+          render: function(data: any) {
             return '<label class="badge badge-info">' + data + '</label>';
           }
         },
@@ -374,7 +389,7 @@ export class InvoicesComponent implements OnInit {
         {
           width: '50px',
           targets: 6,
-          render: function (data: any) {
+          render: function(data: any) {
             if (data && data !== 'null') {
               return '<span class="number-format">' + data + '</span>';
             } else {
@@ -385,7 +400,7 @@ export class InvoicesComponent implements OnInit {
         {
           width: '50px',
           targets: 7,
-          render: function (data: any) {
+          render: function(data: any) {
             if (data && data !== 'null') {
               return '<span class="number-format">' + data + '</span>';
             } else {
@@ -396,7 +411,7 @@ export class InvoicesComponent implements OnInit {
         {
           width: '80px',
           targets: 8,
-          render: function (data: any) {
+          render: function(data: any) {
             if (data && data !== 'null') {
               return '<span class="number-format">' + data + '</span>';
             } else {
@@ -420,7 +435,7 @@ export class InvoicesComponent implements OnInit {
           data: 'invoice_no'
         },
         {
-          data: function (row: any, type: any) {
+          data: function(row: any, type: any) {
             if (type === 'display' && row.invoice_date && row.invoice_date !== 'null') {
               const dateFormate = moment(row.invoice_date).format('DD/MM/YYYY');
               return `<span>${dateFormate}</span>`;
@@ -430,7 +445,7 @@ export class InvoicesComponent implements OnInit {
           }
         },
         {
-          data: function (row: any, type: any) {
+          data: function(row: any, type: any) {
             if (type === 'display' && row.customer && row.customer !== 'null') {
               return row.customer.customer_name;
             } else {
@@ -439,48 +454,53 @@ export class InvoicesComponent implements OnInit {
           }
         },
         {
-          data: function (row: any, type: any) {
+          data: function(row: any, type: any) {
             if (type === 'display' && row.customer && row.customer !== 'null') {
               return row.customer.tax_code;
             } else {
               return '<span></span>';
             }
           }
-        }, {
-          data: function (row: any, type: any) {
+        },
+        {
+          data: function(row: any, type: any) {
             if (type === 'display' && row.customer && row.customer !== 'null') {
               return row.customer.address;
             } else {
               return '<span></span>';
             }
           }
-        }, {
-          data: function (row: any, type: any) {
+        },
+        {
+          data: function(row: any, type: any) {
             if (type === 'display') {
               return formatCurrency(row.total_before_tax);
             } else {
               return '<span></span>';
             }
           }
-        }, {
-          data: function (row: any, type: any) {
+        },
+        {
+          data: function(row: any, type: any) {
             if (type === 'display') {
               return formatCurrency(row.total_tax);
             } else {
               return '<span></span>';
             }
           }
-        }, {
-          data: function (row: any, type: any) {
+        },
+        {
+          data: function(row: any, type: any) {
             if (type === 'display') {
               return formatCurrency(row.total);
             } else {
               return '<span></span>';
             }
           }
-        }, {
+        },
+        {
           orderable: false,
-          data: function (row: any, type: any) {
+          data: function(row: any, type: any) {
             if (type === 'display' && row.invoice_id && row.invoice_id !== 'null') {
               return `
                 <div class="form-check">
@@ -501,7 +521,7 @@ export class InvoicesComponent implements OnInit {
         info: false
       },
       order: [[2, 'desc']],
-      drawCallback: function () {
+      drawCallback: function() {
         const pagination = $(this)
           .closest('.dataTables_wrapper')
           .find('.dataTables_paginate');
@@ -511,22 +531,21 @@ export class InvoicesComponent implements OnInit {
 
     function getProductItemByInvoice(invoiceId: string, callback: any) {
       const userLoggedJson = $.cookie('credentials') || sessionStorage.getItem('credentials');
+      const serverUrl = $.cookie('serverUrl') || sessionStorage.getItem('serverUrl');
       const userModel = $.parseJSON(userLoggedJson);
-
       const token = userModel.token;
-      const tenant = userModel.tenant;
 
-      const url = `http://178.128.123.223:8080/${tenant}/invoices/${invoiceId}`;
+      const url = `${serverUrl}/invoices/${invoiceId}`;
       $.ajax({
         url: url,
-        beforeSend: function (xhr: any) {
+        beforeSend: function(xhr: any) {
           xhr.setRequestHeader('Authorization', 'Bearer ' + token);
         }
       })
-        .done(function (data: any) {
+        .done(function(data: any) {
           callback(data.items);
         })
-        .fail(function (jqXHR: any, textStatus: any) {
+        .fail(function(jqXHR: any, textStatus: any) {
           alert('Đã xảy ra lỗi: ' + textStatus);
         });
     }
@@ -552,7 +571,7 @@ export class InvoicesComponent implements OnInit {
       let contentItemHtml = ``;
       if (items && items.length > 0) {
         let lineItem = ``;
-        items.forEach(function (entry: any) {
+        items.forEach(function(entry: any) {
           let priceFormat = entry.price;
           if (priceFormat > 0) {
             priceFormat = formatCurrency(priceFormat);
@@ -626,9 +645,9 @@ export class InvoicesComponent implements OnInit {
     bindButtonStatus(true);
 
     // selected row
-    $('#invoiceTable tbody').on('click', 'tr.row-parent', function () {
+    $('#invoiceTable tbody').on('click', 'tr.row-parent', function() {
       console.log('click tr');
-      $('input:checkbox[name=stickchoice]').each(function () {
+      $('input:checkbox[name=stickchoice]').each(function() {
         $(this).prop('checked', false);
       });
 
@@ -655,7 +674,7 @@ export class InvoicesComponent implements OnInit {
     });
 
     // Add event listener for opening and closing details
-    $('#invoiceTable tbody').on('click', 'td.details-control', function (e: any) {
+    $('#invoiceTable tbody').on('click', 'td.details-control', function(e: any) {
       e.preventDefault();
       console.log('click td');
       const tr = $(this).closest('tr');
@@ -674,7 +693,7 @@ export class InvoicesComponent implements OnInit {
         otherRow.child.hide();
 
         // call API
-        getProductItemByInvoice(row.data().invoice_id, function (items: any) {
+        getProductItemByInvoice(row.data().invoice_id, function(items: any) {
           row.child(formatEinvoiceRow(items)).show();
           tr.addClass('tr-expand');
         });

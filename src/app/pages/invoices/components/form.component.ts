@@ -1,11 +1,4 @@
-import {
-  Component,
-  OnInit,
-  OnDestroy,
-  TemplateRef,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef
-} from '@angular/core';
+import { Component, OnInit, OnDestroy, TemplateRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, FormArray, Validators, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, Observable, of } from 'rxjs';
@@ -19,7 +12,7 @@ import { SelectData, GoodData, InvoiceModel, ProductData, ProductModel } from '@
 import { CustomerService } from './../../../_services/app/customer.service';
 import { GoodService } from '@app/_services';
 import { ReferenceService } from './../../../_services/app/reference.service';
-import {Location} from '@angular/common';
+import { Location } from '@angular/common';
 
 declare var $: any;
 import * as moment from 'moment';
@@ -70,7 +63,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   public priceOrigin = new Array<number>();
   public totalAmoutWt = new Array<number>();
   public totalQuantityTax = new Array<number>();
-
 
   public configSingleBox = {
     noResultsFound: ' ',
@@ -145,7 +137,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     private goodService: GoodService,
     private customerService: CustomerService,
     private referenceService: ReferenceService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.initRouter();
@@ -231,7 +223,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     // paymentType
     invoiceModel.paymentType = dataForm.paymentType;
 
-
     invoiceModel.total_before_tax = this.sumTotalAmount();
     invoiceModel.total_tax = this.sumTotalQuantityTax();
     invoiceModel.total = this.sumTotalAmountWt();
@@ -250,7 +241,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     if (this.isPreview) {
       console.log('isPreview');
       this.invoiceService.preview(invoiceModel).subscribe(data => {
-        const file = new Blob([data], {type: 'application/pdf'});
+        const file = new Blob([data], { type: 'application/pdf' });
         const fileURL = URL.createObjectURL(file);
         console.log(fileURL);
         window.open(fileURL);
@@ -300,7 +291,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   }
 
   public signInvoiceClicked(template: TemplateRef<any>) {
-
     // 1. get list token
     this.invoiceService.listToken().subscribe(data => {
       console.log('data: ' + JSON.stringify(data));
@@ -314,9 +304,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   }
 
   public inCDClicked() {
-    this.invoiceService.printTransform(this.invoiceId).subscribe(data => {
-
-    });
+    this.invoiceService.printTransform(this.invoiceId).subscribe(data => {});
   }
 
   /*** CUSTOMER CHANGE */
@@ -418,7 +406,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   public addMoreLineClicked() {
     this.stickyButtonAdd();
   }
-
 
   /*** TOTAL PRICE */
   // tinh lai amount, amountwt
@@ -670,7 +657,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
   private initRouter() {
     this.subscription = this.activatedRoute.params.subscribe((params: any) => {
-
       if (params.id) {
         this.invoiceId = params.id;
         this.disabledAdjust = false;
@@ -813,7 +799,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     while (formArray.length !== 0) {
       formArray.removeAt(0);
     }
-  }
+  };
 
   private formSetDefault() {
     this.addForm.patchValue({

@@ -13,8 +13,11 @@ export class CustomerFormComponent implements OnInit {
   public addForm: FormGroup;
   public submitted = false;
   public errorMessage: string;
-  public dataForm: CustomerModel;
   public title: string;
+
+  // init state
+  public dataForm: CustomerModel;
+  public viewMode: boolean;
 
   constructor(
     private customerService: CustomerService,
@@ -22,7 +25,6 @@ export class CustomerFormComponent implements OnInit {
     public bsModalRef: BsModalRef
   ) {}
   ngOnInit() {
-    console.log('form init');
     this.initForm();
     if (this.dataForm) {
       this.addForm.patchValue(this.dataForm);

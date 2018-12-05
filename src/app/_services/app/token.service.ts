@@ -9,10 +9,7 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class TokenService {
-  constructor(
-    private appConstant: AppConstant,
-    private appService: AppService,
-    private httpClient: HttpClient) { }
+  constructor(private appConstant: AppConstant, private appService: AppService, private httpClient: HttpClient) {}
 
   listToken() {
     // return this.appService.getWithNoToken(`${environment.pluginUrl}/token?fill=all`);

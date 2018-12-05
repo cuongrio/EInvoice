@@ -82,16 +82,25 @@
                     <i class="fas fa-plus"></i> Thêm mới
                   </button>
 
-                  <button type="button" form="ngForm" class="btn btn-md btn-outline-primary" (click)="editClicked()">
-                    <i class="fas fa-edit"></i> Sửa
+                  <button id="editButton" type="button" form="ngForm" class="btn btn-md btn-outline-primary" (click)="openClicked()">
+                    <i class="fas fa-edit"></i> Mở
                   </button>
 
-                  <button type="button" form="ngForm" class="btn btn-md btn-outline-danger" (click)="deleteClicked()">
+                  <button id="deleteButton" type="button" form="ngForm" class="btn btn-md btn-outline-danger" (click)="openModal(disposeConfirm)">
                     <i class="fas fa-trash"></i> Xóa
                   </button>
-
-                  <button type="button" form="ngForm" class="btn btn-md btn-outline-primary" (click)="copyClicked()">
-                    <i class="fas fa-copy"></i> Sao chép
+                  <ng-template #disposeConfirm>
+                    <div class="modal-body text-center">
+                      <p>Xác nhận xóa đối tượng?</p>
+                      <button type="button" class="btn btn-primary mr-1" (click)="deleteClicked()">Đồng ý</button>
+                      <button type="button" class="btn btn-default" (click)="modalRef.hide()">Bỏ qua</button>
+                    </div>
+                  </ng-template>
+                  <button id="copyButton" type="button" form="ngForm" 
+                  class="btn btn-md btn-outline-primary">
+                    <i id="copyLoading" class="fa fa-spinner fa-spin"></i> 
+                    <i id="copyLoaded" class="fas fa-copy"></i> 
+                    Sao chép
                   </button>
                 </div>
               </div>
@@ -110,21 +119,9 @@
                     <th>Đơn vị</th>
                     <th>Tài khoản</th>
                     <th>Ngân hàng</th>
+                    <th></th>
                   </tr>
                 </thead>
-                <tfoot>
-                  <tr>
-                    <th>Mã ĐT</th>
-                    <th>Tên đối tượng</th>
-                    <th>Địa chỉ</th>
-                    <th>Điện thoại</th>
-                    <th>Email</th>
-                    <th>Mã số thuế</th>
-                    <th>Đơn vị</th>
-                    <th>Tài khoản</th>
-                    <th>Ngân hàng</th>
-                  </tr>
-                </tfoot>
               </table>
             </div>
             <div class="ngb-pagination">

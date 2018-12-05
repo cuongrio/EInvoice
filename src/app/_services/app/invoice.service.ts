@@ -11,12 +11,7 @@ import { AppConstant } from '@app/_mock/mock.data';
   providedIn: 'root'
 })
 export class InvoiceService {
-  constructor(
-    private appConstant: AppConstant,
-    private httpClient: HttpClient,
-    private appService: AppService) {
-
-  }
+  constructor(private appConstant: AppConstant, private httpClient: HttpClient, private appService: AppService) {}
 
   /** PDF */
   preview(invoiceModel: InvoiceModel) {
@@ -65,24 +60,24 @@ export class InvoiceService {
   }
 
   queryInvoices(invoiceParam?: InvoiceParam) {
-    if (invoiceParam) {
-      let httpParams = new HttpParams();
-      Object.keys(invoiceParam).forEach(function (key: any) {
-        console.log('key: ' + key + '||| ' + invoiceParam[key]);
-        if (invoiceParam[key]) {
-          if (key === 'page') {
-            httpParams = httpParams.append(key, JSON.stringify(parseInt(invoiceParam[key], 0) - 1));
-          } else {
-            httpParams = httpParams.append(key, invoiceParam[key]);
-          }
-        }
-      });
-      console.log('httpParams: ' + httpParams);
-      return this.appService.get(`/invoices`, httpParams);
-    }
-    return this.appService.get(`/invoices`);
+    // if (invoiceParam) {
+    //   let httpParams = new HttpParams();
+    //   Object.keys(invoiceParam).forEach(function(key: any) {
+    //     console.log('key: ' + key + '||| ' + invoiceParam[key]);
+    //     if (invoiceParam[key]) {
+    //       if (key === 'page') {
+    //         httpParams = httpParams.append(key, JSON.stringify(parseInt(invoiceParam[key], 0) - 1));
+    //       } else {
+    //         httpParams = httpParams.append(key, invoiceParam[key]);
+    //       }
+    //     }
+    //   });
+    //   console.log('httpParams: ' + httpParams);
+    //   return this.appService.get(`/invoices`, httpParams);
+    // }
+    // return this.appService.get(`/invoices`);
 
-    // return of(this.appConstant.invoiceList);
+     return of(this.appConstant.invoiceList);
   }
 
   /** END INVOICE */

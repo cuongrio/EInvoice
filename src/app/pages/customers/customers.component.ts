@@ -1,13 +1,12 @@
-import { Component, OnInit, HostListener, AfterViewInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, AfterViewInit, TemplateRef } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DatePipe } from '@angular/common';
-import * as moment from 'moment';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import { CustomerFormComponent } from './components/form.component';
 import { CustomerService } from './../../_services/app/customer.service';
 import { CustomerModel } from '@app/_models';
+import { AlertComponent } from '@app/shared/alert/alert.component';
 
 declare var $: any;
 
@@ -21,6 +20,8 @@ export class CustomersComponent implements OnInit, AfterViewInit {
   public bsConfig = { dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-blue' };
   public modalRef: BsModalRef;
 
+  public viewMode = false;
+
   // expand search
   public expandSearch: boolean;
   public searchForm: FormGroup;
@@ -31,15 +32,13 @@ export class CustomersComponent implements OnInit, AfterViewInit {
   public totalElements = 0;
   public totalPages = 0;
 
-  private previousPage = 0;
-
   constructor(
     private router: Router,
     private activeRouter: ActivatedRoute,
     private customerService: CustomerService,
     private formBuilder: FormBuilder,
     private modalService: BsModalService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.initDefault();
@@ -49,19 +48,42 @@ export class CustomersComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.initSelectBox();
-    // this.highlight();
-  }
+    $('#copyLoading').hide();
 
-  // @HostListener('document:keypress', ['$event'])
-  // handleKeyboardEvent(event: KeyboardEvent) {
-  //   if (event.key === 'f') {
-  //     this.expandSearchClicked();
-  //   }
-  //   if (event.key === 'Enter' && this.expandSearch === true) {
-  //     this.onSubmit(this.searchForm.value);
-  //   }
-  // }
+    function copyToClipboard(text: string) {
+      var $temp = $("<input>");
+      $("body").append($temp);
+      $temp.val(text).select();
+      document.execCommand("copy");
+      $temp.remove();
+    }
+
+    // handle copy button
+    $('#copyButton').on('click', function (e: any) {
+      e.preventDefault();
+
+      // loading
+      $('#copyLoading').show();
+      $('#copyLoaded').hide();
+
+      var row = $('#customerTable tbody').find('tr.selected')[0];
+      let customerText = '';
+      $(row).find('td').each(function (index: any) {
+        const tdText = $(this).text();
+        if (index > 0 && tdText && tdText.trim().length > 0) {
+          customerText += ',';
+        }
+        customerText += tdText;
+      });
+      console.log(customerText);
+      copyToClipboard(customerText);
+
+      setTimeout(function () {
+        $('#copyLoading').hide();
+        $('#copyLoaded').show();
+      }, 500);
+    });
+  }
 
   public expandSearchClicked() {
     if (this.expandSearch) {
@@ -72,49 +94,70 @@ export class CustomersComponent implements OnInit, AfterViewInit {
     localStorage.setItem('customerSearch', JSON.stringify(this.expandSearch));
   }
 
-  public onSubmit(form: any) {}
+  public onSubmit(form: any) { }
 
   public addNewClicked() {
-    this.modalRef = this.modalService.show(CustomerFormComponent, { class: 'modal-lg' });
+    const initialState = {
+      viewMode: false
+    };
+    this.modalRef = this.modalService.show(CustomerFormComponent, { class: 'modal-lg', initialState });
   }
 
-  public editClicked() {}
-
-  public deleteClicked() {}
-
-  public copyClicked() {}
-
-  public onPageChange(page: number) {}
-
-  public deleteRow() {}
-
-  public editRow() {}
-
-  private highlight() {
-    $('#customerTable tbody').on('mouseenter', 'td', function() {
-      const colIdx = $('#customerTable')
-        .dataTable()
-        .cell(this)
-        .index().column;
-
-      $(
-        $('#customerTable')
-          .dataTable()
-          .cells()
-          .nodes()
-      ).removeClass('highlight');
-      $(
-        $('#customerTable')
-          .dataTable()
-          .column(colIdx)
-          .nodes()
-      ).addClass('highlight');
+  public openClicked() {
+    const customerId = +this.getCheckboxesValue();
+    this.customerService.retrieveById(customerId).subscribe(data => {
+      const initialState = {
+        dataForm: data,
+        viewMode: true
+      };
+      console.log(JSON.stringify(initialState));
+      this.modalRef = this.modalService.show(CustomerFormComponent, { class: 'modal-lg', initialState });
     });
+
+  }
+
+  public openModal(template: TemplateRef<any>) {
+    this.modalRef = this.modalService.show(template, { class: 'modal-sm' });
+  }
+
+  public deleteClicked() {
+    const customerId = +this.getCheckboxesValue();
+    this.customerService.delete(customerId).subscribe(
+      data => {
+        this.modalRef.hide();
+        const initialState = {
+          message: 'Đã hủy đối tượng thành công!',
+          title: 'Thành công!',
+          class: 'success',
+          highlight: `Đối tượng #(${data.customer_id}) ${data.customer_name}`
+        };
+        this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+      },
+      err => {
+        this.modalRef.hide();
+        this.errorHandler(err);
+      }
+    );
+  }
+
+  public onPageChange(page: number) { }
+
+  private errorHandler(err: any) {
+    const initialState = {
+      message: 'Something went wrong',
+      title: 'Đã có lỗi!',
+      class: 'error'
+    };
+
+    if (err.error) {
+      initialState.message = err.error.message;
+    }
+    this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
   }
 
   private getCheckboxesValue() {
     const itemsChecked = new Array<string>();
-    $('input:checkbox[name=stickchoice]:checked').each(function() {
+    $('input:checkbox[name=stickchoice]:checked').each(function () {
       const item: string = $(this).val();
       itemsChecked.push(item);
     });
@@ -152,10 +195,6 @@ export class CustomersComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private initSelectBox() {
-    $('select').select2({ minimumResultsForSearch: Infinity });
-  }
-
   private createForm() {
     this.searchForm = this.formBuilder.group({
       customer_code: '',
@@ -179,44 +218,121 @@ export class CustomersComponent implements OnInit, AfterViewInit {
       language: {
         emptyTable: 'Không có dữ liệu'
       },
+      createdRow: function (row: any, data: any, index: number) {
+        $(row).addClass('row-parent');
+      },
+      columnDefs: [
+        {
+          width: '60px',
+          targets: 0,
+          orderable: true
+        }, {
+          width: '100px',
+          targets: 1,
+          orderable: false
+        }, {
+          width: '200x',
+          targets: 2
+        }, {
+          width: '100px',
+          targets: 3
+        }, {
+          width: '100px',
+          targets: 4
+        }, {
+          width: '100px',
+          targets: 5
+        }, {
+          width: '100px',
+          targets: 6
+        }, {
+          width: '100px',
+          targets: 7,
+          orderable: false
+        }, {
+          width: '20px',
+          targets: 8,
+          orderable: false
+        }],
       columns: [
         {
           data: 'customer_code'
-        },
-        {
+        },{
           data: 'customer_name'
-        },
-        {
-          data: 'org'
-        },
-        {
-          data: 'tax_code'
-        },
-        {
+        },{
           data: 'address'
-        },
-        {
-          data: 'bank_account'
-        },
-        {
-          data: 'bank'
-        },
-        {
+        },{
           data: 'phone'
-        },
-        {
+        },{
           data: 'email'
+        },{
+          data: 'tax_code'
+        },{
+          data: 'org'
+        }, {
+          data: 'bank_account'
+        },{
+          data: 'bank'
+        }, {
+          orderable: false,
+          data: function (row: any, type: any) {
+            if (type === 'display' && row.customer_id && row.customer_id !== 'null') {
+              return `
+                <div class="form-check">
+                  <label class="form-check-label">
+                    <input type="checkbox" name="stickchoice" value="${row.customer_id}" class="form-check-input">
+                  <i class="input-helper"></i></label>
+                </div>
+              `;
+            } else {
+              return '<span></span>';
+            }
+          }
         }
       ],
-      select: {
-        style: 'multi'
-      },
-      drawCallback: function() {
+      drawCallback: function () {
         const pagination = $(this)
           .closest('.dataTables_wrapper')
           .find('.dataTables_paginate');
         pagination.toggle(this.api().page.info().pages > 1);
       }
+    });
+
+    function bindButtonStatus(status: boolean) {
+      $('#editButton').prop('disabled', status);
+      $('#copyButton').prop('disabled', status);
+      $('#deleteButton').prop('disabled', status);
+    }
+    // disabled all button
+    bindButtonStatus(true);
+
+    // selected row
+    $('#customerTable tbody').on('click', 'tr.row-parent', function () {
+      console.log('click tr');
+      $('input:checkbox[name=stickchoice]').each(function () {
+        $(this).prop('checked', false);
+      });
+
+      // find expand
+      console.log($(this));
+
+      if ($(this).hasClass('selected')) {
+        $(this).removeClass('selected');
+        $(this)
+          .find('input:checkbox[name=stickchoice]')
+          .prop('checked', false);
+
+        bindButtonStatus(true);
+      } else {
+        table.$('tr.selected').removeClass('selected');
+        $(this).addClass('selected');
+        $(this)
+          .find('input:checkbox[name=stickchoice]')
+          .prop('checked', true);
+
+        bindButtonStatus(false);
+      }
+      return false;
     });
   }
 }

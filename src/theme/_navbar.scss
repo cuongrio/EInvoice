@@ -284,8 +284,8 @@
       -webkit-transition: height 0.3s;
       -moz-transition: height 0.3s;
       transition: height 0.3s;
-      text-align:center;
-      line-height:60px;
+      text-align: center;
+      line-height: 60px;
 
       @include media-breakpoint-down(md) {
         display: none;

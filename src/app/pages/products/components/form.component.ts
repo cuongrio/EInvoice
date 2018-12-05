@@ -9,11 +9,14 @@ import { ProductModel } from '@app/_models';
   templateUrl: './form.component.html'
 })
 export class ProductFormComponent implements OnInit {
-  public title: string;
   public addForm: FormGroup;
-  public errorMessage: string;
   public submitted = false;
-  public dataForm: any;
+  public errorMessage: string;
+  public title: string;
+
+  // init state
+  public dataForm: ProductModel;
+  public viewMode: boolean;
 
   constructor(private goodService: GoodService, private formBuilder: FormBuilder, public bsModalRef: BsModalRef) {}
   ngOnInit() {
