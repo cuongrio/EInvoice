@@ -290,7 +290,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     this.submitted = false;
   }
 
-  public signInvoiceClicked(template: TemplateRef<any>) {
+  public signInvoiceClicked() {
     // 1. get list token
     this.invoiceService.listToken().subscribe(data => {
       console.log('data: ' + JSON.stringify(data));
