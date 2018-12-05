@@ -1,6 +1,6 @@
 <div class="form-dialog">
     <div class="modal-header">
-        <h4 class="modal-title pull-left {{class}}">
+        <h4 class="modal-title pull-left">
             {{title}}
         </h4>
         <button *ngIf="viewMode" (click)="viewMode=false" type="button" class="btn btn-sm btn-link">
@@ -75,9 +75,6 @@
                         <div class="col-sm-8">
                             <input [readonly]="viewMode" formControlName="tax_rate_code" list="vatOptions" class="form-control form-control-sm"
                                 [ngClass]="{ 'is-invalid': submitted && addForm.controls['tax_rate_code'].errors }">
-                            <datalist id="vatOptions">
-                                <option *ngFor="let vat of comboTaxRate" value="{{vat.code}}">{{vat.description}}</option>
-                            </datalist>
                             <app-control-message *ngIf="submitted" [control]="addForm.controls['tax_rate_code']"></app-control-message>
                         </div>
                     </div>

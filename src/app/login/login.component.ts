@@ -13,6 +13,7 @@ export class LoginComponent implements OnInit {
   error: string;
   loginForm: FormGroup;
   isLoading = false;
+  public submitted = false;
 
   constructor(
     private ref: ChangeDetectorRef,
@@ -27,7 +28,7 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit(dataForm: UserModel) {
-    console.log('dataForm: ' + dataForm);
+    this.submitted = true;
     this.isLoading = true;
     this.authenticationService
       .login(dataForm)
@@ -39,6 +40,7 @@ export class LoginComponent implements OnInit {
       )
       .subscribe(
         credentials => {
+          this.submitted = false;
           const userLogged = credentials as UserModel;
           this.authenticationService.setCredentials(userLogged);
           this.route.queryParams.subscribe(params =>
@@ -46,6 +48,7 @@ export class LoginComponent implements OnInit {
           );
         },
         error => {
+          this.submitted = false;
           this.error = error;
           this.ref.markForCheck();
         }

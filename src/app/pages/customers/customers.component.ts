@@ -85,6 +85,10 @@ export class CustomersComponent implements OnInit, AfterViewInit {
     });
   }
 
+  public onSubmit(form: any) {
+
+  }
+
   public expandSearchClicked() {
     if (this.expandSearch) {
       this.expandSearch = false;
