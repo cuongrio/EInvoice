@@ -3,7 +3,7 @@ import { environment } from './../../../environments/environment';
 import { InvoiceModel } from '@app/_models';
 import { InvoiceParam } from './../../_models/param/invoice.param';
 import { AppService } from '../core/app.service';
-import { HttpParams } from '@angular/common/http';
+import { HttpParams, HttpClient, HttpHeaders } from '@angular/common/http';
 import { of } from 'rxjs';
 import { AppConstant } from '@app/_mock/mock.data';
 
@@ -11,11 +11,16 @@ import { AppConstant } from '@app/_mock/mock.data';
   providedIn: 'root'
 })
 export class InvoiceService {
-  constructor(private appConstant: AppConstant, private appService: AppService) { }
+  constructor(
+    private appConstant: AppConstant,
+    private httpClient: HttpClient,
+    private appService: AppService) {
+
+  }
 
   /** PDF */
   preview(invoiceModel: InvoiceModel) {
-    return this.appService.post(`/invoices/preview`, invoiceModel);
+    return this.appService.postForPreview(`/invoices/preview`, invoiceModel);
   }
 
   print(invoiceId: number) {
@@ -94,12 +99,16 @@ export class InvoiceService {
   signByToken(alias: string, pdfbase64: string, signatureImage: string, location: string, ahdsign: string) {
     let body = new HttpParams();
     body = body.set('alias', alias);
+    body = body.set('ahdsign', ahdsign);
     body = body.set('pdf-base64', pdfbase64);
     body = body.set('signature-img', signatureImage);
     body = body.set('location', location);
-    body = body.set('ahdsign', ahdsign);
 
-    return this.appService.post(`${environment.pluginUrl}/token`, body);
+    return this.httpClient.post(`${environment.pluginUrl}/token`, body, {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/x-www-form-urlencoded'
+      })
+    });
   }
 
   signed(invoiceId: number, signEncode: string) {

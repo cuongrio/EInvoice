@@ -12,6 +12,8 @@ export * from './data/select.data';
 
 export * from './data/invoice.list.data';
 
+export * from './data/token.data';
+
 // param
 export * from './param/customer.param';
 export * from './param/good.param';

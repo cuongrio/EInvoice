@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { AuthenticationService } from './../../core/authentication/authentication.service';
 import { environment } from './../../../environments/environment';
 import { HttpParams, HttpHeaders } from '@angular/common/http';
+import { ResponseContentType } from '@angular/http';
 
 @Injectable()
 export class AppService {
@@ -14,6 +15,36 @@ export class AppService {
     private httpService: HttpService,
     private authenticationService: AuthenticationService
   ) { }
+
+  public postForPreview(url: string, body: Object): Observable<any> {
+    // check url
+    const tenantUrl = this.getTenantUrl(url);
+    if (tenantUrl === '') {
+      this.router.navigate(['/login']);
+    }
+    return this.httpService.request('POST', tenantUrl, {
+      headers: this.appendHeader(),
+      body: JSON.stringify(body),
+      responseType: 'arraybuffer'
+    });
+  }
+
+  public getWithNoToken(url: string): Observable<any> {
+    // check url
+    const tenantUrl = this.getTenantUrl(url);
+    if (tenantUrl === '') {
+      this.router.navigate(['/login']);
+    }
+
+    return this.httpService.request('GET', tenantUrl, {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods' : 'GET,PUT,POST,DELETE,PATCH,OPTIONS'
+      }),
+    });
+  }
+
 
   public get(url: string, httpParams?: HttpParams): Observable<any> {
     // check url

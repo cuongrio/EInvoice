@@ -19,6 +19,7 @@ import { SelectData, GoodData, InvoiceModel, ProductData, ProductModel } from '@
 import { CustomerService } from './../../../_services/app/customer.service';
 import { GoodService } from '@app/_services';
 import { ReferenceService } from './../../../_services/app/reference.service';
+import {Location} from '@angular/common';
 
 declare var $: any;
 import * as moment from 'moment';
@@ -30,12 +31,16 @@ import * as moment from 'moment';
 })
 export class InvoiceFormComponent implements OnInit, OnDestroy {
   public invoiceId: number;
+  public form: string;
+  public serial: string;
   public adjust = false;
 
   public isPreview = false;
+  public viewMode = false;
   // button status
+  public disabledEdit = true;
   public disabledInCD = true;
-  public disabledAdd = true;
+  public disabledAdd = false;
   public disabledSign = true;
   public disabledPrintTranform = true;
   public disabledAdjust = true;
@@ -49,13 +54,14 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   public modalRef: BsModalRef;
   public bsConfig = { dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-blue' };
 
-  public formPicked: SelectData;
-  public serialPicked: SelectData;
-  public customerPicked: CustomerData[];
+  public formPicked: any;
+  public serialPicked: any;
+  public customerPicked: any;
+  public htttPicked: Array<SelectData>;
   public references: Array<SelectData>;
   public noItemLine = false;
   public hiddenExColumn = true;
-  public listTokenDummy = new Array<SelectData>();
+  public listTokenAvaiable = new Array<SelectData>();
 
   // amount
   public totalAmount = new Array<number>();
@@ -67,7 +73,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
 
   public configSingleBox = {
-    noResultsFound: 'Không có dữ liệu',
+    noResultsFound: ' ',
     showNotFound: true,
     placeholder: ' ',
     toggleDropdown: true,
@@ -129,6 +135,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
   constructor(
     private ref: ChangeDetectorRef,
+    private location: Location,
     private router: Router,
     private formBuilder: FormBuilder,
     private invoiceService: InvoiceService,
@@ -155,6 +162,14 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
+  editClicked() {
+    this.viewMode = false;
+    this.ref.markForCheck();
+  }
+  backClicked() {
+    this.location.back();
+  }
+
   adjustClicked() {
     this.clearFormArray(this.itemFormArray);
     this.stickyButtonAdd();
@@ -163,6 +178,8 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     this.totalPriceTax = new Array<number>();
     this.totalQuantityTax = new Array<number>();
     this.priceOrigin = new Array<number>();
+    this.adjust = true;
+    this.viewMode = false;
   }
 
   cancelClicked() {
@@ -174,6 +191,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     this.submitted = true;
     let dataFormItems: any;
     this.noItemLine = true;
+    console.log('isPreview: ' + this.isPreview);
 
     if (dataForm.items && dataForm.items.length > 0) {
       dataFormItems = dataForm.items.filter((elemnent: any, index: number, array: any) => {
@@ -186,6 +204,8 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
         this.noItemLine = true;
       }
     }
+    console.log(this.addForm.invalid);
+    console.log(this.noItemLine);
     this.ref.markForCheck();
     if (this.addForm.invalid || this.noItemLine) {
       return;
@@ -204,6 +224,8 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     invoiceModel.customer.bank = dataForm.customerBank;
     invoiceModel.customer.bank_account = dataForm.customerBankAccount;
     invoiceModel.customer.address = dataForm.customerAddress;
+    invoiceModel.customer.email = dataForm.customerEmail;
+    invoiceModel.customer.tax_code = dataForm.customerTax;
     invoiceModel.customer.phone = this.customerPicked[0].phone;
 
     // paymentType
@@ -226,22 +248,15 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     });
 
     if (this.isPreview) {
+      console.log('isPreview');
       this.invoiceService.preview(invoiceModel).subscribe(data => {
-        console.log('data: ' + JSON.stringify(data));
-      }, err => {
-        const initialState = {
-          message: 'Không thể tạo hóa đơn!',
-          title: 'Đã có lỗi!',
-          class: 'error'
-        };
-
-        if (err.error) {
-          initialState.message = err.error.message;
-        }
-        this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
-        this.submitted = false;
+        const file = new Blob([data], {type: 'application/pdf'});
+        const fileURL = URL.createObjectURL(file);
+        console.log(fileURL);
+        window.open(fileURL);
       });
     } else {
+      console.log('tao hoa don');
       return this.invoiceService.createInvoice(invoiceModel).subscribe(
         data => {
           const initialState = {
@@ -251,8 +266,16 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
             highlight: `Hóa đơn #${data.invoice_id}`
           };
           this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+
+          this.addForm.patchValue({
+            invoiceNo: data.invoice_no,
+            status: data.status
+          });
+          this.viewMode = true;
+          this.disabledEdit = false;
+          this.disabledSign = false;
+          this.ref.markForCheck();
           this.submitted = false;
-          this.resetForm();
         },
         err => {
           const initialState = {
@@ -280,7 +303,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
     // 1. get list token
     this.invoiceService.listToken().subscribe(data => {
-     console.log('data: ' + JSON.stringify(data));
+      console.log('data: ' + JSON.stringify(data));
     });
     console.log('list token');
   }
@@ -315,6 +338,15 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     });
 
     this.initDataForm(customer);
+    this.ref.markForCheck();
+  }
+
+  public onHtttChange(htttValue: any) {
+    const item = new SelectData();
+    Object.assign(item, htttValue[0]);
+    this.addForm.patchValue({
+      paymentType: item.code
+    });
     this.ref.markForCheck();
   }
 
@@ -561,8 +593,11 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
   private loadHttt() {
     this.comboHTTT = this.htttDummy();
+    this.htttPicked = new Array<SelectData>();
+    this.htttPicked.push(this.comboHTTT[0]);
+    console.log(this.htttPicked);
     this.addForm.patchValue({
-      paymentType: 'CK/TM'
+      paymentType: this.htttPicked[0].code
     });
   }
 
@@ -635,15 +670,18 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
   private initRouter() {
     this.subscription = this.activatedRoute.params.subscribe((params: any) => {
-      this.disabledAdd = false;
 
       if (params.id) {
         this.invoiceId = params.id;
-        this.disabledAdd = true;
         this.disabledAdjust = false;
+        this.disabledEdit = false;
+        this.viewMode = true;
 
         this.invoiceService.retrieveInvoiceById(this.invoiceId).subscribe(data => {
           this.setFormWithDefaultData(data);
+          this.form = data.form;
+          this.serial = data.serial;
+
           if (data.status === 'CREATED') {
             this.disabledSign = false;
           }
@@ -665,7 +703,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
     this.addForm.patchValue({
       invoiceDate: invoiceDate,
-      invoiceId: data.invoice_id,
       invoiceNo: data.invoice_no,
       customerTax: data.customer.tax_code,
       customerEmail: data.customer.email,
@@ -736,17 +773,17 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
     // CK/TM,CK,TM mặc định CK/TM
     selectItem.code = 'CK/TM';
-    selectItem.value = 'CK/TM';
+    selectItem.select_item = 'CK/TM';
     items.push(selectItem);
 
     selectItem = new SelectData();
     selectItem.code = 'CK';
-    selectItem.value = 'CK';
+    selectItem.select_item = 'CK';
     items.push(selectItem);
 
     selectItem = new SelectData();
     selectItem.code = 'CK/TM';
-    selectItem.value = 'CK/TM';
+    selectItem.select_item = 'CK/TM';
     items.push(selectItem);
     return items;
   }
@@ -754,14 +791,14 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   private createItemsForm() {
     this.addForm = this.formBuilder.group({
       invoiceDate: ['', Validators.compose([Validators.required])],
-      invoiceId: '',
+      invoiceNo: '',
       form: ['', Validators.compose([Validators.required])],
       serial: ['', Validators.compose([Validators.required])],
       customerCode: ['', Validators.compose([Validators.required])],
       customerName: ['', Validators.compose([Validators.required])],
       customerTax: ['', Validators.compose([Validators.required])],
       customerEmail: ['', Validators.compose([Validators.required, Validators.email])],
-      invoiceNo: ['', Validators.compose([Validators.required])],
+      orderNo: '',
       customerOrg: ['', Validators.compose([Validators.required])],
       paymentType: ['', Validators.compose([Validators.required])],
       customerBankAccount: '',

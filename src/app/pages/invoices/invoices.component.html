@@ -152,7 +152,8 @@
                   <button id="openButton" type="button" (click)="openRowClicked()" class="btn  btn-md btn-outline-primary">
                     <i class="fas fa-edit"></i> Mở
                   </button>
-                  <button id="copyButton" type="button" (click)="copyRowClicked()" class="btn btn-md btn-outline-primary" title="Sao chép">
+                  <button id="copyButton" type="button" (click)="copyRowClicked()" class="btn btn-md btn-outline-primary"
+                    title="Sao chép">
                     <i class="fas fa-copy"></i> Sao chép
                   </button>
                   <button id="printButton" type="button" (click)="printRowClicked()" class="btn btn-md btn-outline-primary">
@@ -161,25 +162,46 @@
                   <button id="printTranformButton" (click)="printTransformRowClicked()" type="button" class="btn btn-md btn-outline-primary">
                     <i class="fas fa-retweet"></i> In chuyển đổi
                   </button>
-                  <button id="signButton" type="button" (click)="signClicked()" class="btn btn-md btn-outline-primary">
+                  <button id="signButton" type="button" (click)="openModalMd(listToken)" class="btn btn-md btn-outline-primary">
                     <i class="fas fa-key"></i> Ký
                   </button>
+                  <ng-template #listToken>
+                    <div class="modal-header">
+                      <h4 class="modal-title pull-left">Xác nhận token</h4>
+                      <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                        <ngx-select-dropdown
+                        (open)="loadTokenData()"
+                        [multiple]="false"
+                        (valueChange)="onTokenChange($event)"
+                        [config]="configSingleBox" [options]="listTokenAvaiable">
+                      </ngx-select-dropdown>
+                      <div class="btn-group">
+                          <button type="button" class="btn btn-primary mr-1" (click)="tokenChoiceClicked()">Đồng ý</button>
+                          <button type="button" class="btn btn-default" (click)="modalRef.hide()">Bỏ qua</button>
+                      </div>
+                    </div>
+                  </ng-template>
+
                   <button id="approveButton" type="button" (click)="approveClicked()" class="btn btn-md btn-success">
-                      <i class="fas fa-check"></i> Duyệt
+                    <i class="fas fa-check"></i> Duyệt
                   </button>
                   <button id="receiveExcelButton" type="button" (click)="receiveExcelClicked()" class="btn btn-md btn-outline-primary">
                     <i class="fas fa-file-excel"></i> Nhận Excel
                   </button>
-                  <button id="disposeButton" type="button" (click)="openModal(disposeConfirm)"  class="btn btn-md btn-outline-danger">
+                  <button id="disposeButton" type="button" (click)="openModal(disposeConfirm)" class="btn btn-md btn-outline-danger">
                     <i class="fas fa-trash"></i> Hủy hóa đơn
                   </button>
                   <ng-template #disposeConfirm>
-                      <div class="modal-body text-center">
-                        <p>Xác nhận hủy hóa đơn?</p>
-                        <button type="button" class="btn btn-primary mr-1" (click)="disposeConfirmClicked()" >Đồng ý</button>
-                        <button type="button" class="btn btn-default" (click)="modalRef.hide()" >Bỏ qua</button>
-                      </div>
-                    </ng-template>
+                    <div class="modal-body text-center">
+                      <p>Xác nhận hủy hóa đơn?</p>
+                      <button type="button" class="btn btn-primary mr-1" (click)="disposeConfirmClicked()">Đồng ý</button>
+                      <button type="button" class="btn btn-default" (click)="modalRef.hide()">Bỏ qua</button>
+                    </div>
+                  </ng-template>
                 </div>
               </div>
             </div>

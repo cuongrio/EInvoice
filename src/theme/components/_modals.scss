@@ -25,6 +25,28 @@ body.modal-open {
       width: 350px !important;
     }
 
+    &.modal-token{
+      width: 400px !important;
+
+      .btn-group{
+        margin: 24px auto;
+        text-align: center;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+      }
+
+      .ngx-dropdown-container {
+        .ngx-dropdown-button {
+          width: 100%;
+          > span[_ngcontent-c2]:first-child{
+            display: block !important;
+          }
+        }
+      }
+
+    }
+
     &.modal-lg {
       max-width: 800px !important;
       min-width: 600px !important;

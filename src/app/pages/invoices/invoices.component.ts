@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, OnInit, TemplateRef, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DatePipe } from '@angular/common';
@@ -9,8 +9,10 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { AuthenticationService } from '@app/core/authentication/authentication.service';
 import { environment } from '@env/environment';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
-
+import { SelectData } from '@app/_models';
 import { AlertComponent } from '@app//shared/alert/alert.component';
+import { TokenService } from './../../_services/app/token.service';
+import { TokenData } from './../../_models/data/token.data';
 
 declare var $: any;
 
@@ -32,6 +34,10 @@ export class InvoicesComponent implements OnInit {
 
   public bsConfig = { dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-blue' };
   public modalRef: BsModalRef;
+
+  public tokenPicked: TokenData;
+  public listTokenAvaiable: Array<TokenData>;
+
   // expand search
   public expandSearch: boolean;
   public searchForm: FormGroup;
@@ -41,6 +47,15 @@ export class InvoicesComponent implements OnInit {
   public totalItems = 0;
   public totalElements = 0;
   public totalPages = 0;
+
+  public configSingleBox = {
+    noResultsFound: ' ',
+    showNotFound: false,
+    placeholder: ' ',
+    toggleDropdown: false,
+    displayKey: 'select_item',
+    search: false
+  };
 
   private previousPage = 0;
 
@@ -55,8 +70,10 @@ export class InvoicesComponent implements OnInit {
 
   constructor(
     private modalService: BsModalService,
+    private ref: ChangeDetectorRef,
     private datePipe: DatePipe,
     private router: Router,
+    private tokenService: TokenService,
     private authenticationService: AuthenticationService,
     private activeRouter: ActivatedRoute,
     private invoiceService: InvoiceService,
@@ -83,8 +100,32 @@ export class InvoicesComponent implements OnInit {
     localStorage.setItem('expandSearch', JSON.stringify(this.expandSearch));
   }
 
-  openModal(template: TemplateRef<any>) {
+  public openModal(template: TemplateRef<any>) {
     this.modalRef = this.modalService.show(template, { class: 'modal-sm' });
+  }
+
+  public openModalMd(template: TemplateRef<any>) {
+    this.modalRef = this.modalService.show(template, { class: 'modal-token' });
+  }
+
+  public onTokenChange(selectItems: Array<TokenData>) {
+    this.tokenPicked = new TokenData();
+    Object.assign(this.tokenPicked, selectItems[0]);
+  }
+
+  public async tokenChoiceClicked() {
+    localStorage.setItem('token-picked', JSON.stringify(this.tokenPicked));
+    const invoiceId = +this.getCheckboxesValue();
+    const dataToken = await this.invoiceService.sign(invoiceId).toPromise();
+    const signToken = await this.invoiceService.signByToken(
+      this.tokenPicked.alias, dataToken.pdf_base64,
+      dataToken.signature_img_base64, dataToken.location, dataToken.ahd_sign_base64).toPromise();
+    this.invoiceService.signed(invoiceId, JSON.stringify(signToken)).subscribe(data => {
+      console.log(data);
+    }, err => {
+      this.errorHandler(err);
+    });
+
   }
 
   public onSubmit(form: any) {
@@ -142,16 +183,28 @@ export class InvoicesComponent implements OnInit {
     });
   }
 
+  public loadTokenData() {
+    if (this.listTokenAvaiable && this.listTokenAvaiable.length > 0) {
+      return true;
+    }
+    this.tokenService.listToken().subscribe((dataArr: Array<TokenData>) => {
+      if (dataArr && dataArr.length > 0) {
+        this.listTokenAvaiable = dataArr;
+        dataArr.forEach((item: TokenData, idx: number) => {
+          item.select_item = item.name + '\n' + item.effectiveDate;
+        });
+      }
+      this.ref.markForCheck();
+    });
+  }
+
   public signClicked() {
     const invoiceId = +this.getCheckboxesValue();
     // 1. get list token
-    this.invoiceService.listToken().subscribe((data: Array<any>) => {
-      console.log(JSON.stringify(data));
+    this.tokenService.listToken().subscribe((data: Array<TokenData>) => {
+      this.listTokenAvaiable = data;
+      this.ref.markForCheck();
     });
-
-    // this.invoiceService.sign(invoiceId).subscribe(data => {
-    //   console.log('data: ' + JSON.stringify(data));
-    // });
   }
 
   public approveClicked() {
@@ -159,16 +212,7 @@ export class InvoicesComponent implements OnInit {
     this.invoiceService.approveInvoice(invoiceId).subscribe(data => {
       console.log(JSON.stringify(data));
     }, err => {
-      const initialState = {
-        message: 'Something went wrong',
-        title: 'Đã có lỗi!',
-        class: 'error'
-      };
-
-      if (err.error) {
-        initialState.message = err.error.message;
-      }
-      this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+      this.errorHandler(err);
     });
   }
 
@@ -177,16 +221,7 @@ export class InvoicesComponent implements OnInit {
     this.invoiceService.disposeInvoice(invoiceId).subscribe(data => {
       console.log(JSON.stringify(data));
     }, err => {
-      const initialState = {
-        message: 'Something went wrong',
-        title: 'Đã có lỗi!',
-        class: 'error'
-      };
-
-      if (err.error) {
-        initialState.message = err.error.message;
-      }
-      this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+      this.errorHandler(err);
     });
   }
 
@@ -203,16 +238,7 @@ export class InvoicesComponent implements OnInit {
       this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
     }, err => {
       this.modalRef.hide();
-      const initialState = {
-        message: 'Something went wrong',
-        title: 'Đã có lỗi!',
-        class: 'error'
-      };
-
-      if (err.error) {
-        initialState.message = err.error.message;
-      }
-      this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+      this.errorHandler(err);
     });
   }
 
@@ -250,6 +276,19 @@ export class InvoicesComponent implements OnInit {
     } else {
       this.expandSearch = false;
     }
+  }
+
+  private errorHandler(err: any) {
+    const initialState = {
+      message: 'Something went wrong',
+      title: 'Đã có lỗi!',
+      class: 'error'
+    };
+
+    if (err.error) {
+      initialState.message = err.error.message;
+    }
+    this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
   }
 
   private callServiceAndBindTable(params: InvoiceParam) {
