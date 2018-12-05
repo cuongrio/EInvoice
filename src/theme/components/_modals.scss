@@ -101,6 +101,14 @@ body.modal-open {
           height: 45px !important;
           object-fit: scale-down;
         }
+
+        .alert{
+          overflow: auto !important;
+          font-size: 11px;
+          padding: 8px;
+          height: auto;
+          word-break: break-word;
+        }
       }
 
       .modal-footer {

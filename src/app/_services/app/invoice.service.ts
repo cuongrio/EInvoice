@@ -6,12 +6,17 @@ import { AppService } from '../core/app.service';
 import { HttpParams, HttpClient, HttpHeaders } from '@angular/common/http';
 import { of } from 'rxjs';
 import { AppConstant } from '@app/_mock/mock.data';
+import { HttpService } from '@app/core/http/http.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class InvoiceService {
-  constructor(private appConstant: AppConstant, private httpClient: HttpClient, private appService: AppService) {}
+  constructor(
+    private appConstant: AppConstant,
+    private httpClient: HttpClient,
+    private httpService: HttpService,
+    private appService: AppService) { }
 
   /** PDF */
   preview(invoiceModel: InvoiceModel) {
@@ -62,7 +67,7 @@ export class InvoiceService {
   queryInvoices(invoiceParam?: InvoiceParam) {
     if (invoiceParam) {
       let httpParams = new HttpParams();
-      Object.keys(invoiceParam).forEach(function(key: any) {
+      Object.keys(invoiceParam).forEach(function (key: any) {
         console.log('key: ' + key + '||| ' + invoiceParam[key]);
         if (invoiceParam[key]) {
           if (key === 'page') {
@@ -92,18 +97,32 @@ export class InvoiceService {
   }
 
   signByToken(alias: string, pdfbase64: string, signatureImage: string, location: string, ahdsign: string) {
-    let body = new HttpParams();
-    body = body.set('alias', alias);
-    body = body.set('ahdsign', ahdsign);
-    body = body.set('pdf-base64', pdfbase64);
-    body = body.set('signature-img', signatureImage);
-    body = body.set('location', location);
+    // let body = new HttpParams();
+    // body = body.set('alias', alias);
+    // body = body.set('ahdsign', ahdsign);
+    // body = body.set('pdf-base64', pdfbase64);
+    // body = body.set('signature-img', signatureImage);
+    // body = body.set('location', location);
 
-    return this.httpClient.post(`${environment.pluginUrl}/token`, body, {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/x-www-form-urlencoded'
-      })
-    });
+    const body = new URLSearchParams();
+    body.set('alias', alias);
+    body.set('ahdsign', ahdsign);
+    body.set('pdf-base64', pdfbase64);
+    body.set('signature-img', signatureImage);
+    body.set('location', location);
+
+    const options = {
+      headers: new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded')
+    };
+
+    return this.httpClient
+      .post(`${environment.pluginUrl}/token`, body.toString(), options);
+
+    // return this.httpService.post(`${environment.pluginUrl}/token`, formData, {
+    //   headers: new HttpHeaders({
+    //     'Content-Type': 'application/x-www-form-urlencoded'
+    //   })
+    // });
   }
 
   signed(invoiceId: number, signEncode: string) {

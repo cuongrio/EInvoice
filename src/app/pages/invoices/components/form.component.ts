@@ -8,9 +8,9 @@ import { AlertComponent } from '@app//shared/alert/alert.component';
 import { UtilsService } from '@app/_services/utils/utils.service';
 import { InvoiceService } from './../../../_services/app/invoice.service';
 import { CustomerData } from './../../../_models/data/customer.data';
-import { SelectData, GoodData, InvoiceModel, ProductData, ProductModel } from '@app/_models';
+import { SelectData, GoodData, InvoiceModel, ProductData, ProductModel, TokenData } from '@app/_models';
 import { CustomerService } from './../../../_services/app/customer.service';
-import { GoodService } from '@app/_services';
+import { GoodService, TokenService } from '@app/_services';
 import { ReferenceService } from './../../../_services/app/reference.service';
 import { Location } from '@angular/common';
 
@@ -28,6 +28,14 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   public serial: string;
   public adjust = false;
 
+  // signed
+  public tokenPicked: TokenData;
+  public listTokenAvaiable: Array<TokenData>;
+
+  public signErrorMessage: string;
+  public signButtonDisabled = true;
+  public signButtonLoading = false;
+
   public isPreview = false;
   public viewMode = false;
   // button status
@@ -43,7 +51,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
   public viewCustomerCode = false;
 
-  public columNo = 12;
   public modalRef: BsModalRef;
   public bsConfig = { dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-blue' };
 
@@ -54,7 +61,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   public references: Array<SelectData>;
   public noItemLine = false;
   public hiddenExColumn = true;
-  public listTokenAvaiable = new Array<SelectData>();
 
   // amount
   public totalAmount = new Array<number>();
@@ -130,6 +136,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     private location: Location,
     private router: Router,
     private formBuilder: FormBuilder,
+    private tokenService: TokenService,
     private invoiceService: InvoiceService,
     private activatedRoute: ActivatedRoute,
     private modalService: BsModalService,
@@ -137,7 +144,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     private goodService: GoodService,
     private customerService: CustomerService,
     private referenceService: ReferenceService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.initRouter();
@@ -179,6 +186,27 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     this.router.navigate(['/invoices']);
   }
 
+  public loadTokenData() {
+    if (this.listTokenAvaiable && this.listTokenAvaiable.length > 0) {
+      return true;
+    }
+    this.tokenService.listToken().subscribe((dataArr: Array<TokenData>) => {
+      if (dataArr && dataArr.length > 0) {
+        this.listTokenAvaiable = dataArr;
+        dataArr.forEach((item: TokenData, idx: number) => {
+          item.select_item = item.name + '\n' + item.effectiveDate;
+        });
+      }
+      this.ref.markForCheck();
+    }, err => {
+      if (err.error) {
+        this.signErrorMessage = err.error.message;
+      } else {
+        this.signErrorMessage = 'Đã có lỗi xảy ra!';
+      }
+    });
+  }
+
   onSubmit(dataForm: any) {
     this.submitted = true;
     let dataFormItems: any;
@@ -196,8 +224,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
         this.noItemLine = true;
       }
     }
-    console.log(this.addForm.invalid);
-    console.log(this.noItemLine);
+
     this.ref.markForCheck();
     if (this.addForm.invalid || this.noItemLine) {
       return;
@@ -285,17 +312,74 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     }
   }
 
+  public openModalMd(template: TemplateRef<any>) {
+    this.modalRef = this.modalService.show(template, { class: 'modal-token' });
+  }
+
   public addNewButtonClicked() {
     this.resetForm();
     this.submitted = false;
   }
 
-  public signInvoiceClicked() {
-    // 1. get list token
-    this.invoiceService.listToken().subscribe(data => {
-      console.log('data: ' + JSON.stringify(data));
+  public onTokenChange(selectItems: Array<TokenData>) {
+    this.tokenPicked = new TokenData();
+    this.signButtonDisabled = true;
+    if (selectItems.length > 0 && selectItems[0]) {
+      Object.assign(this.tokenPicked, selectItems[0]);
+      this.signButtonDisabled = false;
+    }
+  }
+
+  public async tokenChoiceClicked() {
+    if (!this.invoiceId) {
+      return;
+    }
+    this.signButtonDisabled = true;
+    this.signButtonLoading = true;
+    localStorage.setItem('token-picked', JSON.stringify(this.tokenPicked));
+    const dataToken = await this.invoiceService.sign(this.invoiceId)
+      .toPromise().catch(err => {
+        if (err.error) {
+          this.signErrorMessage = err.error.message;
+        } else {
+          this.signErrorMessage = 'Đã có lỗi xảy ra!';
+        }
+      });
+
+    const signToken = await this.invoiceService.signByToken(
+      this.tokenPicked.alias,
+      dataToken.pdf_base64,
+      dataToken.signature_img_base64,
+      dataToken.location,
+      dataToken.ahd_sign_base64
+    ).toPromise().catch(err => {
+      if (err.error) {
+        this.signErrorMessage = err.error.message;
+      } else {
+        this.signErrorMessage = 'Đã có lỗi xảy ra!';
+      }
     });
-    console.log('list token');
+
+    this.invoiceService.signed(this.invoiceId, JSON.stringify(signToken)).subscribe(data => {
+      this.modalRef.hide();
+      this.signButtonDisabled = false;
+      this.signButtonLoading = false;
+      const initialState = {
+        message: 'Đã ký thành công hóa đơn!',
+        title: 'Thông báo!',
+        class: 'success',
+        highlight: `Hóa đơn #${this.invoiceId}`
+      };
+      this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+    }, err => {
+      this.signButtonDisabled = false;
+      this.signButtonLoading = false;
+      if (err.error) {
+        this.signErrorMessage = err.error.message;
+      } else {
+        this.signErrorMessage = 'Đã có lỗi xảy ra!';
+      }
+    });
   }
 
   /***** BUTTON CLICKED */
@@ -304,7 +388,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   }
 
   public inCDClicked() {
-    this.invoiceService.printTransform(this.invoiceId).subscribe(data => {});
+    this.invoiceService.printTransform(this.invoiceId).subscribe(data => { });
   }
 
   /*** CUSTOMER CHANGE */

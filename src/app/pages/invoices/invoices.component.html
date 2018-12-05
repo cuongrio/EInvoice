@@ -1,17 +1,17 @@
 <!-- partial -->
 <div class="container-fluid page-body-wrapper">
-  <div class="jumbotron jumbotron-fluid">
-    <div class="container">
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a routerLink="/">Trang chủ</a></li>
-          <li class="breadcrumb-item active"><a routerLink="/invoices">Danh sách hóa đơn</a></li>
-        </ol>
-      </nav>
-    </div>
-  </div>
-
   <div class="main-panel">
+    <div class="jumbotron jumbotron-fluid">
+      <div class="container">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a routerLink="/">Trang chủ</a></li>
+            <li class="breadcrumb-item active"><a routerLink="/invoices">Danh sách hóa đơn</a></li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+
     <div class="content-wrapper">
       <div class="content-list">
         <div class="card card-shadow">
@@ -142,10 +142,9 @@
 
               <div class="col-12">
                 <div class="template-ein navbar-action">
-                  <button [disabled]="isSearching" [hidden]="!expandSearch" type="button"
-                    class="btn btn-md btn-info btn-search"
+                  <button [disabled]="isSearching" [hidden]="!expandSearch" type="button" class="btn btn-md btn-info btn-search"
                     (click)="ngSearchForm.ngSubmit.emit()">
-                    <i *ngIf="!isSearching" class="icon-magnifier"></i> 
+                    <i *ngIf="!isSearching" class="icon-magnifier"></i>
                     <i *ngIf="isSearching" class="fa fa-spinner fa-spin"></i> Tìm kiếm
                   </button>
                   <button type="button" routerLink="/invoices/createNew" class="btn btn-md btn-success">
@@ -154,10 +153,9 @@
                   <button id="openButton" type="button" (click)="openRowClicked()" class="btn  btn-md btn-outline-primary">
                     <i class="fas fa-edit"></i> Mở
                   </button>
-                  <button id="copyButton" type="button"
-                  class="btn btn-md btn-outline-primary">
-                    <i id="copyLoading" class="fa fa-spinner fa-spin"></i> 
-                    <i id="copyLoaded" class="fas fa-copy"></i> 
+                  <button id="copyButton" type="button" class="btn btn-md btn-outline-primary">
+                    <i id="copyLoading" class="fa fa-spinner fa-spin"></i>
+                    <i id="copyLoaded" class="fas fa-copy"></i>
                     Sao chép
                   </button>
                   <button id="printButton" type="button" (click)="printRowClicked()" class="btn btn-md btn-outline-primary">
@@ -177,15 +175,20 @@
                       </button>
                     </div>
                     <div class="modal-body">
-                        <ngx-select-dropdown
-                        (open)="loadTokenData()"
-                        [multiple]="false"
-                        (valueChange)="onTokenChange($event)"
+                      <div *ngIf="signErrorMessage" class="alert alert-danger" role="alert">
+                        {{signErrorMessage}}
+                      </div>
+
+                      <ngx-select-dropdown (open)="loadTokenData()" [multiple]="false" (valueChange)="onTokenChange($event)"
                         [config]="configSingleBox" [options]="listTokenAvaiable">
                       </ngx-select-dropdown>
                       <div class="btn-group">
-                          <button type="button" class="btn btn-primary mr-1" (click)="tokenChoiceClicked()">Đồng ý</button>
-                          <button type="button" class="btn btn-default" (click)="modalRef.hide()">Bỏ qua</button>
+                        <button type="button" [disabled]="signButtonDisabled" class="btn btn-primary mr-1 no-br" (click)="tokenChoiceClicked()">
+                            <i *ngIf="signButtonLoading" class="fa fa-spinner fa-spin"></i>
+                            <i *ngIf="!signButtonLoading" class="fas fa-key"></i>
+                            {{ signButtonLoading ? 'Vui lòng chờ...' : 'Đồng ý' }}
+                        </button>
+                        <button type="button" class="btn btn-default" (click)="modalRef.hide()">Bỏ qua</button>
                       </div>
                     </div>
                   </ng-template>

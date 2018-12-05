@@ -40,6 +40,9 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
 
   public tokenPicked: TokenData;
   public listTokenAvaiable: Array<TokenData>;
+  public signErrorMessage: string;
+  public signButtonDisabled = true;
+  public signButtonLoading = false;
 
   // expand search
   public expandSearch: boolean;
@@ -153,38 +156,61 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
 
   public onTokenChange(selectItems: Array<TokenData>) {
     this.tokenPicked = new TokenData();
-    Object.assign(this.tokenPicked, selectItems[0]);
+    this.signButtonDisabled = true;
+    if (selectItems.length > 0 && selectItems[0]) {
+      Object.assign(this.tokenPicked, selectItems[0]);
+      this.signButtonDisabled = false;
+    }
   }
 
   public async tokenChoiceClicked() {
+    this.signButtonDisabled = true;
+    this.signButtonLoading = true;
     localStorage.setItem('token-picked', JSON.stringify(this.tokenPicked));
     const invoiceId = +this.getCheckboxesValue();
-    const dataToken = await this.invoiceService.sign(invoiceId).toPromise();
-    const signToken = await this.invoiceService
-      .signByToken(
-        this.tokenPicked.alias,
-        dataToken.pdf_base64,
-        dataToken.signature_img_base64,
-        dataToken.location,
-        dataToken.ahd_sign_base64
-      )
-      .toPromise();
-    this.invoiceService.signed(invoiceId, JSON.stringify(signToken)).subscribe(data => {
-        this.invoiceService.signed(invoiceId, data).subscribe(res => {
-          const initialState = {
-            message: 'Đã ký thành công hóa đơn!',
-            title: 'Thông báo!',
-            class: 'success',
-            highlight: `Hóa đơn #${invoiceId}`
-          };
-          this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
-        }, err => {
-          this.errorHandler(err);
-        });
-      }, err => {
-        this.errorHandler(err);
+    const dataToken = await this.invoiceService.sign(invoiceId)
+      .toPromise().catch(err => {
+        if (err.error) {
+          this.signErrorMessage = err.error.message;
+        } else {
+          this.signErrorMessage = 'Đã có lỗi xảy ra!';
+        }
+      });
+
+    const signToken = await this.invoiceService.signByToken(
+      this.tokenPicked.alias,
+      dataToken.pdf_base64,
+      dataToken.signature_img_base64,
+      dataToken.location,
+      dataToken.ahd_sign_base64
+    ).toPromise().catch(err => {
+      if (err.error) {
+        this.signErrorMessage = err.error.message;
+      } else {
+        this.signErrorMessage = 'Đã có lỗi xảy ra!';
       }
-    );
+    });
+
+    this.invoiceService.signed(invoiceId, JSON.stringify(signToken)).subscribe(data => {
+      this.modalRef.hide();
+      this.signButtonDisabled = false;
+      this.signButtonLoading = false;
+      const initialState = {
+        message: 'Đã ký thành công hóa đơn!',
+        title: 'Thông báo!',
+        class: 'success',
+        highlight: `Hóa đơn #${invoiceId}`
+      };
+      this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+    }, err => {
+      this.signButtonDisabled = false;
+      this.signButtonLoading = false;
+      if (err.error) {
+        this.signErrorMessage = err.error.message;
+      } else {
+        this.signErrorMessage = 'Đã có lỗi xảy ra!';
+      }
+    });
   }
 
   public onSubmit(form: any) {
@@ -257,14 +283,6 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
       this.ref.markForCheck();
     }, err => {
       this.errorHandler(err);
-    });
-  }
-
-  public signClicked() {
-    // 1. get list token
-    this.tokenService.listToken().subscribe((data: Array<TokenData>) => {
-      this.listTokenAvaiable = data;
-      this.ref.markForCheck();
     });
   }
 

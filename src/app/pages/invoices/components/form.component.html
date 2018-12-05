@@ -1,19 +1,18 @@
 <div class="container-fluid page-body-wrapper">
-  <div class="jumbotron jumbotron-fluid">
-    <div class="container">
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a routerLink="/">Trang chủ</a></li>
-          <li class="breadcrumb-item"><a routerLink="/invoices">Danh sách hóa đơn</a></li>
-          <li *ngIf="invoiceId" class="breadcrumb-item active" aria-current="page">Mở hóa đơn</li>
-          <li *ngIf="!invoiceId" class="breadcrumb-item active" aria-current="page">Lập hóa đơn</li>
-        </ol>
-      </nav>
-    </div>
-  </div>
-
   <div class="main-panel">
-    <div class="content-wrapper"> 
+    <div class="jumbotron jumbotron-fluid">
+      <div class="container">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a routerLink="/">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a routerLink="/invoices">Danh sách hóa đơn</a></li>
+            <li *ngIf="invoiceId" class="breadcrumb-item active" aria-current="page">Mở hóa đơn</li>
+            <li *ngIf="!invoiceId" class="breadcrumb-item active" aria-current="page">Lập hóa đơn</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+    <div class="content-wrapper">
       <div class="row">
         <div class="container-fluid">
           <div class="template-ein navbar-action">
@@ -21,8 +20,8 @@
               <i class="fas fa-plus"></i> Thêm
             </button>
             <button type="button" (click)="editClicked()" [disabled]="disabledEdit" class="btn btn-md btn-outline-primary"><i
-              class="fas fa-edit"></i>
-            Sửa</button>
+                class="fas fa-edit"></i>
+              Sửa</button>
             <button type="button" (click)="adjustClicked()" [disabled]="disabledAdjust" class="btn btn-md btn-outline-primary"><i
                 class="fas fa-edit"></i>
               Điều chỉnh</button>
@@ -32,9 +31,34 @@
             <button type="button" (click)="isPreview=true; ngAddForm.ngSubmit.emit()" class="btn btn-md btn-outline-primary"><i
                 class="fas fa-info"></i> Xem</button>
 
-            <button type="button" [disabled]="disabledSign" (click)="signInvoiceClicked()" class="btn btn-md btn-outline-primary"><i
-                class="fas fa-key"></i>
-              Ký</button>
+            <button id="signButton" [disabled]="disabledSign" type="button" (click)="openModalMd(listToken)" class="btn btn-md btn-outline-primary">
+              <i class="fas fa-key"></i> Ký
+            </button>
+            <ng-template #listToken>
+              <div class="modal-header">
+                <h4 class="modal-title pull-left">Xác nhận token</h4>
+                <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div *ngIf="signErrorMessage" class="alert alert-danger" role="alert">
+                  {{signErrorMessage}}
+                </div>
+
+                <ngx-select-dropdown (open)="loadTokenData()" [multiple]="false" (valueChange)="onTokenChange($event)"
+                  [config]="configSingleBox" [options]="listTokenAvaiable">
+                </ngx-select-dropdown>
+                <div class="btn-group">
+                  <button type="button" [disabled]="signButtonDisabled" class="btn btn-primary mr-1 no-br" (click)="tokenChoiceClicked()">
+                    <i *ngIf="signButtonLoading" class="fa fa-spinner fa-spin"></i>
+                    <i *ngIf="!signButtonLoading" class="fas fa-key"></i>
+                    {{ signButtonLoading ? 'Vui lòng chờ...' : 'Đồng ý' }}
+                  </button>
+                  <button type="button" class="btn btn-default" (click)="modalRef.hide()">Bỏ qua</button>
+                </div>
+              </div>
+            </ng-template>
 
             <button [disabled]="disabledInCD" (click)="inCDClicked()" type="button" class="btn btn-md btn-outline-primary"><i
                 class="fas fa-print"></i>
@@ -52,7 +76,8 @@
             <div class="card-body invoice__wrapper">
               <div *ngIf="adjust" class="alert alert-danger">
                 Đang viết hóa đơn điều chỉnh cho hóa đơn số:
-                <a routerLink="/invoices/update/{{invoiceId}}"><strong>#{{this.invoiceId}}, mẫu: {{form}}, ký hiệu: {{serial}} </strong></a>
+                <a routerLink="/invoices/update/{{invoiceId}}"><strong>#{{this.invoiceId}}, mẫu: {{form}}, ký hiệu:
+                    {{serial}} </strong></a>
                 <a (click)="backClicked()" class="btn btn-md btn-light">Quay lại</a>
               </div>
 
@@ -99,8 +124,9 @@
                             <div class="input-group-prepend" [ngClass]="{ 'is-viewable': viewMode }">
                               <input formControlName="form" readonly="readonly" type="text" class="form-control form-control-sm form-control-custom" />
                             </div>
-                            <ngx-select-dropdown *ngIf="!viewMode" [multiple]="false" (open)="loadFormBox()" (valueChange)="onFormChange($event)"
-                              [config]="configSingleBox" (value)="formPicked" [options]="comboForm">
+                            <ngx-select-dropdown *ngIf="!viewMode" [multiple]="false" (open)="loadFormBox()"
+                              (valueChange)="onFormChange($event)" [config]="configSingleBox" (value)="formPicked"
+                              [options]="comboForm">
                             </ngx-select-dropdown>
                           </div>
                           <app-control-message *ngIf="submitted" [control]="addForm.controls['form']"></app-control-message>
@@ -116,8 +142,8 @@
                             <div class="input-group-prepend" [ngClass]="{ 'is-viewable': viewMode }">
                               <input formControlName="serial" readonly="readonly" type="text" class="form-control form-control-sm form-control-custom" />
                             </div>
-                            <ngx-select-dropdown *ngIf="!viewMode" (value)="serialPicked" [multiple]="false" (valueChange)="onSerialChange($event)"
-                              [config]="configSingleBox" [options]="comboSerial">
+                            <ngx-select-dropdown *ngIf="!viewMode" (value)="serialPicked" [multiple]="false"
+                              (valueChange)="onSerialChange($event)" [config]="configSingleBox" [options]="comboSerial">
                             </ngx-select-dropdown>
                           </div>
                           <app-control-message *ngIf="submitted" [control]="addForm.controls['serial']"></app-control-message>
@@ -133,8 +159,9 @@
                             <div class="input-group-prepend" [ngClass]="{ 'is-viewable': viewMode }">
                               <input formControlName="customerCode" readonly="readonly" type="text" class="form-control form-control-sm form-control-custom" />
                             </div>
-                            <ngx-select-dropdown *ngIf="!viewMode" [multiple]="false" (open)="loadCustomers()" [(value)]="customerPicked"
-                              (valueChange)="onCustomerCodeChange($event)" [config]="configCode" [options]="customerArr"></ngx-select-dropdown>
+                            <ngx-select-dropdown *ngIf="!viewMode" [multiple]="false" (open)="loadCustomers()"
+                              [(value)]="customerPicked" (valueChange)="onCustomerCodeChange($event)" [config]="configCode"
+                              [options]="customerArr"></ngx-select-dropdown>
                           </div>
                           <app-control-message *ngIf="submitted" [control]="addForm.controls['customerCode']"></app-control-message>
                         </div>
@@ -149,8 +176,8 @@
                             <div class="input-group-prepend" [ngClass]="{ 'is-viewable': viewMode }">
                               <input formControlName="customerTax" readonly="readonly" type="text" class="form-control form-control-sm form-control-custom" />
                             </div>
-                            <ngx-select-dropdown *ngIf="!viewMode" [multiple]="false" [(value)]="customerPicked" (valueChange)="onCustomerTaxChange($event)"
-                              [config]="configTaxCode" [options]="customerArr"></ngx-select-dropdown>
+                            <ngx-select-dropdown *ngIf="!viewMode" [multiple]="false" [(value)]="customerPicked"
+                              (valueChange)="onCustomerTaxChange($event)" [config]="configTaxCode" [options]="customerArr"></ngx-select-dropdown>
                           </div>
                           <app-control-message *ngIf="submitted" [control]="addForm.controls['customerTax']"></app-control-message>
                         </div>
@@ -172,8 +199,8 @@
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label"><label>Mã ĐH</label></div>
                         <div class="col-md-8 col-lg-8">
-                          <input type="text" [readonly]="viewMode" formControlName="orderNo" placeholder="Mã đơn hàng" 
-                          class="form-control form-control-sm" /> 
+                          <input type="text" [readonly]="viewMode" formControlName="orderNo" placeholder="Mã đơn hàng"
+                            class="form-control form-control-sm" />
                         </div>
                       </div>
                     </div>
@@ -203,8 +230,8 @@
                       <div class="form-group row">
                         <div class="col-md-1 col-lg-1 col-form-label"><label>Địa chỉ</label></div>
                         <div class="col-md-11 col-lg-11">
-                          <input formControlName="customerAddress" [readonly]="viewMode" type="text" placeholder="Địa chỉ" class="form-control form-control-sm"
-                            [ngClass]="{ 'is-invalid': submitted && addForm.controls['customerAddress'].errors }" />
+                          <input formControlName="customerAddress" [readonly]="viewMode" type="text" placeholder="Địa chỉ"
+                            class="form-control form-control-sm" [ngClass]="{ 'is-invalid': submitted && addForm.controls['customerAddress'].errors }" />
                           <app-control-message *ngIf="submitted" [control]="addForm.controls['customerAddress']"></app-control-message>
                         </div>
                       </div>
@@ -214,14 +241,14 @@
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label"><label class="required">HTTT</label></div>
                         <div class="col-md-8 col-lg-8">
-                            <div class="input-group input-group-sm c-group">
-                                <div class="input-group-prepend" [ngClass]="{ 'is-viewable': viewMode }">
-                                  <input formControlName="paymentType" readonly="readonly" type="text" class="form-control form-control-sm form-control-custom" />
-                                </div>
-                                <ngx-select-dropdown *ngIf="!viewMode" [(value)]="htttPicked" [multiple]="false" (valueChange)="onHtttChange($event)"
-                                  [config]="configSingleBox" [options]="comboHTTT">
-                                </ngx-select-dropdown>
-                              </div>
+                          <div class="input-group input-group-sm c-group">
+                            <div class="input-group-prepend" [ngClass]="{ 'is-viewable': viewMode }">
+                              <input formControlName="paymentType" readonly="readonly" type="text" class="form-control form-control-sm form-control-custom" />
+                            </div>
+                            <ngx-select-dropdown *ngIf="!viewMode" [(value)]="htttPicked" [multiple]="false"
+                              (valueChange)="onHtttChange($event)" [config]="configSingleBox" [options]="comboHTTT">
+                            </ngx-select-dropdown>
+                          </div>
                           <app-control-message *ngIf="submitted" [control]="addForm.controls['paymentType']"></app-control-message>
                         </div>
                       </div>
@@ -231,7 +258,8 @@
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label"><label>Số TK</label></div>
                         <div class="col-md-8 col-lg-8">
-                          <input formControlName="customerBankAccount" [readonly]="viewMode" type="text" placeholder="Số tài khoản" class="form-control form-control-sm" />
+                          <input formControlName="customerBankAccount" [readonly]="viewMode" type="text" placeholder="Số tài khoản"
+                            class="form-control form-control-sm" />
                         </div>
                       </div>
                     </div>
@@ -239,7 +267,8 @@
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label"><label>Ngân hàng</label></div>
                         <div class="col-md-8 col-lg-8">
-                          <input formControlName="customerBank" [readonly]="viewMode" type="text" placeholder="Ngân hàng" class="form-control form-control-sm" />
+                          <input formControlName="customerBank" [readonly]="viewMode" type="text" placeholder="Ngân hàng"
+                            class="form-control form-control-sm" />
                         </div>
                       </div>
                     </div>
@@ -290,21 +319,22 @@
                               <div class="input-group-prepend" [ngClass]="{ 'is-viewable': viewMode }">
                                 <input formControlName="item_code" readonly="readonly" type="text" class="form-control form-control-sm form-control-custom" />
                               </div>
-                              <ngx-select-dropdown *ngIf="!viewMode" (valueChange)="onGoodlineChange($event, idx)" [multiple]="false"
-                                [config]="configGood" [options]="goodArr"></ngx-select-dropdown>
+                              <ngx-select-dropdown *ngIf="!viewMode" (valueChange)="onGoodlineChange($event, idx)"
+                                [multiple]="false" [config]="configGood" [options]="goodArr"></ngx-select-dropdown>
                             </div>
                           </td>
                           <td class="no-padding">
-                            <input formControlName="item_name" [readonly]="viewMode" triggers="dblclick" [popover]="popContent" popoverTitle="Hiển thị thêm"
-                              [(ngModel)]="item['item_name']" [outsideClick]="true" [placement]="bottom" class="form-control form-control-sm"
-                              name="item_item_name" type="text" />
+                            <input formControlName="item_name" [readonly]="viewMode" triggers="dblclick" [popover]="popContent"
+                              popoverTitle="Hiển thị thêm" [(ngModel)]="item['item_name']" [outsideClick]="true"
+                              [placement]="bottom" class="form-control form-control-sm" name="item_item_name" type="text" />
                             <ng-template #popContent>
-                              <textarea formControlName="item_name" [readonly]="viewMode" [(ngModel)]="item['item_name']" class="form-control form-control-sm"
-                                rows="5" name="item_item_name_expand" type="text"></textarea>
+                              <textarea formControlName="item_name" [readonly]="viewMode" [(ngModel)]="item['item_name']"
+                                class="form-control form-control-sm" rows="5" name="item_item_name_expand" type="text"></textarea>
                             </ng-template>
                           </td>
                           <td class="no-padding">
-                            <input formControlName="unit" [readonly]="viewMode" class="form-control form-control-sm" name="item_unit" type="text" />
+                            <input formControlName="unit" [readonly]="viewMode" class="form-control form-control-sm"
+                              name="item_unit" type="text" />
                           </td>
                           <td class="no-padding">
                             <input formControlName="quantity" [readonly]="viewMode" numbersOnly (input)="quantityValueChange($event.target.value, idx)"
