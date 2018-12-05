@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { environment } from './../../../environments/environment';
 import { ProductModel } from '@app/_models';
 import { of } from 'rxjs';
 import { AppService } from '@app/_services/core/app.service';
@@ -13,8 +12,8 @@ export class GoodService {
 
   /**** LIST *** */
   getList() {
-    // return this.appService.get(`/goods`);
-    return of(this.appConstant.goodList);
+    return this.appService.get(`/goods`);
+    // return of(this.appConstant.goodList);
   }
 
   create(product: ProductModel) {
