@@ -191,7 +191,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
       }
     });
 
-    this.invoiceService.signed(invoiceId, JSON.stringify(signToken)).subscribe(data => {
+    this.invoiceService.signed(invoiceId, signToken).subscribe((data: any) => {
       this.modalRef.hide();
       this.signButtonDisabled = false;
       this.signButtonLoading = false;

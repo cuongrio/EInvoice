@@ -125,7 +125,7 @@ export class InvoiceService {
     // });
   }
 
-  signed(invoiceId: number, signEncode: string) {
-    return this.appService.post(`/invoices/${invoiceId}/signed`, signEncode);
+  signed(invoiceId: number, signEncode: any) {
+    return this.appService.postForText(`/invoices/${invoiceId}/signed`, signEncode);
   }
 }

@@ -23,7 +23,7 @@ export class AppService {
       this.router.navigate(['/login']);
     }
     return this.httpService.request('POST', tenantUrl, {
-      headers: this.appendHeader(),
+      headers: this.appendHeaderForJson(),
       body: JSON.stringify(body),
       responseType: 'arraybuffer'
     });
@@ -37,7 +37,7 @@ export class AppService {
     }
 
     return this.httpService.request('GET', tenantUrl, {
-      headers: this.appendHeader(),
+      headers: this.appendHeaderForJson(),
       params: httpParams ? httpParams : {}
     });
   }
@@ -49,8 +49,20 @@ export class AppService {
       this.router.navigate(['/login']);
     }
     return this.httpService.request('POST', tenantUrl, {
-      headers: this.appendHeader(),
-      body: JSON.stringify(body)
+      headers: this.appendHeaderForJson(),
+      body: body
+    });
+  }
+
+  public postForText(url: string, body: Object): Observable<any> {
+    // check url
+    const tenantUrl = this.getTenantUrl(url);
+    if (tenantUrl === '') {
+      this.router.navigate(['/login']);
+    }
+    return this.httpService.request('POST', tenantUrl, {
+      headers: this.appendHeaderForText(),
+      body: body
     });
   }
 
@@ -61,7 +73,7 @@ export class AppService {
       this.router.navigate(['/login']);
     }
     return this.httpService.request('PUT', url, {
-      headers: this.appendHeader(),
+      headers: this.appendHeaderForJson(),
       body: JSON.stringify(body)
     });
   }
@@ -74,11 +86,11 @@ export class AppService {
     }
 
     return this.httpService.request('DELETE', tenantUrl, {
-      headers: this.appendHeader()
+      headers: this.appendHeaderForJson()
     });
   }
 
-  private appendHeader(): HttpHeaders {
+  private appendHeaderForJson(): HttpHeaders {
     const credentials: UserModel = this.authenticationService.credentials;
     if (credentials) {
       const token = credentials.token;
@@ -86,6 +98,23 @@ export class AppService {
         console.log('token: ' + token);
         const headers = new HttpHeaders({
           'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token
+        });
+        return headers;
+      }
+    } else {
+      this.router.navigate(['/login']);
+    }
+  }
+
+  private appendHeaderForText(): HttpHeaders {
+    const credentials: UserModel = this.authenticationService.credentials;
+    if (credentials) {
+      const token = credentials.token;
+      if (token !== null) {
+        console.log('token: ' + token);
+        const headers = new HttpHeaders({
+          'Content-Type': 'text',
           Authorization: 'Bearer ' + token
         });
         return headers;
