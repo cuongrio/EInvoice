@@ -39,8 +39,7 @@
               "./node_modules/moment/moment.js",
               "./node_modules/datatables/media/js/jquery.dataTables.min.js",
               "./node_modules/datatables.net-bs4/js/dataTables.bootstrap4.min.js",
-              "./node_modules/datatables.net-responsive/js/dataTables.responsive.min.js",
-              "./node_modules/select2/dist/js/select2.min.js"
+              "./node_modules/datatables.net-responsive/js/dataTables.responsive.min.js"
             ]
           },
           "configurations": {

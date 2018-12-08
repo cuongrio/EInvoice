@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 import { FormGroup, FormArray, Validators, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription, Observable, of } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import { AlertComponent } from '@app//shared/alert/alert.component';
@@ -17,10 +17,9 @@ import { GoodService, TokenService } from '@app/_services';
 import { ReferenceService } from './../../../_services/app/reference.service';
 import { Location } from '@angular/common';
 
-declare var $: any;
 import * as moment from 'moment';
-import { thisExpression } from 'babel-types';
 import { NgSelectConfig } from '@ng-select/ng-select';
+import { ISpinnerConfig, SPINNER_PLACEMENT, SPINNER_ANIMATIONS } from '@hardpool/ngx-spinner';
 
 @Component({
   selector: 'app-invoice-form',
@@ -29,9 +28,9 @@ import { NgSelectConfig } from '@ng-select/ng-select';
 })
 export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
   public invoiceId: number;
-  public form: string;
-  public serial: string;
-  public adjust = false;
+  public adjustForm: string;
+  public adjustSerial: string;
+  public isAdjust = false;
 
   // signed
   public tokenPicked: TokenData;
@@ -57,64 +56,35 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
   public viewCustomerCode = false;
 
   public previewLoading = false;
-
+  public formLoading = false;
+  public serialLoading = false;
+  public taxRateLoading = false;
+  public customerLoading = false;
+  public goodLoading = false;
+  public signTokenLoading = false;
   public modalRef: BsModalRef;
-  public bsConfig = { dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-blue' };
+  public bsConfig = {
+    dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-blue'
+  };
 
-  public formPicked: any;
-  public serialPicked: any;
-  public customerPicked: any;
-  public taxRatePicked: string;
-  public htttPicked: string;
+  public formPicked: string;
+  public serialPicked: string;
+  public htttModel: string;
+
   public references: Array<SelectData>;
   public noItemLine = false;
   public hiddenExColumn = true;
 
   // amount
-  public totalAmount = new Array<number>();
-  public totalPriceTax = new Array<number>();
-  public totalAmoutWt = new Array<number>();
+  public lineAmount = new Array<number>();
+  public linePriceTax = new Array<number>();
+  public lineAmoutWt = new Array<number>();
+  public lineDiscount = new Array<number>();
+  public linePriceOrigin = new Array<number>();
+  public linePriceWt = new Array<number>();
+  public taxModel = new Array<string>();
 
-  public configSingleBox = {
-    noResultsFound: ' ',
-    showNotFound: true,
-    placeholder: ' ',
-    toggleDropdown: true,
-    displayKey: 'select_item',
-    search: false
-  };
-
-  public configCode = {
-    searchPlaceholder: 'Tìm kiếm',
-    noResultsFound: 'Không có dữ liệu',
-    moreText: 'Xem thêm',
-    showNotFound: true,
-    placeholder: ' ',
-    toggleDropdown: true,
-    displayKey: 'select_item',
-    search: true,
-    limitTo: 7
-  };
-
-  public configTaxCode = {
-    searchPlaceholder: 'Tìm kiếm',
-    noResultsFound: 'Không có dữ liệu',
-    moreText: 'Xem thêm',
-    placeholder: ' ',
-    displayKey: 'tax_code',
-    search: true,
-    limitTo: 7
-  };
-
-  public configGood = {
-    searchPlaceholder: 'Tìm kiếm',
-    noResultsFound: 'Không có dữ liệu',
-    moreText: 'Xem thêm',
-    placeholder: ' ',
-    displayKey: 'select_item',
-    search: true,
-    limitTo: 7
-  };
+  public spinnerConfig: ISpinnerConfig;
 
   public configVAT: any = {
     placeholder: '%VAT',
@@ -150,9 +120,10 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
     private goodService: GoodService,
     private customerService: CustomerService,
     private referenceService: ReferenceService
-  ) { 
+  ) {
     this.config.notFoundText = 'Không có kết quả';
-    this.config.loadingText = 'Vui lòng chờ..';
+    this.config.loadingText = 'Đang tải..';
+    this.config.addTagText = 'Thêm';
   }
 
   ngOnInit() {
@@ -163,9 +134,8 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
     this.loadReferences();
     this.loadGoods();
     this.loadHttt();
-    this.stickyButtonAdd();
-
-    // set default value
+    this.initNewRow();
+    this.initSpinnerConfig();
   }
 
   ngAfterViewInit() {
@@ -186,12 +156,15 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
 
   adjustClicked() {
     this.clearFormArray(this.itemFormArray);
-    this.stickyButtonAdd();
-    this.totalAmount = new Array<number>();
-    this.totalAmoutWt = new Array<number>();
-    this.totalPriceTax = new Array<number>();
-    this.adjust = true;
+    this.initNewRow();
+    this.lineAmount = new Array<number>();
+    this.lineAmoutWt = new Array<number>();
+    this.linePriceTax = new Array<number>();
+    this.isAdjust = true;
     this.viewMode = false;
+    this.disabledEdit = true;
+    this.disabledSign = true;
+    this.disabledAdd = true;
   }
 
   cancelClicked() {
@@ -203,20 +176,22 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.listTokenAvaiable && this.listTokenAvaiable.length > 0) {
       return true;
     }
+    this.signTokenLoading = true;
     this.tokenService.listToken().subscribe((dataArr: Array<TokenData>) => {
       if (dataArr && dataArr.length > 0) {
         this.listTokenAvaiable = dataArr;
-        dataArr.forEach((item: TokenData, idx: number) => {
-          item.select_item = item.name + '\n' + item.effectiveDate;
-        });
+        this.ref.markForCheck();
       }
-      this.ref.markForCheck();
+      setTimeout(function () {
+        this.signTokenLoading = false;
+        this.ref.markForCheck();
+      }.bind(this), 200);
     }, err => {
-      if (err.error) {
-        this.signErrorMessage = err.error.message;
-      } else {
-        this.signErrorMessage = 'Đã có lỗi xảy ra!';
-      }
+      setTimeout(function () {
+        this.signTokenLoading = false;
+        this.ref.markForCheck();
+      }.bind(this), 200);
+      this.errorHandler(err);
     });
   }
 
@@ -262,22 +237,30 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
     invoiceModel.customer.address = dataForm.customerAddress;
     invoiceModel.customer.email = dataForm.customerEmail;
     invoiceModel.customer.tax_code = dataForm.customerTax;
-    invoiceModel.customer.phone = this.customerPicked[0].phone;
+    invoiceModel.customer.customer_code = dataForm.customerCode;
+    invoiceModel.customer.phone = dataForm.phone;
 
     // paymentType
     invoiceModel.paymentType = dataForm.paymentType;
 
-    invoiceModel.total_before_tax = this.sumTotalAmount();
-    invoiceModel.total = this.sumTotalAmountWt();
+    invoiceModel.total_before_tax = this.sumLineAmount();
+    invoiceModel.total = this.sumLineAmountWt();
+    invoiceModel.total_tax = this.sumLinePriceTax();
 
     // set items
     invoiceModel.items = dataFormItems;
     invoiceModel.items.forEach((item: ProductData, indx: number) => {
-      // item.tax_rate_code = this.taxRatePicked;
-      console.log(item.tax_rate_code);
-      item.tax = +this.totalPriceTax[indx];
-      item.amount = +this.totalAmount[indx];
-      item.amount_wt = +this.totalAmoutWt[indx];
+      item.item_line = indx + 1;
+      item.tax_rate_code = this.getVatCode(item.tax_rate + '');
+      item.discount = item.discount > 0 ? item.discount : 0;
+      item.discount_rate = item.discount_rate > 0 ? item.discount_rate : 0;
+
+      item.tax = +this.linePriceTax[indx];
+      item.amount = +this.lineAmount[indx];
+      item.amount_wt = +this.lineAmoutWt[indx];
+
+      // keep old
+      item.price_wt = this.linePriceWt[indx];
     });
 
     if (this.isPreview) {
@@ -294,7 +277,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
         this.errorHandler(err);
       });
     } else {
-      console.log('tao hoa don');
       return this.invoiceService.createInvoice(invoiceModel).subscribe(
         data => {
           const initialState = {
@@ -309,9 +291,15 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
             invoiceNo: data.invoice_no,
             status: data.status
           });
+
+          this.invoiceId = data.invoice_id;
+          this.adjustForm = data.form;
+          this.adjustSerial = data.serial;
+
           this.viewMode = true;
           this.disabledEdit = false;
           this.disabledSign = false;
+          this.disabledAdjust = false;
           this.ref.markForCheck();
           this.submitted = false;
         },
@@ -333,37 +321,32 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public openModalMd(template: TemplateRef<any>) {
+    this.loadTokenData();
     this.modalRef = this.modalService.show(template, { class: 'modal-token' });
   }
 
   public addNewButtonClicked() {
     this.resetForm();
     this.submitted = false;
+    this.viewMode = false;
   }
 
-  public onTokenChange(selectItems: Array<TokenData>) {
-    this.tokenPicked = new TokenData();
-    this.signButtonDisabled = true;
-    if (selectItems.length > 0 && selectItems[0]) {
-      Object.assign(this.tokenPicked, selectItems[0]);
+  public onTokenChange(token: any) {
+    this.signErrorMessage = '';
+    if (token) {
       this.signButtonDisabled = false;
+      this.tokenPicked = token;
     }
   }
 
   public async tokenChoiceClicked() {
-    if (!this.invoiceId) {
-      return;
-    }
     this.signButtonDisabled = true;
     this.signButtonLoading = true;
     localStorage.setItem('token-picked', JSON.stringify(this.tokenPicked));
-    const dataToken = await this.invoiceService.sign(this.invoiceId)
+    const invoiceId = +this.invoiceId;
+    const dataToken = await this.invoiceService.sign(invoiceId)
       .toPromise().catch(err => {
-        if (err.error) {
-          this.signErrorMessage = err.error.message;
-        } else {
-          this.signErrorMessage = 'Đã có lỗi xảy ra!';
-        }
+        this.errorSignHandler(err);
       });
 
     const signToken = await this.invoiceService.signByToken(
@@ -373,33 +356,25 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
       dataToken.location,
       dataToken.ahd_sign_base64
     ).toPromise().catch(err => {
-      if (err.error) {
-        this.signErrorMessage = err.error.message;
-      } else {
-        this.signErrorMessage = 'Đã có lỗi xảy ra!';
-      }
+      this.errorSignHandler(err);
     });
 
-    this.invoiceService.signed(this.invoiceId, JSON.stringify(signToken)).subscribe(data => {
-      this.modalRef.hide();
-      this.signButtonDisabled = false;
-      this.signButtonLoading = false;
-      const initialState = {
-        message: 'Đã ký thành công hóa đơn!',
-        title: 'Thông báo!',
-        class: 'success',
-        highlight: `Hóa đơn #${this.invoiceId}`
-      };
-      this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
-    }, err => {
-      this.signButtonDisabled = false;
-      this.signButtonLoading = false;
-      if (err.error) {
-        this.signErrorMessage = err.error.message;
-      } else {
-        this.signErrorMessage = 'Đã có lỗi xảy ra!';
-      }
-    });
+    if (signToken) {
+      this.invoiceService.signed(invoiceId, signToken).subscribe((data: any) => {
+        this.modalRef.hide();
+        this.signButtonDisabled = false;
+        this.signButtonLoading = false;
+        const initialState = {
+          message: 'Đã ký thành công hóa đơn!',
+          title: 'Thông báo!',
+          class: 'success',
+          highlight: `Hóa đơn #${invoiceId}`
+        };
+        this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+      }, err => {
+        this.errorSignHandler(err);
+      });
+    }
   }
 
   /***** BUTTON CLICKED */
@@ -412,47 +387,21 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /*** CUSTOMER CHANGE */
-  public onCustomerTaxChange(customerValue: any) {
-    const customer = new CustomerData();
-    Object.assign(customer, customerValue[0]);
-    this.addForm.patchValue({
-      customerTax: customer.tax_code
-    });
-
-    this.initDataForm(customer);
-  }
-
-  public onCustomerCodeChange(customerValue: any) {
-    const customer = new CustomerData();
-    Object.assign(customer, customerValue[0]);
-    this.addForm.patchValue({
-      customerCode: customer.customer_code
-    });
-
+  public onCustomerChange(customer: any) {
     this.initDataForm(customer);
     this.ref.markForCheck();
   }
 
-  public onFormChange(formValue: any) {
-    const selectData = new SelectData();
-    this.comboSerial = new Array<SelectData>();
-    this.serialPicked = null;
-
-    if (formValue && formValue.length > 0) {
-      Object.assign(selectData, formValue[0]);
-      const comboType = `COMBO_SERIAL_${selectData.code}`;
-
-      this.references.forEach((item: SelectData, index: number) => {
-        if (item.type === comboType) {
-          this.comboSerial.push(item);
-        }
+  public onFormChange(selectData: SelectData) {
+    if (!selectData) {
+      this.serialPicked = null;
+      this.addForm.patchValue({
+        serial: ''
       });
+      return;
     }
-    this.addForm.patchValue({
-      form: selectData.code
-    });
-    this.ref.markForCheck();
-    this.ref.detectChanges();
+    this.comboSerial = new Array<SelectData>();
+    this.loadSerialByForm(selectData.value);
   }
 
   public onSerialChange(serialValue: any) {
@@ -464,18 +413,18 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   /**** GOOD CHANGE */
-  public onGoodlineChange(dataArr: GoodData[], idx: number) {
-    if (dataArr && dataArr.length > 0) {
-      const good = dataArr[0];
-      const controlArray = this.itemFormArray;
-      controlArray.controls[idx].get('item_line').setValue(idx + 1);
-      controlArray.controls[idx].get('item_code').setValue(good.goods_code);
-      controlArray.controls[idx].get('item_name').setValue(good.goods_name);
-      controlArray.controls[idx].get('unit').setValue(good.unit);
-      controlArray.controls[idx].get('price').setValue(good.price);
-      controlArray.controls[idx].get('tax_rate').setValue(good.tax_rate);
-      this.noItemLine = false;
-    }
+  public onGoodlineChange(good: GoodData, idx: number) {
+    this.submitted = false;
+    const controlArray = this.itemFormArray;
+    controlArray.controls[idx].get('item_line').setValue(idx + 1);
+    controlArray.controls[idx].get('item_code').setValue(good.goods_code);
+    controlArray.controls[idx].get('item_name').setValue(good.goods_name);
+    controlArray.controls[idx].get('unit').setValue(good.unit);
+    controlArray.controls[idx].get('price').setValue(good.price);
+
+    // copy to model
+    this.linePriceOrigin[idx] = good.price;
+    this.noItemLine = false;
   }
 
   public get itemFormArray(): FormArray {
@@ -485,80 +434,93 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
   public deleteLineClicked(idx: number) {
     this.itemFormArray.removeAt(idx);
     // remove sum
-    this.totalAmount.splice(idx, 1);
-    this.totalAmoutWt.splice(idx, 1);
-    this.totalPriceTax.splice(idx, 1);
+    this.lineAmount.splice(idx, 1);
+    this.lineAmoutWt.splice(idx, 1);
+    this.linePriceTax.splice(idx, 1);
+    this.linePriceOrigin.splice(idx, 1);
+    this.lineDiscount.splice(idx, 1);
+    this.taxModel.splice(idx, 1);
   }
 
-  public addMoreLineClicked() {
-    this.stickyButtonAdd();
+  public initNewRow() {
+    const fg = this.formBuilder.group({
+      item_line: '',
+      item_code: '',
+      item_name: ['', Validators.required],
+      unit: ['', Validators.required],
+      price: ['', Validators.required],
+      tax_rate: ['', Validators.required],
+      tax_rate_code: '',
+      quantity: ['', Validators.required],
+      discount_rate: '',
+      discount: ''
+    });
+
+    fg.patchValue({
+      discount_rate: 0,
+    });
+
+    this.itemFormArray.push(fg);
+
+    // init first value
+    this.lineAmount.push(null);
+    this.linePriceTax.push(null);
+    this.lineAmoutWt.push(null);
+    this.linePriceOrigin.push(0);
+    this.lineDiscount.push(0);
+    this.linePriceWt.push(0);
+    this.taxModel.push('10');
   }
 
   /*** TOTAL PRICE */
   // tinh lai amount, amountwt
   public quantityValueChange(quantityStr: string, idx: number) {
-
-    let quantity = parseInt(quantityStr);
+    const quantity = parseInt(quantityStr, 0);
     const price = this.itemFormArray.controls[idx].get('price').value;
-    const discountRate = this.itemFormArray.controls[idx].get('discount_rate').value;
-    const taxtRate = this.itemFormArray.controls[idx].get('tax_rate').value;
+    const taxRate = +this.taxModel[idx];
 
-    this.recaculator(idx, discountRate, taxtRate, price, quantity);
+    this.recaculator(idx, taxRate, price, quantity);
   }
 
   // tinh lai tax, amount, priceWt
-  public priceValueChange(priceStr: string, idx: number) {
-    let price = 0;
-    if (priceStr && priceStr.length > 0) {
-      const thousands = /\,/gi;
-      priceStr = priceStr.replace(thousands, '');
-      price = parseFloat(priceStr);
-    }
+  public priceValueChange(price: number, idx: number) {
     const quantity = this.itemFormArray.controls[idx].get('quantity').value;
-    const discountRate = this.itemFormArray.controls[idx].get('discount_rate').value;
-    const taxtRate = this.itemFormArray.controls[idx].get('tax_rate').value;
-    this.recaculator(idx, discountRate, taxtRate, price, quantity);
+    const taxRate = +this.taxModel[idx];
+    this.linePriceOrigin[idx] = price;
+    this.linePriceWt[idx] = (price * (1 + taxRate)) / 100;
+    this.recaculator(idx, taxRate, price, quantity);
   }
 
   // total vat -> tinh lai tax
   public taxRateValueChange(taxChoice: SelectData, idx: number) {
     let taxRate = 0;
-    if(taxChoice){
+    if (taxChoice) {
       taxRate = +taxChoice.value;
     }
-    const discount = this.itemFormArray.controls[idx].get('discount').value;
-    this.priceTaxPopulator(idx, taxRate, discount);
-    this.amountWtPopulator(idx, discount);
+    const price = this.linePriceOrigin[idx];
+    this.linePriceWt[idx] = (price * (1 + taxRate)) / 100;
+    this.priceTaxPopulator(idx, taxRate);
+    this.amountWtPopulator(idx);
   }
 
   // cho
-  public discountRateValueChange(discountRate: number, idx: number) {
-    this.discountPopulator(idx, discountRate);
-    const discount = this.itemFormArray.controls[idx].get('discount').value;
-    const taxRate = this.itemFormArray.controls[idx].get('tax_rate').value;
+  public discountRateValueChange(discountRateStr: string, idx: number) {
+    const discountRate = parseInt(discountRateStr, 0);
+    const taxRate = +this.taxModel[idx];
+    this.lineDiscount[idx] = (this.lineAmount[idx] * discountRate) / 100;
 
-    this.priceTaxPopulator(idx, taxRate, discount);
-    this.amountWtPopulator(idx, discount);
-  }
-
-  // cho
-  public discountValueChange(discount: number, idx: number) {
-    const taxRate = this.itemFormArray.controls[idx].get('tax_rate').value;
-    this.itemFormArray.controls[idx].get('discount_rate').setValue(null);
-
-    this.priceTaxPopulator(idx, taxRate, discount);
-    this.amountWtPopulator(idx, discount);
-  }
-
-  public loadSerialBox() {
-    this.ref.markForCheck();
-    this.ref.detectChanges();
+    this.priceTaxPopulator(idx, taxRate);
+    this.amountWtPopulator(idx);
   }
 
   public loadFormBox() {
-    console.log(JSON.stringify(this.comboForm));
+    this.formLoading = true;
     if (this.comboForm && this.comboForm.length > 0) {
-      console.log('return' + this.comboForm[0].code);
+      this.formPicked = this.comboForm[0].value;
+      this.addForm.patchValue({
+        form: this.formPicked
+      });
+      this.formLoading = false;
       return;
     }
     if (!this.references) {
@@ -567,15 +529,23 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   // sum tong
-  public sumTotalAmount(): number {
-    return this.sumColumn(this.totalAmount);
+  public sumLineAmount(): number {
+    return this.sumColumn(this.lineAmount);
   }
-  public sumTotalPriceTax(): number {
-    return this.sumColumn(this.totalPriceTax);
+  public sumLinePriceTax(): number {
+    return this.sumColumn(this.linePriceTax);
   }
 
-  public sumTotalAmountWt(): number {
-    return this.sumColumn(this.totalAmoutWt);
+  public sumLineAmountWt(): number {
+    return this.sumColumn(this.lineAmoutWt);
+  }
+
+  public sumLineDiscount(): number {
+    return this.sumColumn(this.lineDiscount);
+  }
+
+  public sumLinePrice(): number {
+    return this.sumColumn(this.linePriceOrigin);
   }
 
   private errorHandler(err: any) {
@@ -592,10 +562,9 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private resetForm() {
-    this.customerPicked = null;
-    this.totalAmount = new Array<number>();
-    this.totalAmoutWt = new Array<number>();
-    this.totalPriceTax = new Array<number>();
+    this.lineAmount = new Array<number>();
+    this.lineAmoutWt = new Array<number>();
+    this.linePriceTax = new Array<number>();
     this.noItemLine = false;
 
     this.clearFormArray(this.itemFormArray);
@@ -605,14 +574,49 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
     this.formSetDefault();
     this.loadCustomers();
     this.loadGoods();
-    this.stickyButtonAdd();
+    this.initNewRow();
   }
 
-  private recaculator(idx: number, discount: number, taxRate: number, price: number, quantity: number) {
+  private errorSignHandler(err: any) {
+    this.signButtonDisabled = false;
+    this.signButtonLoading = false;
+    if (err.error) {
+      this.signErrorMessage = err.error.message;
+    } else {
+      this.signErrorMessage = 'Đã có lỗi xảy ra!';
+    }
+  }
+
+  private loadSerialByForm(form: string) {
+    this.serialLoading = true;
+    if (form && form.length > 0) {
+      const comboType = `COMBO_SERIAL_${form}`;
+
+      this.references.forEach((item: SelectData, index: number) => {
+        if (item.type === comboType) {
+          this.comboSerial.push(item);
+        }
+      });
+    }
+
+    // set default picked
+    if (this.comboSerial.length > 0) {
+      this.serialPicked = this.comboSerial[0].value;
+      this.addForm.patchValue({
+        serial: this.serialPicked
+      });
+    }
+    setTimeout(function () {
+      this.serialLoading = false;
+      this.ref.markForCheck();
+    }.bind(this), 200);
+  }
+
+  private recaculator(idx: number, taxRate: number, price: number, quantity: number) {
     // reload all
     this.amountPopulator(idx, price, quantity);
-    this.priceTaxPopulator(idx, taxRate, discount);
-    this.amountWtPopulator(idx, discount);
+    this.priceTaxPopulator(idx, taxRate);
+    this.amountWtPopulator(idx);
   }
 
   private sumColumn(columns: Array<number>) {
@@ -631,6 +635,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
 
+    this.goodLoading = true;
     this.goodService.getList().subscribe((items: GoodData[]) => {
       const goods = items as GoodData[];
       this.goodArr = new Array<GoodData>();
@@ -641,15 +646,26 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
         good.select_item = good.goods_code;
         this.goodArr.push(good);
       }
+
+      setTimeout(function () {
+        this.goodLoading = false;
+        this.ref.markForCheck();
+      }.bind(this), 200);
+
+    }, err => {
+      setTimeout(function () {
+        this.goodLoading = false;
+        this.ref.markForCheck();
+      }.bind(this), 200);
+      this.errorHandler(err);
     });
   }
 
   private loadHttt() {
     this.comboHTTT = this.htttDummy();
-    this.htttPicked = this.comboHTTT[0].value;
-    console.log('httppcicked ' + this.htttPicked);
+    this.htttModel = this.comboHTTT[0].value;
     this.addForm.patchValue({
-      paymentType: this.htttPicked
+      paymentType: this.htttModel
     });
   }
 
@@ -658,20 +674,20 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
 
+    this.customerLoading = true;
     this.customerService.getList().subscribe((items: CustomerData[]) => {
-      const customers = items as CustomerData[];
-      this.customerArr = new Array<CustomerData>();
-
-      for (let i = 0; i < customers.length; i++) {
-        const customer = new CustomerData();
-        Object.assign(customer, customers[i]);
-        customer.select_item = customer.customer_code;
-        this.customerArr.push(customer);
-      }
+      this.customerArr = items as CustomerData[];
+      setTimeout(function () {
+        this.customerLoading = false;
+        this.ref.markForCheck();
+      }.bind(this), 200);
     });
   }
 
   private loadReferences() {
+    this.formLoading = true;
+    this.taxRateLoading = true;
+
     this.referenceService.referenceInfo().subscribe((items: SelectData[]) => {
       const selectItems = items as SelectData[];
       this.references = selectItems;
@@ -692,10 +708,25 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
       }
 
       // set default value
-      // this.taxRatePicked = '10';
-      this.addForm.patchValue({
-        taxtRate: '10'
-      })
+      if (this.comboForm.length > 0) {
+        this.formPicked = this.comboForm[0].value;
+        this.addForm.patchValue({
+          form: this.formPicked
+        });
+        this.loadSerialByForm(this.formPicked);
+      }
+      setTimeout(function () {
+        this.taxRateLoading = false;
+        this.formLoading = false;
+        this.ref.markForCheck();
+      }.bind(this), 200);
+    }, err => {
+      setTimeout(function () {
+        this.taxRateLoading = false;
+        this.formLoading = false;
+        this.ref.markForCheck();
+      }.bind(this), 200);
+      this.errorHandler(err);
     });
   }
 
@@ -709,7 +740,8 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
         customerName: customer.customer_name,
         customerBankAccount: customer.bank_account,
         customerBank: customer.bank,
-        customerAddress: customer.address
+        customerAddress: customer.address,
+        customerPhone: customer.phone
       });
     } else {
       this.addForm.patchValue({
@@ -720,8 +752,17 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
         customerOrg: '',
         customerBankAccount: '',
         customerBank: '',
+        customerPhone: '',
         customerAddress: ''
       });
+    }
+  }
+
+  private getVatCode(value: string): string {
+    for (let i = 0; i < this.comboTaxRate.length; i++) {
+      if (this.comboTaxRate[i].value === value) {
+        return this.comboTaxRate[i].code;
+      }
     }
   }
 
@@ -735,8 +776,8 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
 
         this.invoiceService.retrieveInvoiceById(this.invoiceId).subscribe(data => {
           this.setFormWithDefaultData(data);
-          this.form = data.form;
-          this.serial = data.serial;
+          this.adjustForm = data.form;
+          this.adjustSerial = data.serial;
 
           if (data.status === 'CREATED') {
             this.disabledSign = false;
@@ -750,11 +791,17 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private setFormWithDefaultData(data: any) {
-    this.totalPriceTax = new Array<number>();
-    this.totalAmount = new Array<number>();
-    this.totalAmoutWt = new Array<number>();
+    this.linePriceTax = new Array<number>();
+    this.lineAmount = new Array<number>();
+    this.lineAmoutWt = new Array<number>();
+    this.taxModel = new Array<string>();
 
     const invoiceDate = moment(data.invoice_date).format('DD-MM-YYYY');
+
+    // load serialcombobox
+    this.loadSerialByForm(data.form);
+    this.serialPicked = data.serial;
+    this.formPicked = data.form;
 
     this.addForm.patchValue({
       invoiceDate: invoiceDate,
@@ -766,8 +813,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
       customerBankAccount: data.customer.bank_account,
       customerBank: data.customer.bank,
       customerAddress: data.customer.address,
-      form: data.form,
-      serial: data.serial,
       status: data.status
     });
 
@@ -780,59 +825,33 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
       controlArray.controls[idx].get('unit').setValue(item.unit);
       controlArray.controls[idx].get('price').setValue(item.price);
       controlArray.controls[idx].get('tax_rate').setValue(item.tax_rate);
+      this.taxModel[idx] = item.tax_rate + '';
       controlArray.controls[idx].get('quantity').setValue(item.quantity);
       controlArray.controls[idx].get('discount_rate').setValue(0);
       controlArray.controls[idx].get('discount').setValue(0);
 
-      this.totalPriceTax.splice(idx, 0, item.tax);
-      this.totalAmount.splice(idx, 0, item.amount);
-      this.totalAmoutWt.splice(idx, 0, item.amount_wt);
+      this.linePriceTax.splice(idx, 0, item.tax);
+      this.lineAmount.splice(idx, 0, item.amount);
+      this.lineAmoutWt.splice(idx, 0, item.amount_wt);
     });
 
     console.log(JSON.stringify(data.items));
   }
 
-  private stickyButtonAdd() {
-    const emptyProductLine: ProductData = {
-      item_line: null,
-      item_code: '',
-      item_name: '',
-      unit: '',
-      price: null,
-      tax_rate: null,
-      tax_rate_code: '',
-      quantity: null,
-      discount_rate: null,
-      discount: null
-    };
-
-    const fg = this.formBuilder.group(emptyProductLine);
-    this.itemFormArray.push(fg);
-
-    // init first value
-    this.totalAmount.push(null);
-    this.totalPriceTax.push(null);
-    this.totalAmoutWt.push(null);
-  }
-
-  // https://www.concretepage.com/angular-2/angular-2-4-formbuilder-example
-
   private htttDummy() {
-    const items = new Array<SelectData>();
-    let selectItem = new SelectData();
-
-    // CK/TM,CK,TM mặc định CK/TM
-    selectItem.code = 'CK/TM';
-    items.push(selectItem);
-
-    selectItem = new SelectData();
-    selectItem.code = 'CK';
-    items.push(selectItem);
-
-    selectItem = new SelectData();
-    selectItem.code = 'CK/TM';
-    items.push(selectItem);
-    return items;
+    return [{
+      code: 'CK/TM',
+      value: 'CK/TM',
+      type: 'COMBO_HTTT'
+    }, {
+      code: 'CK',
+      value: 'CK',
+      type: 'COMBO_HTTT'
+    }, {
+      code: 'TM',
+      value: 'TM',
+      type: 'COMBO_HTTT'
+    }];
   }
 
   private createItemsForm() {
@@ -846,6 +865,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
       customerTax: ['', Validators.compose([Validators.required])],
       customerEmail: ['', Validators.compose([Validators.email])],
       orderNo: '',
+      customerPhone: '',
       customerOrg: ['', Validators.compose([Validators.required])],
       paymentType: ['', Validators.compose([Validators.required])],
       customerBankAccount: '',
@@ -878,28 +898,31 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
     price = price > 0 ? price : 0;
     quantity = quantity > 0 ? quantity : 0;
     const amount = price * quantity;
-    this.totalAmount[idx] = amount;
+    this.lineAmount[idx] = amount;
   }
 
   // Thành Tiền
-  private amountWtPopulator(idx: number, discount: number) {
-    discount = discount > 0 ? discount : 0;
-    const amountWt = (this.totalAmount[idx] - discount) + this.totalPriceTax[idx];
-    this.totalAmoutWt[idx] = amountWt;
+  private amountWtPopulator(idx: number) {
+    const discount = this.lineDiscount[idx] > 0 ? this.lineDiscount[idx] : 0;
+    const amountWt = (this.lineAmount[idx] - discount) + this.linePriceTax[idx];
+    this.lineAmoutWt[idx] = amountWt;
   }
 
   // Tiền thuế
-  private priceTaxPopulator(idx: number, taxRate: number, discount: number) {
+  private priceTaxPopulator(idx: number, taxRate: number) {
     taxRate = taxRate > 0 ? taxRate : 0;
-    discount = discount > 0 ? discount : 0;
-    const tax = ((this.totalAmount[idx] - discount) * taxRate) / 100;
-    this.totalPriceTax[idx] = tax;
+    const discount = this.lineDiscount[idx] > 0 ? this.lineDiscount[idx] : 0;
+    const tax = ((this.lineAmount[idx] - discount) * taxRate) / 100;
+    this.linePriceTax[idx] = tax;
   }
 
-  // Tiền chiết khấu
-  private discountPopulator(idx: number, discountRate: number) {
-    discountRate = discountRate > 0 ? discountRate : 0;
-    const discount = (this.totalAmount[idx] * discountRate) / 100;
-    this.itemFormArray.controls[idx].get('discount').setValue(discount);
+  private initSpinnerConfig() {
+    this.spinnerConfig = {
+      placement: SPINNER_PLACEMENT.block_ui,
+      animation: SPINNER_ANIMATIONS.spin_2,
+      bgColor: 'rgba(255,255,255,0.8)',
+      size: '1.4rem',
+      color: '#4729b7'
+    };
   }
 }

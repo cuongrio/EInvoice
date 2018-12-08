@@ -5,5 +5,4 @@ export class TokenData {
   notAfter?: string;
   effectiveDate?: string;
   isExpired?: string;
-  select_item?: string;
 }

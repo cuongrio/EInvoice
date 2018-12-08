@@ -71,12 +71,90 @@
   }
 }
 
+.word-break{
+  word-break: break-word !important; 
+}
+
+.container-half{
+  display: flex;
+  align-items: center;
+  .select-half{
+    width: 50% !important;
+  }
+} 
+
+.modal-body{
+  .modal-button_close{
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+  }
+}
+
+.avaible-tokens{
+  .token-name{
+    font-size: 12px;
+    &.is-expired{
+      color: #dc3545;
+    }
+    &.is-effective{
+      color: #7ed321;
+    }
+  }
+  label{
+    cursor: pointer;
+    font-size: 13px !important;
+    &.is-expired{
+      color: #dc3545;
+    }
+    &.is-effective{
+      color: #7ed321;
+    }
+  }
+}
+
+.error{
+  color: #dc3545 !important;
+}
+
 /**SELECT***/
+.ng-select{
+  &.control-invalid{
+    border: 1px solid #dc3545 !important;
+  }
+  .ng-dropdown-panel-items{
+    .ng-option{
+      padding: 5px 10px;
+      &.ng-option-selected{
+        background: #e9ecef !important;
+      }
+      &:hover,
+      &:focus{
+        background: #e9ecef !important;
+      }
+    }
+  }
+}
+.ng-dropdown-panel{
+  .ng-dropdown-header{
+    font-size: 14px;
+  }
+  .ng-option.ng-option-disabled{
+    font-size: 13px;
+  }
+}
+
+.modal-body{
+  .ng-select.ng-select-single .ng-select-container .ng-value-container .ng-value{
+    font-size: 13px !important;
+  }
+}
+
 .form-group{
   .ng-select-single{
     .ng-select-container{
         height: 31px !important;
-        min-height: unset !important;
+        min-height: 31px !important;
   
         .ng-clear-wrapper{
           width: 10px !important;
@@ -100,6 +178,7 @@
     .ng-dropdown-panel {
       .ng-dropdown-panel-items{
         .ng-option{
+          font-weight: 500 !important;
           font-size: 13px !important;
         }
       }
@@ -110,7 +189,8 @@
 .product-item__wrapper{
   .ng-select-single{
     .ng-select-container{
-      height: unset !important;
+      height: 31px !important;
+      min-height: 31px !important;
       border: 0 !important;
       border-radius: 0 !important;
 
@@ -129,7 +209,6 @@
   }
 }
 
-
 .required:after {
   content: "*";
 }
@@ -145,7 +224,7 @@
       li {
         background: #e9ecef !important;
         color: #333 !important;
-        padding: 2px 10px !important;
+        padding: 4px 10px !important;
         /* padding: 11px; */
         overflow: hidden;
         line-height: 22px !important;
@@ -162,7 +241,7 @@
       margin-bottom: 7px !important;
 
       li {
-        padding: 2px 10px !important;
+        padding: 4px 10px !important;
         line-height: 22px !important;
         overflow: hidden !important;
         font-size: 12px !important;
@@ -301,9 +380,6 @@ legend.scheduler-border {
   padding: 0px 12px !important;
   .table {
     background: #d3e4ff;
-    td {
-      line-height: 1.4;
-    }
     thead > tr > th {
       border-bottom: 1px solid #999;
     }
@@ -398,6 +474,20 @@ table {
     }
   }
 }
+
+/****SCROLLBAR***/
+.scroll-host {
+  &::-webkit-scrollbar {
+    width: 7px;
+    opacity: 0.7;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    -webkit-box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.3);
+    background-color: #e9ecef;
+  }
+}
+
 
 .bg-smoke {
   background: #e9ecef !important;
@@ -582,11 +672,27 @@ table {
   min-height: 150px !important;
 }
 
+.flash-warn {
+  background-color: #fffbdd !important;
+}
+
 /***INVOICE SCREEN**/
 .table.dataTable {
   &.invoiceTable {
     td {
       padding: 5px 5px !important;
+    }
+    
+    .subtable_invoice{
+      &.table{
+        > tbody > tr > td {
+          line-height: 1.4;
+          padding: 10px 5px !important;
+        }
+        > thead > tr > th{
+          padding: 15px 5px !important;
+        }
+      }
     }
   }
 
@@ -841,7 +947,7 @@ label.error {
         }
         .ngx-dropdown-list-container {
           min-width: 186px;
-        }
+        } 
         .hideselect {
           .ngx-dropdown-list-container {
             min-width: 186px;
@@ -850,17 +956,7 @@ label.error {
             display: none !important;
           }
         }
-
-        .select2-selection--single {
-          &:focus {
-            border-width: 1px !important;
-          }
-        }
-
-        .select2-dropdown {
-          border-radius: 0 !important;
-        }
-
+ 
         td {
           position: relative;
 
@@ -912,13 +1008,22 @@ label.error {
             background: #f5f5f5;
           }
           input.form-control {
-            border-width: 0 !important;
+            border: 0 !important;
             padding-left: 5px;
-            min-height: 36px;
+            min-height: 33px;
+
+            &.control-invalid{
+              border: 1px solid #dc3545 !important;
+            }
 
             &:focus {
               outline: 1px !important;
             }
+          }
+
+          .input-group-prepend{
+            margin-right: 0 !important;
+            border-right: 1px solid #ccc;
           }
 
           .popover {

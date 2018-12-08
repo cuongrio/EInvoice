@@ -3,7 +3,6 @@ import { environment } from '@env/environment';
 import { CookieService } from 'ngx-cookie-service';
 import { UserModel } from '@app/_models';
 import { HttpService } from '..';
-import { of } from 'rxjs';
 const credentialsKey = 'credentials';
 const serverUrlKey = 'serverUrl';
 /**
@@ -40,7 +39,7 @@ export class AuthenticationService {
    */
   logout() {
     this._credentials = null;
-    return of(true);
+    this.setCredentials(null);
   }
 
   /**

@@ -12,8 +12,8 @@ export class GoodService {
 
   /**** LIST *** */
   getList() {
-    // return this.appService.get(`/goods`);
-    return of(this.appConstant.goodList);
+    return this.appService.get(`/goods`);
+   // return of(this.appConstant.goodList);
   }
 
   create(product: ProductModel) {
@@ -25,8 +25,8 @@ export class GoodService {
   }
 
   retrieveById(goodId: number) {
-    // return this.appService.get(`/invoices/${invoiceId}`);
-    return of(this.appConstant.goodDetail);
+    return this.appService.get(`/goods/${goodId}`);
+    // return of(this.appConstant.goodDetail);
   }
 
   update(product: ProductModel) {

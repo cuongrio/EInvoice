@@ -20,21 +20,26 @@ import { InvoiceFormComponent } from './components/form.component';
 import { InvoiceService, ValidationService, GoodService, CustomerService } from './../../_services';
 import { SelectDropDownModule } from 'ngx-select-dropdown';
 import { UtilsService } from '@app/_services/utils/utils.service';
+import { ForgotPassService } from './../../_services/core/forgot.service';
 import { HttpClientModule } from '@angular/common/http';
 import { NgSelectModule } from '@ng-select/ng-select';
-import {NgxMaskModule} from 'ngx-mask'
+import { NgxMaskModule } from 'ngx-mask';
+import { NgxCurrencyModule } from 'ngx-currency';
+import { NgxSpinnerModule } from '@hardpool/ngx-spinner';
 
 @NgModule({
   imports: [
     CommonModule,
     RouterModule.forChild(InvoicesRoutes),
     FormsModule,
-    ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
+    ReactiveFormsModule.withConfig({ warnOnNgModelWithFormControl: 'never' }),
     SelectDropDownModule,
     HttpClientModule,
     NgSelectModule,
     AlertModule.forRoot(),
     NgbModule,
+    NgxCurrencyModule,
+    NgxSpinnerModule,
     NgxMaskModule.forRoot(),
     TooltipModule.forRoot(),
     PaginationModule.forRoot(),
@@ -45,6 +50,14 @@ import {NgxMaskModule} from 'ngx-mask'
     SharedModule
   ],
   declarations: [InvoicesComponent, InvoiceFormComponent],
-  providers: [ValidationService, InvoiceService, GoodService, CustomerService, UtilsService, DatePipe]
+  providers: [
+    ValidationService,
+    ForgotPassService,
+    InvoiceService,
+    GoodService,
+    CustomerService,
+    UtilsService,
+    DatePipe
+  ]
 })
-export class InvoicesModule {}
+export class InvoicesModule { }

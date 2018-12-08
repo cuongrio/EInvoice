@@ -15,7 +15,6 @@ import { AlertModule } from 'ngx-bootstrap';
 import { ProductsRoutes } from './products.routing';
 import { DatePipe } from '@angular/common';
 import { SelectDropDownModule } from 'ngx-select-dropdown';
-import { SelectModule } from 'ng2-select';
 
 import { HttpClientModule } from '@angular/common/http';
 import { UtilsService } from '@app/_services/utils/utils.service';
@@ -31,7 +30,6 @@ import { ValidationService, GoodService } from '@app/_services';
     FormsModule,
     ReactiveFormsModule,
     SelectDropDownModule,
-    SelectModule,
     HttpClientModule,
     AlertModule.forRoot(),
     NgbModule,
@@ -47,4 +45,4 @@ import { ValidationService, GoodService } from '@app/_services';
   declarations: [ProductsComponent, ProductFormComponent],
   providers: [GoodService, UtilsService, DatePipe, ValidationService]
 })
-export class ProductsModule {}
+export class ProductsModule { }

@@ -19,14 +19,16 @@
                             </div>
 
                             <h3 class="mr-auto">Đăng nhập tài khoản</h3>
-                            <p class="mb-5 mr-auto">Vui lòng nhập thông tin bên dưới.</p>
+                            <p class="mb-5 mr-auto">Vui lòng nhập thông tin bên dưới.
+                                Hoặc <a routerLink="/forgot-password">Quên mật khẩu?</a>
+                            </p>
                             <div class="form-group">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="icon-user"></i></span>
                                     </div>
                                     <input type="text" placeholder="Tài khoản" formControlName="username" class="form-control"
-                                        [ngClass]="{ 'is-invalid': submitted && loginForm.controls['password'].errors }" />
+                                        [ngClass]="{ 'control-invalid': submitted && loginForm.controls['password'].errors }" />
                                 </div>
                                 <app-control-message *ngIf="submitted" [control]="loginForm.controls['username']"></app-control-message>
                             </div>
@@ -37,7 +39,7 @@
                                         <span class="input-group-text"><i class="icon-lock"></i></span>
                                     </div>
                                     <input type="password" placeholder="Mật khẩu" formControlName="password" class="form-control"
-                                        [ngClass]="{ 'is-invalid': submitted && loginForm.controls['password'].errors }" />
+                                        [ngClass]="{ 'control-invalid': submitted && loginForm.controls['password'].errors }" />
                                 </div>
                                 <app-control-message *ngIf="submitted" [control]="loginForm.controls['password']"></app-control-message>
                             </div>

@@ -15,8 +15,6 @@ import { AlertModule } from 'ngx-bootstrap';
 import { DatePipe } from '@angular/common';
 import { CustomerService, ValidationService } from './../../_services';
 import { SelectDropDownModule } from 'ngx-select-dropdown';
-import { SelectModule } from 'ng2-select';
-
 import { HttpClientModule } from '@angular/common/http';
 
 import { UtilsService } from '@app/_services/utils/utils.service';
@@ -32,7 +30,6 @@ import { CustomersRoutes } from './customers.routing';
     FormsModule,
     ReactiveFormsModule,
     SelectDropDownModule,
-    SelectModule,
     HttpClientModule,
     AlertModule.forRoot(),
     NgbModule,

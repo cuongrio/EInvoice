@@ -22,7 +22,7 @@
                         <label class="col-sm-4 col-form-label text-right required">Mã đối tượng</label>
                         <div class="col-sm-8">
                             <input [readonly]="viewMode" appAutofocus formControlName="customer_code" type="text" class="form-control form-control-sm"
-                                [ngClass]="{ 'is-invalid': submitted && addForm.controls['customer_code'].errors }">
+                                [ngClass]="{ 'control-invalid': submitted && addForm.controls['customer_code'].errors }">
                             <app-control-message *ngIf="submitted" [control]="addForm.controls['customer_code']"></app-control-message>
                         </div>
                     </div>
@@ -32,7 +32,7 @@
                         <label class="col-sm-4 col-form-label text-right required">Tên đối tượng</label>
                         <div class="col-sm-8">
                             <input [readonly]="viewMode" formControlName="customer_name" class="form-control form-control-sm"
-                                [ngClass]="{ 'is-invalid': submitted && addForm.controls['customer_name'].errors }">
+                                [ngClass]="{ 'control-invalid': submitted && addForm.controls['customer_name'].errors }">
                             <app-control-message *ngIf="submitted" [control]="addForm.controls['customer_name']"></app-control-message>
                         </div>
                     </div>
@@ -42,7 +42,7 @@
                         <label class="col-sm-2 col-form-label text-right">Địa chỉ</label>
                         <div class="col-sm-10">
                             <input [readonly]="viewMode" formControlName="address" type="text" class="form-control form-control-sm"
-                                [ngClass]="{ 'is-invalid': submitted && addForm.controls['address'].errors }">
+                                [ngClass]="{ 'control-invalid': submitted && addForm.controls['address'].errors }">
                             <app-control-message *ngIf="submitted" [control]="addForm.controls['address']"></app-control-message>
                         </div>
                     </div>
@@ -52,7 +52,7 @@
                         <label class="col-sm-4 col-form-label text-right required">Điện thoại</label>
                         <div class="col-sm-8">
                             <input [readonly]="viewMode" formControlName="phone" type="text" class="form-control form-control-sm"
-                                [ngClass]="{ 'is-invalid': submitted && addForm.controls['phone'].errors }">
+                                [ngClass]="{ 'control-invalid': submitted && addForm.controls['phone'].errors }">
                             <app-control-message *ngIf="submitted" [control]="addForm.controls['phone']"></app-control-message>
                         </div>
                     </div>
@@ -62,7 +62,7 @@
                         <label class="col-sm-4 col-form-label text-right required">Email</label>
                         <div class="col-sm-8">
                             <input [readonly]="viewMode" formControlName="email" type="text" class="form-control form-control-sm"
-                                [ngClass]="{ 'is-invalid': submitted && addForm.controls['email'].errors }">
+                                [ngClass]="{ 'control-invalid': submitted && addForm.controls['email'].errors }">
                             <app-control-message *ngIf="submitted" [control]="addForm.controls['email']"></app-control-message>
                         </div>
                     </div>
@@ -72,7 +72,7 @@
                         <label class="col-sm-2 col-form-label text-right required">Đơn vị</label>
                         <div class="col-sm-10">
                             <input [readonly]="viewMode" formControlName="org" type="text" class="form-control form-control-sm"
-                                [ngClass]="{ 'is-invalid': submitted && addForm.controls['org'].errors }">
+                                [ngClass]="{ 'control-invalid': submitted && addForm.controls['org'].errors }">
                             <app-control-message *ngIf="submitted" [control]="addForm.controls['org']"></app-control-message>
                         </div>
                     </div>
@@ -83,7 +83,7 @@
                         <label class="col-sm-4 col-form-label text-right required">Mã số thuế</label>
                         <div class="col-sm-8">
                             <input [readonly]="viewMode" formControlName="tax_code" type="text" class="form-control form-control-sm"
-                                [ngClass]="{ 'is-invalid': submitted && addForm.controls['tax_code'].errors }">
+                                [ngClass]="{ 'control-invalid': submitted && addForm.controls['tax_code'].errors }">
                             <app-control-message *ngIf="submitted" [control]="addForm.controls['tax_code']"></app-control-message>
                         </div>
                     </div>
@@ -94,7 +94,7 @@
                         <label class="col-sm-4 col-form-label text-right">Số TK</label>
                         <div class="col-sm-8">
                             <input [readonly]="viewMode" formControlName="bank_account" type="text" class="form-control form-control-sm"
-                                [ngClass]="{ 'is-invalid': submitted && addForm.controls['bank_account'].errors }">
+                                [ngClass]="{ 'control-invalid': submitted && addForm.controls['bank_account'].errors }">
                             <app-control-message *ngIf="submitted" [control]="addForm.controls['bank_account']"></app-control-message>
                         </div>
                     </div>
@@ -104,7 +104,7 @@
                         <label class="col-sm-2 col-form-label text-right">Ngân hàng</label>
                         <div class="col-sm-10">
                             <input [readonly]="viewMode" formControlName="bank" type="text" class="form-control form-control-sm"
-                                [ngClass]="{ 'is-invalid': submitted && addForm.controls['bank'].errors }">
+                                [ngClass]="{ 'control-invalid': submitted && addForm.controls['bank'].errors }">
                             <app-control-message *ngIf="submitted" [control]="addForm.controls['bank']"></app-control-message>
                         </div>
                     </div>

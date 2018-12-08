@@ -5,12 +5,15 @@
   unit: string;
   quantity: number;
   price: number;
-  tax?: number;
   tax_rate: number;
   tax_rate_code?: string;
-  price_wt?: number; // gia tien + VAT
-  amount?: number; // tong chua thue
-  amount_wt?: number; //
   discount_rate?: number;
   discount?: number;
+
+  // keep old
+  price_wt?: number;
+
+  tax?: number;
+  amount?: number;
+  amount_wt?: number;
 }

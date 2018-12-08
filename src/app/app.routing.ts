@@ -4,11 +4,12 @@ import { Routes, RouterModule } from '@angular/router';
 // import page
 import { PageLayoutComponent } from './pages/page-layout.component';
 import { LoginComponent } from './login/login.component';
-import { LogoutComponent } from './logout/logout.component';
+
 import { NotFoundComponent } from './exception/not-found.component';
 import { BadRequestComponent } from './exception/bad-request.component';
 import { ServerErrorComponent } from './exception/server-error.component';
 import { AuthenticationGuard } from './core/authentication/authentication.guard';
+import { ForgotPassComponent } from './forgot/forgot-pass.component';
 
 const routes: Routes = [
   {
@@ -19,7 +20,7 @@ const routes: Routes = [
   {
     path: '',
     component: PageLayoutComponent,
-    // canActivate: [AuthenticationGuard],
+    canActivate: [AuthenticationGuard],
     children: [
       {
         path: 'dashboard',
@@ -53,9 +54,9 @@ const routes: Routes = [
     data: { title: 'Thông tin đăng nhập' }
   },
   {
-    path: 'logout',
-    component: LogoutComponent,
-    data: { title: 'Đăng xuất' }
+    path: 'forgot-password',
+    component: ForgotPassComponent,
+    data: { title: 'Reset mật khẩu' }
   },
   {
     path: '404',

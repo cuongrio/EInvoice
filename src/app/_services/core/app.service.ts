@@ -6,7 +6,6 @@ import { Observable } from 'rxjs';
 import { AuthenticationService } from './../../core/authentication/authentication.service';
 import { environment } from './../../../environments/environment';
 import { HttpParams, HttpHeaders } from '@angular/common/http';
-import { ResponseContentType } from '@angular/http';
 
 @Injectable()
 export class AppService {

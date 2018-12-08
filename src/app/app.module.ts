@@ -22,14 +22,10 @@ import { AppComponent } from './app.component';
 import { PageLayoutComponent } from './pages/page-layout.component';
 import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/login.component';
-import { LogoutComponent } from './logout/logout.component';
 import { NotFoundComponent } from './exception/not-found.component';
 import { BadRequestComponent } from './exception/bad-request.component';
 import { ServerErrorComponent } from './exception/server-error.component';
-
-import { NumberDirective } from '@app/_directives/number_only.directive';
-import { AutofocusDirective } from './_directives/autofocus.directive';
-import { SlTruncatePipe } from './_directives/sl_truncate.directive';
+import { ForgotPassComponent } from './forgot/forgot-pass.component';
 import { ValidationService } from './_services';
 
 import { CookieService } from 'ngx-cookie-service';
@@ -38,6 +34,7 @@ import { CoreModule } from './core/core.module';
 import { HttpService } from './core/http/http.service';
 import { AppConstant } from './_mock/mock.data';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { AppDirectiveModule } from './_directives/app-directive.module';
 
 @NgModule({
   declarations: [
@@ -45,16 +42,13 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
     PageLayoutComponent,
     LoginComponent,
     RegisterComponent,
-    LogoutComponent,
+    ForgotPassComponent,
     NotFoundComponent,
     ServerErrorComponent,
-    BadRequestComponent,
-    NumberDirective,
-    AutofocusDirective,
-    SlTruncatePipe
+    BadRequestComponent
   ],
   imports: [
-    BrowserModule,
+  BrowserModule,
     FormsModule,
     ReactiveFormsModule,
     HttpModule,
@@ -69,7 +63,8 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
     LoadingBarModule,
     LoadingBarHttpModule,
     LoadingBarHttpClientModule,
-    LoadingBarRouterModule
+    LoadingBarRouterModule,
+    AppDirectiveModule
   ],
 
   providers: [ValidationService, CookieService, HttpService, AppService, AppConstant],

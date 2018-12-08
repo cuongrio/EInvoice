@@ -13,6 +13,7 @@ import { SelectData } from '@app/_models';
 import { AlertComponent } from '@app//shared/alert/alert.component';
 import { TokenService } from './../../_services/app/token.service';
 import { TokenData } from './../../_models/data/token.data';
+import { ISpinnerConfig, SPINNER_PLACEMENT, SPINNER_ANIMATIONS } from '@hardpool/ngx-spinner';
 
 declare var $: any;
 
@@ -25,21 +26,24 @@ type ArrayObject = Array<{ code: string; value: string }>;
 export class InvoicesComponent implements OnInit, AfterViewInit {
   public sortArr: string[] = ['ASC', 'DESC'];
   public sortByArr: ArrayObject = [
-    { code: 'invoiceNo', value: 'Số hóa đơn' },
-    { code: 'invoiceDate', value: 'Ngày hóa đơn' }
+    { code: 'Số hóa đơn', value: 'invoiceNo' },
+    { code: 'Ngày hóa đơn', value: 'invoiceDate' }
   ];
 
   // searching button
   public isSearching = false;
 
   public bsConfig = { dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-blue' };
+  public spinnerConfig: ISpinnerConfig;
   public modalRef: BsModalRef;
 
-  public tokenPicked: TokenData;
+  public signTokenLoading = false;
   public listTokenAvaiable: Array<TokenData>;
   public signErrorMessage: string;
   public signButtonDisabled = true;
   public signButtonLoading = false;
+
+
 
   // expand search
   public expandSearch: boolean;
@@ -61,6 +65,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
   };
 
   private previousPage = 0;
+  private tokenPicked: TokenData;
 
   // select option
 
@@ -92,6 +97,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
     this.initDataTable();
     this.initForm();
     this.initPageHandlerInRouter();
+    this.initSpinnerConfig();
   }
 
   ngAfterViewInit() {
@@ -148,15 +154,15 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
   }
 
   public openModalMd(template: TemplateRef<any>) {
+    this.loadTokenData();
     this.modalRef = this.modalService.show(template, { class: 'modal-token' });
   }
 
-  public onTokenChange(selectItems: Array<TokenData>) {
-    this.tokenPicked = new TokenData();
-    this.signButtonDisabled = true;
-    if (selectItems.length > 0 && selectItems[0]) {
-      Object.assign(this.tokenPicked, selectItems[0]);
+  public onTokenChange(token: any) {
+    this.signErrorMessage = '';
+    if (token) {
       this.signButtonDisabled = false;
+      this.tokenPicked = token;
     }
   }
 
@@ -232,7 +238,8 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
   // BUTTON ACTION
   public openRowClicked() {
     const invoiceId = this.getCheckboxesValue();
-    this.router.navigate([`/invoices/open/${invoiceId}`]);
+    console.log(invoiceId);
+    window.open(`/invoices/open/${invoiceId}`, '_blank');
   }
 
   public copyRowClicked() {
@@ -269,15 +276,21 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
     if (this.listTokenAvaiable && this.listTokenAvaiable.length > 0) {
       return true;
     }
+    this.signTokenLoading = true;
     this.tokenService.listToken().subscribe((dataArr: Array<TokenData>) => {
       if (dataArr && dataArr.length > 0) {
         this.listTokenAvaiable = dataArr;
-        dataArr.forEach((item: TokenData, idx: number) => {
-          item.select_item = item.name + '\n' + item.effectiveDate;
-        });
+        this.ref.markForCheck();
       }
-      this.ref.markForCheck();
+      setTimeout(function () {
+        this.signTokenLoading = false;
+        this.ref.markForCheck();
+      }.bind(this), 200);
     }, err => {
+      setTimeout(function () {
+        this.signTokenLoading = false;
+        this.ref.markForCheck();
+      }.bind(this), 200);
       this.errorHandler(err);
     });
   }
@@ -582,13 +595,15 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
         },
         {
           orderable: false,
+          className: 'action-control',
           data: function (row: any, type: any) {
             if (type === 'display' && row.invoice_id && row.invoice_id !== 'null') {
               return `
                 <div class="form-check">
                   <label class="form-check-label">
                     <input type="checkbox" name="stickchoice" value="${row.invoice_id}" class="form-check-input">
-                  <i class="input-helper"></i></label>
+                    <i class="input-helper"></i></label>
+                    <input type="hidden" class="invoice-hidden" value="${row.invoice_id}">
                 </div>
               `;
             } else {
@@ -680,29 +695,28 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
               <td>${entry.item_code}</td>
               <td>${entry.item_name}</td>
               <td>${entry.unit}</td>
+              <td class="text-right">${entry.quantity}</td>
               <td class="text-right">${priceFormat}</td>
               <td class="text-right">${taxFormat}</td>
-              <td class="text-right">${priceWtFormat}</td>
-              <td class="text-right">${entry.quantity}</td>
               <td class="text-right">${amountFormat}</td>
+              <td class="text-right">${priceWtFormat}</td>
             </tr>
           `;
         });
 
         contentItemHtml =
-          `<table class="table display dataTable">
+          `<table class="table display subtable_invoice dataTable">
           <thead>
             <tr>
-              <th>Dòng</th>
-              <th>Mã SP</th>
-              <th>Tên SP</th>
-              <th>Đơn vị</th>
-              <th class="text-right">Giá</th>
-              <th class="text-right">Thuế</th>
-              <th class="text-right">% Thuế</th>
-              <th class="text-right">price_wt</th>
-              <th class="text-right">quantity</th>
-              <th class="text-right">amount</th>
+              <th style="width: 40px;">Dòng</th>
+              <th style="width: 120px;">Mã HH</th>
+              <th style="width: 400px;">Nội dung</th>
+              <th style="width: 60px;">Đơn vị</th>
+              <th style="width: 60px;" class="text-right">Số lượng</th>
+              <th style="width: 140px;" class="text-right">Đơn Giá</th>
+              <th style="width: 140px;" class="text-right">Tiền thuế</th>
+              <th style="width: 140px;" class="text-right">Tiền chưa thuế</th>
+              <th style="width: 140px;" class="text-right">Tiền có thuế</th>
             </tr>
           </thead>
           <tbody>` +
@@ -725,6 +739,14 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
 
     // disabled all button
     bindButtonStatus(true);
+
+    $('#invoiceTable tbody').on('dblclick', 'tr.row-parent', function (e: any) {
+      e.preventDefault();
+      e.stopPropagation();
+      const invoiceId = $(this).find('.invoice-hidden').val();
+      const openUrl = window.location.origin + '/invoices/open/' + invoiceId;
+      window.open(openUrl, '_blank');
+    });
 
     // selected row
     $('#invoiceTable tbody').on('click', 'tr.row-parent', function () {
@@ -758,7 +780,6 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
     // Add event listener for opening and closing details
     $('#invoiceTable tbody').on('click', 'td.details-control', function (e: any) {
       e.preventDefault();
-      $(this).html('<i class="fa fa-spinner fa-spin" ></i>');
       const tr = $(this).closest('tr');
       const row = table.row(tr);
 
@@ -782,6 +803,16 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
       }
       return false;
     });
+  }
+
+  private initSpinnerConfig() {
+    this.spinnerConfig = {
+      placement: SPINNER_PLACEMENT.block_ui,
+      animation: SPINNER_ANIMATIONS.spin_2,
+      bgColor: 'rgba(255,255,255,0.8)',
+      size: '1.4rem',
+      color: '#4729b7'
+    };
   }
 
   private formatForm(form: any) {
