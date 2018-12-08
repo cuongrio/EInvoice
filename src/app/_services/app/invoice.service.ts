@@ -24,7 +24,7 @@ export class InvoiceService {
   }
 
   print(invoiceId: number) {
-    return this.appService.get(`/invoices/${invoiceId}/print`);
+    return this.appService.postForPreview(`/invoices/${invoiceId}/print`, {});
   }
 
   download(invoiceId: number) {
@@ -32,7 +32,7 @@ export class InvoiceService {
   }
 
   printTransform(invoiceId: number) {
-    return this.appService.post(`/invoices/${invoiceId}/transform`, {});
+    return this.appService.postForPreview(`/invoices/${invoiceId}/transform`, {});
   }
 
   /** INVOICE */
@@ -97,13 +97,6 @@ export class InvoiceService {
   }
 
   signByToken(alias: string, pdfbase64: string, signatureImage: string, location: string, ahdsign: string) {
-    // let body = new HttpParams();
-    // body = body.set('alias', alias);
-    // body = body.set('ahdsign', ahdsign);
-    // body = body.set('pdf-base64', pdfbase64);
-    // body = body.set('signature-img', signatureImage);
-    // body = body.set('location', location);
-
     const body = new URLSearchParams();
     body.set('alias', alias);
     body.set('ahdsign', ahdsign);
@@ -112,20 +105,16 @@ export class InvoiceService {
     body.set('location', location);
 
     const options = {
+      responseType: 'text' as 'json',
       headers: new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded')
     };
 
-    return this.httpClient
+    return this.httpService
       .post(`${environment.pluginUrl}/token`, body.toString(), options);
-
-    // return this.httpService.post(`${environment.pluginUrl}/token`, formData, {
-    //   headers: new HttpHeaders({
-    //     'Content-Type': 'application/x-www-form-urlencoded'
-    //   })
-    // });
   }
 
   signed(invoiceId: number, signEncode: any) {
+    const body = new URLSearchParams();
     return this.appService.postForText(`/invoices/${invoiceId}/signed`, signEncode);
   }
 }

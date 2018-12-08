@@ -37,6 +37,7 @@ import { AppService } from './_services/core/app.service';
 import { CoreModule } from './core/core.module';
 import { HttpService } from './core/http/http.service';
 import { AppConstant } from './_mock/mock.data';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   declarations: [
@@ -64,6 +65,7 @@ import { AppConstant } from './_mock/mock.data';
     SharedModule,
     AppRoutingModule,
     AlertModule.forRoot(),
+    TranslateModule.forRoot(),
     LoadingBarModule,
     LoadingBarHttpModule,
     LoadingBarHttpClientModule,
@@ -73,4 +75,4 @@ import { AppConstant } from './_mock/mock.data';
   providers: [ValidationService, CookieService, HttpService, AppService, AppConstant],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }

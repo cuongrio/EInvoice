@@ -183,7 +183,8 @@
                         [config]="configSingleBox" [options]="listTokenAvaiable">
                       </ngx-select-dropdown>
                       <div class="btn-group">
-                        <button type="button" [disabled]="signButtonDisabled" class="btn btn-primary mr-1 no-br" (click)="tokenChoiceClicked()">
+                        <button type="button" [disabled]="signButtonDisabled" class="btn btn-primary mr-1 no-br" 
+                        (click)="tokenChoiceClicked()">
                             <i *ngIf="signButtonLoading" class="fa fa-spinner fa-spin"></i>
                             <i *ngIf="!signButtonLoading" class="fas fa-key"></i>
                             {{ signButtonLoading ? 'Vui lòng chờ...' : 'Đồng ý' }}

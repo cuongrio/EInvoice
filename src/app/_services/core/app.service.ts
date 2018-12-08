@@ -14,7 +14,19 @@ export class AppService {
     private router: Router,
     private httpService: HttpService,
     private authenticationService: AuthenticationService
-  ) {}
+  ) { }
+
+  public getTenantUrl(url: string) {
+    if (url.indexOf('ahoadonplugin') === -1) {
+      const credentials: UserModel = this.authenticationService.credentials;
+      if (credentials) {
+        return `${environment.serverUrl}/${credentials.tenant}${url}`;
+      } else {
+        return '';
+      }
+    }
+    return url;
+  }
 
   public postForPreview(url: string, body: Object): Observable<any> {
     // check url
@@ -26,6 +38,18 @@ export class AppService {
       headers: this.appendHeaderForJson(),
       body: JSON.stringify(body),
       responseType: 'arraybuffer'
+    });
+  }
+
+  public postForText(url: string, body: Object): Observable<any> {
+    // check url
+    const tenantUrl = this.getTenantUrl(url);
+    if (tenantUrl === '') {
+      this.router.navigate(['/login']);
+    }
+    return this.httpService.request('POST', tenantUrl, {
+      headers: this.appendHeaderForText(),
+      body: body
     });
   }
 
@@ -50,18 +74,6 @@ export class AppService {
     }
     return this.httpService.request('POST', tenantUrl, {
       headers: this.appendHeaderForJson(),
-      body: body
-    });
-  }
-
-  public postForText(url: string, body: Object): Observable<any> {
-    // check url
-    const tenantUrl = this.getTenantUrl(url);
-    if (tenantUrl === '') {
-      this.router.navigate(['/login']);
-    }
-    return this.httpService.request('POST', tenantUrl, {
-      headers: this.appendHeaderForText(),
       body: body
     });
   }
@@ -114,7 +126,7 @@ export class AppService {
       if (token !== null) {
         console.log('token: ' + token);
         const headers = new HttpHeaders({
-          'Content-Type': 'text',
+          'Content-Type': 'application/octet-stream',
           Authorization: 'Bearer ' + token
         });
         return headers;
@@ -122,17 +134,5 @@ export class AppService {
     } else {
       this.router.navigate(['/login']);
     }
-  }
-
-  public getTenantUrl(url: string) {
-    if (url.indexOf('ahoadonplugin') === -1) {
-      const credentials: UserModel = this.authenticationService.credentials;
-      if (credentials) {
-        return `${environment.serverUrl}/${credentials.tenant}${url}`;
-      } else {
-        return '';
-      }
-    }
-    return url;
   }
 }

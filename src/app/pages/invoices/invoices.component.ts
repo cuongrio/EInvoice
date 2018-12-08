@@ -26,10 +26,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
   public sortArr: string[] = ['ASC', 'DESC'];
   public sortByArr: ArrayObject = [
     { code: 'invoiceNo', value: 'Số hóa đơn' },
-    { code: 'fromDate', value: 'Từ ngày' },
-    { code: 'toDate', value: 'Đến ngày' },
-    { code: 'serial', value: 'Số Serial' },
-    { code: 'orgTaxCode', value: 'Mã số thuế' }
+    { code: 'invoiceDate', value: 'Ngày hóa đơn' }
   ];
 
   // searching button
@@ -170,11 +167,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
     const invoiceId = +this.getCheckboxesValue();
     const dataToken = await this.invoiceService.sign(invoiceId)
       .toPromise().catch(err => {
-        if (err.error) {
-          this.signErrorMessage = err.error.message;
-        } else {
-          this.signErrorMessage = 'Đã có lỗi xảy ra!';
-        }
+        this.errorSignHandler(err);
       });
 
     const signToken = await this.invoiceService.signByToken(
@@ -184,33 +177,25 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
       dataToken.location,
       dataToken.ahd_sign_base64
     ).toPromise().catch(err => {
-      if (err.error) {
-        this.signErrorMessage = err.error.message;
-      } else {
-        this.signErrorMessage = 'Đã có lỗi xảy ra!';
-      }
+      this.errorSignHandler(err);
     });
 
-    this.invoiceService.signed(invoiceId, signToken).subscribe((data: any) => {
-      this.modalRef.hide();
-      this.signButtonDisabled = false;
-      this.signButtonLoading = false;
-      const initialState = {
-        message: 'Đã ký thành công hóa đơn!',
-        title: 'Thông báo!',
-        class: 'success',
-        highlight: `Hóa đơn #${invoiceId}`
-      };
-      this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
-    }, err => {
-      this.signButtonDisabled = false;
-      this.signButtonLoading = false;
-      if (err.error) {
-        this.signErrorMessage = err.error.message;
-      } else {
-        this.signErrorMessage = 'Đã có lỗi xảy ra!';
-      }
-    });
+    if (signToken) {
+      this.invoiceService.signed(invoiceId, signToken).subscribe((data: any) => {
+        this.modalRef.hide();
+        this.signButtonDisabled = false;
+        this.signButtonLoading = false;
+        const initialState = {
+          message: 'Đã ký thành công hóa đơn!',
+          title: 'Thông báo!',
+          class: 'success',
+          highlight: `Hóa đơn #${invoiceId}`
+        };
+        this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+      }, err => {
+        this.errorSignHandler(err);
+      });
+    }
   }
 
   public onSubmit(form: any) {
@@ -252,20 +237,31 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
 
   public copyRowClicked() {
     const item = this.getCheckboxesValue();
-    console.log('item: ' + item);
   }
 
   public printRowClicked() {
     const invoiceId = +this.getCheckboxesValue();
     this.invoiceService.print(invoiceId).subscribe(data => {
-      console.log('data: ' + JSON.stringify(data));
+      const file = new Blob([data], { type: 'application/pdf' });
+      const fileURL = URL.createObjectURL(file);
+      this.ref.markForCheck();
+      window.open(fileURL);
+    }, err => {
+      this.ref.markForCheck();
+      this.errorHandler(err);
     });
   }
 
   public printTransformRowClicked() {
     const invoiceId = +this.getCheckboxesValue();
     this.invoiceService.printTransform(invoiceId).subscribe(data => {
-      console.log('data: ' + JSON.stringify(data));
+      const file = new Blob([data], { type: 'application/pdf' });
+      const fileURL = URL.createObjectURL(file);
+      this.ref.markForCheck();
+      window.open(fileURL);
+    }, err => {
+      this.ref.markForCheck();
+      this.errorHandler(err);
     });
   }
 
@@ -363,6 +359,16 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
       this.expandSearch = JSON.parse(expandSearchTmp);
     } else {
       this.expandSearch = false;
+    }
+  }
+
+  private errorSignHandler(err: any) {
+    this.signButtonDisabled = false;
+    this.signButtonLoading = false;
+    if (err.error) {
+      this.signErrorMessage = err.error.message;
+    } else {
+      this.signErrorMessage = 'Đã có lỗi xảy ra!';
     }
   }
 
@@ -752,7 +758,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
     // Add event listener for opening and closing details
     $('#invoiceTable tbody').on('click', 'td.details-control', function (e: any) {
       e.preventDefault();
-      console.log('click td');
+      $(this).html('<i class="fa fa-spinner fa-spin" ></i>');
       const tr = $(this).closest('tr');
       const row = table.row(tr);
 

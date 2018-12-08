@@ -16,10 +16,9 @@ import { InvoicesRoutes } from './invoices.routing';
 import { DatePipe } from '@angular/common';
 import { InvoicesComponent } from './invoices.component';
 import { InvoiceFormComponent } from './components/form.component';
+
 import { InvoiceService, ValidationService, GoodService, CustomerService } from './../../_services';
 import { SelectDropDownModule } from 'ngx-select-dropdown';
-import { SelectModule } from 'ng2-select';
-
 import { NgxCurrencyModule } from 'ngx-currency';
 import { UtilsService } from '@app/_services/utils/utils.service';
 import { HttpClientModule } from '@angular/common/http';
@@ -27,12 +26,10 @@ import { HttpClientModule } from '@angular/common/http';
 @NgModule({
   imports: [
     CommonModule,
-
     RouterModule.forChild(InvoicesRoutes),
     FormsModule,
-    ReactiveFormsModule,
+    ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
     SelectDropDownModule,
-    SelectModule,
     HttpClientModule,
     AlertModule.forRoot(),
     NgxCurrencyModule,

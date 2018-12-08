@@ -28,8 +28,11 @@
             <button type="button" (click)="isPreview=false; ngAddForm.ngSubmit.emit()" class="btn btn-md btn-success">
               <i class="fas fa-save"></i> Lưu
             </button>
-            <button type="button" (click)="isPreview=true; ngAddForm.ngSubmit.emit()" class="btn btn-md btn-outline-primary"><i
-                class="fas fa-info"></i> Xem</button>
+            <button type="button" [disabled]="previewLoading" (click)="isPreview=true; ngAddForm.ngSubmit.emit()" class="btn btn-md btn-outline-primary">
+              <i *ngIf="previewLoading" class="fa fa-spinner fa-spin"></i>
+              <i *ngIf="!previewLoading" class="fas fa-info"></i>
+              Xem
+            </button>
 
             <button id="signButton" [disabled]="disabledSign" type="button" (click)="openModalMd(listToken)" class="btn btn-md btn-outline-primary">
               <i class="fas fa-key"></i> Ký
@@ -186,7 +189,7 @@
 
                     <div class="col-md-3 col-lg-3">
                       <div class="form-group row">
-                        <div class="col-md-4 col-lg-4 col-form-label required"><label>Email</label></div>
+                        <div class="col-md-4 col-lg-4 col-form-label"><label>Email</label></div>
                         <div class="col-md-8 col-lg-8">
                           <input formControlName="customerEmail" [readonly]="viewMode" type="text" class="form-control form-control-sm"
                             [ngClass]="{ 'is-invalid': submitted && addForm.controls['customerEmail'].errors }" />
@@ -277,7 +280,7 @@
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label"><label>Trạng thái</label></div>
                         <div class="col-md-8 col-lg-8">
-                          <input type="text" formControlName="status" disabled="disabled" class="form-control form-control-sm" />
+                          <input type="text" formControlName="status" readonly="readonly" class="form-control form-control-sm" />
                         </div>
                       </div>
                     </div>
@@ -294,17 +297,16 @@
                         <tr>
                           <th class="bg-smoke" style="width: 20px;">#</th>
                           <th style="width: 120px;">Mã HH</th>
-                          <th style="width: 300px;">Nội dung</th>
-                          <th style="width: 60px;">ĐVT</th>
-                          <th style="width: 60px;" class="text-right">SL</th>
-                          <th style="width: 120px;" class="text-right">Giá</th>
-                          <th style="width: 60px;" class="text-right">% VAT</th>
-                          <th *ngIf="!hiddenExColumn" style="width: 60px;" class="text-right">% CK</th>
+                          <th style="width: 500px;">Nội dung</th>
+                          <th style="width: 80px;">ĐV</th>
+                          <th style="width: 80px;" class="text-right">Số lượng</th>
+                          <th style="width: 120px;" class="text-right">Đơn giá</th>
+                          <th style="width: 140px;" class="text-right">Tiền chưa thuế</th>
+                          <th *ngIf="!hiddenExColumn" style="width: 80px;" class="text-right">% CK</th>
                           <th *ngIf="!hiddenExColumn" style="width: 120px;" class="text-right">Tiền CK</th>
-                          <th style="width: 120px;" class="text-right">Tiền thuế</th>
-                          <th style="width: 120px;" class="text-right">Tổng thuế</th>
-                          <th style="width: 120px;" class="text-right">Tổng tiền</th>
-                          <th style="width: 120px;" class="text-right">Sau thuế</th>
+                          <th style="width: 80px;" class="text-right">% Thuế</th>
+                          <th style="width: 140px;" class="text-right">Tiền thuế</th>
+                          <th style="width: 140px;" class="text-right">Thành tiền</th>
 
                         </tr>
                       </thead>
@@ -314,6 +316,7 @@
                           <td class="no-padding bg-smoke text-center">
                             {{idx + 1}}
                           </td>
+
                           <td class="no-padding invoice-no__item">
                             <div class="input-group input-group-sm c-group">
                               <div class="input-group-prepend" [ngClass]="{ 'is-viewable': viewMode }">
@@ -323,50 +326,54 @@
                                 [multiple]="false" [config]="configGood" [options]="goodArr"></ngx-select-dropdown>
                             </div>
                           </td>
+
                           <td class="no-padding">
-                            <input formControlName="item_name" [readonly]="viewMode" triggers="dblclick" [popover]="popContent"
-                              popoverTitle="Hiển thị thêm" [(ngModel)]="item['item_name']" [outsideClick]="true"
-                              [placement]="bottom" class="form-control form-control-sm" name="item_item_name" type="text" />
-                            <ng-template #popContent>
-                              <textarea formControlName="item_name" [readonly]="viewMode" [(ngModel)]="item['item_name']"
-                                class="form-control form-control-sm" rows="5" name="item_item_name_expand" type="text"></textarea>
-                            </ng-template>
+                            <input formControlName="item_name" [readonly]="viewMode" class="form-control form-control-sm"
+                              name="item_item_name" type="text" />
                           </td>
+
                           <td class="no-padding">
                             <input formControlName="unit" [readonly]="viewMode" class="form-control form-control-sm"
                               name="item_unit" type="text" />
                           </td>
+
                           <td class="no-padding">
-                            <input formControlName="quantity" [readonly]="viewMode" numbersOnly (input)="quantityValueChange($event.target.value, idx)"
-                              class="form-control form-control-sm text-right" name="item_quantity" type="text" />
-                          </td>
-                          <td class="no-padding">
-                            <input formControlName="price" [readonly]="viewMode" numbersOnly currencyMask [options]="{ prefix: '', allowNegative: false, precision: 0  }"
-                              (input)="priceValueChange($event.target.value, idx)" class="form-control form-control-sm text-right"
-                              name="item_price" type="text" />
-                          </td>
-                          <td class="no-padding vat-line">
-                            <input formControlName="tax_rate" [readonly]="viewMode" numbersOnly (input)="taxRateValueChange($event.target.value, idx)"
-                              class="form-control form-control-sm text-right text-bold" list="vatOptions">
-                          </td>
-                          <td [(hidden)]="hiddenExColumn" class="no-padding">
-                            <input formControlName="ck" [readonly]="viewMode" numbersOnly (input)="ckValueChange($event.target.value, idx)"
+                            <input formControlName="quantity" [readonly]="viewMode" currencyMask 
+                            [options]="{ prefix: '', thousands: '.', allowNegative: false, precision: 0  }"
+                            (input)="quantityValueChange($event.target.value, idx)"
                               class="form-control form-control-sm text-right" type="text" />
                           </td>
-                          <td [(hidden)]="hiddenExColumn" class="no-padding">
-                            <input formControlName="total_ck" [readonly]="viewMode" currencyMask [options]="{ prefix: '', allowNegative: false, precision: 0  }"
-                              numbersOnly (input)="totalCkValueChange($event.target.value, idx)" class="form-control form-control-sm text-right"
+
+                          <td class="no-padding">
+                            <input formControlName="price" [readonly]="viewMode" currencyMask [options]="{ prefix: 'đ', allowNegative: false, precision: 0  }"
+                              (input)="priceValueChange($event.target.value, idx)" class="form-control form-control-sm text-right"
                               type="text" />
                           </td>
-                          <td class="no-padding text-right is-viewable">
-                            <label class="mt-2 mr-2">{{totalPriceTax[idx] | number:'.0-2'}}</label>
-                          </td>
-                          <td class="no-padding text-right is-viewable">
-                            <label class="mt-2 mr-2">{{totalQuantityTax[idx] | number:'.0-2'}}</label>
-                          </td>
+
                           <td class="no-padding text-right is-viewable">
                             <label class="mt-2 mr-2">{{totalAmount[idx] | number:'.0-2'}}</label>
                           </td>
+
+                          <td [(hidden)]="hiddenExColumn" class="no-padding">
+                            <input formControlName="discount_rate" [readonly]="viewMode" (input)="discountRateValueChange($event.target.value, idx)"
+                              class="form-control form-control-sm text-right" type="text" />
+                          </td>
+
+                          <td [(hidden)]="hiddenExColumn" class="no-padding">
+                            <input formControlName="discount" [readonly]="viewMode" currencyMask [options]="{ prefix: '',decimal: '', thousands: '', allowNegative: false, precision: 0  }"
+                              (input)="discountValueChange($event.target.value, idx)" class="form-control form-control-sm text-right"
+                              type="text" />
+                          </td>
+
+                          <td class="no-padding vat-line">
+                            <input formControlName="tax_rate" [readonly]="viewMode" (input)="taxRateValueChange($event.target.value, idx)"
+                              class="form-control form-control-sm text-right text-bold" list="vatOptions">
+                          </td>
+
+                          <td class="no-padding text-right is-viewable">
+                            <label class="mt-2 mr-2">{{totalPriceTax[idx] | number:'.0-2'}}</label>
+                          </td>
+
                           <td class="no-padding text-right is-viewable">
                             <label class="mt-2 mr-2">{{totalAmoutWt[idx] | number:'.0-2'}}</label>
                           </td>
@@ -388,24 +395,19 @@
                           </th>
                           <th></th>
                           <th></th>
-                          <th class="text-right"></th>
-                          <th class="text-right"></th>
-                          <th *ngIf="!hiddenExColumn" class="text-right"></th>
-                          <th *ngIf="!hiddenExColumn" class="text-right">
-                          </th>
-                          <th class="text-right"></th>
-                          <th class="text-right">
-                            {{ sumTotalPriceTax() | currency:'VND':'symbol':'4.0-2'}}
-                          </th>
-                          <th class="text-right">
-                            {{ sumTotalQuantityTax() | currency:'VND':'symbol':'4.0-2'}}
-                          </th>
+                          <th></th>
+                          <th></th>
                           <th class="text-right">
                             {{ sumTotalAmount() | currency:'VND':'symbol':'4.0-2'}}
                           </th>
+                          <th *ngIf="!hiddenExColumn" class="text-right"></th>
+                          <th *ngIf="!hiddenExColumn" class="text-right"></th>
+
                           <th class="text-right">
-                            {{ sumTotalAmountWt() | currency:'VND':'symbol':'4.0-2'}}
+
                           </th>
+                          <th></th>
+                          <th></th>
                         </tr>
                       </tfoot>
                     </table>

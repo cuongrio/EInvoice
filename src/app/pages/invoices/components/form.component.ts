@@ -1,4 +1,7 @@
-import { Component, OnInit, OnDestroy, TemplateRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import {
+  Component, OnInit, OnDestroy, TemplateRef,
+  ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, HostListener
+} from '@angular/core';
 import { FormGroup, FormArray, Validators, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, Observable, of } from 'rxjs';
@@ -51,6 +54,8 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
   public viewCustomerCode = false;
 
+  public previewLoading = false;
+
   public modalRef: BsModalRef;
   public bsConfig = { dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-blue' };
 
@@ -64,11 +69,9 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
   // amount
   public totalAmount = new Array<number>();
+  public totalAmoutAd = new Array<number>();
   public totalPriceTax = new Array<number>();
-  public totalPriceWt = new Array<number>();
-  public priceOrigin = new Array<number>();
   public totalAmoutWt = new Array<number>();
-  public totalQuantityTax = new Array<number>();
 
   public configSingleBox = {
     noResultsFound: ' ',
@@ -132,6 +135,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
 
   constructor(
+    private _el: ElementRef,
     private ref: ChangeDetectorRef,
     private location: Location,
     private router: Router,
@@ -175,8 +179,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     this.totalAmount = new Array<number>();
     this.totalAmoutWt = new Array<number>();
     this.totalPriceTax = new Array<number>();
-    this.totalQuantityTax = new Array<number>();
-    this.priceOrigin = new Array<number>();
     this.adjust = true;
     this.viewMode = false;
   }
@@ -209,6 +211,9 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
   onSubmit(dataForm: any) {
     this.submitted = true;
+    if (this.isPreview) {
+      this.previewLoading = true;
+    }
     let dataFormItems: any;
     this.noItemLine = true;
     console.log('isPreview: ' + this.isPreview);
@@ -227,6 +232,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
     this.ref.markForCheck();
     if (this.addForm.invalid || this.noItemLine) {
+      this.previewLoading = false;
       return;
     }
     const invoiceModel = new InvoiceModel();
@@ -251,7 +257,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     invoiceModel.paymentType = dataForm.paymentType;
 
     invoiceModel.total_before_tax = this.sumTotalAmount();
-    invoiceModel.total_tax = this.sumTotalQuantityTax();
     invoiceModel.total = this.sumTotalAmountWt();
 
     // set items
@@ -260,7 +265,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
       item.tax_rate_code = this.getVatCode(item.tax_rate + '');
       console.log(item.tax_rate_code);
       item.tax = +this.totalPriceTax[indx];
-      item.price_wt = +this.totalPriceWt[indx];
       item.amount = +this.totalAmount[indx];
       item.amount_wt = +this.totalAmoutWt[indx];
     });
@@ -270,8 +274,13 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
       this.invoiceService.preview(invoiceModel).subscribe(data => {
         const file = new Blob([data], { type: 'application/pdf' });
         const fileURL = URL.createObjectURL(file);
-        console.log(fileURL);
+        this.previewLoading = false;
+        this.ref.markForCheck();
         window.open(fileURL);
+      }, err => {
+        this.previewLoading = false;
+        this.ref.markForCheck();
+        this.errorHandler(err);
       });
     } else {
       console.log('tao hoa don');
@@ -466,9 +475,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
       controlArray.controls[idx].get('tax_rate').setValue(good.tax_rate);
 
       this.noItemLine = false;
-      this.priceOrigin[idx] = good.price;
       this.priceTaxPopulator(idx, good.price, good.tax_rate);
-      this.priceWtPopulator(idx, good.price);
     }
   }
 
@@ -482,9 +489,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     this.totalAmount.splice(idx, 1);
     this.totalAmoutWt.splice(idx, 1);
     this.totalPriceTax.splice(idx, 1);
-    this.totalPriceWt.splice(idx, 1);
-    this.totalQuantityTax.splice(idx, 1);
-    this.priceOrigin.splice(idx, 1);
   }
 
   public addMoreLineClicked() {
@@ -495,51 +499,44 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   // tinh lai amount, amountwt
   public quantityValueChange(quantity: number, idx: number) {
     const price = this.itemFormArray.controls[idx].get('price').value;
-    const ck = this.itemFormArray.controls[idx].get('ck').value;
-    this.recaculator(idx, ck, price, quantity);
+    const discountRate = this.itemFormArray.controls[idx].get('discount_rate').value;
+    this.recaculator(idx, discountRate, price, quantity);
   }
 
   // tinh lai tax, amount, priceWt
   public priceValueChange(price: number, idx: number) {
-    const ck = this.itemFormArray.controls[idx].get('ck').value;
     const quantity = this.itemFormArray.controls[idx].get('quantity').value;
-    const taxRate = this.itemFormArray.controls[idx].get('tax_rate').value;
-
-    this.priceTaxPopulator(idx, price, taxRate);
-    this.priceWtPopulator(idx, price);
-    this.recaculator(idx, ck, price, quantity);
+    const discountRate = this.itemFormArray.controls[idx].get('discount_rate').value;
+    this.recaculator(idx, discountRate, price, quantity);
   }
 
   // total vat -> tinh lai tax
   public taxRateValueChange(taxRate: number, idx: number) {
     const price = this.itemFormArray.controls[idx].get('price').value;
-    const ck = this.itemFormArray.controls[idx].get('ck').value;
+    const discountRate = this.itemFormArray.controls[idx].get('discount_rate').value;
     const quantity = this.itemFormArray.controls[idx].get('quantity').value;
     const taxRateCode = this.getVatCode(taxRate + '');
     // set tax rate
     this.itemFormArray.controls[idx].get('tax_rate_code').setValue(taxRateCode);
 
     this.priceTaxPopulator(idx, price, taxRate);
-    this.priceWtPopulator(idx, price);
-    this.recaculator(idx, ck, price, quantity);
+    this.recaculator(idx, discountRate, price, quantity);
   }
 
   // cho
-  public ckValueChange(ck: number, idx: number) {
+  public discountRateValueChange(discountRate: number, idx: number) {
+    console.log('discountRate: ' + discountRate);
     const quantity = this.itemFormArray.controls[idx].get('quantity').value;
     const price = this.itemFormArray.controls[idx].get('price').value;
-    this.totalCKPopulator(idx, ck, price, quantity);
+    this.discountPopulator(idx, discountRate, price, quantity);
 
     // reload all
-    this.recaculator(idx, ck, price, quantity);
+    this.recaculator(idx, discountRate, price, quantity);
   }
 
   // cho
-  public totalCkValueChange(totalCk: number, idx: number) {
-    const quantity = this.itemFormArray.controls[idx].get('quantity').value;
-    const price = this.itemFormArray.controls[idx].get('price').value;
-    const ck = this.itemFormArray.controls[idx].get('ck').value;
-    this.recaculator(idx, ck, price, quantity);
+  public discountValueChange(discount: number, idx: number) {
+    console.log('discount: ' + discount);
   }
 
   public loadSerialBox() {
@@ -558,20 +555,31 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  sumTotalPriceTax(): number {
+  // sum tong
+  public sumTotalAmount(): number {
+    return this.sumColumn(this.totalAmount);
+  }
+  public sumTotalPriceTax(): number {
     return this.sumColumn(this.totalPriceTax);
   }
 
-  sumTotalQuantityTax(): number {
-    return this.sumColumn(this.totalQuantityTax);
-  }
-
-  sumTotalAmountWt(): number {
+  public sumTotalAmountWt(): number {
     return this.sumColumn(this.totalAmoutWt);
   }
 
-  sumTotalAmount(): number {
-    return this.sumColumn(this.totalAmount);
+
+
+  private errorHandler(err: any) {
+    const initialState = {
+      message: 'Something went wrong',
+      title: 'Đã có lỗi!',
+      class: 'error'
+    };
+
+    if (err.error) {
+      initialState.message = err.error.message;
+    }
+    this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
   }
 
   private resetForm() {
@@ -579,8 +587,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     this.totalAmount = new Array<number>();
     this.totalAmoutWt = new Array<number>();
     this.totalPriceTax = new Array<number>();
-    this.totalQuantityTax = new Array<number>();
-    this.priceOrigin = new Array<number>();
     this.noItemLine = false;
 
     this.clearFormArray(this.itemFormArray);
@@ -601,12 +607,11 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  private recaculator(idx: number, ck: number, price: number, quantity: number) {
+  private recaculator(idx: number, discountRate: number, price: number, quantity: number) {
     // reload all
     this.amountPopulator(idx, price, quantity);
-    this.amountWtPopulator(idx, quantity);
-    this.totalCKPopulator(idx, ck, price, quantity);
-    this.totalQuantityTaxPopulator(idx, quantity);
+    // this.amountWtPopulator(idx, quantity);
+    // this.discountPopulator(idx, discountRate, price, quantity);
   }
 
   private sumColumn(columns: Array<number>) {
@@ -620,30 +625,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     return sumPrice;
   }
   /*** END TOTAL PRICE */
-
-  private async signedInvoiceAction(invoiceId: number) {
-    let params: Array<any>;
-    // get sign paramater
-    await this.invoiceService.sign(invoiceId).subscribe(data => {
-      params = data as Array<any>;
-    });
-
-    // const alias: string = params[0] + '';
-    // const pdf64: string = params[1] + '';
-    // const signatureImg: string = params[2] + '';
-    // const location: string = '';
-    // const ahdsign: string = '';
-
-    // let signEncode: string;
-    // await this.apiService.signByToken(alias, pdf64, signatureImg, location, ahdsign).subscribe(data => {
-    //   signEncode = data as string;
-    // });
-
-    // this.apiService.signed(invoiceId, signEncode).subscribe(data => {
-
-    // });
-  }
-
   private loadGoods() {
     if (this.goodArr && this.goodArr.length > 0) {
       return;
@@ -765,7 +746,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
   private setFormWithDefaultData(data: any) {
     this.totalPriceTax = new Array<number>();
-    this.totalQuantityTax = new Array<number>();
     this.totalAmount = new Array<number>();
     this.totalAmoutWt = new Array<number>();
 
@@ -796,14 +776,12 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
       controlArray.controls[idx].get('price').setValue(item.price);
       controlArray.controls[idx].get('tax_rate').setValue(item.tax_rate);
       controlArray.controls[idx].get('quantity').setValue(item.quantity);
-      controlArray.controls[idx].get('ck').setValue(0);
-      controlArray.controls[idx].get('total_ck').setValue(0);
+      controlArray.controls[idx].get('discount_rate').setValue(0);
+      controlArray.controls[idx].get('discount').setValue(0);
 
       this.totalPriceTax.splice(idx, 0, item.tax);
-      this.totalPriceWt.splice(idx, 0, item.price_wt);
       this.totalAmount.splice(idx, 0, item.amount);
       this.totalAmoutWt.splice(idx, 0, item.amount_wt);
-      this.totalQuantityTax.splice(idx, 0, item.tax * item.quantity);
     });
 
     console.log(JSON.stringify(data.items));
@@ -819,8 +797,8 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
       tax_rate: null,
       tax_rate_code: '',
       quantity: null,
-      ck: null,
-      total_ck: null
+      discount_rate: null,
+      discount: null
     };
 
     const fg = this.formBuilder.group(emptyProductLine);
@@ -828,11 +806,8 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
     // init first value
     this.totalAmount.push(null);
-    this.totalPriceWt.push(null);
     this.totalPriceTax.push(null);
-    this.totalQuantityTax.push(null);
     this.totalAmoutWt.push(null);
-    this.priceOrigin.push(null);
   }
 
   // https://www.concretepage.com/angular-2/angular-2-4-formbuilder-example
@@ -867,7 +842,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
       customerCode: ['', Validators.compose([Validators.required])],
       customerName: ['', Validators.compose([Validators.required])],
       customerTax: ['', Validators.compose([Validators.required])],
-      customerEmail: ['', Validators.compose([Validators.required, Validators.email])],
+      customerEmail: ['', Validators.compose([Validators.email])],
       orderNo: '',
       customerOrg: ['', Validators.compose([Validators.required])],
       paymentType: ['', Validators.compose([Validators.required])],
@@ -891,65 +866,31 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     });
   }
 
+
   /**************
    * FUNCTION CACULATOR
    */
+
+  // Tiền chưa thuế
   private amountPopulator(idx: number, price: number, quantity: number) {
     price = price > 0 ? price : 0;
     quantity = quantity > 0 ? quantity : 0;
     const amount = price * quantity;
     this.totalAmount[idx] = amount;
   }
+
+  // Thành Tiền
   private amountWtPopulator(idx: number, quantity: number) {
-    quantity = quantity > 0 ? quantity : 0;
-    const priceWt = this.totalPriceWt[idx] > 0 ? this.totalPriceWt[idx] : 0;
-    const amountWt = priceWt * quantity;
 
-    this.totalAmoutWt[idx] = amountWt;
   }
 
+  // Tiền thuế
   private priceTaxPopulator(idx: number, price: number, taxRate: number) {
-    price = price > 0 ? price : 0;
-    taxRate = taxRate > 0 ? taxRate : 0;
-    const tax = (price * taxRate) / 100;
-    this.totalPriceTax[idx] = tax;
+
   }
 
-  private totalQuantityTaxPopulator(idx: number, quantity: number) {
-    quantity = quantity > 0 ? quantity : 0;
-    const tax = this.totalPriceTax[idx] > 0 ? this.totalPriceTax[idx] : 0;
-    this.totalQuantityTax[idx] = quantity * tax;
-  }
+  // Tiền chiết khấu
+  private discountPopulator(idx: number, discountRate: number, price: number, quantity: number) {
 
-  private priceWtPopulator(idx: number, price: number) {
-    price = price > 0 ? price : 0;
-    const tax = this.totalPriceTax[idx] > 0 ? this.totalPriceTax[idx] : 0;
-    this.totalPriceWt[idx] = price + tax;
-  }
-
-  private totalCKPopulator(idx: number, ckPercentage: number, price: number, quantity: number) {
-    price = price > 0 ? price : 0;
-    quantity = quantity > 0 ? quantity : 0;
-    ckPercentage = ckPercentage > 0 ? ckPercentage : 0;
-
-    const totalCk = (price * quantity * ckPercentage) / 100;
-    this.itemFormArray.controls[idx].get('total_ck').setValue(totalCk);
-
-    if (ckPercentage > 0) {
-      const newPrice = price - totalCk;
-      this.itemFormArray.controls[idx].get('price').setValue(newPrice);
-    } else {
-      this.itemFormArray.controls[idx].get('price').setValue(this.priceOrigin[idx]);
-    }
-  }
-
-  private pricePopulator(idx: number, oldPrice: number, ck: number, totalCK: number) {
-    if (oldPrice > 0 && ck > 0 && totalCK > 0) {
-      totalCK = totalCK > 0 ? totalCK : 0;
-      const newPrice = oldPrice - totalCK;
-      this.itemFormArray.controls[idx].get('price').setValue(newPrice);
-    } else {
-      this.itemFormArray.controls[idx].get('price').setValue(this.priceOrigin[idx]);
-    }
   }
 }

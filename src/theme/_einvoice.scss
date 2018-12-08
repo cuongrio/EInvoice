@@ -258,7 +258,7 @@ table {
   }
 
   tr.tr-expand + tr {
-    background: #d3e4ff;
+    transition: visibility 0s linear 0.33s, opacity 0.33s linear;
     > td {
       padding: 20px !important;
     }
