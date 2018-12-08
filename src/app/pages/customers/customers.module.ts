@@ -19,7 +19,6 @@ import { SelectModule } from 'ng2-select';
 
 import { HttpClientModule } from '@angular/common/http';
 
-import { NgxCurrencyModule } from 'ngx-currency';
 import { UtilsService } from '@app/_services/utils/utils.service';
 import { CustomersComponent } from './customers.component';
 import { CustomerFormComponent } from './components/form.component';
@@ -36,7 +35,6 @@ import { CustomersRoutes } from './customers.routing';
     SelectModule,
     HttpClientModule,
     AlertModule.forRoot(),
-    NgxCurrencyModule,
     NgbModule,
     TooltipModule.forRoot(),
     PaginationModule.forRoot(),

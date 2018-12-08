@@ -19,9 +19,10 @@ import { InvoiceFormComponent } from './components/form.component';
 
 import { InvoiceService, ValidationService, GoodService, CustomerService } from './../../_services';
 import { SelectDropDownModule } from 'ngx-select-dropdown';
-import { NgxCurrencyModule } from 'ngx-currency';
 import { UtilsService } from '@app/_services/utils/utils.service';
 import { HttpClientModule } from '@angular/common/http';
+import { NgSelectModule } from '@ng-select/ng-select';
+import {NgxMaskModule} from 'ngx-mask'
 
 @NgModule({
   imports: [
@@ -31,9 +32,10 @@ import { HttpClientModule } from '@angular/common/http';
     ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
     SelectDropDownModule,
     HttpClientModule,
+    NgSelectModule,
     AlertModule.forRoot(),
-    NgxCurrencyModule,
     NgbModule,
+    NgxMaskModule.forRoot(),
     TooltipModule.forRoot(),
     PaginationModule.forRoot(),
     BsDatepickerModule.forRoot(),

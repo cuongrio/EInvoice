@@ -13,8 +13,8 @@ export class CustomerService {
 
   // CUSTOMERS
   getList() {
-    return this.appService.get(`/customers`);
-    // return of(this.appConstant.customerList);
+    // return this.appService.get(`/customers`);
+    return of(this.appConstant.customerList);
   }
 
   retrieveById(customerId: number) {

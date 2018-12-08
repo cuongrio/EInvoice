@@ -12,8 +12,8 @@ export class GoodService {
 
   /**** LIST *** */
   getList() {
-    return this.appService.get(`/goods`);
-    // return of(this.appConstant.goodList);
+    // return this.appService.get(`/goods`);
+    return of(this.appConstant.goodList);
   }
 
   create(product: ProductModel) {

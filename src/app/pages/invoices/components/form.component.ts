@@ -1,6 +1,6 @@
 import {
   Component, OnInit, OnDestroy, TemplateRef,
-  ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, HostListener
+  ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, HostListener, AfterViewInit
 } from '@angular/core';
 import { FormGroup, FormArray, Validators, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -19,13 +19,15 @@ import { Location } from '@angular/common';
 
 declare var $: any;
 import * as moment from 'moment';
+import { thisExpression } from 'babel-types';
+import { NgSelectConfig } from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-invoice-form',
   templateUrl: './form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class InvoiceFormComponent implements OnInit, OnDestroy {
+export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
   public invoiceId: number;
   public form: string;
   public serial: string;
@@ -62,14 +64,14 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   public formPicked: any;
   public serialPicked: any;
   public customerPicked: any;
-  public htttPicked: Array<SelectData>;
+  public taxRatePicked: string;
+  public htttPicked: string;
   public references: Array<SelectData>;
   public noItemLine = false;
   public hiddenExColumn = true;
 
   // amount
   public totalAmount = new Array<number>();
-  public totalAmoutAd = new Array<number>();
   public totalPriceTax = new Array<number>();
   public totalAmoutWt = new Array<number>();
 
@@ -135,7 +137,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
 
   constructor(
-    private _el: ElementRef,
+    private config: NgSelectConfig,
     private ref: ChangeDetectorRef,
     private location: Location,
     private router: Router,
@@ -148,7 +150,10 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     private goodService: GoodService,
     private customerService: CustomerService,
     private referenceService: ReferenceService
-  ) { }
+  ) { 
+    this.config.notFoundText = 'Không có kết quả';
+    this.config.loadingText = 'Vui lòng chờ..';
+  }
 
   ngOnInit() {
     this.initRouter();
@@ -159,6 +164,12 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     this.loadGoods();
     this.loadHttt();
     this.stickyButtonAdd();
+
+    // set default value
+  }
+
+  ngAfterViewInit() {
+
   }
 
   ngOnDestroy() {
@@ -262,7 +273,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     // set items
     invoiceModel.items = dataFormItems;
     invoiceModel.items.forEach((item: ProductData, indx: number) => {
-      item.tax_rate_code = this.getVatCode(item.tax_rate + '');
+      // item.tax_rate_code = this.taxRatePicked;
       console.log(item.tax_rate_code);
       item.tax = +this.totalPriceTax[indx];
       item.amount = +this.totalAmount[indx];
@@ -422,15 +433,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     this.ref.markForCheck();
   }
 
-  public onHtttChange(htttValue: any) {
-    const item = new SelectData();
-    Object.assign(item, htttValue[0]);
-    this.addForm.patchValue({
-      paymentType: item.code
-    });
-    this.ref.markForCheck();
-  }
-
   public onFormChange(formValue: any) {
     const selectData = new SelectData();
     this.comboSerial = new Array<SelectData>();
@@ -442,7 +444,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
       this.references.forEach((item: SelectData, index: number) => {
         if (item.type === comboType) {
-          item.select_item = item.code;
           this.comboSerial.push(item);
         }
       });
@@ -473,9 +474,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
       controlArray.controls[idx].get('unit').setValue(good.unit);
       controlArray.controls[idx].get('price').setValue(good.price);
       controlArray.controls[idx].get('tax_rate').setValue(good.tax_rate);
-
       this.noItemLine = false;
-      this.priceTaxPopulator(idx, good.price, good.tax_rate);
     }
   }
 
@@ -497,46 +496,58 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
   /*** TOTAL PRICE */
   // tinh lai amount, amountwt
-  public quantityValueChange(quantity: number, idx: number) {
+  public quantityValueChange(quantityStr: string, idx: number) {
+
+    let quantity = parseInt(quantityStr);
     const price = this.itemFormArray.controls[idx].get('price').value;
     const discountRate = this.itemFormArray.controls[idx].get('discount_rate').value;
-    this.recaculator(idx, discountRate, price, quantity);
+    const taxtRate = this.itemFormArray.controls[idx].get('tax_rate').value;
+
+    this.recaculator(idx, discountRate, taxtRate, price, quantity);
   }
 
   // tinh lai tax, amount, priceWt
-  public priceValueChange(price: number, idx: number) {
+  public priceValueChange(priceStr: string, idx: number) {
+    let price = 0;
+    if (priceStr && priceStr.length > 0) {
+      const thousands = /\,/gi;
+      priceStr = priceStr.replace(thousands, '');
+      price = parseFloat(priceStr);
+    }
     const quantity = this.itemFormArray.controls[idx].get('quantity').value;
     const discountRate = this.itemFormArray.controls[idx].get('discount_rate').value;
-    this.recaculator(idx, discountRate, price, quantity);
+    const taxtRate = this.itemFormArray.controls[idx].get('tax_rate').value;
+    this.recaculator(idx, discountRate, taxtRate, price, quantity);
   }
 
   // total vat -> tinh lai tax
-  public taxRateValueChange(taxRate: number, idx: number) {
-    const price = this.itemFormArray.controls[idx].get('price').value;
-    const discountRate = this.itemFormArray.controls[idx].get('discount_rate').value;
-    const quantity = this.itemFormArray.controls[idx].get('quantity').value;
-    const taxRateCode = this.getVatCode(taxRate + '');
-    // set tax rate
-    this.itemFormArray.controls[idx].get('tax_rate_code').setValue(taxRateCode);
-
-    this.priceTaxPopulator(idx, price, taxRate);
-    this.recaculator(idx, discountRate, price, quantity);
+  public taxRateValueChange(taxChoice: SelectData, idx: number) {
+    let taxRate = 0;
+    if(taxChoice){
+      taxRate = +taxChoice.value;
+    }
+    const discount = this.itemFormArray.controls[idx].get('discount').value;
+    this.priceTaxPopulator(idx, taxRate, discount);
+    this.amountWtPopulator(idx, discount);
   }
 
   // cho
   public discountRateValueChange(discountRate: number, idx: number) {
-    console.log('discountRate: ' + discountRate);
-    const quantity = this.itemFormArray.controls[idx].get('quantity').value;
-    const price = this.itemFormArray.controls[idx].get('price').value;
-    this.discountPopulator(idx, discountRate, price, quantity);
+    this.discountPopulator(idx, discountRate);
+    const discount = this.itemFormArray.controls[idx].get('discount').value;
+    const taxRate = this.itemFormArray.controls[idx].get('tax_rate').value;
 
-    // reload all
-    this.recaculator(idx, discountRate, price, quantity);
+    this.priceTaxPopulator(idx, taxRate, discount);
+    this.amountWtPopulator(idx, discount);
   }
 
   // cho
   public discountValueChange(discount: number, idx: number) {
-    console.log('discount: ' + discount);
+    const taxRate = this.itemFormArray.controls[idx].get('tax_rate').value;
+    this.itemFormArray.controls[idx].get('discount_rate').setValue(null);
+
+    this.priceTaxPopulator(idx, taxRate, discount);
+    this.amountWtPopulator(idx, discount);
   }
 
   public loadSerialBox() {
@@ -566,8 +577,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   public sumTotalAmountWt(): number {
     return this.sumColumn(this.totalAmoutWt);
   }
-
-
 
   private errorHandler(err: any) {
     const initialState = {
@@ -599,19 +608,11 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     this.stickyButtonAdd();
   }
 
-  private getVatCode(value: string): string {
-    for (let i = 0; i < this.comboTaxRate.length; i++) {
-      if (this.comboTaxRate[i].value === value) {
-        return this.comboTaxRate[i].code;
-      }
-    }
-  }
-
-  private recaculator(idx: number, discountRate: number, price: number, quantity: number) {
+  private recaculator(idx: number, discount: number, taxRate: number, price: number, quantity: number) {
     // reload all
     this.amountPopulator(idx, price, quantity);
-    // this.amountWtPopulator(idx, quantity);
-    // this.discountPopulator(idx, discountRate, price, quantity);
+    this.priceTaxPopulator(idx, taxRate, discount);
+    this.amountWtPopulator(idx, discount);
   }
 
   private sumColumn(columns: Array<number>) {
@@ -645,11 +646,10 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
   private loadHttt() {
     this.comboHTTT = this.htttDummy();
-    this.htttPicked = new Array<SelectData>();
-    this.htttPicked.push(this.comboHTTT[0]);
-    console.log(this.htttPicked);
+    this.htttPicked = this.comboHTTT[0].value;
+    console.log('httppcicked ' + this.htttPicked);
     this.addForm.patchValue({
-      paymentType: this.htttPicked[0].code
+      paymentType: this.htttPicked
     });
   }
 
@@ -687,10 +687,15 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
         }
 
         if (selectItem.type === 'COMBO_FORM') {
-          selectItem.select_item = selectItem.value;
           this.comboForm.push(selectItem);
         }
       }
+
+      // set default value
+      // this.taxRatePicked = '10';
+      this.addForm.patchValue({
+        taxtRate: '10'
+      })
     });
   }
 
@@ -818,17 +823,14 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
     // CK/TM,CK,TM mặc định CK/TM
     selectItem.code = 'CK/TM';
-    selectItem.select_item = 'CK/TM';
     items.push(selectItem);
 
     selectItem = new SelectData();
     selectItem.code = 'CK';
-    selectItem.select_item = 'CK';
     items.push(selectItem);
 
     selectItem = new SelectData();
     selectItem.code = 'CK/TM';
-    selectItem.select_item = 'CK/TM';
     items.push(selectItem);
     return items;
   }
@@ -880,17 +882,24 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   }
 
   // Thành Tiền
-  private amountWtPopulator(idx: number, quantity: number) {
-
+  private amountWtPopulator(idx: number, discount: number) {
+    discount = discount > 0 ? discount : 0;
+    const amountWt = (this.totalAmount[idx] - discount) + this.totalPriceTax[idx];
+    this.totalAmoutWt[idx] = amountWt;
   }
 
   // Tiền thuế
-  private priceTaxPopulator(idx: number, price: number, taxRate: number) {
-
+  private priceTaxPopulator(idx: number, taxRate: number, discount: number) {
+    taxRate = taxRate > 0 ? taxRate : 0;
+    discount = discount > 0 ? discount : 0;
+    const tax = ((this.totalAmount[idx] - discount) * taxRate) / 100;
+    this.totalPriceTax[idx] = tax;
   }
 
   // Tiền chiết khấu
-  private discountPopulator(idx: number, discountRate: number, price: number, quantity: number) {
-
+  private discountPopulator(idx: number, discountRate: number) {
+    discountRate = discountRate > 0 ? discountRate : 0;
+    const discount = (this.totalAmount[idx] * discountRate) / 100;
+    this.itemFormArray.controls[idx].get('discount').setValue(discount);
   }
 }

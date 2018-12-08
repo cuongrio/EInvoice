@@ -71,6 +71,65 @@
   }
 }
 
+/**SELECT***/
+.form-group{
+  .ng-select-single{
+    .ng-select-container{
+        height: 31px !important;
+        min-height: unset !important;
+  
+        .ng-clear-wrapper{
+          width: 10px !important;
+          .ng-clear{
+            line-height: unset !important;
+          }
+        }
+  
+        .ng-value{
+          font-size: 13px !important;
+        }
+  
+        .ng-input{
+          top: 0 !important;
+          > input{
+            padding: 5px 0px !important;
+            font-size: 13px !important;
+          }
+        }
+    }
+    .ng-dropdown-panel {
+      .ng-dropdown-panel-items{
+        .ng-option{
+          font-size: 13px !important;
+        }
+      }
+    }  
+  }  
+}
+
+.product-item__wrapper{
+  .ng-select-single{
+    .ng-select-container{
+      height: unset !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+
+      .ng-clear-wrapper{
+        width: 8px !important;
+      }
+
+      .ng-input{
+        top: 0 !important;
+        > input{
+          padding: 5px 0px !important;
+          font-size: 13px !important;
+        }
+      }
+    }
+  }
+}
+
+
 .required:after {
   content: "*";
 }
@@ -275,45 +334,8 @@ table {
   border-right: 0 !important;
 }
 
-/****SCROLLBAR***/
-.select2-results__options {
-  .select2-results__option {
-    padding: 4px 8px !important;
-  }
-  &::-webkit-scrollbar {
-    width: 4px;
-    opacity: 0.7;
-  }
 
-  &::-webkit-scrollbar-thumb {
-    -webkit-box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.3);
-    background-color: #e9ecef;
-  }
-}
 
-.ein-select2-container {
-  width: 100%;
-  display: flex;
-  align-items: stretch;
-  flex-flow: row nowrap;
-  justify-content: space-between;
-
-  .ein-select {
-    padding: 0.56rem 0.75rem;
-    border: 1px solid #d9d9d9;
-    color: #333;
-    font-size: 0.7rem;
-    width: 50%;
-
-    &:first-child {
-      margin-right: 12px;
-    }
-  }
-
-  .select2-selection {
-    border-radius: 4px;
-  }
-}
 
 .search-box {
   margin-bottom: 8px;
@@ -892,6 +914,7 @@ label.error {
           input.form-control {
             border-width: 0 !important;
             padding-left: 5px;
+            min-height: 36px;
 
             &:focus {
               outline: 1px !important;

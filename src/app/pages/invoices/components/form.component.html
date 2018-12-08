@@ -94,7 +94,7 @@
                         </div>
                         <div class="col-md-8 col-lg-8">
                           <div class="input-group">
-                            <input appAutofocus [readonly]="viewMode" formControlName="invoiceDate" class="form-control form-control-sm text-bold"
+                            <input [readonly]="viewMode" formControlName="invoiceDate" class="form-control form-control-sm text-bold"
                               [ngClass]="{ 'is-invalid': submitted && addForm.controls['invoiceDate'].errors }"
                               placeholder="DD/MM/YYYY" triggers="none" [bsConfig]="bsConfig" #dinvoiceDate="bsDatepicker"
                               bsDatepicker />
@@ -123,7 +123,7 @@
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label"><label class="required">Mẫu số</label></div>
                         <div class="col-md-8 col-lg-8">
-                          <div class="input-group input-group-sm c-group">
+                          <!-- <div class="input-group input-group-sm c-group">
                             <div class="input-group-prepend" [ngClass]="{ 'is-viewable': viewMode }">
                               <input formControlName="form" readonly="readonly" type="text" class="form-control form-control-sm form-control-custom" />
                             </div>
@@ -131,7 +131,10 @@
                               (valueChange)="onFormChange($event)" [config]="configSingleBox" (value)="formPicked"
                               [options]="comboForm">
                             </ngx-select-dropdown>
-                          </div>
+                          </div> -->
+                          <ng-select formControlName="form"
+                            [items]="comboForm" [clearable]="false" [searchable]="false" bindLabel="code" bindValue="value">
+                          </ng-select>
                           <app-control-message *ngIf="submitted" [control]="addForm.controls['form']"></app-control-message>
                         </div>
                       </div>
@@ -141,14 +144,17 @@
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label"><label class="required">Ký hiệu</label></div>
                         <div class="col-md-8 col-lg-8">
-                          <div class="input-group input-group-sm c-group">
+                          <!-- <div class="input-group input-group-sm c-group">
                             <div class="input-group-prepend" [ngClass]="{ 'is-viewable': viewMode }">
                               <input formControlName="serial" readonly="readonly" type="text" class="form-control form-control-sm form-control-custom" />
                             </div>
                             <ngx-select-dropdown *ngIf="!viewMode" (value)="serialPicked" [multiple]="false"
                               (valueChange)="onSerialChange($event)" [config]="configSingleBox" [options]="comboSerial">
                             </ngx-select-dropdown>
-                          </div>
+                          </div> -->
+                          <ng-select formControlName="serial"
+                            [items]="comboSerial" [clearable]="false" [searchable]="false" bindLabel="code" bindValue="value">
+                          </ng-select>
                           <app-control-message *ngIf="submitted" [control]="addForm.controls['serial']"></app-control-message>
                         </div>
                       </div>
@@ -244,14 +250,17 @@
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label"><label class="required">HTTT</label></div>
                         <div class="col-md-8 col-lg-8">
-                          <div class="input-group input-group-sm c-group">
+                          <!-- <div class="input-group input-group-sm c-group">
                             <div class="input-group-prepend" [ngClass]="{ 'is-viewable': viewMode }">
                               <input formControlName="paymentType" readonly="readonly" type="text" class="form-control form-control-sm form-control-custom" />
                             </div>
                             <ngx-select-dropdown *ngIf="!viewMode" [(value)]="htttPicked" [multiple]="false"
                               (valueChange)="onHtttChange($event)" [config]="configSingleBox" [options]="comboHTTT">
                             </ngx-select-dropdown>
-                          </div>
+                          </div> -->
+                          <ng-select formControlName="paymentType" [(ngModel)]="htttPicked"
+                            [items]="comboHTTT" [clearable]="false" [searchable]="false" bindLabel="code" bindValue="value">
+                          </ng-select>
                           <app-control-message *ngIf="submitted" [control]="addForm.controls['paymentType']"></app-control-message>
                         </div>
                       </div>
@@ -298,13 +307,13 @@
                           <th class="bg-smoke" style="width: 20px;">#</th>
                           <th style="width: 120px;">Mã HH</th>
                           <th style="width: 500px;">Nội dung</th>
-                          <th style="width: 80px;">ĐV</th>
-                          <th style="width: 80px;" class="text-right">Số lượng</th>
-                          <th style="width: 120px;" class="text-right">Đơn giá</th>
+                          <th style="width: 100px;">ĐV</th>
+                          <th style="width: 100px;" class="text-right">Số lượng</th>
+                          <th style="width: 140px;" class="text-right">Đơn giá</th>
                           <th style="width: 140px;" class="text-right">Tiền chưa thuế</th>
                           <th *ngIf="!hiddenExColumn" style="width: 80px;" class="text-right">% CK</th>
-                          <th *ngIf="!hiddenExColumn" style="width: 120px;" class="text-right">Tiền CK</th>
-                          <th style="width: 80px;" class="text-right">% Thuế</th>
+                          <th *ngIf="!hiddenExColumn" style="width: 140px;" class="text-right">Tiền CK</th>
+                          <th style="width: 60px;" class="text-right">% Thuế</th>
                           <th style="width: 140px;" class="text-right">Tiền thuế</th>
                           <th style="width: 140px;" class="text-right">Thành tiền</th>
 
@@ -338,16 +347,13 @@
                           </td>
 
                           <td class="no-padding">
-                            <input formControlName="quantity" [readonly]="viewMode" currencyMask 
-                            [options]="{ prefix: '', thousands: '.', allowNegative: false, precision: 0  }"
-                            (input)="quantityValueChange($event.target.value, idx)"
+                            <input formControlName="quantity" mask="000000" (input)="quantityValueChange($event.target.value, idx)"
                               class="form-control form-control-sm text-right" type="text" />
                           </td>
 
                           <td class="no-padding">
-                            <input formControlName="price" [readonly]="viewMode" currencyMask [options]="{ prefix: 'đ', allowNegative: false, precision: 0  }"
-                              (input)="priceValueChange($event.target.value, idx)" class="form-control form-control-sm text-right"
-                              type="text" />
+                            <input formControlName="price" [readonly]="viewMode" mask="000,000,000" (input)="priceValueChange($event.target.value, idx)"
+                              class="form-control form-control-sm text-right" type="text" />
                           </td>
 
                           <td class="no-padding text-right is-viewable">
@@ -355,19 +361,19 @@
                           </td>
 
                           <td [(hidden)]="hiddenExColumn" class="no-padding">
-                            <input formControlName="discount_rate" [readonly]="viewMode" (input)="discountRateValueChange($event.target.value, idx)"
+                            <input formControlName="discount_rate" [readonly]="viewMode" mask="00" (input)="discountRateValueChange($event.target.value, idx)"
                               class="form-control form-control-sm text-right" type="text" />
                           </td>
 
                           <td [(hidden)]="hiddenExColumn" class="no-padding">
-                            <input formControlName="discount" [readonly]="viewMode" currencyMask [options]="{ prefix: '',decimal: '', thousands: '', allowNegative: false, precision: 0  }"
-                              (input)="discountValueChange($event.target.value, idx)" class="form-control form-control-sm text-right"
-                              type="text" />
+                            <input formControlName="discount" [readonly]="viewMode" mask="000,000,000" (input)="discountValueChange($event.target.value, idx)"
+                              class="form-control form-control-sm text-right" type="text" />
                           </td>
 
                           <td class="no-padding vat-line">
-                            <input formControlName="tax_rate" [readonly]="viewMode" (input)="taxRateValueChange($event.target.value, idx)"
-                              class="form-control form-control-sm text-right text-bold" list="vatOptions">
+                            <ng-select formControlName="tax_rate" (change)="taxRateValueChange($event, idx)"
+                              [(ngModel)]="taxRatePicked" [items]="comboTaxRate" [clearable]="false" [searchable]="false" bindLabel="code" bindValue="value">
+                            </ng-select>
                           </td>
 
                           <td class="no-padding text-right is-viewable">
@@ -402,20 +408,18 @@
                           </th>
                           <th *ngIf="!hiddenExColumn" class="text-right"></th>
                           <th *ngIf="!hiddenExColumn" class="text-right"></th>
-
+                          <th></th>
                           <th class="text-right">
-
+                            {{ sumTotalPriceTax() | currency:'VND':'symbol':'4.0-2'}}
                           </th>
-                          <th></th>
-                          <th></th>
+                          <th class="text-right">
+                            {{ sumTotalAmountWt() | currency:'VND':'symbol':'4.0-2'}}
+                          </th>
                         </tr>
                       </tfoot>
                     </table>
                   </div>
                 </div>
-                <datalist id="vatOptions">
-                  <option *ngFor="let vat of comboTaxRate" value="{{vat.value}}">{{vat.code}}</option>
-                </datalist>
               </form>
             </div>
           </div>

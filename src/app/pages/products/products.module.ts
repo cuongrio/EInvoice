@@ -18,7 +18,6 @@ import { SelectDropDownModule } from 'ngx-select-dropdown';
 import { SelectModule } from 'ng2-select';
 
 import { HttpClientModule } from '@angular/common/http';
-import { NgxCurrencyModule } from 'ngx-currency';
 import { UtilsService } from '@app/_services/utils/utils.service';
 import { ProductsComponent } from './products.component';
 import { ProductFormComponent } from './components/form.component';
@@ -35,7 +34,6 @@ import { ValidationService, GoodService } from '@app/_services';
     SelectModule,
     HttpClientModule,
     AlertModule.forRoot(),
-    NgxCurrencyModule,
     NgbModule,
     TooltipModule.forRoot(),
     PaginationModule.forRoot(),

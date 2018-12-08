@@ -16,7 +16,7 @@ export class ReferenceService {
   }
 
   referenceInfo() {
-    return this.appService.get(`/references`);
-    // return of(this.appConstant.references);
+    // return this.appService.get(`/references`);
+    return of(this.appConstant.references);
   }
 }
