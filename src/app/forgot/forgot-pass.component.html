@@ -1,4 +1,4 @@
-<div class="page-login">
+<div class="page-authen">
     <div class="container-fluid page-body-wrapper full-page-wrapper">
         <div class="content-wrapper auth p-0 theme-two">
             <div class="row d-flex align-items-stretch">
@@ -8,24 +8,62 @@
                 </div>
                 <div class="col-12 col-md-8 h-100 bg-white">
                     <div class="auto-form-wrapper d-flex align-items-center justify-content-center flex-column">
-                        <form class="forgotForm">
+                        <form *ngIf="screen === 1" class="authen-form" [formGroup]="forgotForm" (ngSubmit)="onSendSubmit(forgotForm.value)">
+                            <div *ngIf="errorMessage" class="alert alert-danger">
+                                <i class="fas fa-exclamation-triangle"></i> {{errorMessage}}
+                            </div>
                             <h3 class="mr-auto">Quên mật khẩu tài khoản</h3>
                             <p class="mb-5 mr-auto">
                                 Để lấy lại mật khẩu Bạn vui lòng nhập địa chỉ Email của mình vào đây
+                                <br /> Hoặc <a routerLink="/login">Đăng nhập?</a>
                             </p>
                             <div class="form-group">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-envelope"></i></span>
                                     </div>
-                                    <input type="text" placeholder="Email" class="form-control" />
+                                    <input type="text" formControlName="email" placeholder="Email" class="form-control" />
                                 </div>
+                                <app-control-message *ngIf="submitted" [control]="forgotForm.controls['email']"></app-control-message>
                             </div>
                             <div class="form-group">
                                 <button [disabled]="isLoading" type="submit" class="btn btn-primary submit-btn">
                                     <i *ngIf="isLoading" class="fa fa-spinner fa-spin"></i>
                                     <i *ngIf="!isLoading" class="fa fa-sign-in"></i>
                                     {{ isLoading ? 'Vui lòng chờ...' : 'Gửi yêu cầu' }}
+                                </button>
+                            </div>
+                            <div class="wrapper mt-5 text-gray">
+                                <p class="footer-text">Copyright © 2018 EInvoice System. All rights reserved.</p>
+                            </div>
+                        </form>
+
+                        <form *ngIf="screen === 2" class="authen-form" [formGroup]="securityForm" (ngSubmit)="onCheckSubmit(securityForm.value)">
+                            <div *ngIf="errorMessage" class="alert alert-danger">
+                                <i class="fas fa-exclamation-triangle"></i> {{errorMessage}}
+                            </div>
+                            <h3 class="mr-auto">Xác nhận mã bảo mật</h3>
+                            <p class="mb-5 mr-auto">
+                                Vui lòng nhập mật mã đã gửi tới email của bạn.
+                                <br /> Hoặc <a routerLink="/login">Đăng nhập?</a>
+                            </p>
+                            <p class="mb-3 text-bold">
+                                {{emailRequest}}
+                            </p>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                    </div>
+                                    <input type="text" formControlName="secure_code" placeholder="Mã bảo mật" class="form-control" />
+                                </div>
+                                <app-control-message *ngIf="submitted" [control]="securityForm.controls['secure_code']"></app-control-message>
+                            </div>
+                            <div class="form-group">
+                                <button [disabled]="isLoading" type="submit" class="btn btn-primary submit-btn">
+                                    <i *ngIf="isLoading" class="fa fa-spinner fa-spin"></i>
+                                    <i *ngIf="!isLoading" class="fa fa-sign-in"></i>
+                                    {{ isLoading ? 'Vui lòng chờ...' : 'Xác nhận' }}
                                 </button>
                             </div>
                             <div class="wrapper mt-5 text-gray">

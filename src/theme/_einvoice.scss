@@ -708,12 +708,16 @@ table {
   }
 }
 
+.alert{
+  word-break: break-word;
+}
+
 /***LOGIN FORM***/
-.page-login {
+.page-authen {
   .content-wrapper {
     max-width: unset !important;
   }
-  .loginForm {
+  .authen-form {
     .form-group {
       margin-bottom: 1rem !important;
       .form-control {
@@ -735,6 +739,7 @@ table {
     }
   }
 }
+  
 .no-border {
   border: 0 !important;
 }

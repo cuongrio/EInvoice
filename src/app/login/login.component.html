@@ -1,4 +1,4 @@
-<div class="page-login">
+<div class="page-authen">
     <div class="container-fluid page-body-wrapper full-page-wrapper">
         <div class="content-wrapper auth p-0 theme-two">
             <div class="row d-flex align-items-stretch">
@@ -12,7 +12,7 @@
                             <p>Bạn chưa có tài khoản?</p>
                             <a routerLink="/register" class="btn get-started-btn">ĐĂNG KÝ</a>
                         </div> -->
-                        <form class="loginForm" [formGroup]="loginForm" (ngSubmit)="onSubmit(loginForm.value)">
+                        <form class="authen-form" [formGroup]="loginForm" (ngSubmit)="onSubmit(loginForm.value)">
                             <div class="alert alert-danger" [hidden]="!error || isLoading">
                                 <i class="fas fa-exclamation-triangle"></i> Tài khoản đăng nhập và mật khẩu không
                                 đúng!!!

@@ -26,14 +26,14 @@ import { NotFoundComponent } from './exception/not-found.component';
 import { BadRequestComponent } from './exception/bad-request.component';
 import { ServerErrorComponent } from './exception/server-error.component';
 import { ForgotPassComponent } from './forgot/forgot-pass.component';
-import { ValidationService } from './_services';
+import { ValidationService, ForgotPassService } from './_services';
 
 import { CookieService } from 'ngx-cookie-service';
 import { AppService } from './_services/core/app.service';
 import { CoreModule } from './core/core.module';
 import { HttpService } from './core/http/http.service';
 import { AppConstant } from './_mock/mock.data';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { AppDirectiveModule } from './_directives/app-directive.module';
 
 @NgModule({
@@ -67,7 +67,7 @@ import { AppDirectiveModule } from './_directives/app-directive.module';
     AppDirectiveModule
   ],
 
-  providers: [ValidationService, CookieService, HttpService, AppService, AppConstant],
+  providers: [ValidationService, ForgotPassService, CookieService, HttpService, AppService, AppConstant],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
