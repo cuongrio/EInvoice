@@ -28,7 +28,8 @@
             <button type="button" [disabled]="viewMode" (click)="isPreview=false; ngAddForm.ngSubmit.emit()" class="btn btn-md btn-success">
               <i class="fas fa-save"></i> Lưu
             </button>
-            <button type="button" [disabled]="previewLoading || viewMode" (click)="isPreview=true; ngAddForm.ngSubmit.emit()" class="btn btn-md btn-outline-primary">
+            <button type="button" [disabled]="previewLoading || viewMode" (click)="isPreview=true; ngAddForm.ngSubmit.emit()"
+              class="btn btn-md btn-outline-primary">
               <i *ngIf="previewLoading" class="fa fa-spinner fa-spin"></i>
               <i *ngIf="!previewLoading" class="fas fa-info"></i>
               Xem
@@ -38,54 +39,48 @@
               <i class="fas fa-key"></i> Ký
             </button>
             <ng-template #listToken>
-                <ngx-spinner [visible]="signButtonLoading" [config]="spinnerConfig"></ngx-spinner>
-                <div class="modal-header">
-                  <h4 class="modal-title pull-left">Xác nhận token</h4>
-                  <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div class="modal-body">
-                  <p *ngIf="signErrorMessage" class="error">
-                    {{signErrorMessage}}
-                  </p>
-                  <ng-select [loading]="signTokenLoading"
-                        [items]="listTokenAvaiable"
-                        (change)="onTokenChange($event)" 
-                        [clearable]="false"
-                        [searchable]="false" 
-                        bindLabel="name" 
-                        bindValue="alias">
-                        <ng-template ng-option-tmp let-item="item">
-                          <div class="avaible-tokens">
-                            <div *ngIf="item.isExpired;else isExpried">
-                                <div class="token-name is-expired"><b>Tên: </b>{{item.name}}</div>
-                                <label class="is-expired">
-                                    <b>Hiệu lực: </b> {{item.effectiveDate}}
-                                </label>
-                            </div>
-                            
-                            <ng-template #isExpried>
-                                <div class="token-name is-effective"><b>Tên: </b>{{item.name}}</div>
-                                <label class="is-effective">
-                                    <b>Hiệu lực: </b> {{item.effectiveDate}}
-                                </label>
-                            </ng-template>
-                          </div>
-                        </ng-template>
-                      </ng-select>
+              <ngx-spinner [visible]="signButtonLoading" [config]="spinnerConfig"></ngx-spinner>
+              <div class="modal-header">
+                <h4 class="modal-title pull-left">Xác nhận token</h4>
+                <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p *ngIf="signErrorMessage" class="error">
+                  {{signErrorMessage}}
+                </p>
+                <ng-select [loading]="signTokenLoading" [items]="listTokenAvaiable" (change)="onTokenChange($event)"
+                  [clearable]="false" [searchable]="false" bindLabel="name" bindValue="alias">
+                  <ng-template ng-option-tmp let-item="item">
+                    <div class="avaible-tokens">
+                      <div *ngIf="item.isExpired;else isExpried">
+                        <div class="token-name is-expired"><b>Tên: </b>{{item.name}}</div>
+                        <label class="is-expired">
+                          <b>Hiệu lực: </b> {{item.effectiveDate}}
+                        </label>
+                      </div>
 
-                  <div class="btn-group">
-                    <button type="button" [disabled]="signButtonDisabled" class="btn btn-primary mr-1 no-br"
-                      (click)="tokenChoiceClicked()">
-                      <i *ngIf="signButtonLoading" class="fa fa-spinner fa-spin"></i>
-                      <i *ngIf="!signButtonLoading" class="fas fa-key"></i>
-                      {{ signButtonLoading ? 'Vui lòng chờ...' : 'Đồng ý' }}
-                    </button>
-                    <button type="button" class="btn btn-default" (click)="modalRef.hide()">Bỏ qua</button>
-                  </div>
+                      <ng-template #isExpried>
+                        <div class="token-name is-effective"><b>Tên: </b>{{item.name}}</div>
+                        <label class="is-effective">
+                          <b>Hiệu lực: </b> {{item.effectiveDate}}
+                        </label>
+                      </ng-template>
+                    </div>
+                  </ng-template>
+                </ng-select>
+
+                <div class="btn-group">
+                  <button type="button" [disabled]="signButtonDisabled" class="btn btn-primary mr-1 no-br" (click)="tokenChoiceClicked()">
+                    <i *ngIf="signButtonLoading" class="fa fa-spinner fa-spin"></i>
+                    <i *ngIf="!signButtonLoading" class="fas fa-key"></i>
+                    {{ signButtonLoading ? 'Vui lòng chờ...' : 'Ký' }}
+                  </button>
+                  <button type="button" class="btn btn-default" (click)="modalRef.hide()">Bỏ qua</button>
                 </div>
-              </ng-template>
+              </div>
+            </ng-template>
 
             <button [disabled]="disabledInCD" (click)="inCDClicked()" type="button" class="btn btn-md btn-outline-primary"><i
                 class="fas fa-print"></i>
@@ -139,15 +134,6 @@
 
                     <div class="col-md-3 col-lg-3">
                       <div class="form-group row">
-                        <div class="col-md-4 col-lg-4 col-form-label"><label>Số hóa đơn</label></div>
-                        <div class="col-md-8 col-lg-8">
-                          <input formControlName="invoiceNo" readonly="readonly" type="text" class="form-control form-control-sm" />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="col-md-3 col-lg-3">
-                      <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label"><label class="required">Mẫu số</label></div>
                         <div class="col-md-8 col-lg-8">
                           <ng-select *ngIf="!viewMode" formControlName="form" [loading]="formLoading" [ngClass]="{ 'is-viewable': viewMode }"
@@ -176,6 +162,14 @@
                         </div>
                       </div>
                     </div>
+                    <div class="col-md-3 col-lg-3">
+                      <div class="form-group row">
+                        <div class="col-md-4 col-lg-4 col-form-label"><label>Số hóa đơn</label></div>
+                        <div class="col-md-8 col-lg-8">
+                          <input formControlName="invoiceNo" readonly="readonly" type="text" class="form-control form-control-sm" />
+                        </div>
+                      </div>
+                    </div>
 
                     <div class="col-md-3 col-lg-3">
                       <div class="form-group row">
@@ -185,11 +179,11 @@
                             (change)="onCustomerChange($event)" [items]="customerArr" [virtualScroll]="true" bindLabel="customer_code"
                             bindValue="customer_code">
                             <ng-template ng-header-tmp>
-                                <small class="form-text text-muted">Tổng: <b>{{customerArr.length}}</b></small>
+                              <small class="form-text text-muted">Tổng: <b>{{customerArr.length}}</b></small>
                             </ng-template>
                             <ng-template ng-option-tmp let-item="item" let-index="index">
                               <p></p>
-                                <b>{{item.customer_code}}</b> {{item.customer_name}}
+                              <b>{{item.customer_code}}</b> {{item.customer_name}}
                             </ng-template>
                           </ng-select>
                           <input type="text" *ngIf="viewMode" readonly="readonly" formControlName="customerCode" class="form-control form-control-sm" />
@@ -205,10 +199,10 @@
                           <ng-select *ngIf="!viewMode" formControlName="customerTax" (change)="onCustomerChange($event)"
                             [items]="customerArr" [virtualScroll]="true" bindLabel="tax_code" [addTag]="true" bindValue="tax_code">
                             <ng-template ng-header-tmp>
-                                <small class="form-text text-muted">Tổng: <b>{{customerArr.length}}</b></small>
+                              <small class="form-text text-muted">Tổng: <b>{{customerArr.length}}</b></small>
                             </ng-template>
                             <ng-template ng-option-tmp let-item="item" let-index="index">
-                                <b>{{item.tax_code}}</b> {{item.customer_name}}
+                              <b>{{item.tax_code}}</b> {{item.customer_name}}
                             </ng-template>
                           </ng-select>
                           <input type="text" *ngIf="viewMode" readonly="readonly" formControlName="customerTax" class="form-control form-control-sm" />
@@ -354,10 +348,10 @@
                               (change)="onGoodlineChange($event, idx)" [virtualScroll]="true" bindLabel="goods_code"
                               bindValue="goods_code">
                               <ng-template ng-header-tmp>
-                                  <small class="form-text text-muted">Tổng: <b>{{goodArr.length}}</b></small>
+                                <small class="form-text text-muted">Tổng: <b>{{goodArr.length}}</b></small>
                               </ng-template>
                               <ng-template ng-option-tmp let-item="item" let-index="index">
-                                  <b>{{item.goods_code}}</b> {{item.goods_name}}
+                                <b>{{item.goods_code}}</b> {{item.goods_name}}
                               </ng-template>
                             </ng-select>
                             <input *ngIf="viewMode" readonly="readonly" formControlName="item_code" class="form-control form-control-sm"
@@ -457,6 +451,17 @@
                   </div>
                 </div>
               </form>
+              <div class="row text-center">
+                <div class="btn-group btn-form__footer">
+                  <button type="button" [disabled]="viewMode" (click)="isPreview=false; ngAddForm.ngSubmit.emit()"
+                    class="btn btn-md btn-success">
+                    <i class="fas fa-save"></i> Lưu
+                  </button>
+                  <button (click)="backClicked()" type="button" class="btn btn-md ml-2 btn-light">
+                      <i class="fas fa-times-circle"></i> Bỏ qua
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

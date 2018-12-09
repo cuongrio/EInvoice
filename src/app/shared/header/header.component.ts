@@ -36,16 +36,16 @@ export class HeaderComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    $(window).scroll(function() {
-      if (window.matchMedia('(min-width: 992px)').matches) {
-        const header = '.navbar.horizontal-layout';
-        if ($(window).scrollTop() >= 1) {
-          $(header).addClass('fixed-on-scroll');
-        } else {
-          $(header).removeClass('fixed-on-scroll');
-        }
-      }
-    });
+    // $(window).scroll(function() {
+    //   if (window.matchMedia('(min-width: 992px)').matches) {
+    //     const header = '.navbar.horizontal-layout';
+    //     if ($(window).scrollTop() >= 1) {
+    //       $(header).addClass('fixed-on-scroll');
+    //     } else {
+    //       $(header).removeClass('fixed-on-scroll');
+    //     }
+    //   }
+    // });
   }
 
   logoutClicked() {

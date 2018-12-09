@@ -214,7 +214,7 @@
                           (click)="tokenChoiceClicked()">
                           <i *ngIf="signButtonLoading" class="fa fa-spinner fa-spin"></i>
                           <i *ngIf="!signButtonLoading" class="fas fa-key"></i>
-                          {{ signButtonLoading ? 'Vui lòng chờ...' : 'Đồng ý' }}
+                          {{ signButtonLoading ? 'Vui lòng chờ...' : 'Ký' }}
                         </button>
                         <button type="button" class="btn btn-default" (click)="modalRef.hide()">Bỏ qua</button>
                       </div>
@@ -254,7 +254,6 @@
                     <th class="text-right">%VAT</th>
                     <th class="text-right">TS thuế</th>
                     <th class="text-right">Tổng tiền</th>
-                    <th></th>
                   </tr>
                 </thead>
               </table>

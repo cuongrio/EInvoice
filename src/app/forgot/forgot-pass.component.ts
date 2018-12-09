@@ -1,8 +1,9 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { AuthenticationService } from '@app/core/authentication/authentication.service';
 import { ForgotPassService } from './../_services/core/forgot.service';
+import { Subscription } from 'rxjs';
+import { ValidationService } from '@app/_services/core/validator.service';
 
 
 @Component({
@@ -14,21 +15,29 @@ export class ForgotPassComponent implements OnInit {
   public submitted = false;
   public errorMessage: string;
   public screen = 1;
-  public emailRequest: string;
 
-  forgotForm: FormGroup;
-  securityForm: FormGroup;
+  public emailRequest: string;
+  public secureCode: string;
+
+  public forgotForm: FormGroup;
+  public securityForm: FormGroup;
+  public confirmPassForm: FormGroup;
+
+  private subscription: Subscription;
   constructor(
     private ref: ChangeDetectorRef,
+    private validationService: ValidationService,
     private formBuilder: FormBuilder,
     private forgotService: ForgotPassService,
-    private router: Router,
-    private authenticationService: AuthenticationService
+    private activatedRoute: ActivatedRoute,
   ) {
   }
 
   ngOnInit() {
+    this.createConfirmPassForm();
     this.createSendForm();
+    this.createCheckTokenForm();
+    this.initRouter();
   }
 
   onSendSubmit(dataForm: any) {
@@ -41,10 +50,9 @@ export class ForgotPassComponent implements OnInit {
     this.emailRequest = dataForm.email;
     this.forgotService.sendReset(dataForm.email).subscribe(data => {
       this.errorMessage = '';
-      this.screen = 2;
       this.submitted = false;
-      this.createCheckTokenForm();
       this.resetLoading();
+      this.screen = 4;
     }, err => {
       this.resetLoading();
       this.submitted = false;
@@ -67,11 +75,11 @@ export class ForgotPassComponent implements OnInit {
       secure_code: dataForm.secure_code
     };
 
+    this.secureCode = dataForm.secure_code;
     this.forgotService.checkReset(body).subscribe(data => {
       this.errorMessage = '';
-      this.screen = 3;
+      this.screen = 2;
       this.submitted = false;
-      // this.createCheckTokenForm();
       this.resetLoading();
     }, err => {
       this.resetLoading();
@@ -80,6 +88,83 @@ export class ForgotPassComponent implements OnInit {
         this.errorMessage = err.error.message;
       }
     });
+  }
+
+  onDoResetSubmit(dataForm: any) {
+    this.submitted = true;
+    this.isLoading = true;
+    if (this.confirmPassForm.invalid) {
+      this.resetLoading();
+      return;
+    }
+
+    const body = {
+      email: this.emailRequest,
+      secure_code: this.secureCode,
+      new_password: dataForm.password
+    };
+
+    console.log(body);
+
+    this.forgotService.doReset(body).subscribe(data => {
+      this.errorMessage = '';
+      this.screen = 3;
+      this.submitted = false;
+      this.resetLoading();
+    }, err => {
+      this.resetLoading();
+      this.submitted = false;
+      if (err.error) {
+        this.errorMessage = err.error.message;
+      }
+    });
+  }
+
+  private initRouter() {
+    this.activatedRoute.queryParamMap.subscribe(queryParams => {
+      const email = queryParams.get('email');
+      const secure = queryParams.get('secure');
+      if (email && secure) {
+        const body = {
+          email: email,
+          secure_code: secure
+        };
+
+        // save to context
+        this.emailRequest = email;
+        this.secureCode = secure;
+
+        this.forgotService.checkReset(body).subscribe(data => {
+          this.errorMessage = '';
+          this.screen = 2;
+          this.submitted = false;
+          this.resetLoading();
+        }, err => {
+          this.initFirstScreenDefault();
+          this.forgotForm.patchValue({
+            email: email
+          });
+
+          if (err.error) {
+            this.errorMessage = err.error.message;
+          } else {
+            this.errorMessage = 'Yêu cầu reset mật khẩu không đúng hoặc hết hạn';
+          }
+          this.ref.markForCheck();
+        });
+      } else {
+        this.initFirstScreenDefault();
+      }
+    }, err => {
+      this.initFirstScreenDefault();
+    });
+  }
+
+  private initFirstScreenDefault() {
+    this.screen = 1;
+    this.submitted = false;
+    this.isLoading = false;
+    this.createSendForm();
   }
 
   private resetLoading() {
@@ -97,7 +182,25 @@ export class ForgotPassComponent implements OnInit {
 
   private createCheckTokenForm() {
     this.securityForm = this.formBuilder.group({
+      email: '',
       secure_code: ['', Validators.compose([Validators.required])]
     });
+  }
+
+  private createConfirmPassForm() {
+    this.confirmPassForm = this.formBuilder.group({
+      password: ['', Validators.compose([
+        Validators.required,
+        this.validationService.passwordValidator
+      ])],
+      confirmPass: ''
+    }, { validators: this.checkPasswords });
+  }
+
+  private checkPasswords(group: FormGroup) {
+    const password = group.controls.password.value;
+    const confirmPass = group.controls.confirmPass.value;
+
+    return password === confirmPass ? null : { notSame: true };
   }
 }

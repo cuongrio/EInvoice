@@ -868,6 +868,12 @@ label.error {
   }
 }
 
+.btn-form__footer{
+  text-align: center;
+  margin: 0 auto 30px;
+}
+
+
 /***INVOICE FORM***/
 .invoice__wrapper {
   &.card-body {
@@ -922,7 +928,6 @@ label.error {
     }
 
     .product-item__wrapper {
-      min-height: 280px;
       .table thead th {
         padding: 16px 4px !important;
       }

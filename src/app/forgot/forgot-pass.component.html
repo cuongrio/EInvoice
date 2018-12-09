@@ -29,7 +29,7 @@
                             <div class="form-group">
                                 <button [disabled]="isLoading" type="submit" class="btn btn-primary submit-btn">
                                     <i *ngIf="isLoading" class="fa fa-spinner fa-spin"></i>
-                                    <i *ngIf="!isLoading" class="fa fa-sign-in"></i>
+                                    <i *ngIf="!isLoading" class="fas fa-arrow-circle-right"></i>
                                     {{ isLoading ? 'Vui lòng chờ...' : 'Gửi yêu cầu' }}
                                 </button>
                             </div>
@@ -37,32 +37,41 @@
                                 <p class="footer-text">Copyright © 2018 EInvoice System. All rights reserved.</p>
                             </div>
                         </form>
-
-                        <form *ngIf="screen === 2" class="authen-form" [formGroup]="securityForm" (ngSubmit)="onCheckSubmit(securityForm.value)">
+                        <form *ngIf="screen === 2" class="authen-form" [formGroup]="confirmPassForm" (ngSubmit)="onDoResetSubmit(confirmPassForm.value)">
                             <div *ngIf="errorMessage" class="alert alert-danger">
                                 <i class="fas fa-exclamation-triangle"></i> {{errorMessage}}
                             </div>
-                            <h3 class="mr-auto">Xác nhận mã bảo mật</h3>
+                            <h3 class="mr-auto">Đặt lại mật khẩu</h3>
                             <p class="mb-5 mr-auto">
-                                Vui lòng nhập mật mã đã gửi tới email của bạn.
-                                <br /> Hoặc <a routerLink="/login">Đăng nhập?</a>
+                                Vui lòng nhập mật khẩu mới của bạn. Hoặc <a routerLink="/login">Đăng nhập?</a>
                             </p>
-                            <p class="mb-3 text-bold">
-                                {{emailRequest}}
-                            </p>
+
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-key"></i></span>
+                                    </div>
+                                    <input type="text" formControlName="password" placeholder="Nhập mật khẩu" class="form-control" />
+                                </div>
+                                <app-control-message *ngIf="submitted" [control]="confirmPassForm.controls['password']"></app-control-message>
+                            </div>
+
                             <div class="form-group">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-lock"></i></span>
                                     </div>
-                                    <input type="text" formControlName="secure_code" placeholder="Mã bảo mật" class="form-control" />
+                                    <input type="text" formControlName="confirmPass" placeholder="Nhập lại mật khẩu"
+                                        class="form-control" />
                                 </div>
-                                <app-control-message *ngIf="submitted" [control]="securityForm.controls['secure_code']"></app-control-message>
+                                <p class="error text-danger" *ngIf="submitted && confirmPassForm.hasError('notSame')">
+                                    Mật khẩu xác nhận không khớp!
+                                </p>
                             </div>
                             <div class="form-group">
                                 <button [disabled]="isLoading" type="submit" class="btn btn-primary submit-btn">
                                     <i *ngIf="isLoading" class="fa fa-spinner fa-spin"></i>
-                                    <i *ngIf="!isLoading" class="fa fa-sign-in"></i>
+                                    <i *ngIf="!isLoading" class="far fa-check-circle"></i>
                                     {{ isLoading ? 'Vui lòng chờ...' : 'Xác nhận' }}
                                 </button>
                             </div>
@@ -70,6 +79,37 @@
                                 <p class="footer-text">Copyright © 2018 EInvoice System. All rights reserved.</p>
                             </div>
                         </form>
+
+                        <form *ngIf="screen === 3">
+                            <div class="alert alert-success">
+                                <i class="far fa-check-circle"></i>
+                                <label>&nbsp;Bạn đã đổi mật khẩu thành công</label>
+                            </div>
+
+                            <div class="form-group">
+                                <button routerLink="/login" class="btn btn-primary submit-btn">
+                                    <i class="fas fa-sign-in-alt"></i> Đăng nhập
+                                </button>
+                            </div>
+                            <div class="wrapper mt-5 text-gray">
+                                <p class="footer-text">Copyright © 2018 EInvoice System. All rights reserved.</p>
+                            </div>
+                        </form>
+
+                        <div *ngIf="screen === 4">
+                            <div class="alert alert-success">
+                                <i class="far fa-check-circle"></i> Email đã được gửi, vui lòng kiểm tra hộp thư để cập
+                                nhật thông tin.
+                            </div>
+                            <div class="form-group">
+                                <button routerLink="/login" class="btn btn-primary submit-btn">
+                                    <i class="fas fa-sign-in-alt"></i> Đăng nhập
+                                </button>
+                            </div>
+                            <div class="wrapper mt-5 text-gray">
+                                <p class="footer-text">Copyright © 2018 EInvoice System. All rights reserved.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

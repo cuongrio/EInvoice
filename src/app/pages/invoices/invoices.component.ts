@@ -513,104 +513,93 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
             return '<span></span>';
           }
         }
-      },
-      {
-        width: '20px',
-        targets: 9
       }
       ],
-      columns: [
-        {
-          className: 'details-control',
-          orderable: false,
-          data: null,
-          defaultContent: ''
-        },
-        {
-          data: 'invoice_no'
-        },
-        {
-          data: function (row: any, type: any) {
-            if (type === 'display' && row.invoice_date && row.invoice_date !== 'null') {
-              const dateFormate = moment(row.invoice_date).format('DD/MM/YYYY');
-              return `<span>${dateFormate}</span>`;
-            } else {
-              return '<span></span>';
-            }
-          }
-        },
-        {
-          data: function (row: any, type: any) {
-            if (type === 'display' && row.customer && row.customer !== 'null') {
-              return row.customer.customer_name;
-            } else {
-              return '<span></span>';
-            }
-          }
-        },
-        {
-          data: function (row: any, type: any) {
-            if (type === 'display' && row.customer && row.customer !== 'null') {
-              return row.customer.tax_code;
-            } else {
-              return '<span></span>';
-            }
-          }
-        },
-        {
-          data: function (row: any, type: any) {
-            if (type === 'display' && row.customer && row.customer !== 'null') {
-              return row.customer.address;
-            } else {
-              return '<span></span>';
-            }
-          }
-        },
-        {
-          data: function (row: any, type: any) {
-            if (type === 'display') {
-              return formatCurrency(row.total_before_tax);
-            } else {
-              return '<span></span>';
-            }
-          }
-        },
-        {
-          data: function (row: any, type: any) {
-            if (type === 'display') {
-              return formatCurrency(row.total_tax);
-            } else {
-              return '<span></span>';
-            }
-          }
-        },
-        {
-          data: function (row: any, type: any) {
-            if (type === 'display') {
-              return formatCurrency(row.total);
-            } else {
-              return '<span></span>';
-            }
-          }
-        },
-        {
-          orderable: false,
-          className: 'action-control',
-          data: function (row: any, type: any) {
-            if (type === 'display' && row.invoice_id && row.invoice_id !== 'null') {
-              return `
-                <div class="form-check">
-                  <label class="form-check-label">
-                    <input type="checkbox" name="stickchoice" value="${row.invoice_id}" class="form-check-input">
-                    <i class="input-helper"></i></label>
-                    <input type="hidden" class="invoice-hidden" value="${row.invoice_id}">
-                </div>
-              `;
-            } else {
-              return '<span></span>';
-            }
+      columns: [{
+        orderable: false,
+        className: 'action-control',
+        data: function (row: any, type: any) {
+          if (type === 'display' && row.invoice_id && row.invoice_id !== 'null') {
+            return `
+              <div class="form-check">
+                <label class="form-check-label">
+                  <input type="checkbox" name="stickchoice" value="${row.invoice_id}" class="form-check-input">
+                  <i class="input-helper"></i></label>
+                  <input type="hidden" class="invoice-hidden" value="${row.invoice_id}">
+              </div>
+            `;
+          } else {
+            return '<span></span>';
           }
         }
+      },
+      {
+        data: 'invoice_no'
+      },
+      {
+        data: function (row: any, type: any) {
+          if (type === 'display' && row.invoice_date && row.invoice_date !== 'null') {
+            const dateFormate = moment(row.invoice_date).format('DD/MM/YYYY');
+            return `<span>${dateFormate}</span>`;
+          } else {
+            return '<span></span>';
+          }
+        }
+      },
+      {
+        data: function (row: any, type: any) {
+          if (type === 'display' && row.customer && row.customer !== 'null') {
+            return row.customer.customer_name;
+          } else {
+            return '<span></span>';
+          }
+        }
+      },
+      {
+        data: function (row: any, type: any) {
+          if (type === 'display' && row.customer && row.customer !== 'null') {
+            return row.customer.tax_code;
+          } else {
+            return '<span></span>';
+          }
+        }
+      },
+      {
+        data: function (row: any, type: any) {
+          if (type === 'display' && row.customer && row.customer !== 'null') {
+            return row.customer.address;
+          } else {
+            return '<span></span>';
+          }
+        }
+      },
+      {
+        data: function (row: any, type: any) {
+          if (type === 'display') {
+            return formatCurrency(row.total_before_tax);
+          } else {
+            return '<span></span>';
+          }
+        }
+      },
+      {
+        data: function (row: any, type: any) {
+          if (type === 'display') {
+            return formatCurrency(row.total_tax);
+          } else {
+            return '<span></span>';
+          }
+        }
+      },
+      {
+        data: function (row: any, type: any) {
+          if (type === 'display') {
+            return formatCurrency(row.total);
+          } else {
+            return '<span></span>';
+          }
+        }
+      }
       ],
       select: {
         style: 'single',
@@ -625,27 +614,6 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
         pagination.toggle(this.api().page.info().pages > 1);
       }
     });
-
-    function getProductItemByInvoice(invoiceId: string, callback: any) {
-      const userLoggedJson = $.cookie('credentials') || sessionStorage.getItem('credentials');
-      const serverUrl = $.cookie('serverUrl') || sessionStorage.getItem('serverUrl');
-      const userModel = $.parseJSON(userLoggedJson);
-      const token = userModel.token;
-
-      const url = `${serverUrl}/invoices/${invoiceId}`;
-      $.ajax({
-        url: url,
-        beforeSend: function (xhr: any) {
-          xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-        }
-      })
-        .done(function (data: any) {
-          callback(data.items);
-        })
-        .fail(function (jqXHR: any, textStatus: any) {
-          alert('Đã xảy ra lỗi: ' + textStatus);
-        });
-    }
 
     function bindButtonStatus(status: boolean) {
       $('#openButton').prop('disabled', status);
@@ -662,79 +630,6 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
         return price.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
       }
       return price;
-    }
-
-    function formatEinvoiceRow(items: any) {
-      let contentItemHtml = ``;
-      if (items && items.length > 0) {
-        let lineItem = ``;
-        items.forEach(function (entry: any) {
-          let priceFormat = entry.price;
-          if (priceFormat > 0) {
-            priceFormat = formatCurrency(priceFormat);
-          }
-
-          let taxFormat = entry.tax;
-          if (taxFormat > 0) {
-            taxFormat = formatCurrency(taxFormat);
-          }
-
-          let priceWtFormat = entry.price_wt;
-          if (priceWtFormat > 0) {
-            priceWtFormat = formatCurrency(priceWtFormat);
-          }
-
-          let amountFormat = entry.amount;
-          if (amountFormat > 0) {
-            amountFormat = formatCurrency(amountFormat);
-          }
-
-          lineItem += `
-            <tr>
-              <td>${entry.item_line}</td>
-              <td>${entry.item_code}</td>
-              <td>${entry.item_name}</td>
-              <td>${entry.unit}</td>
-              <td class="text-right">${entry.quantity}</td>
-              <td class="text-right">${priceFormat}</td>
-              <td class="text-right">${taxFormat}</td>
-              <td class="text-right">${amountFormat}</td>
-              <td class="text-right">${priceWtFormat}</td>
-            </tr>
-          `;
-        });
-
-        contentItemHtml =
-          `<table class="table display subtable_invoice dataTable">
-          <thead>
-            <tr>
-              <th style="width: 40px;">Dòng</th>
-              <th style="width: 120px;">Mã HH</th>
-              <th style="width: 400px;">Nội dung</th>
-              <th style="width: 60px;">Đơn vị</th>
-              <th style="width: 60px;" class="text-right">Số lượng</th>
-              <th style="width: 140px;" class="text-right">Đơn Giá</th>
-              <th style="width: 140px;" class="text-right">Tiền thuế</th>
-              <th style="width: 140px;" class="text-right">Tiền chưa thuế</th>
-              <th style="width: 140px;" class="text-right">Tiền có thuế</th>
-            </tr>
-          </thead>
-          <tbody>` +
-          lineItem +
-          `</tbody>
-        </table>`;
-      } else {
-        contentItemHtml = `<p class="no-information">Không có thông tin</p>`;
-      }
-
-      return (
-        `
-      <fieldset class="scheduler-border border_customer">
-        <legend class="scheduler-border">Thông tin sản phẩm</legend>
-        ` +
-        contentItemHtml +
-        `</fieldset>`
-      );
     }
 
     // disabled all button
@@ -773,33 +668,6 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
           .prop('checked', true);
 
         bindButtonStatus(false);
-      }
-      return false;
-    });
-
-    // Add event listener for opening and closing details
-    $('#invoiceTable tbody').on('click', 'td.details-control', function (e: any) {
-      e.preventDefault();
-      const tr = $(this).closest('tr');
-      const row = table.row(tr);
-
-      console.log(tr.classList);
-
-      if (row.child.isShown()) {
-        row.child.hide();
-        tr.removeClass('tr-expand');
-      } else {
-        // reset all
-        const otherTr = $('tr.tr-expand');
-        const otherRow = table.row(otherTr);
-        otherTr.removeClass('tr-expand');
-        otherRow.child.hide();
-
-        // call API
-        getProductItemByInvoice(row.data().invoice_id, function (items: any) {
-          row.child(formatEinvoiceRow(items)).show();
-          tr.addClass('tr-expand');
-        });
       }
       return false;
     });

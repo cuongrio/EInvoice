@@ -54,7 +54,7 @@ const routes: Routes = [
     data: { title: 'Thông tin đăng nhập' }
   },
   {
-    path: 'forgot-password',
+    path: 'public/resetpass',
     component: ForgotPassComponent,
     data: { title: 'Reset mật khẩu' }
   },

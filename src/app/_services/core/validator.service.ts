@@ -9,9 +9,10 @@ export class ValidationService {
     const config = {
       required: 'Vui lòng không để trống!',
       email: 'Sai định dạng Email!',
+      notSame: 'Xác nhận mật khẩu không khớp!',
       invalidEmail: 'Sai định dạng Email!',
-      invalidPassword: 'Mật khẩu chứa ít nhất 6 ký tự!',
-      minlength: `Nhập ít nhất ${validatorValue.requiredLength}!`
+      invalidPassword: 'Mật khẩu phải từ 6-20 ký tự, cho phép chữ, số và ký tự !@#$%^&*',
+      minlength: `Nhập ít nhất ${validatorValue.requiredLength} ký tự!`
     };
 
     return config[validatorName];
@@ -35,22 +36,10 @@ export class ValidationService {
     }
     // {6,100}           - Assert password is between 6 and 100 characters
     // (?=.*[0-9])       - Assert a string has at least one number
-    if (control.value.match(/^(?=.*[0-9])[a-zA-Z0-9!@#$%^&*]{6,100}$/)) {
+    if (control.value.match(/^(?=.*[0-9])[a-zA-Z0-9!@#$%^&*]{6,20}$/)) {
       return null;
     } else {
       return { invalidPassword: true };
-    }
-  }
-
-  phoneValidator(control: any) {
-    if (!control.value) {
-      return;
-    }
-
-    if (control.value.match(/^\+?([0-9]{2})\)?[-. ]?([0-9]{4})[-. ]?([0-9]{4})$/)) {
-      return null;
-    } else {
-      return { invalidPhone: true };
     }
   }
 }
