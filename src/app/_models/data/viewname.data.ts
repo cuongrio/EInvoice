@@ -1,5 +1,4 @@
 export class ViewNameData {
-    status?: string;
-    paymentType?: string;
-  }
-  
+  status?: string;
+  paymentType?: string;
+}

@@ -117,6 +117,14 @@
   color: #dc3545 !important;
 }
 
+.action-control{
+  .form-check-label{
+    input{
+      width: 100% !important;
+      height:100% !important;
+    }
+  }
+}
 /**SELECT***/
 .ng-select{
   &.control-invalid{

@@ -13,7 +13,7 @@
             <img *ngIf="class==='error'" src="./assets/images/sorry.png" class="img-sm" alt="error image">
             <div class="ml-1">
                 <h6 *ngIf="highlight">{{highlight}}</h6>
-                <p class="text-muted word-break">{{message}}</p>
+                <p *ngIf="message" class="text-muted word-break">{{message}}</p>
                 <button (click)="bsModalRef.hide()" type="button" class="btn btn-md btn-primary modal-button_close">
                         <i class="fa fa-window-close"></i> Đóng 
                     </button>

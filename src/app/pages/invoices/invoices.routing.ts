@@ -21,5 +21,9 @@ export const InvoicesRoutes: Routes = [
     path: 'open/:id',
     component: InvoiceFormComponent,
     data: { title: 'Đang mở hóa đơn' }
+  }, {
+    path: 'open/:id/refresh',
+    component: InvoiceFormComponent,
+    data: { title: 'Đang mở hóa đơn' }
   }
 ];

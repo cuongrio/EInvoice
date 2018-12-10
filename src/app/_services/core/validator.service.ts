@@ -12,6 +12,7 @@ export class ValidationService {
       notSame: 'Xác nhận mật khẩu không khớp!',
       invalidEmail: 'Sai định dạng Email!',
       invalidPassword: 'Mật khẩu phải từ 6-20 ký tự, cho phép chữ, số và ký tự !@#$%^&*',
+      invalidOrgName: 'Vui lòng không để trống Tên đơn vị hoặc Người mua',
       minlength: `Nhập ít nhất ${validatorValue.requiredLength} ký tự!`
     };
 

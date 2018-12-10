@@ -2,9 +2,9 @@ import {
   Component, OnInit, OnDestroy, TemplateRef,
   ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit
 } from '@angular/core';
-import { FormGroup, FormArray, Validators, FormBuilder } from '@angular/forms';
-import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { FormGroup, FormArray, Validators, FormBuilder, FormControl } from '@angular/forms';
+import { ActivatedRoute, Router, UrlSegment, NavigationEnd } from '@angular/router';
+import { Subscription, combineLatest } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import { AlertComponent } from '@app//shared/alert/alert.component';
@@ -27,7 +27,7 @@ import { AdjustData } from './../../../_models/data/adjust.data';
   templateUrl: './form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
+export class InvoiceFormComponent implements OnInit, OnDestroy {
   public invoiceId: number;
   public invoiceNo: string;
   public segmentRouter: string;
@@ -72,7 +72,9 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
   public customerLoading = false;
   public goodLoading = false;
   public signTokenLoading = false;
+
   public modalRef: BsModalRef;
+
   public bsConfig = {
     dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-blue'
   };
@@ -134,17 +136,13 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit() {
-    this.initRouter();
     this.createItemsForm();
-    this.loadCustomers();
-    this.loadReferences();
-    this.loadGoods();
     this.initNewRow();
     this.initSpinnerConfig();
-  }
-
-  ngAfterViewInit() {
-
+    this.initRouter();
+    this.loadReferences();
+    this.loadCustomers();
+    this.loadGoods();
   }
 
   ngOnDestroy() {
@@ -303,138 +301,31 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     if (this.isPreview) {
-      this.invoiceService.preview(invoiceModel).subscribe(data => {
-        const file = new Blob([data], { type: 'application/pdf' });
-        const fileURL = URL.createObjectURL(file);
-        this.previewLoading = false;
-        this.ref.markForCheck();
-        window.open(fileURL);
-      }, err => {
-        this.previewLoading = false;
-        this.ref.markForCheck();
-        this.errorHandler(err);
-      });
+      return this.submitForPreview(invoiceModel);
     } else {
       if (this.invoiceId) {
-        // case adjust
         if (this.isAdjust) {
-          return this.invoiceService.ajustInvoice(this.invoiceId, invoiceModel).subscribe(data => {
-            const initialState = {
-              message: `Đã điều chỉnh cho hóa đơn #${this.invoiceNo}!`,
-              title: 'Thành công!',
-              class: 'success',
-              highlight: `Số hóa đơn mới: #${data.invoice_no}.`
-            };
-            this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
-            this.resolvedFormStatus(data);
-            this.isAdjust = false;
-            this.disabledAdjust = true;
-            this.disabledReplace = true;
-            return true;
-          }, err => {
-            const initialState = {
-              message: 'Không thể điều chỉnh hóa đơn!',
-              title: 'Đã có lỗi!',
-              class: 'error'
-            };
-
-            if (err.error) {
-              initialState.message = err.error.message;
-            }
-            this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
-            this.submitted = false;
-          });
+          return this.submitForAdjust(invoiceModel);
         } else if (this.isReplace) {
-          return this.invoiceService.replaceInvoice(this.invoiceId, invoiceModel).subscribe(data => {
-            const initialState = {
-              message: `Đã thay thế hóa đơn #${this.invoiceNo}!`,
-              title: 'Thành công!',
-              class: 'success',
-              highlight: `Số hóa đơn mới: #${data.invoice_no}.`
-            };
-            this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
-            this.resolvedFormStatus(data);
-            this.isAdjust = false;
-            this.disabledAdjust = true;
-            this.isReplace = false;
-            this.disabledReplace = true;
-            this.disabledReplace = true;
-            return true;
-          }, err => {
-            const initialState = {
-              message: 'Không thể điều chỉnh hóa đơn!',
-              title: 'Đã có lỗi!',
-              class: 'error'
-            };
-
-            if (err.error) {
-              initialState.message = err.error.message;
-            }
-            this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
-            this.submitted = false;
-          });
+          return this.submitForReplace(invoiceModel);
         } else {
-
-          // case update
-          invoiceModel.invoice_id = this.invoiceId;
-          invoiceModel.invoice_no = this.invoiceNo;
-          return this.invoiceService.updateInvoice(invoiceModel).subscribe(data => {
-            const initialState = {
-              message: `Đã cập nhật hóa đơn thành công!`,
-              title: 'Thành công!',
-              class: 'success',
-              highlight: `Hóa đơn: #${data.invoice_no}.`
-            };
-            this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
-
-            this.resolvedFormStatus(data);
-
-          }, err => {
-            const initialState = {
-              message: 'Không thể cập nhật hóa đơn!',
-              title: 'Đã có lỗi!',
-              class: 'error'
-            };
-
-            if (err.error) {
-              initialState.message = err.error.message;
-            }
-            this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
-            this.submitted = false;
-          });
+          if (this.segmentRouter === 'copy') {
+            return this.submitForCreate(invoiceModel);
+          } else {
+            // case update
+            invoiceModel.invoice_id = this.invoiceId;
+            invoiceModel.invoice_no = this.invoiceNo;
+            return this.submitForUpdate(invoiceModel);
+          }
         }
       } else {
-        return this.invoiceService.createInvoice(invoiceModel).subscribe(
-          data => {
-            const initialState = {
-              message: 'Đã tạo hóa đơn thành công!',
-              title: 'Thành công!',
-              class: 'success',
-              highlight: `Hóa đơn: #${data.invoice_no}.`
-            };
-            this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
-
-            this.resolvedFormStatus(data);
-          },
-          err => {
-            const initialState = {
-              message: 'Không thể tạo hóa đơn!',
-              title: 'Đã có lỗi!',
-              class: 'error'
-            };
-
-            if (err.error) {
-              initialState.message = err.error.message;
-            }
-            this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
-            this.submitted = false;
-          }
-        );
+        return this.submitForCreate(invoiceModel);
       }
     }
   }
 
   public openModalMd(template: TemplateRef<any>) {
+    this.signErrorMessage = '';
     this.loadTokenData();
     this.modalRef = this.modalService.show(template, { class: 'modal-token' });
   }
@@ -460,7 +351,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
   public async tokenChoiceClicked() {
     this.signButtonDisabled = true;
     this.signButtonLoading = true;
-    localStorage.setItem('token-picked', JSON.stringify(this.tokenPicked));
     const invoiceId = +this.invoiceId;
     const invoiceNo = this.invoiceNo;
     const dataToken = await this.invoiceService.sign(invoiceId)
@@ -492,7 +382,9 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
           class: 'success',
           highlight: `Hóa đơn #${invoiceNo}`
         };
+
         this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+        this.resolvedLink(invoiceId);
       }, err => {
         this.errorSignHandler(err);
       });
@@ -522,6 +414,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
 
   /*** CUSTOMER CHANGE */
   public onCustomerChange(customer: any) {
+    console.log(customer);
     this.initDataForm(customer);
     this.ref.markForCheck();
   }
@@ -607,11 +500,17 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public get paymentTypeName() {
-    return this.utilsService.getPaymentTypeName(this.viewNameData.paymentType, this.comboHTTT);
+    if (this.viewNameData && this.viewNameData.paymentType) {
+      return this.utilsService.getPaymentTypeName(this.viewNameData.paymentType, this.comboHTTT);
+    }
+    return '';
   }
 
   public get statusName() {
-    return this.utilsService.getStatusName(this.viewNameData.status, this.comboStatus);
+    if (this.viewNameData && this.viewNameData.status) {
+      return this.utilsService.getStatusName(this.viewNameData.status, this.comboStatus);
+    }
+    return '';
   }
 
   /*** TOTAL PRICE */
@@ -690,6 +589,125 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.sumColumn(this.linePriceOrigin);
   }
 
+  // SUBMIT ACTION CASE
+  private submitForPreview(invoiceModel: InvoiceModel) {
+    this.invoiceService.preview(invoiceModel).subscribe(data => {
+      const file = new Blob([data], { type: 'application/pdf' });
+      const fileURL = URL.createObjectURL(file);
+      this.previewLoading = false;
+      this.ref.markForCheck();
+      window.open(fileURL);
+    }, err => {
+      this.previewLoading = false;
+      this.ref.markForCheck();
+      this.errorHandler(err);
+    });
+  }
+
+  private submitForAdjust(invoiceModel: InvoiceModel) {
+    return this.invoiceService.ajustInvoice(this.invoiceId, invoiceModel).subscribe(data => {
+      const initialState = {
+        message: `Đã điều chỉnh cho hóa đơn #${this.invoiceNo}!`,
+        title: 'Thành công!',
+        class: 'success',
+        highlight: `Số hóa đơn mới: #${data.invoice_no}.`
+      };
+      this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+      this.resolvedLink(data.invoice_id);
+      return true;
+    }, err => {
+      const initialState = {
+        message: 'Không thể điều chỉnh hóa đơn!',
+        title: 'Đã có lỗi!',
+        class: 'error'
+      };
+
+      if (err.error) {
+        initialState.message = err.error.message;
+      }
+      this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+      this.submitted = false;
+    });
+  }
+
+  private submitForReplace(invoiceModel: InvoiceModel) {
+    this.invoiceService.replaceInvoice(this.invoiceId, invoiceModel).subscribe(data => {
+      const initialState = {
+        message: `Đã thay thế hóa đơn #${this.invoiceNo}!`,
+        title: 'Thành công!',
+        class: 'success',
+        highlight: `Số hóa đơn mới: #${data.invoice_no}.`
+      };
+      this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+      this.resolvedLink(data.invoice_id);
+      return true;
+    }, err => {
+      const initialState = {
+        message: 'Không thể điều chỉnh hóa đơn!',
+        title: 'Đã có lỗi!',
+        class: 'error'
+      };
+
+      if (err.error) {
+        initialState.message = err.error.message;
+      }
+      this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+      this.submitted = false;
+    });
+  }
+
+  private submitForUpdate(invoiceModel: InvoiceModel) {
+    this.invoiceService.updateInvoice(invoiceModel).subscribe(data => {
+      const initialState = {
+        message: `Đã cập nhật hóa đơn thành công!`,
+        title: 'Thành công!',
+        class: 'success',
+        highlight: `Hóa đơn: #${data.invoice_no}.`
+      };
+      this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+      this.resolvedLink(data.invoice_id);
+    }, err => {
+      const initialState = {
+        message: 'Không thể cập nhật hóa đơn!',
+        title: 'Đã có lỗi!',
+        class: 'error'
+      };
+
+      if (err.error) {
+        initialState.message = err.error.message;
+      }
+      this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+      this.submitted = false;
+    });
+  }
+
+  private submitForCreate(invoiceModel: InvoiceModel) {
+    this.invoiceService.createInvoice(invoiceModel).subscribe(
+      data => {
+        const initialState = {
+          message: 'Đã tạo hóa đơn thành công!',
+          title: 'Thành công!',
+          class: 'success',
+          highlight: `Hóa đơn: #${data.invoice_no}.`
+        };
+        this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+        this.resolvedLink(data.invoice_id);
+      },
+      err => {
+        const initialState = {
+          message: 'Không thể tạo hóa đơn!',
+          title: 'Đã có lỗi!',
+          class: 'error'
+        };
+
+        if (err.error) {
+          initialState.message = err.error.message;
+        }
+        this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+        this.submitted = false;
+      });
+  }
+
   private errorHandler(err: any) {
     const initialState = {
       message: 'Đã có lỗi xảy ra',
@@ -707,23 +725,25 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
     this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
   }
 
-  private resolvedFormStatus(data: any) {
-    this.addForm.patchValue({
-      invoiceNo: data.invoice_no,
-      status: data.status
+  private resolvedLink(invoice_id: number) {
+    if (this.isRouterRefresh()) {
+      this.router.navigate([`/invoices/open/${invoice_id}`]);
+    } else {
+      this.router.navigate([`/invoices/open/${invoice_id}/refresh`]);
+    }
+  }
+
+  private isRouterRefresh(): boolean {
+    const urlSegmentArr: UrlSegment[] = this.activatedRoute.snapshot.url;
+    let segmentMerged: string;
+    urlSegmentArr.forEach((item: UrlSegment, idx: number) => {
+      segmentMerged += item.path;
     });
-
-    this.invoiceId = data.invoice_id;
-    this.invoiceNo = data.invoice_no;
-    this.adjustForm = data.form;
-    this.adjustSerial = data.serial;
-
-    this.viewMode = true;
-    this.disabledEdit = false;
-    this.disabledSign = false;
-    this.disabledAdjust = false;
-    this.ref.markForCheck();
-    this.submitted = false;
+    console.log(segmentMerged);
+    if (segmentMerged.indexOf('refresh') === -1) {
+      return false;
+    }
+    return true;
   }
 
   private resetForm() {
@@ -945,7 +965,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private initDataForm(customer: CustomerData) {
-    if (customer) {
+    if (customer && customer.customer_id) {
       this.addForm.patchValue({
         customerEmail: customer.email,
         customerOrg: customer.org,
@@ -956,18 +976,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
         customerBank: customer.bank,
         customerAddress: customer.address,
         customerPhone: customer.phone
-      });
-    } else {
-      this.addForm.patchValue({
-        customerEmail: '',
-        customerName: '',
-        customerCode: '',
-        customerTax: '',
-        customerOrg: '',
-        customerBankAccount: '',
-        customerBank: '',
-        customerPhone: '',
-        customerAddress: ''
       });
     }
   }
@@ -987,7 +995,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
     this.canPreview = true;
 
     // case create new
-    this.subscription = this.activatedRoute.params.subscribe((params: any) => {
+    return this.subscription = this.activatedRoute.params.subscribe((params: any) => {
       if (params.id) {
         this.invoiceId = params.id;
         if (segment === 'open') {
@@ -1001,14 +1009,14 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
 
         this.canPreview = false;
 
-        this.invoiceService.retrieveInvoiceById(this.invoiceId).subscribe(data => {
+        return this.invoiceService.retrieveInvoiceById(this.invoiceId).subscribe(data => {
           this.invoiceNo = data.invoice_no;
           if (segment === 'open') {
             this.setFormWithDefaultData(data, 'open');
             this.adjustForm = data.form;
             this.adjustSerial = data.serial;
 
-            // set view name 
+            // set view name
             // view name
             this.viewNameData = {
               status: data.status,
@@ -1049,6 +1057,9 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
             this.setFormWithDefaultData(data, 'copy');
           }
           this.ref.markForCheck();
+          return true;
+        }, err => {
+          this.errorHandler(err);
         });
       }
     });
@@ -1094,25 +1105,30 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     const controlArray = this.itemFormArray;
-    data.items.forEach((item: any, idx: number) => {
-      controlArray.controls[idx].get('item_line').setValue(idx + 1);
-      controlArray.controls[idx].get('item_code').setValue(item.item_code);
+    if (data.items && data.items.length > 0) {
+      data.items.forEach((item: any, idx: number) => {
+        if (!controlArray.controls[idx]) {
+          this.initNewRow();
+        }
+        controlArray.controls[idx].get('item_line').setValue(item.item_line);
+        controlArray.controls[idx].get('item_code').setValue(item.item_code);
 
-      controlArray.controls[idx].get('item_name').setValue(item.item_name);
-      controlArray.controls[idx].get('unit').setValue(item.unit);
-      controlArray.controls[idx].get('price').setValue(item.price);
-      controlArray.controls[idx].get('tax_rate').setValue(item.tax_rate);
-      this.taxModel[idx] = item.tax_rate + '';
-      controlArray.controls[idx].get('quantity').setValue(item.quantity);
-      controlArray.controls[idx].get('discount_rate').setValue(item.discount_rate);
-      controlArray.controls[idx].get('discount').setValue(0);
+        controlArray.controls[idx].get('item_name').setValue(item.item_name);
+        controlArray.controls[idx].get('unit').setValue(item.unit);
+        controlArray.controls[idx].get('price').setValue(item.price);
+        controlArray.controls[idx].get('tax_rate').setValue(item.tax_rate);
+        this.taxModel[idx] = item.tax_rate + '';
+        controlArray.controls[idx].get('quantity').setValue(item.quantity);
+        controlArray.controls[idx].get('discount_rate').setValue(item.discount_rate);
+        controlArray.controls[idx].get('discount').setValue(0);
 
-      this.linePriceTax.splice(idx, 0, item.tax);
-      this.lineAmount.splice(idx, 0, item.amount);
-      this.lineAmoutWt.splice(idx, 0, item.amount_wt);
-      this.linePriceWt.splice(idx, 0, item.price_wt);
-      this.lineDiscount[idx] = (this.lineAmount[idx] * item.discount_rate) / 100;
-    });
+        this.linePriceTax.splice(idx, 0, item.tax);
+        this.lineAmount.splice(idx, 0, item.amount);
+        this.lineAmoutWt.splice(idx, 0, item.amount_wt);
+        this.linePriceWt.splice(idx, 0, item.price_wt);
+        this.lineDiscount[idx] = (this.lineAmount[idx] * item.discount_rate) / 100;
+      });
+    }
   }
 
   private createItemsForm() {
@@ -1122,7 +1138,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
       orderNo: '',
       form: ['', Validators.compose([Validators.required])],
       serial: ['', Validators.compose([Validators.required])],
-      customerCode: ['', Validators.compose([Validators.required])],
+      customerCode: '',
       customerName: ['', Validators.compose([Validators.required])],
       customerTax: ['', Validators.compose([Validators.required])],
       customerEmail: ['', Validators.compose([Validators.email])],
@@ -1134,7 +1150,16 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
       status: '',
       customerAddress: ['', Validators.compose([Validators.required])],
       items: this.formBuilder.array([])
-    });
+    }, {
+        validator: (formControl: FormControl) => {
+          const customerOrg = formControl.get('customerOrg').value;
+          const customerName = formControl.get('customerName').value;
+          if (customerName.length === 0 && customerOrg.length === 0) {
+            return { invalidOrgName: true };
+          }
+        }
+      });
+
     const dateFormate = moment(new Date()).format('DD-MM-YYYY');
     this.invoiceDatePicked = dateFormate;
     this.addForm.patchValue({

@@ -7,6 +7,7 @@
   toDate?: string;
   invoiceNo?: string;
   form?: string;
+  status?: string;
   serial?: string;
   orgTaxCode?: string;
   expand?: boolean;

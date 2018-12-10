@@ -1,6 +1,6 @@
 import { Component, OnInit, TemplateRef, ChangeDetectorRef, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import * as moment from 'moment';
 import { InvoiceService, ReferenceService } from '@app/_services';
@@ -98,13 +98,13 @@ export class InvoicesComponent implements OnInit {
     this.detailApi = `${environment.serverUrl}/${this.tenant}/invoices`;
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.initDefault();
-    this.initDataTable();
     this.initForm();
+    await this.loadReferences();
+    this.initDataTable();
     this.initRouter();
     this.initSpinnerConfig();
-    this.loadReferences();
   }
 
   public expandSearchClicked() {
@@ -121,6 +121,7 @@ export class InvoicesComponent implements OnInit {
   }
 
   public openModalMd(template: TemplateRef<any>) {
+    this.signErrorMessage = '';
     this.loadTokenData();
     this.modalRef = this.modalService.show(template, { class: 'modal-token' });
   }
@@ -174,9 +175,12 @@ export class InvoicesComponent implements OnInit {
   public onSubmit(form: any) {
     this.page = 1;
     this.isSearching = true;
+    console.log(form);
 
     const invoiceParam: InvoiceParam = this.formatForm(form);
     invoiceParam.page = JSON.stringify(this.page);
+    console.log(invoiceParam);
+
     localStorage.setItem('userquery', JSON.stringify(invoiceParam));
     this.router.navigate([], { replaceUrl: true, queryParams: invoiceParam });
     this.callServiceAndBindTable(invoiceParam);
@@ -219,7 +223,7 @@ export class InvoicesComponent implements OnInit {
       const file = new Blob([data], { type: 'application/pdf' });
       const fileURL = URL.createObjectURL(file);
       this.ref.markForCheck();
-      window.open(fileURL);
+      window.open(fileURL, '_self');
     }, err => {
       this.ref.markForCheck();
       this.errorHandler(err);
@@ -231,7 +235,7 @@ export class InvoicesComponent implements OnInit {
     this.invoiceService.printTransform(invoiceId).subscribe(data => {
       const file = new Blob([data], { type: 'application/pdf' });
       const fileURL = URL.createObjectURL(file);
-      window.open(fileURL);
+      window.open(fileURL, '_self');
     }, err => {
       const initialState = {
         message: 'Hóa đơn chỉ được in chuyển đổi một lần!',
@@ -244,7 +248,6 @@ export class InvoicesComponent implements OnInit {
 
   public onFormChange(selectData: SelectData) {
     if (!selectData) {
-      this.serialPicked = null;
       this.searchForm.patchValue({
         serial: ''
       });
@@ -320,8 +323,20 @@ export class InvoicesComponent implements OnInit {
     );
   }
 
-  // END BUTTON ACTION
+  public get pageSize() {
+    return [{
+      code: 20,
+      value: '20'
+    }, {
+      code: 50,
+      value: '50'
+    }, {
+      code: 100,
+      value: '100'
+    }];
+  }
 
+  // END BUTTON ACTION
   private getCheckboxesValue() {
     const itemsChecked = new Array<string>();
     $('input:checkbox[name=stickchoice]:checked').each(function () {
@@ -334,6 +349,7 @@ export class InvoicesComponent implements OnInit {
   private initRouter() {
     if (this.activeRouter.snapshot.queryParams) {
       const routerParams = JSON.parse(JSON.stringify(this.activeRouter.snapshot.queryParams));
+      console.log(routerParams);
       if (routerParams['page']) {
         this.page = +routerParams['page'];
         this.previousPage = +routerParams['page'];
@@ -429,6 +445,7 @@ export class InvoicesComponent implements OnInit {
       toDate: '',
       invoiceNo: '',
       form: '',
+      status: '',
       serial: '',
       orgTaxCode: ''
     });
@@ -440,7 +457,10 @@ export class InvoicesComponent implements OnInit {
   private initDataTable() {
     const $data_table = $('#invoiceTable');
     const statusJson = sessionStorage.getItem('comboStatus');
-    const statusArr = JSON.parse(statusJson) as SelectData[];
+    let statusArr: any;
+    if (statusJson) {
+      statusArr = JSON.parse(statusJson) as SelectData[];
+    }
     const table = $data_table.DataTable({
       paging: false,
       searching: false,
@@ -541,8 +561,11 @@ export class InvoicesComponent implements OnInit {
         data: function (row: any, type: any) {
           if (type === 'display' && row.status && row.status !== 'null') {
             // get in session storage
-            const status = statusArr.find(i => (i.code === row.status));
-            return `<span>${status.value}</span>`;
+            if (statusArr) {
+              const status = statusArr.find((i: SelectData) => (i.code === row.status));
+              return `<span>${status.value}</span>`;
+            }
+            return `<span>${row.status}</span>`;
           } else {
             return '<span></span>';
           }
@@ -652,31 +675,31 @@ export class InvoicesComponent implements OnInit {
 
     $('#invoiceTable tbody').on('dblclick', 'tr.row-parent', function (e: any) {
       e.preventDefault();
-      e.stopPropagation();
       const invoiceId = $(this).find('.invoice-hidden').val();
       const openUrl = window.location.origin + '/invoices/open/' + invoiceId;
-      window.open(openUrl);
+      window.open(openUrl, '_self');
     });
 
     // selected row
-    $('#invoiceTable tbody').on('click', 'tr.row-parent', function () {
+    $('#invoiceTable tbody').on('click', 'td.action-control', function (e: any) {
+      e.preventDefault();
       $('input:checkbox[name=stickchoice]').each(function () {
         $(this).prop('checked', false);
       });
 
-      if ($(this).hasClass('selected')) {
-        $(this).removeClass('selected');
-        $(this)
-          .find('input:checkbox[name=stickchoice]')
+      const tr = $(this).closest('tr');
+
+      if (tr.hasClass('selected')) {
+        tr.removeClass('selected');
+        tr.find('input:checkbox[name=stickchoice]')
           .prop('checked', false);
 
         bindButtonStatus(true);
       } else {
         table.$('tr.selected').removeClass('selected');
-        $(this).addClass('selected');
-        $(this)
-          .find('input:checkbox[name=stickchoice]')
-          .prop('checked', true);
+        tr.addClass('selected');
+        console.log('herekrke');
+        tr.find('input:checkbox[name=stickchoice]').prop('checked', true);
 
         bindButtonStatus(false);
       }
@@ -705,7 +728,6 @@ export class InvoicesComponent implements OnInit {
     if (form.size) {
       invoiceParamsForamat.size = form.size;
     }
-
     if (form.fromDate) {
       const fromDate = this.convertDateToQuery(form.fromDate);
       invoiceParamsForamat.fromDate = fromDate;
@@ -725,6 +747,9 @@ export class InvoicesComponent implements OnInit {
     }
     if (form.orgTaxCode) {
       invoiceParamsForamat.orgTaxCode = form.orgTaxCode;
+    }
+    if (form.status) {
+      invoiceParamsForamat.status = form.status;
     }
     return invoiceParamsForamat;
   }

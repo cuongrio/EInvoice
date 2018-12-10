@@ -24,7 +24,7 @@ export const ROUTES: RouteInfo[] = [
   selector: 'app-header',
   templateUrl: './header.component.html'
 })
-export class HeaderComponent implements OnInit, AfterViewInit {
+export class HeaderComponent implements OnInit {
   menuItems: any[];
   userLogged: UserModel;
 
@@ -32,21 +32,7 @@ export class HeaderComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.menuItems = ROUTES.filter(menuItem => menuItem);
-    // this.userLogged = this.authenticationService.credentials;
-    this.userLogged = {name: 'kjljkjljkl'};
-  }
-
-  ngAfterViewInit() {
-    // $(window).scroll(function() {
-    //   if (window.matchMedia('(min-width: 992px)').matches) {
-    //     const header = '.navbar.horizontal-layout';
-    //     if ($(window).scrollTop() >= 1) {
-    //       $(header).addClass('fixed-on-scroll');
-    //     } else {
-    //       $(header).removeClass('fixed-on-scroll');
-    //     }
-    //   }
-    // });
+    this.userLogged = this.authenticationService.credentials;
   }
 
   logoutClicked() {

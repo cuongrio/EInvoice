@@ -41,32 +41,22 @@
                           </div>
 
                           <div class="col-md-3 col-lg-3">
-                              <div class="form-group row">
-                                <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Mẫu số</label></div>
-                                <div class="col-md-8 col-lg-8">
-                                    <ng-select formControlName="form" 
-                                    [loading]="formLoading"
-                                    [items]="comboForm"
-                                    (change)="onFormChange($event)"
-                                    [searchable]="false" 
-                                    bindLabel="code" 
-                                    bindValue="value">
-                                  </ng-select>
-                                </div>
+                            <div class="form-group row">
+                              <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Mẫu số</label></div>
+                              <div class="col-md-8 col-lg-8">
+                                <ng-select formControlName="form" [loading]="formLoading" [items]="comboForm" (change)="onFormChange($event)"
+                                  [searchable]="false" bindLabel="code" bindValue="value">
+                                </ng-select>
                               </div>
                             </div>
+                          </div>
 
                           <div class="col-md-3 col-lg-3">
                             <div class="form-group row">
                               <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Ký hiệu</label></div>
                               <div class="col-md-8 col-lg-8">
-                                  <ng-select 
-                                  formControlName="serial" 
-                                  [loading]="serialLoading"
-                                  [items]="comboSerial"
-                                  [searchable]="false" 
-                                  bindLabel="code" 
-                                  bindValue="value">
+                                <ng-select formControlName="serial" [loading]="serialLoading" [items]="comboSerial"
+                                  [searchable]="false" bindLabel="code" bindValue="value">
                                 </ng-select>
                               </div>
                             </div>
@@ -124,13 +114,8 @@
                             <div class="form-group row">
                               <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Trạng thái</label></div>
                               <div class="col-md-8 col-lg-8">
-                                <ng-select 
-                                  formControlName="status" 
-                                  [loading]="statusLoading"
-                                  [items]="comboStatus"
-                                  [searchable]="false" 
-                                  bindLabel="code" 
-                                  bindValue="value">
+                                <ng-select formControlName="status" [loading]="statusLoading" [items]="comboStatus"
+                                  [searchable]="false" bindLabel="value" bindValue="code">
                                 </ng-select>
                               </div>
                             </div>
@@ -200,31 +185,26 @@
                       <p *ngIf="signErrorMessage" class="error">
                         {{signErrorMessage}}
                       </p>
-                      <ng-select [loading]="signTokenLoading"
-                            [items]="listTokenAvaiable"
-                            (change)="onTokenChange($event)" 
-                            [clearable]="false"
-                            [searchable]="false" 
-                            bindLabel="name" 
-                            bindValue="alias">
-                            <ng-template ng-option-tmp let-item="item">
-                              <div class="avaible-tokens">
-                                <div *ngIf="item.isExpired;else isExpried">
-                                    <div class="token-name is-expired"><b>Tên: </b>{{item.name}}</div>
-                                    <label class="is-expired">
-                                        <b>Hiệu lực: </b> {{item.effectiveDate}}
-                                    </label>
-                                </div>
-                                
-                                <ng-template #isExpried>
-                                    <div class="token-name is-effective"><b>Tên: </b>{{item.name}}</div>
-                                    <label class="is-effective">
-                                        <b>Hiệu lực: </b> {{item.effectiveDate}}
-                                    </label>
-                                </ng-template>
-                              </div>
+                      <ng-select [loading]="signTokenLoading" [items]="listTokenAvaiable" (change)="onTokenChange($event)"
+                        [clearable]="false" [searchable]="false" bindLabel="name" bindValue="alias">
+                        <ng-template ng-option-tmp let-item="item">
+                          <div class="avaible-tokens">
+                            <div *ngIf="item.isExpired;else isExpried">
+                              <div class="token-name is-expired"><b>Tên: </b>{{item.name}}</div>
+                              <label class="is-expired">
+                                <b>Hiệu lực: </b> {{item.effectiveDate}}
+                              </label>
+                            </div>
+
+                            <ng-template #isExpried>
+                              <div class="token-name is-effective"><b>Tên: </b>{{item.name}}</div>
+                              <label class="is-effective">
+                                <b>Hiệu lực: </b> {{item.effectiveDate}}
+                              </label>
                             </ng-template>
-                          </ng-select>
+                          </div>
+                        </ng-template>
+                      </ng-select>
 
                       <div class="btn-group">
                         <button type="button" [disabled]="signButtonDisabled" class="btn btn-primary mr-1 no-br"
@@ -277,11 +257,16 @@
               </table>
             </div>
             <div class="ngb-pagination">
-              <div class="page-info">Trang {{ page }}: {{ totalElements }} dòng | Tổng số: {{ totalPages }} trang.</div>
+              <div class="page-info">
+                <ng-select [items]="pageSize" [searchable]="false" bindLabel="code" bindValue="value">
+                </ng-select>
+                <label>Trang {{ page }}: {{ totalElements }} dòng | Tổng số: {{ totalPages }} trang.</label>
+              </div>
               <!--
                 <ngb-pagination class="d-flex justify-content-end" [pageSize]="itemsPerPage" [collectionSize]="totalItems"
                 [(page)]="page" (pageChange)="onPageChange($event)" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"></ngb-pagination>
               -->
+
               <div *ngIf="totalPages > 1">
                 <ngb-pagination class="d-flex justify-content-end" [pageSize]="itemsPerPage" [collectionSize]="totalItems"
                   [(page)]="page" (pageChange)="onPageChange($event)" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"></ngb-pagination>
