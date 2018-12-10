@@ -13,8 +13,10 @@ export * from './data/select.data';
 export * from './data/invoice.list.data';
 export * from './data/sign.data';
 export * from './data/token.data';
+export * from './data/adjust.data';
 
 // param
 export * from './param/customer.param';
 export * from './param/good.param';
 export * from './param/invoice.param';
+

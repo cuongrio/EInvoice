@@ -124,12 +124,16 @@
   }
   .ng-dropdown-panel-items{
     .ng-option{
-      padding: 5px 10px;
+      padding: 7px 10px;
       &.ng-option-selected{
         background: #e9ecef !important;
       }
       &:hover,
       &:focus{
+        background: #e9ecef !important;
+      }
+
+      &.ng-option-marked{
         background: #e9ecef !important;
       }
     }
@@ -206,6 +210,15 @@
         }
       }
     }
+  }
+}
+
+.alert{
+  &.alert-info{
+    border: 0 !important;
+  }
+  &.alert-danger{
+    border: 0 !important;
   }
 }
 
@@ -496,6 +509,12 @@ table {
 .template-ein {
   &.navbar-action {
     margin-bottom: 12px;
+
+    .pull-right{
+      .btn{
+        margin-left: 8px;
+      }
+    }
   }
   > .btn {
     @extend .mt-2;
@@ -868,6 +887,18 @@ label.error {
   }
 }
 
+.pull-left{
+  float: left;
+}
+.pull-right{
+  float: right;
+}
+
+.adjustlink{
+  text-transform: uppercase;
+    font-weight: 600;
+}
+
 .btn-form__footer{
   text-align: center;
   margin: 0 auto 30px;
@@ -881,6 +912,9 @@ label.error {
   }
   .navbar-action {
     margin-top: 20px;
+    .btn{
+      margin-right: 7px;
+    }
   }
 
   .invoice__form {

@@ -18,10 +18,10 @@ export class AppService {
   public getTenantUrl(url: string) {
     if (url.indexOf('ahoadonplugin') === -1) {
       const credentials: UserModel = this.authenticationService.credentials;
-      if (credentials) {
+      if (credentials && credentials.tenant) {
         return `${environment.serverUrl}/${credentials.tenant}${url}`;
       } else {
-        return '';
+        this.router.navigate(['/login']);
       }
     }
     return url;
@@ -83,9 +83,9 @@ export class AppService {
     if (tenantUrl === '') {
       this.router.navigate(['/login']);
     }
-    return this.httpService.request('PUT', url, {
+    return this.httpService.request('PUT', tenantUrl, {
       headers: this.appendHeaderForJson(),
-      body: JSON.stringify(body)
+      body: body
     });
   }
 
@@ -106,7 +106,6 @@ export class AppService {
     if (credentials) {
       const token = credentials.token;
       if (token !== null) {
-        console.log('token: ' + token);
         const headers = new HttpHeaders({
           'Content-Type': 'application/json',
           Authorization: 'Bearer ' + token
@@ -123,7 +122,6 @@ export class AppService {
     if (credentials) {
       const token = credentials.token;
       if (token !== null) {
-        console.log('token: ' + token);
         const headers = new HttpHeaders({
           'Content-Type': 'application/octet-stream',
           Authorization: 'Bearer ' + token

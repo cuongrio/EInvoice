@@ -23,6 +23,12 @@ body.modal-open {
 
     &.modal-sm {
       width: 350px !important;
+      .modal-header{
+        padding: 7px 1rem 0px !important;
+      }
+      .modal-body{
+        padding: 7px 15px !important;
+      }
     }
 
     &.modal-token {
@@ -97,8 +103,8 @@ body.modal-open {
       .modal-body {
         min-height: 120px;
         img.img-sm {
-          width: 45px !important;
-          height: 45px !important;
+          width: 60px !important;
+          height: 60px !important;
           object-fit: scale-down;
         }
 

@@ -26,6 +26,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { NgxMaskModule } from 'ngx-mask';
 import { NgxCurrencyModule } from 'ngx-currency';
 import { NgxSpinnerModule } from '@hardpool/ngx-spinner';
+import { AppDirectiveModule } from '@app/_directives/directive.module';
 
 @NgModule({
   imports: [
@@ -46,7 +47,7 @@ import { NgxSpinnerModule } from '@hardpool/ngx-spinner';
     BsDatepickerModule.forRoot(),
     PopoverModule.forRoot(),
     ModalModule.forRoot(),
-
+    AppDirectiveModule,
     SharedModule
   ],
   declarations: [InvoicesComponent, InvoiceFormComponent],

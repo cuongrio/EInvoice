@@ -32,20 +32,42 @@
                         <div class="row">
                           <div class="col-md-3 col-lg-3">
                             <div class="form-group row">
-                              <div class="col-md-4 col-lg-4 col-form-label"><label>Mã hóa đơn</label></div>
+                              <div class="col-md-4 col-lg-4 col-form-label"><label>Số hóa đơn</label></div>
                               <div class="col-md-8 col-lg-8">
                                 <input formControlName="invoiceNo" type="text" class="form-control form-control-sm"
-                                  placeholder="Mã hóa đơn" />
+                                  placeholder="Số hóa đơn" />
                               </div>
                             </div>
                           </div>
 
                           <div class="col-md-3 col-lg-3">
+                              <div class="form-group row">
+                                <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Mẫu số</label></div>
+                                <div class="col-md-8 col-lg-8">
+                                    <ng-select formControlName="form" 
+                                    [loading]="formLoading"
+                                    [items]="comboForm"
+                                    (change)="onFormChange($event)"
+                                    [searchable]="false" 
+                                    bindLabel="code" 
+                                    bindValue="value">
+                                  </ng-select>
+                                </div>
+                              </div>
+                            </div>
+
+                          <div class="col-md-3 col-lg-3">
                             <div class="form-group row">
-                              <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Số Serial</label></div>
+                              <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Ký hiệu</label></div>
                               <div class="col-md-8 col-lg-8">
-                                <input formControlName="serial" type="text" class="form-control form-control-sm"
-                                  placeholder="Số Serial" />
+                                  <ng-select 
+                                  formControlName="serial" 
+                                  [loading]="serialLoading"
+                                  [items]="comboSerial"
+                                  [searchable]="false" 
+                                  bindLabel="code" 
+                                  bindValue="value">
+                                </ng-select>
                               </div>
                             </div>
                           </div>
@@ -60,15 +82,15 @@
                             </div>
                           </div>
 
-                          <div class="col-md-3 col-lg-3">
+                          <!-- <div class="col-md-3 col-lg-3">
                             <div class="form-group row">
-                              <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Kích cỡ</label></div>
+                              <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Mã hàng</label></div>
                               <div class="col-md-8 col-lg-8">
                                 <input formControlName="size" type="text" class="form-control form-control-sm"
-                                  placeholder="Kích cỡ" />
+                                  placeholder="Mã hàng" />
                               </div>
                             </div>
-                          </div>
+                          </div> -->
 
                           <div class="col-md-3 col-lg-3">
                             <div class="form-group row">
@@ -104,16 +126,6 @@
                                     </button>
                                   </div>
                                 </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div class="col-md-3 col-lg-3">
-                            <div class="form-group row">
-                              <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Form</label></div>
-                              <div class="col-md-8 col-lg-8">
-                                <input formControlName="form" type="text" class="form-control form-control-sm"
-                                  placeholder="Form" />
                               </div>
                             </div>
                           </div>
@@ -157,10 +169,8 @@
                   <button id="openButton" type="button" (click)="openRowClicked()" class="btn  btn-md btn-outline-primary">
                     <i class="fas fa-edit"></i> Mở
                   </button>
-                  <button id="copyButton" type="button" class="btn btn-md btn-outline-primary">
-                    <i id="copyLoading" class="fa fa-spinner fa-spin"></i>
-                    <i id="copyLoaded" class="fas fa-copy"></i>
-                    Sao chép
+                  <button id="copyButton" (click)="copyRowClicked()" type="button" class="btn btn-md btn-outline-primary">
+                    <i class="fas fa-copy"></i> Sao chép
                   </button>
                   <button id="printButton" type="button" (click)="printRowClicked()" class="btn btn-md btn-outline-primary">
                     <i class="fas fa-print"></i> In
@@ -246,13 +256,14 @@
                 <thead>
                   <tr>
                     <th></th>
+                    <th>Trạng thái</th>
                     <th>Số hóa đơn</th>
                     <th>Ngày HĐ</th>
                     <th>Khách hàng</th>
                     <th>MST</th>
                     <th>Địa chỉ</th>
-                    <th class="text-right">%VAT</th>
-                    <th class="text-right">TS thuế</th>
+                    <th class="text-right">Tiền chưa thuế</th>
+                    <th class="text-right">Tiền thuế</th>
                     <th class="text-right">Tổng tiền</th>
                   </tr>
                 </thead>

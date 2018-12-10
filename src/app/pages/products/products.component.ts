@@ -72,7 +72,6 @@ export class ProductsComponent implements OnInit, AfterViewInit {
         }
         customerText += tdText;
       });
-      console.log(customerText);
       copyToClipboard(customerText);
 
       setTimeout(function () {
@@ -98,7 +97,6 @@ export class ProductsComponent implements OnInit, AfterViewInit {
         dataForm: data,
         viewMode: true
       };
-      console.log(JSON.stringify(initialState));
       this.modalRef = this.modalService.show(ProductFormComponent, { class: 'modal-lg', initialState });
     });
 
@@ -319,7 +317,6 @@ export class ProductsComponent implements OnInit, AfterViewInit {
 
     // selected row
     $('#productTable tbody').on('click', 'tr.row-parent', function () {
-      console.log('click tr');
       $('input:checkbox[name=stickchoice]').each(function () {
         $(this).prop('checked', false);
       });

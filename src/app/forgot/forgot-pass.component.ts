@@ -104,8 +104,6 @@ export class ForgotPassComponent implements OnInit {
       new_password: dataForm.password
     };
 
-    console.log(body);
-
     this.forgotService.doReset(body).subscribe(data => {
       this.errorMessage = '';
       this.screen = 3;

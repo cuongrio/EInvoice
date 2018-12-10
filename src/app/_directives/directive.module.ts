@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 
 import { CurrencyInputMaskDirective } from './currency-input-mask.directive';
 import { AutofocusDirective } from './autofocus.directive';
+import { InvoiceStatusDirective } from './status.directive';
 
 
 @NgModule({
@@ -13,11 +14,13 @@ import { AutofocusDirective } from './autofocus.directive';
     ],
     declarations: [
       CurrencyInputMaskDirective,
-      AutofocusDirective
+      AutofocusDirective,
+      InvoiceStatusDirective
     ],
     exports: [
       CurrencyInputMaskDirective,
-      AutofocusDirective
+      AutofocusDirective,
+      InvoiceStatusDirective
     ]
 })
 export class AppDirectiveModule {

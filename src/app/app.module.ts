@@ -34,7 +34,7 @@ import { CoreModule } from './core/core.module';
 import { HttpService } from './core/http/http.service';
 import { AppConstant } from './_mock/mock.data';
 import { TranslateModule } from '@ngx-translate/core';
-import { AppDirectiveModule } from './_directives/app-directive.module';
+import { AppDirectiveModule } from './_directives/directive.module';
 
 @NgModule({
   declarations: [

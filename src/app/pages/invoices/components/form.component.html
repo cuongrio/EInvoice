@@ -22,17 +22,21 @@
             <button type="button" (click)="editClicked()" [disabled]="disabledEdit" class="btn btn-md btn-outline-primary"><i
                 class="fas fa-edit"></i>
               Sửa</button>
-            <button type="button" (click)="adjustClicked()" [disabled]="disabledAdjust" class="btn btn-md btn-outline-primary"><i
-                class="fas fa-edit"></i>
-              Điều chỉnh</button>
+
             <button type="button" [disabled]="viewMode" (click)="isPreview=false; ngAddForm.ngSubmit.emit()" class="btn btn-md btn-success">
               <i class="fas fa-save"></i> Lưu
             </button>
-            <button type="button" [disabled]="previewLoading || viewMode" (click)="isPreview=true; ngAddForm.ngSubmit.emit()"
+            <button *ngIf="canPreview" type="button" [disabled]="previewLoading || viewMode" (click)="isPreview=true; ngAddForm.ngSubmit.emit()"
               class="btn btn-md btn-outline-primary">
               <i *ngIf="previewLoading" class="fa fa-spinner fa-spin"></i>
               <i *ngIf="!previewLoading" class="fas fa-info"></i>
-              Xem
+              Xem trước
+            </button>
+
+            <button *ngIf="!canPreview" type="button" (click)="printRowClicked()" [disabled]="previewLoading" class="btn btn-md btn-outline-primary">
+              <i *ngIf="previewLoading" class="fa fa-spinner fa-spin"></i>
+              <i *ngIf="!previewLoading" class="fas fa-info"></i>
+              In
             </button>
 
             <button id="signButton" [disabled]="disabledSign" type="button" (click)="openModalMd(listToken)" class="btn btn-md btn-outline-primary">
@@ -81,13 +85,23 @@
                 </div>
               </div>
             </ng-template>
-
-            <button [disabled]="disabledInCD" (click)="inCDClicked()" type="button" class="btn btn-md btn-outline-primary"><i
-                class="fas fa-print"></i>
-              In CĐ</button>
             <button routerLink="/invoices" type="button" class="btn btn-md btn-light">
               <i class="fas fa-share-square"></i> Thoát
             </button>
+
+            <div class="pull-right mt-2">
+              <button type="button" (click)="adjustClicked()" [disabled]="disabledAdjust" class="btn btn-md btn-outline-primary"><i
+                  class="fas fa-edit"></i>
+                Điều chỉnh
+              </button>
+              <button type="button" (click)="replaceClicked()" [disabled]="disabledReplace" class="btn btn-md btn-outline-primary">
+                <i class="fa fa-retweet"></i> Thay thế
+              </button>
+
+              <button [disabled]="disabledInCD" (click)="printTransformRowClicked()" type="button" class="btn btn-md btn-outline-primary"><i
+                  class="fas fa-print"></i>
+                In chuyển đổi</button>
+            </div>
           </div>
         </div>
       </div>
@@ -96,12 +110,37 @@
         <div class="col-lg-12">
           <div class="card card-shadow px-2">
             <div class="card-body invoice__wrapper">
-              <div *ngIf="isAdjust" class="alert alert-danger">
-                Đang viết hóa đơn điều chỉnh cho hóa đơn số:
-                <a target="_blank" routerLink="/invoices/open/{{invoiceId}}"><strong>#{{this.invoiceId}}, mẫu:
-                    {{adjustForm}}, ký
-                    hiệu:
-                    {{adjustSerial}} </strong></a>
+              <div *ngIf="isAdjust || isReplace" class="alert alert-danger">
+                <span *ngIf="isAdjust">
+                  Đang viết hóa đơn <b>ĐIỀU CHỈNH</b> cho
+                </span>
+                <span *ngIf="isReplace">
+                  Đang viết hóa đơn <b>THAY THẾ</b> cho
+                </span>
+                <a class="adjustlink" target="_blank" routerLink="/invoices/open/{{invoiceId}}">
+                  hóa đơn số: #{{invoiceNo}} | mẫu: {{adjustForm}} | ký hiệu:{{adjustSerial}}
+                </a>
+                <a (click)="backClicked()" class="btn btn-md btn-light ml-3">
+                  <i class="fas fa-chevron-left"></i> Quay lại</a>
+              </div>
+
+              <div *ngIf="currentAdjust" class="alert alert-info">
+                <span *ngIf="currentAdjust.invoice_type == 'ADJED'">
+                  Hóa đơn này <strong>ĐƯỢC ĐIỀU CHỈNH</strong> bởi hóa đơn số:
+                </span>
+                <span *ngIf="currentAdjust.invoice_type == 'ADJ'">
+                  Hóa đơn <strong>ĐIỀU CHỈNH</strong> cho số hóa đơn số:
+                </span>
+                <span *ngIf="currentAdjust.invoice_type == 'REPLACE'">
+                  Hóa đơn này <strong>ĐƯỢC THAY THẾ</strong> bởi hóa đơn số:
+                </span>
+                <span *ngIf="currentAdjust.invoice_type == 'REPLACED'">
+                  Hóa đơn này <strong>BỊ THAY THẾ</strong> bởi hóa đơn số:
+                </span>
+                <a class="adjustlink" target="_blank" routerLink="/invoices/open/{{currentAdjust.ref_invoice_id}}">
+                  #{{currentAdjust.ref_invoice_no}} | mẫu: {{currentAdjust.ref_invoice_form}} | ký
+                  hiệu:{{currentAdjust.ref_invoice_serial}}
+                </a>
                 <a (click)="backClicked()" class="btn btn-md btn-light ml-3">
                   <i class="fas fa-chevron-left"></i> Quay lại</a>
               </div>
@@ -118,10 +157,10 @@
                           <div class="input-group">
                             <input [readonly]="viewMode" formControlName="invoiceDate" class="form-control form-control-sm text-bold"
                               [ngClass]="{ 'control-invalid': submitted && addForm.controls['invoiceDate'].errors }"
-                              placeholder="DD/MM/YYYY" triggers="none" [bsConfig]="bsConfig" #dinvoiceDate="bsDatepicker"
-                              bsDatepicker />
-                            <div *ngIf="!viewMode" class="input-group-append">
-                              <button class="btn btn-icons btn-inverse-light btn-md" (click)="dinvoiceDate.toggle()"
+                              placeholder="DD/MM/YYYY" (bsValueChange)="invoiceDateValueChange($event)" [isDisabled]="viewMode"
+                              [bsConfig]="bsConfig" #dinvoiceDate="bsDatepicker" bsDatepicker />
+                            <div class="input-group-append">
+                              <button [disabled]="viewMode" class="btn btn-icons btn-inverse-light btn-md" (click)="dinvoiceDate.toggle()"
                                 [attr.aria-expanded]="dinvoiceDate.isOpen" type="button">
                                 <i class="fas fa-calendar"></i>
                               </button>
@@ -176,18 +215,16 @@
                         <div class="col-md-4 col-lg-4 col-form-label"><label class="required">Mã KH</label></div>
                         <div class="col-md-8 col-lg-8">
                           <ng-select *ngIf="!viewMode" formControlName="customerCode" [loading]="customerLoading"
-                            (change)="onCustomerChange($event)" [items]="customerArr" [virtualScroll]="true" bindLabel="customer_code"
-                            bindValue="customer_code">
+                            (change)="onCustomerChange($event)" [items]="customerArr" [addTag]="true" [virtualScroll]="true"
+                            bindLabel="customer_code" bindValue="customer_code">
                             <ng-template ng-header-tmp>
                               <small class="form-text text-muted">Tổng: <b>{{customerArr.length}}</b></small>
                             </ng-template>
                             <ng-template ng-option-tmp let-item="item" let-index="index">
-                              <p></p>
                               <b>{{item.customer_code}}</b> {{item.customer_name}}
                             </ng-template>
                           </ng-select>
                           <input type="text" *ngIf="viewMode" readonly="readonly" formControlName="customerCode" class="form-control form-control-sm" />
-                          <app-control-message *ngIf="submitted" [control]="addForm.controls['customerCode']"></app-control-message>
                         </div>
                       </div>
                     </div>
@@ -206,7 +243,6 @@
                             </ng-template>
                           </ng-select>
                           <input type="text" *ngIf="viewMode" readonly="readonly" formControlName="customerTax" class="form-control form-control-sm" />
-                          <app-control-message *ngIf="submitted" [control]="addForm.controls['customerTax']"></app-control-message>
                         </div>
                       </div>
                     </div>
@@ -266,10 +302,12 @@
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label"><label class="required">HTTT</label></div>
                         <div class="col-md-8 col-lg-8">
-                          <ng-select *ngIf="!viewMode" formControlName="paymentType" [(ngModel)]="htttModel" [items]="comboHTTT"
-                            [clearable]="false" [searchable]="false" bindLabel="code" bindValue="value">
+                          <ng-select *ngIf="!viewMode" [markFirst]="true" formControlName="paymentType" [(ngModel)]="htttModel" [items]="comboHTTT"
+                            [clearable]="false" [searchable]="false" bindLabel="value" bindValue="code">
                           </ng-select>
-                          <input *ngIf="viewMode" readonly="readonly" formControlName="paymentType" class="form-control form-control-sm text-right"
+                          <input *ngIf="viewMode" value="Tiền mặt / Chuyển khoản" 
+                            readonly="readonly" 
+                            class="form-control form-control-sm"
                             type="text" />
                           <app-control-message *ngIf="submitted" [control]="addForm.controls['paymentType']"></app-control-message>
                         </div>
@@ -299,7 +337,7 @@
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label"><label>Trạng thái</label></div>
                         <div class="col-md-8 col-lg-8">
-                          <input type="text" formControlName="status" readonly="readonly" class="form-control form-control-sm" />
+                          <input appInvoiceStatus type="text" formControlName="status" readonly="readonly" class="form-control form-control-sm" />
                         </div>
                       </div>
                     </div>
@@ -320,7 +358,7 @@
                           <th style="width: 100px;">ĐV</th>
                           <th style="width: 100px;" class="text-right">Số lượng</th>
                           <th style="width: 140px;" class="text-right">Đơn giá</th>
-                          <th style="width: 140px;" class="text-right">Tiền chưa thuế</th>
+                          <th style="width: 160px;" class="text-right">Tiền chưa thuế</th>
                           <th [hidden]="hiddenExColumn" style="width: 80px;" class="text-right">% CK</th>
                           <th [hidden]="hiddenExColumn" style="width: 140px;" class="text-right">Tiền CK</th>
                           <th style="width: 80px;" class="text-right">% Thuế</th>
@@ -337,13 +375,6 @@
                           </td>
 
                           <td class="no-padding invoice-no__item">
-                            <!-- <div class="input-group input-group-sm c-group">
-                              <div class="input-group-prepend" [ngClass]="{ 'is-viewable': viewMode }">
-                                <input formControlName="item_code" readonly="readonly" type="text" class="form-control form-control-sm form-control-custom" />
-                              </div>
-                              <ngx-select-dropdown *ngIf="!viewMode" (valueChange)="onGoodlineChange($event, idx)"
-                                [multiple]="false" [config]="configGood" [options]="goodArr"></ngx-select-dropdown>
-                            </div> -->
                             <ng-select *ngIf="!viewMode" formControlName="item_code" [loading]="goodLoading" [items]="goodArr"
                               (change)="onGoodlineChange($event, idx)" [virtualScroll]="true" bindLabel="goods_code"
                               bindValue="goods_code">
@@ -431,19 +462,19 @@
                           <th></th>
                           <th></th>
                           <th class="text-right">
-                            {{ sumLinePrice() | currency:'VND':'symbol':'4.0-2'}}
+                            {{ sumLinePrice() | number:'.0-2'}}
                           </th>
                           <th class="text-right">
-                            {{ sumLineAmount() | currency:'VND':'symbol':'4.0-2'}}
+                            {{ sumLineAmount() | number:'.0-2'}}
                           </th>
                           <th [hidden]="hiddenExColumn" class="text-right"></th>
                           <th [hidden]="hiddenExColumn" class="text-right"></th>
                           <th></th>
                           <th class="text-right">
-                            {{ sumLinePriceTax() | currency:'VND':'symbol':'4.0-2'}}
+                            {{ sumLinePriceTax() | number:'.0-2'}}
                           </th>
                           <th class="text-right">
-                            {{ sumLineAmountWt() | currency:'VND':'symbol':'4.0-2'}}
+                            {{ sumLineAmountWt() | number:'.0-2'}}
                           </th>
                         </tr>
                       </tfoot>
@@ -452,13 +483,12 @@
                 </div>
               </form>
               <div class="row text-center">
-                <div class="btn-group btn-form__footer">
-                  <button type="button" [disabled]="viewMode" (click)="isPreview=false; ngAddForm.ngSubmit.emit()"
-                    class="btn btn-md btn-success">
+                <div *ngIf="!viewMode" class="btn-group btn-form__footer">
+                  <button type="button" (click)="isPreview=false; ngAddForm.ngSubmit.emit()" class="btn btn-success">
                     <i class="fas fa-save"></i> Lưu
                   </button>
-                  <button (click)="backClicked()" type="button" class="btn btn-md ml-2 btn-light">
-                      <i class="fas fa-times-circle"></i> Bỏ qua
+                  <button (click)="backClicked()" type="button" class="btn ml-2 btn-light">
+                    <i class="fas fa-times-circle"></i> Bỏ qua
                   </button>
                 </div>
               </div>

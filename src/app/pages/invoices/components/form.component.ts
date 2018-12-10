@@ -3,7 +3,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, HostListener, AfterViewInit
 } from '@angular/core';
 import { FormGroup, FormArray, Validators, FormBuilder } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 import { Subscription, Observable } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
@@ -20,6 +20,7 @@ import { Location } from '@angular/common';
 import * as moment from 'moment';
 import { NgSelectConfig } from '@ng-select/ng-select';
 import { ISpinnerConfig, SPINNER_PLACEMENT, SPINNER_ANIMATIONS } from '@hardpool/ngx-spinner';
+import { AdjustData } from './../../../_models/data/adjust.data';
 
 @Component({
   selector: 'app-invoice-form',
@@ -28,12 +29,17 @@ import { ISpinnerConfig, SPINNER_PLACEMENT, SPINNER_ANIMATIONS } from '@hardpool
 })
 export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
   public invoiceId: number;
+  public invoiceNo: string;
+  public segmentRouter: string;
   public adjustForm: string;
   public adjustSerial: string;
   public isAdjust = false;
+  public isReplace = false;
+  public currentAdjust: AdjustData;
 
   // signed
   public tokenPicked: TokenData;
+  public invoiceDatePicked: string;
   public listTokenAvaiable: Array<TokenData>;
 
   public signErrorMessage: string;
@@ -49,6 +55,8 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
   public disabledSign = true;
   public disabledPrintTranform = true;
   public disabledAdjust = true;
+  public disabledReplace = true;
+  public canPreview = true;
 
   public addForm: FormGroup;
   public submitted = false;
@@ -58,6 +66,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
   public previewLoading = false;
   public formLoading = false;
   public serialLoading = false;
+  public htttLoading = false;
   public taxRateLoading = false;
   public customerLoading = false;
   public goodLoading = false;
@@ -99,10 +108,12 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
   public customerArr: Array<CustomerData>;
   public goodArr: Array<GoodData>;
 
+  public comboStatus = new Array<SelectData>();
   public comboHTTT = new Array<SelectData>();
   public comboForm = new Array<SelectData>();
   public comboSerial = new Array<SelectData>();
   public comboTaxRate = new Array<SelectData>();
+  public comboSerialStorage = new Array<SelectData>();
 
   private subscription: Subscription;
 
@@ -129,11 +140,9 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit() {
     this.initRouter();
     this.createItemsForm();
-    this.formSetDefault();
     this.loadCustomers();
     this.loadReferences();
     this.loadGoods();
-    this.loadHttt();
     this.initNewRow();
     this.initSpinnerConfig();
   }
@@ -146,25 +155,56 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
     this.subscription.unsubscribe();
   }
 
-  editClicked() {
+  public editClicked() {
     this.viewMode = false;
     this.ref.markForCheck();
   }
-  backClicked() {
+
+  public printRowClicked() {
+    const invoiceId = +this.invoiceId;
+    this.previewLoading = true;
+    this.invoiceService.print(invoiceId).subscribe(data => {
+      const file = new Blob([data], { type: 'application/pdf' });
+      const fileURL = URL.createObjectURL(file);
+      this.ref.markForCheck();
+      window.open(fileURL);
+      setTimeout(function () {
+        this.signTokenLoading = false;
+        this.ref.markForCheck();
+      }.bind(this), 200);
+    }, err => {
+      setTimeout(function () {
+        this.signTokenLoading = false;
+        this.ref.markForCheck();
+      }.bind(this), 200);
+      this.ref.markForCheck();
+      this.errorHandler(err);
+    });
+  }
+
+  public invoiceDateValueChange(event: any) {
+    const dateFormate = moment(event).format('DD-MM-YYYY');
+    this.invoiceDatePicked = dateFormate;
+  }
+
+  public backClicked() {
     this.location.back();
   }
 
-  adjustClicked() {
-    this.clearFormArray(this.itemFormArray);
-    this.initNewRow();
-    this.lineAmount = new Array<number>();
-    this.lineAmoutWt = new Array<number>();
-    this.linePriceTax = new Array<number>();
+  public adjustClicked() {
+    this.currentAdjust = null;
     this.isAdjust = true;
-    this.viewMode = false;
-    this.disabledEdit = true;
-    this.disabledSign = true;
-    this.disabledAdd = true;
+    this.isReplace = false;
+    this.initForAdjustAndReplace();
+    this.ref.markForCheck();
+  }
+
+  public replaceClicked() {
+    this.currentAdjust = null;
+    this.isReplace = true;
+    this.isAdjust = false;
+    this.initForAdjustAndReplace();
+    this.ref.markForCheck();
   }
 
   cancelClicked() {
@@ -202,7 +242,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     let dataFormItems: any;
     this.noItemLine = true;
-    console.log('isPreview: ' + this.isPreview);
 
     if (dataForm.items && dataForm.items.length > 0) {
       dataFormItems = dataForm.items.filter((elemnent: any, index: number, array: any) => {
@@ -225,7 +264,11 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
     // general
     invoiceModel.form = dataForm.form;
     invoiceModel.serial = dataForm.serial;
-    const dateFormate = moment(dataForm.invoiceDate).format('YYYY-MM-DD');
+
+    invoiceModel.invoice_no = dataForm.invoiceNo;
+    invoiceModel.order_no = dataForm.orderNo;
+    const invoiceDate = moment(this.invoiceDatePicked, 'DD-MM-YYYY');
+    const dateFormate = invoiceDate.format('YYYY-MM-DD');
     invoiceModel.invoice_date = dateFormate;
 
     // update customer
@@ -264,7 +307,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     if (this.isPreview) {
-      console.log('isPreview');
       this.invoiceService.preview(invoiceModel).subscribe(data => {
         const file = new Blob([data], { type: 'application/pdf' });
         const fileURL = URL.createObjectURL(file);
@@ -277,46 +319,122 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
         this.errorHandler(err);
       });
     } else {
-      return this.invoiceService.createInvoice(invoiceModel).subscribe(
-        data => {
-          const initialState = {
-            message: 'Đã tạo hóa đơn thành công!',
-            title: 'Thành công!',
-            class: 'success',
-            highlight: `Hóa đơn #${data.invoice_id}`
-          };
-          this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+      if (this.invoiceId) {
+        // case adjust
+        if (this.isAdjust) {
+          return this.invoiceService.ajustInvoice(this.invoiceId, invoiceModel).subscribe(data => {
+            const initialState = {
+              message: `Đã điều chỉnh cho hóa đơn #${this.invoiceNo}!`,
+              title: 'Thành công!',
+              class: 'success',
+              highlight: `Số hóa đơn mới: #${data.invoice_no}.`
+            };
+            this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+            this.resolvedFormStatus(data);
+            this.isAdjust = false;
+            this.disabledAdjust = true;
+            this.disabledReplace = true;
+            return true;
+          }, err => {
+            const initialState = {
+              message: 'Không thể điều chỉnh hóa đơn!',
+              title: 'Đã có lỗi!',
+              class: 'error'
+            };
 
-          this.addForm.patchValue({
-            invoiceNo: data.invoice_no,
-            status: data.status
+            if (err.error) {
+              initialState.message = err.error.message;
+            }
+            this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+            this.submitted = false;
           });
+        } else if (this.isReplace) {
+          return this.invoiceService.replaceInvoice(this.invoiceId, invoiceModel).subscribe(data => {
+            const initialState = {
+              message: `Đã thay thế hóa đơn #${this.invoiceNo}!`,
+              title: 'Thành công!',
+              class: 'success',
+              highlight: `Số hóa đơn mới: #${data.invoice_no}.`
+            };
+            this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+            this.resolvedFormStatus(data);
+            this.isAdjust = false;
+            this.disabledAdjust = true;
+            this.isReplace = false;
+            this.disabledReplace = true;
+            this.disabledReplace = true;
+            return true;
+          }, err => {
+            const initialState = {
+              message: 'Không thể điều chỉnh hóa đơn!',
+              title: 'Đã có lỗi!',
+              class: 'error'
+            };
 
-          this.invoiceId = data.invoice_id;
-          this.adjustForm = data.form;
-          this.adjustSerial = data.serial;
+            if (err.error) {
+              initialState.message = err.error.message;
+            }
+            this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+            this.submitted = false;
+          });
+        } else {
 
-          this.viewMode = true;
-          this.disabledEdit = false;
-          this.disabledSign = false;
-          this.disabledAdjust = false;
-          this.ref.markForCheck();
-          this.submitted = false;
-        },
-        err => {
-          const initialState = {
-            message: 'Không thể tạo hóa đơn!',
-            title: 'Đã có lỗi!',
-            class: 'error'
-          };
+          // case update
+          invoiceModel.invoice_id = this.invoiceId;
+          invoiceModel.invoice_no = this.invoiceNo;
+          return this.invoiceService.updateInvoice(invoiceModel).subscribe(data => {
+            const initialState = {
+              message: `Đã cập nhật hóa đơn thành công!`,
+              title: 'Thành công!',
+              class: 'success',
+              highlight: `Hóa đơn: #${data.invoice_no}.`
+            };
+            this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
 
-          if (err.error) {
-            initialState.message = err.error.message;
-          }
-          this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
-          this.submitted = false;
+            this.resolvedFormStatus(data);
+
+          }, err => {
+            const initialState = {
+              message: 'Không thể cập nhật hóa đơn!',
+              title: 'Đã có lỗi!',
+              class: 'error'
+            };
+
+            if (err.error) {
+              initialState.message = err.error.message;
+            }
+            this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+            this.submitted = false;
+          });
         }
-      );
+      } else {
+        return this.invoiceService.createInvoice(invoiceModel).subscribe(
+          data => {
+            const initialState = {
+              message: 'Đã tạo hóa đơn thành công!',
+              title: 'Thành công!',
+              class: 'success',
+              highlight: `Hóa đơn: #${data.invoice_no}.`
+            };
+            this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+
+            this.resolvedFormStatus(data);
+          },
+          err => {
+            const initialState = {
+              message: 'Không thể tạo hóa đơn!',
+              title: 'Đã có lỗi!',
+              class: 'error'
+            };
+
+            if (err.error) {
+              initialState.message = err.error.message;
+            }
+            this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+            this.submitted = false;
+          }
+        );
+      }
     }
   }
 
@@ -326,9 +444,13 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public addNewButtonClicked() {
-    this.resetForm();
-    this.submitted = false;
-    this.viewMode = false;
+    if (this.segmentRouter !== 'createNew') {
+      this.router.navigate(['/invoices/createNew']);
+    } else {
+      this.resetForm();
+      this.submitted = false;
+      this.viewMode = false;
+    }
   }
 
   public onTokenChange(token: any) {
@@ -344,6 +466,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
     this.signButtonLoading = true;
     localStorage.setItem('token-picked', JSON.stringify(this.tokenPicked));
     const invoiceId = +this.invoiceId;
+    const invoiceNo = this.invoiceNo;
     const dataToken = await this.invoiceService.sign(invoiceId)
       .toPromise().catch(err => {
         this.errorSignHandler(err);
@@ -361,6 +484,9 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
 
     if (signToken) {
       this.invoiceService.signed(invoiceId, signToken).subscribe((data: any) => {
+        this.addForm.patchValue({
+          status: 'SIGNED'
+        });
         this.modalRef.hide();
         this.signButtonDisabled = false;
         this.signButtonLoading = false;
@@ -368,7 +494,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
           message: 'Đã ký thành công hóa đơn!',
           title: 'Thông báo!',
           class: 'success',
-          highlight: `Hóa đơn #${invoiceId}`
+          highlight: `Hóa đơn #${invoiceNo}`
         };
         this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
       }, err => {
@@ -382,8 +508,20 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
     this.hiddenExColumn = !this.hiddenExColumn;
   }
 
-  public inCDClicked() {
-    this.invoiceService.printTransform(this.invoiceId).subscribe(data => { });
+  public printTransformRowClicked() {
+    const invoiceId = +this.invoiceId;
+    this.invoiceService.printTransform(invoiceId).subscribe(data => {
+      const file = new Blob([data], { type: 'application/pdf' });
+      const fileURL = URL.createObjectURL(file);
+      window.open(fileURL);
+    }, err => {
+      const initialState = {
+        message: 'Hóa đơn chỉ được in chuyển đổi một lần!',
+        title: 'Hóa đơn đã in chuyển đổi',
+        class: 'error'
+      };
+      this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+    });
   }
 
   /*** CUSTOMER CHANGE */
@@ -550,15 +688,38 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private errorHandler(err: any) {
     const initialState = {
-      message: 'Something went wrong',
+      message: 'Đã có lỗi xảy ra',
       title: 'Đã có lỗi!',
       class: 'error'
     };
-
-    if (err.error) {
+    if (err.message) {
       initialState.message = err.error.message;
+    } else {
+      if (err.error) {
+        initialState.message = err.error.message;
+      }
     }
+
     this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+  }
+
+  private resolvedFormStatus(data: any) {
+    this.addForm.patchValue({
+      invoiceNo: data.invoice_no,
+      status: data.status
+    });
+
+    this.invoiceId = data.invoice_id;
+    this.invoiceNo = data.invoice_no;
+    this.adjustForm = data.form;
+    this.adjustSerial = data.serial;
+
+    this.viewMode = true;
+    this.disabledEdit = false;
+    this.disabledSign = false;
+    this.disabledAdjust = false;
+    this.ref.markForCheck();
+    this.submitted = false;
   }
 
   private resetForm() {
@@ -571,10 +732,15 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
     this.addForm.reset();
 
     // set default
-    this.formSetDefault();
     this.loadCustomers();
     this.loadGoods();
     this.initNewRow();
+
+    const dateFormate = moment(new Date()).format('DD-MM-YYYY');
+    this.invoiceDatePicked = dateFormate;
+    this.addForm.patchValue({
+      invoiceDate: dateFormate
+    });
   }
 
   private errorSignHandler(err: any) {
@@ -661,14 +827,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  private loadHttt() {
-    this.comboHTTT = this.htttDummy();
-    this.htttModel = this.comboHTTT[0].value;
-    this.addForm.patchValue({
-      paymentType: this.htttModel
-    });
-  }
-
   private loadCustomers() {
     if (this.customerArr && this.customerArr.length > 0) {
       return;
@@ -685,14 +843,29 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private loadReferences() {
+
+    // loading
     this.formLoading = true;
     this.taxRateLoading = true;
+    this.htttLoading = true;
 
+    // reset object
+    this.comboForm = new Array<SelectData>();
+    this.comboTaxRate = new Array<SelectData>();
+    this.comboTaxRate = new Array<SelectData>();
+    this.comboHTTT = new Array<SelectData>();
+    this.comboStatus = new Array<SelectData>();
+    this.comboSerialStorage = new Array<SelectData>();
+
+    sessionStorage.setItem('comboForm', '');
+    sessionStorage.setItem('comboHTTT', '');
+    sessionStorage.setItem('comboTaxRate', '');
+    sessionStorage.setItem('comboStatus', '');
+    sessionStorage.setItem('comboSerialStorage', '');
     this.referenceService.referenceInfo().subscribe((items: SelectData[]) => {
       const selectItems = items as SelectData[];
       this.references = selectItems;
-      this.comboForm = new Array<SelectData>();
-      this.comboTaxRate = new Array<SelectData>();
+
 
       for (let i = 0; i < selectItems.length; i++) {
         const selectItem = new SelectData();
@@ -705,6 +878,17 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
         if (selectItem.type === 'COMBO_FORM') {
           this.comboForm.push(selectItem);
         }
+
+        if (selectItem.type === 'COMBO_PAYMENT') {
+          this.comboHTTT.push(selectItem);
+        }
+        if (selectItem.type === 'COMBO_INVOICE_STATUS') {
+          this.comboStatus.push(selectItem);
+        }
+        if (selectItem.type.startsWith('COMBO_SERIAL_')) {
+          // save to sesssion
+          this.comboSerialStorage.push(selectItem);
+        }
       }
 
       // set default value
@@ -715,15 +899,31 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
         });
         this.loadSerialByForm(this.formPicked);
       }
+
+      if (this.comboHTTT.length > 0) {
+        this.htttModel = this.comboHTTT[0].code;
+        this.addForm.patchValue({
+          paymentType: this.htttModel
+        });
+      }
+      // set to localstorage
+      sessionStorage.setItem('comboForm', JSON.stringify(this.comboForm));
+      sessionStorage.setItem('comboHTTT', JSON.stringify(this.comboHTTT));
+      sessionStorage.setItem('comboTaxRate', JSON.stringify(this.comboTaxRate));
+      sessionStorage.setItem('comboStatus', JSON.stringify(this.comboStatus));
+      sessionStorage.setItem('comboSerialStorage', JSON.stringify(this.comboSerialStorage));
+
       setTimeout(function () {
         this.taxRateLoading = false;
         this.formLoading = false;
+        this.htttLoading = false;
         this.ref.markForCheck();
       }.bind(this), 200);
     }, err => {
       setTimeout(function () {
         this.taxRateLoading = false;
         this.formLoading = false;
+        this.htttLoading = false;
         this.ref.markForCheck();
       }.bind(this), 200);
       this.errorHandler(err);
@@ -767,36 +967,74 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private initRouter() {
+    const urlSegmentArr: UrlSegment[] = this.activatedRoute.snapshot.url;
+    const segment = urlSegmentArr[0].path;
+    this.segmentRouter = segment;
+    this.canPreview = true;
+
+    // case create new
     this.subscription = this.activatedRoute.params.subscribe((params: any) => {
       if (params.id) {
         this.invoiceId = params.id;
-        this.disabledAdjust = false;
-        this.disabledEdit = false;
-        this.viewMode = true;
+        if (segment === 'open') {
+          this.disabledAdjust = false;
+          this.disabledEdit = false;
+          this.viewMode = true;
+          this.disabledReplace = false;
+        }
+
+        this.canPreview = false;
 
         this.invoiceService.retrieveInvoiceById(this.invoiceId).subscribe(data => {
-          this.setFormWithDefaultData(data);
-          this.adjustForm = data.form;
-          this.adjustSerial = data.serial;
+          this.invoiceNo = data.invoice_no;
+          if (segment === 'open') {
+            this.setFormWithDefaultData(data, 'open');
+            this.adjustForm = data.form;
+            this.adjustSerial = data.serial;
+            // get data for adjust
+            if (data.ref_invoice_id) {
+              this.currentAdjust = {
+                invoice_type: data.invoice_type,
+                ref_invoice_id: data.ref_invoice_id,
+                ref_invoice_form: data.ref_invoice_form,
+                ref_invoice_serial: data.ref_invoice_serial,
+                ref_invoice_no: data.ref_invoice_no,
+                ref_invoice_date: data.ref_invoice_date,
+                secure_id: data.secure_id
+              };
+              this.disabledAdjust = true;
+              this.disabledReplace = true;
+            }
 
-          if (data.status === 'CREATED') {
-            this.disabledSign = false;
+            if (data.status === 'CREATED') {
+              this.disabledSign = false;
+              this.disabledAdjust = true;
+              this.disabledReplace = true;
+            }
+            if (data.status && data.status === 'SIGNED') {
+              this.disabledSign = true;
+              this.disabledEdit = true;
+              this.disabledAdjust = false;
+              this.disabledReplace = false;
+            }
+            if (data.status === 'APPROVED' || data.status === 'SIGNED') {
+              this.disabledInCD = false;
+            }
           }
-          if (data.status === 'APPROVED' || data.status === 'SIGNED') {
-            this.disabledInCD = false;
+          if (segment === 'copy') {
+            this.setFormWithDefaultData(data, 'copy');
           }
+          this.ref.markForCheck();
         });
       }
     });
   }
 
-  private setFormWithDefaultData(data: any) {
+  private setFormWithDefaultData(data: any, usercase: string) {
     this.linePriceTax = new Array<number>();
     this.lineAmount = new Array<number>();
     this.lineAmoutWt = new Array<number>();
     this.taxModel = new Array<string>();
-
-    const invoiceDate = moment(data.invoice_date).format('DD-MM-YYYY');
 
     // load serialcombobox
     this.loadSerialByForm(data.form);
@@ -804,8 +1042,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
     this.formPicked = data.form;
 
     this.addForm.patchValue({
-      invoiceDate: invoiceDate,
-      invoiceNo: data.invoice_no,
+      customerCode: data.customer.customer_code,
       customerTax: data.customer.tax_code,
       customerEmail: data.customer.email,
       customerName: data.customer.customer_name,
@@ -813,8 +1050,24 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
       customerBankAccount: data.customer.bank_account,
       customerBank: data.customer.bank,
       customerAddress: data.customer.address,
-      status: data.status
     });
+
+    if (usercase === 'open') {
+      const invoiceDate = moment(data.invoice_date).format('DD-MM-YYYY');
+      this.invoiceDatePicked = invoiceDate;
+      this.addForm.patchValue({
+        invoiceDate: invoiceDate,
+        invoiceNo: data.invoice_no,
+        status: data.status
+      });
+    }
+    if (usercase === 'copy') {
+      const currentDate = moment(new Date()).format('DD-MM-YYYY');
+      this.invoiceDatePicked = currentDate;
+      this.addForm.patchValue({
+        invoiceDate: currentDate
+      });
+    }
 
     const controlArray = this.itemFormArray;
     data.items.forEach((item: any, idx: number) => {
@@ -827,44 +1080,28 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
       controlArray.controls[idx].get('tax_rate').setValue(item.tax_rate);
       this.taxModel[idx] = item.tax_rate + '';
       controlArray.controls[idx].get('quantity').setValue(item.quantity);
-      controlArray.controls[idx].get('discount_rate').setValue(0);
+      controlArray.controls[idx].get('discount_rate').setValue(item.discount_rate);
       controlArray.controls[idx].get('discount').setValue(0);
 
       this.linePriceTax.splice(idx, 0, item.tax);
       this.lineAmount.splice(idx, 0, item.amount);
       this.lineAmoutWt.splice(idx, 0, item.amount_wt);
+      this.linePriceWt.splice(idx, 0, item.price_wt);
+      this.lineDiscount[idx] = (this.lineAmount[idx] * item.discount_rate) / 100;
     });
-
-    console.log(JSON.stringify(data.items));
-  }
-
-  private htttDummy() {
-    return [{
-      code: 'CK/TM',
-      value: 'CK/TM',
-      type: 'COMBO_HTTT'
-    }, {
-      code: 'CK',
-      value: 'CK',
-      type: 'COMBO_HTTT'
-    }, {
-      code: 'TM',
-      value: 'TM',
-      type: 'COMBO_HTTT'
-    }];
   }
 
   private createItemsForm() {
     this.addForm = this.formBuilder.group({
       invoiceDate: ['', Validators.compose([Validators.required])],
       invoiceNo: '',
+      orderNo: '',
       form: ['', Validators.compose([Validators.required])],
       serial: ['', Validators.compose([Validators.required])],
       customerCode: ['', Validators.compose([Validators.required])],
       customerName: ['', Validators.compose([Validators.required])],
       customerTax: ['', Validators.compose([Validators.required])],
       customerEmail: ['', Validators.compose([Validators.email])],
-      orderNo: '',
       customerPhone: '',
       customerOrg: ['', Validators.compose([Validators.required])],
       paymentType: ['', Validators.compose([Validators.required])],
@@ -874,6 +1111,11 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
       customerAddress: ['', Validators.compose([Validators.required])],
       items: this.formBuilder.array([])
     });
+    const dateFormate = moment(new Date()).format('DD-MM-YYYY');
+    this.invoiceDatePicked = dateFormate;
+    this.addForm.patchValue({
+      invoiceDate: dateFormate
+    });
   }
 
   private clearFormArray = (formArray: FormArray) => {
@@ -882,10 +1124,18 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  private formSetDefault() {
-    this.addForm.patchValue({
-      invoiceDate: new Date()
-    });
+  private initForAdjustAndReplace() {
+    this.clearFormArray(this.itemFormArray);
+    this.initNewRow();
+    this.lineAmount = new Array<number>();
+    this.lineAmoutWt = new Array<number>();
+    this.linePriceTax = new Array<number>();
+    this.lineDiscount = new Array<number>();
+    this.linePriceOrigin = new Array<number>();
+    this.viewMode = false;
+    this.disabledEdit = true;
+    this.disabledSign = true;
+    this.disabledAdd = true;
   }
 
 
@@ -913,7 +1163,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
     taxRate = taxRate > 0 ? taxRate : 0;
     const discount = this.lineDiscount[idx] > 0 ? this.lineDiscount[idx] : 0;
     const tax = ((this.lineAmount[idx] - discount) * taxRate) / 100;
-    this.linePriceTax[idx] = tax;
+    this.linePriceTax[idx] = Math.round(tax);
   }
 
   private initSpinnerConfig() {

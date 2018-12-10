@@ -3,13 +3,12 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import * as moment from 'moment';
-import { InvoiceService } from '@app/_services';
-import { InvoiceParam, InvoiceListData } from '@app/_models';
+import { InvoiceService, ReferenceService } from '@app/_services';
+import { InvoiceParam, InvoiceListData, SelectData } from '@app/_models';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { AuthenticationService } from '@app/core/authentication/authentication.service';
 import { environment } from '@env/environment';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
-import { SelectData } from '@app/_models';
 import { AlertComponent } from '@app//shared/alert/alert.component';
 import { TokenService } from './../../_services/app/token.service';
 import { TokenData } from './../../_models/data/token.data';
@@ -23,7 +22,7 @@ type ArrayObject = Array<{ code: string; value: string }>;
   selector: 'app-invoices',
   templateUrl: './invoices.component.html'
 })
-export class InvoicesComponent implements OnInit, AfterViewInit {
+export class InvoicesComponent implements OnInit {
   public sortArr: string[] = ['ASC', 'DESC'];
   public sortByArr: ArrayObject = [
     { code: 'Số hóa đơn', value: 'invoiceNo' },
@@ -43,7 +42,12 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
   public signButtonDisabled = true;
   public signButtonLoading = false;
 
+  public formLoading = false;
+  public serialLoading = false;
+  public serialPicked: string;
 
+  public comboForm = new Array<SelectData>();
+  public comboSerial = new Array<SelectData>();
 
   // expand search
   public expandSearch: boolean;
@@ -82,6 +86,7 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
     private datePipe: DatePipe,
     private router: Router,
     private tokenService: TokenService,
+    private referenceService: ReferenceService,
     private authenticationService: AuthenticationService,
     private activeRouter: ActivatedRoute,
     private invoiceService: InvoiceService,
@@ -96,48 +101,9 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
     this.initDefault();
     this.initDataTable();
     this.initForm();
-    this.initPageHandlerInRouter();
+    this.initRouter();
     this.initSpinnerConfig();
-  }
-
-  ngAfterViewInit() {
-    $('#copyLoading').hide();
-
-    function copyToClipboard(text: string) {
-      const $temp = $('<input>');
-      $('body').append($temp);
-      $temp.val(text).select();
-      document.execCommand('copy');
-      $temp.remove();
-    }
-
-    // handle copy button
-    $('#copyButton').on('click', function (e: any) {
-      e.preventDefault();
-
-      // loading
-      $('#copyLoading').show();
-      $('#copyLoaded').hide();
-
-      const row = $('#invoiceTable tbody').find('tr.selected')[0];
-      let customerText = '';
-      $(row).find('td').each(function (index: any) {
-        const tdText = $(this).text();
-        if (tdText && tdText.trim().length > 0) {
-          if (index !== 1) {
-            customerText += ',';
-          }
-          customerText += tdText;
-        }
-      });
-      console.log(customerText);
-      copyToClipboard(customerText);
-
-      setTimeout(function () {
-        $('#copyLoading').hide();
-        $('#copyLoaded').show();
-      }, 500);
-    });
+    this.loadReferences();
   }
 
   public expandSearchClicked() {
@@ -238,12 +204,12 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
   // BUTTON ACTION
   public openRowClicked() {
     const invoiceId = this.getCheckboxesValue();
-    console.log(invoiceId);
-    window.open(`/invoices/open/${invoiceId}`, '_blank');
+    this.router.navigate([`/invoices/open/${invoiceId}`]);
   }
 
   public copyRowClicked() {
-    const item = this.getCheckboxesValue();
+    const invoiceId = this.getCheckboxesValue();
+    this.router.navigate([`/invoices/copy/${invoiceId}`]);
   }
 
   public printRowClicked() {
@@ -264,12 +230,26 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
     this.invoiceService.printTransform(invoiceId).subscribe(data => {
       const file = new Blob([data], { type: 'application/pdf' });
       const fileURL = URL.createObjectURL(file);
-      this.ref.markForCheck();
       window.open(fileURL);
     }, err => {
-      this.ref.markForCheck();
-      this.errorHandler(err);
+      const initialState = {
+        message: 'Hóa đơn chỉ được in chuyển đổi một lần!',
+        title: 'Hóa đơn đã in chuyển đổi',
+        class: 'error'
+      };
+      this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
     });
+  }
+
+  public onFormChange(selectData: SelectData) {
+    if (!selectData) {
+      this.serialPicked = null;
+      this.searchForm.patchValue({
+        serial: ''
+      });
+      return;
+    }
+    this.loadSerialByForm(selectData.value);
   }
 
   public loadTokenData() {
@@ -350,12 +330,18 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
     return itemsChecked;
   }
 
-  private initPageHandlerInRouter() {
+  private initRouter() {
     if (this.activeRouter.snapshot.queryParams) {
       const routerParams = JSON.parse(JSON.stringify(this.activeRouter.snapshot.queryParams));
       if (routerParams['page']) {
         this.page = +routerParams['page'];
         this.previousPage = +routerParams['page'];
+      }
+      if (routerParams['fromDate']) {
+        routerParams['fromDate'] = this.convertDatetoDisplay(routerParams['fromDate']);
+      }
+      if (routerParams['toDate']) {
+        routerParams['toDate'] = this.convertDatetoDisplay(routerParams['toDate']);
       }
 
       // set default value form
@@ -373,6 +359,16 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
     } else {
       this.expandSearch = false;
     }
+  }
+
+  private convertDatetoDisplay(date: string) {
+    const momentDate = moment(date, 'YYYY-MM-DD');
+    return momentDate.format('DD-MM-YYYY');
+  }
+
+  private convertDateToQuery(date: string) {
+    const momentDate = moment(date, 'DD-MM-YYYY');
+    return momentDate.format('YYYY-MM-DD');
   }
 
   private errorSignHandler(err: any) {
@@ -442,6 +438,8 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
 
   private initDataTable() {
     const $data_table = $('#invoiceTable');
+    const statusJson = sessionStorage.getItem('comboStatus');
+    const statusArr = JSON.parse(statusJson) as SelectData[];
     const table = $data_table.DataTable({
       paging: false,
       searching: false,
@@ -461,39 +459,34 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
         width: '20px',
         targets: 0,
         orderable: false
+      }, {
+        width: '60px',
+        targets: 1,
+        render: function (data: any) {
+          return '<span>' + data + '</span>';
+        }
       },
       {
         width: '80px',
-        targets: 1,
+        targets: 2,
         render: function (data: any) {
           return '<label class="badge badge-info">' + data + '</label>';
         }
       },
       {
         width: '60px',
-        targets: 2
-      },
-      {
-        width: '80px',
         targets: 3
       },
       {
-        width: '60px',
+        width: '80px',
         targets: 4
       },
       {
-        width: '50px',
-        targets: 6,
-        render: function (data: any) {
-          if (data && data !== 'null') {
-            return '<span class="number-format">' + data + '</span>';
-          } else {
-            return '<span></span>';
-          }
-        }
+        width: '60px',
+        targets: 5
       },
       {
-        width: '50px',
+        width: '100px',
         targets: 7,
         render: function (data: any) {
           if (data && data !== 'null') {
@@ -504,8 +497,19 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
         }
       },
       {
-        width: '80px',
+        width: '100px',
         targets: 8,
+        render: function (data: any) {
+          if (data && data !== 'null') {
+            return '<span class="number-format">' + data + '</span>';
+          } else {
+            return '<span></span>';
+          }
+        }
+      },
+      {
+        width: '100px',
+        targets: 9,
         render: function (data: any) {
           if (data && data !== 'null') {
             return '<span class="number-format">' + data + '</span>';
@@ -528,6 +532,16 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
                   <input type="hidden" class="invoice-hidden" value="${row.invoice_id}">
               </div>
             `;
+          } else {
+            return '<span></span>';
+          }
+        }
+      }, {
+        data: function (row: any, type: any) {
+          if (type === 'display' && row.status && row.status !== 'null') {
+            // get in session storage
+            const status = statusArr.find(i => (i.code === row.status));
+            return `<span>${status.value}</span>`;
           } else {
             return '<span></span>';
           }
@@ -640,18 +654,14 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
       e.stopPropagation();
       const invoiceId = $(this).find('.invoice-hidden').val();
       const openUrl = window.location.origin + '/invoices/open/' + invoiceId;
-      window.open(openUrl, '_blank');
+      window.open(openUrl);
     });
 
     // selected row
     $('#invoiceTable tbody').on('click', 'tr.row-parent', function () {
-      console.log('click tr');
       $('input:checkbox[name=stickchoice]').each(function () {
         $(this).prop('checked', false);
       });
-
-      // find expand
-      console.log($(this));
 
       if ($(this).hasClass('selected')) {
         $(this).removeClass('selected');
@@ -696,10 +706,12 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
     }
 
     if (form.fromDate) {
-      invoiceParamsForamat.fromDate = form.fromDate;
+      const fromDate = this.convertDateToQuery(form.fromDate);
+      invoiceParamsForamat.fromDate = fromDate;
     }
     if (form.toDate) {
-      invoiceParamsForamat.toDate = form.toDate;
+      const toDate = this.convertDateToQuery(form.toDate);
+      invoiceParamsForamat.toDate = toDate;
     }
     if (form.invoiceNo) {
       invoiceParamsForamat.invoiceNo = form.invoiceNo;
@@ -714,5 +726,106 @@ export class InvoicesComponent implements OnInit, AfterViewInit {
       invoiceParamsForamat.orgTaxCode = form.orgTaxCode;
     }
     return invoiceParamsForamat;
+  }
+
+  private loadReferences() {
+    // reset object
+    this.formLoading = true;
+    this.serialLoading = true;
+    this.comboForm = new Array<SelectData>();
+    this.comboSerial = new Array<SelectData>();
+    const comboTaxRate = new Array<SelectData>();
+    const comboHTTT = new Array<SelectData>();
+    const comboStatus = new Array<SelectData>();
+    const comboSerialStorage = new Array<SelectData>();
+
+    // check session
+    const comboFormStr = sessionStorage.getItem('comboForm');
+    if (comboFormStr) {
+      this.comboForm = JSON.parse(comboFormStr);
+    }
+    const comboSerialStr = sessionStorage.getItem('comboSerialStorage');
+    if (comboSerialStr) {
+      this.comboSerial = JSON.parse(comboSerialStr);
+    }
+    if (this.comboForm.length > 0 && this.comboSerial.length > 0) {
+      this.resetLoading();
+      return;
+    }
+
+    sessionStorage.setItem('comboForm', '');
+    sessionStorage.setItem('comboHTTT', '');
+    sessionStorage.setItem('comboTaxRate', '');
+    sessionStorage.setItem('comboStatus', '');
+    sessionStorage.setItem('comboSerialStorage', '');
+
+    // load from references
+    this.referenceService.referenceInfo().subscribe((items: SelectData[]) => {
+      const selectItems = items as SelectData[];
+      for (let i = 0; i < selectItems.length; i++) {
+        const selectItem = new SelectData();
+        Object.assign(selectItem, selectItems[i]);
+
+        if (selectItem.type === 'COMBO_TAX_RATE_CODE') {
+          comboTaxRate.push(selectItem);
+        }
+
+        if (selectItem.type === 'COMBO_FORM') {
+          this.comboForm.push(selectItem);
+        }
+
+        if (selectItem.type === 'COMBO_PAYMENT') {
+          comboHTTT.push(selectItem);
+        }
+        if (selectItem.type === 'COMBO_INVOICE_STATUS') {
+          comboStatus.push(selectItem);
+        }
+        if (selectItem.type.startsWith('COMBO_SERIAL_')) {
+          // save to sesssion
+          comboSerialStorage.push(selectItem);
+        }
+      }
+
+      // set default value
+      sessionStorage.setItem('comboForm', JSON.stringify(this.comboForm));
+      sessionStorage.setItem('comboHTTT', JSON.stringify(comboHTTT));
+      sessionStorage.setItem('comboTaxRate', JSON.stringify(comboTaxRate));
+      sessionStorage.setItem('comboStatus', JSON.stringify(comboStatus));
+      sessionStorage.setItem('comboSerialStorage', JSON.stringify(comboSerialStorage));
+      this.comboSerial = comboSerialStorage;
+
+      this.resetLoading();
+    }, err => {
+      this.resetLoading();
+      this.errorHandler(err);
+    });
+  }
+
+  private resetLoading() {
+    setTimeout(function () {
+      this.formLoading = false;
+      this.serialLoading = false;
+      this.ref.markForCheck();
+    }.bind(this), 200);
+  }
+
+  private loadSerialByForm(form: string) {
+    this.serialLoading = true;
+    this.comboSerial = new Array<SelectData>();
+    if (form && form.length > 0) {
+      const comboType = `COMBO_SERIAL_${form}`;
+
+      const comboSerialStorage = JSON.parse(sessionStorage.getItem('comboSerialStorage'));
+      comboSerialStorage.forEach((item: SelectData, index: number) => {
+        if (item.type === comboType) {
+          this.comboSerial.push(item);
+        }
+      });
+    }
+
+    // set default picked
+    setTimeout(function () {
+      this.serialLoading = false;
+    }.bind(this), 200);
   }
 }

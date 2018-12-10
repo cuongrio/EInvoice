@@ -52,6 +52,12 @@ export class InvoiceService {
     return this.appService.post(`/invoices/${invoiceId}/adjust`, invoiceModel);
   }
 
+
+  replaceInvoice(invoiceId: number, invoiceModel: InvoiceModel) {
+    return this.appService.post(`/invoices/${invoiceId}/replace`, invoiceModel);
+  }
+
+
   retrieveInvoiceById(invoiceId: number) {
     return this.appService.get(`/invoices/${invoiceId}`);
   }
@@ -68,7 +74,6 @@ export class InvoiceService {
     if (invoiceParam) {
       let httpParams = new HttpParams();
       Object.keys(invoiceParam).forEach(function (key: any) {
-        console.log('key: ' + key + '||| ' + invoiceParam[key]);
         if (invoiceParam[key]) {
           if (key === 'page') {
             httpParams = httpParams.append(key, JSON.stringify(parseInt(invoiceParam[key], 0) - 1));
@@ -77,7 +82,6 @@ export class InvoiceService {
           }
         }
       });
-      console.log('httpParams: ' + httpParams);
       return this.appService.get(`/invoices`, httpParams);
     }
     return this.appService.get(`/invoices`);

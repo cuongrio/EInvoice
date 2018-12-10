@@ -75,7 +75,6 @@ export class CustomersComponent implements OnInit, AfterViewInit {
         }
         customerText += tdText;
       });
-      console.log(customerText);
       copyToClipboard(customerText);
 
       setTimeout(function () {
@@ -112,7 +111,6 @@ export class CustomersComponent implements OnInit, AfterViewInit {
         dataForm: data,
         viewMode: true
       };
-      console.log(JSON.stringify(initialState));
       this.modalRef = this.modalService.show(CustomerFormComponent, { class: 'modal-lg', initialState });
     });
 
@@ -310,13 +308,9 @@ export class CustomersComponent implements OnInit, AfterViewInit {
 
     // selected row
     $('#customerTable tbody').on('click', 'tr.row-parent', function () {
-      console.log('click tr');
       $('input:checkbox[name=stickchoice]').each(function () {
         $(this).prop('checked', false);
       });
-
-      // find expand
-      console.log($(this));
 
       if ($(this).hasClass('selected')) {
         $(this).removeClass('selected');
