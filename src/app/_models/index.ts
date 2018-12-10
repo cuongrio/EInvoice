@@ -14,6 +14,7 @@ export * from './data/invoice.list.data';
 export * from './data/sign.data';
 export * from './data/token.data';
 export * from './data/adjust.data';
+export * from './data/viewname.data';
 
 // param
 export * from './param/customer.param';

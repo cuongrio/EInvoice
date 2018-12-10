@@ -1,38 +1,28 @@
 import { Injectable } from '@angular/core';
-import { BsModalService } from 'ngx-bootstrap/modal';
-import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
-import { AlertComponent } from '@app/shared/alert/alert.component';
+import { SelectData } from '@app/_models';
 
 @Injectable()
 export class UtilsService {
-  public modalRef: BsModalRef;
-
-  constructor(private modalService: BsModalService) {}
-
-  public showSuccessAlert(title: string, message: string) {
-    const initialState = {
-      message: message,
-      title: title,
-      class: 'success'
-    };
-    this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+  getStatusName(code: string, arr: Array<SelectData>): string {
+    if(!code){
+      return code;
+    }
+    if (arr.length == 0) {
+      const statusJson = sessionStorage.getItem('comboStatus');
+      arr = JSON.parse(statusJson) as SelectData[];
+    }
+    const status = arr.find(i => (i.code === code));
+    return status ? status.value : code;
   }
-
-  public showErrorAlert(title: string, message: string) {
-    const initialState = {
-      message: message,
-      title: title,
-      class: 'error'
-    };
-    this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
-  }
-
-  public showValidatorAlert(title: string, list: Array<string>) {
-    const initialState = {
-      list: list,
-      title: title,
-      class: 'error'
-    };
-    this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+  getPaymentTypeName(code: string, arr: Array<SelectData>): string {
+    if(!code){
+      return code;
+    }
+    if (arr.length == 0) {
+      const statusJson = sessionStorage.getItem('comboHTTT');
+      arr = JSON.parse(statusJson) as SelectData[];
+    }
+    const status = arr.find(i => (i.code === code));
+    return status ? status.value : code;
   }
 }

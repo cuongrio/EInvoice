@@ -1,17 +1,17 @@
 import {
   Component, OnInit, OnDestroy, TemplateRef,
-  ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, HostListener, AfterViewInit
+  ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit
 } from '@angular/core';
 import { FormGroup, FormArray, Validators, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
-import { Subscription, Observable } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import { AlertComponent } from '@app//shared/alert/alert.component';
 import { UtilsService } from '@app/_services/utils/utils.service';
 import { InvoiceService } from './../../../_services/app/invoice.service';
 import { CustomerData } from './../../../_models/data/customer.data';
-import { SelectData, GoodData, InvoiceModel, ProductData, ProductModel, TokenData } from '@app/_models';
+import { SelectData, GoodData, InvoiceModel, ProductData, TokenData, ViewNameData } from '@app/_models';
 import { CustomerService } from './../../../_services/app/customer.service';
 import { GoodService, TokenService } from '@app/_services';
 import { ReferenceService } from './../../../_services/app/reference.service';
@@ -36,6 +36,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
   public isAdjust = false;
   public isReplace = false;
   public currentAdjust: AdjustData;
+  public viewNameData: ViewNameData;
 
   // signed
   public tokenPicked: TokenData;
@@ -94,11 +95,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
   public taxModel = new Array<string>();
 
   public spinnerConfig: ISpinnerConfig;
-
-  public configVAT: any = {
-    placeholder: '%VAT',
-    sourceField: ['value']
-  };
 
   public pickingCustomerCode = false;
   public pickingCustomerTax = false;
@@ -610,6 +606,14 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
     this.taxModel.push('10');
   }
 
+  public get paymentTypeName(){
+    return this.utilsService.getPaymentTypeName(this.viewNameData.paymentType, this.comboHTTT);
+  }
+
+  public get statusName(){
+    return this.utilsService.getStatusName(this.viewNameData.status, this.comboStatus);
+  }
+
   /*** TOTAL PRICE */
   // tinh lai amount, amountwt
   public quantityValueChange(quantityStr: string, idx: number) {
@@ -977,6 +981,8 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
       if (params.id) {
         this.invoiceId = params.id;
         if (segment === 'open') {
+
+          // button status
           this.disabledAdjust = false;
           this.disabledEdit = false;
           this.viewMode = true;
@@ -991,6 +997,14 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
             this.setFormWithDefaultData(data, 'open');
             this.adjustForm = data.form;
             this.adjustSerial = data.serial;
+
+            // set view name 
+            // view name
+            this.viewNameData = {
+              status: data.status,
+              paymentType: data.paymentType
+            };
+
             // get data for adjust
             if (data.ref_invoice_id) {
               this.currentAdjust = {
