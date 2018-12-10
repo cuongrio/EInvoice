@@ -44,10 +44,11 @@ export class InvoicesComponent implements OnInit {
 
   public formLoading = false;
   public serialLoading = false;
-  public serialPicked: string;
+  public statusLoading = false;
 
   public comboForm = new Array<SelectData>();
   public comboSerial = new Array<SelectData>();
+  public comboStatus = new Array<SelectData>();
 
   // expand search
   public expandSearch: boolean;
@@ -729,14 +730,36 @@ export class InvoicesComponent implements OnInit {
   }
 
   private loadReferences() {
+
+    // check in session
+    const statusJson = sessionStorage.getItem('comboStatus');
+    if (statusJson) {
+      this.comboStatus = JSON.parse(statusJson) as SelectData[];
+    }
+
+    const formJson = sessionStorage.getItem('comboForm');
+    if (formJson) {
+      this.comboForm = JSON.parse(formJson) as SelectData[];
+    }
+
+    const serialJson = sessionStorage.getItem('comboSerialStorage');
+    if (serialJson) {
+      this.comboSerial = JSON.parse(serialJson) as SelectData[];
+    }
+
+    if (this.comboStatus && this.comboStatus.length > 0
+      && this.comboForm && this.comboForm.length > 0) {
+      return;
+    }
+
     // reset object
     this.formLoading = true;
     this.serialLoading = true;
     this.comboForm = new Array<SelectData>();
     this.comboSerial = new Array<SelectData>();
+    this.comboStatus = new Array<SelectData>();
     const comboTaxRate = new Array<SelectData>();
     const comboHTTT = new Array<SelectData>();
-    const comboStatus = new Array<SelectData>();
     const comboSerialStorage = new Array<SelectData>();
 
     // check session
@@ -752,12 +775,6 @@ export class InvoicesComponent implements OnInit {
       this.resetLoading();
       return;
     }
-
-    sessionStorage.setItem('comboForm', '');
-    sessionStorage.setItem('comboHTTT', '');
-    sessionStorage.setItem('comboTaxRate', '');
-    sessionStorage.setItem('comboStatus', '');
-    sessionStorage.setItem('comboSerialStorage', '');
 
     // load from references
     this.referenceService.referenceInfo().subscribe((items: SelectData[]) => {
@@ -778,7 +795,7 @@ export class InvoicesComponent implements OnInit {
           comboHTTT.push(selectItem);
         }
         if (selectItem.type === 'COMBO_INVOICE_STATUS') {
-          comboStatus.push(selectItem);
+          this.comboStatus.push(selectItem);
         }
         if (selectItem.type.startsWith('COMBO_SERIAL_')) {
           // save to sesssion
@@ -790,7 +807,7 @@ export class InvoicesComponent implements OnInit {
       sessionStorage.setItem('comboForm', JSON.stringify(this.comboForm));
       sessionStorage.setItem('comboHTTT', JSON.stringify(comboHTTT));
       sessionStorage.setItem('comboTaxRate', JSON.stringify(comboTaxRate));
-      sessionStorage.setItem('comboStatus', JSON.stringify(comboStatus));
+      sessionStorage.setItem('comboStatus', JSON.stringify(this.comboStatus));
       sessionStorage.setItem('comboSerialStorage', JSON.stringify(comboSerialStorage));
       this.comboSerial = comboSerialStorage;
 

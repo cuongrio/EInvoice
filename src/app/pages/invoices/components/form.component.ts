@@ -606,11 +606,11 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
     this.taxModel.push('10');
   }
 
-  public get paymentTypeName(){
+  public get paymentTypeName() {
     return this.utilsService.getPaymentTypeName(this.viewNameData.paymentType, this.comboHTTT);
   }
 
-  public get statusName(){
+  public get statusName() {
     return this.utilsService.getStatusName(this.viewNameData.status, this.comboStatus);
   }
 
@@ -804,19 +804,19 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.goodArr && this.goodArr.length > 0) {
       return;
     }
+    // check in session
+    const goodJson = sessionStorage.getItem('goodAutocomplete');
+    if (goodJson) {
+      this.goodArr = JSON.parse(goodJson) as GoodData[];
+      if (this.goodArr && this.goodArr.length > 0) {
+        return;
+      }
+    }
 
     this.goodLoading = true;
     this.goodService.getList().subscribe((items: GoodData[]) => {
-      const goods = items as GoodData[];
-      this.goodArr = new Array<GoodData>();
-
-      for (let i = 0; i < goods.length; i++) {
-        const good = new GoodData();
-        Object.assign(good, goods[i]);
-        good.select_item = good.goods_code;
-        this.goodArr.push(good);
-      }
-
+      this.goodArr = items as GoodData[];
+      sessionStorage.setItem('goodAutocomplete', JSON.stringify(this.goodArr));
       setTimeout(function () {
         this.goodLoading = false;
         this.ref.markForCheck();
@@ -836,9 +836,19 @@ export class InvoiceFormComponent implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
 
+    // check in session
+    const customerJson = sessionStorage.getItem('customerAutocomplete');
+    if (customerJson) {
+      this.customerArr = JSON.parse(customerJson) as CustomerData[];
+      if (this.customerArr && this.customerArr.length > 0) {
+        return;
+      }
+    }
+
     this.customerLoading = true;
     this.customerService.getList().subscribe((items: CustomerData[]) => {
       this.customerArr = items as CustomerData[];
+      sessionStorage.setItem('customerAutocomplete', JSON.stringify(this.customerArr));
       setTimeout(function () {
         this.customerLoading = false;
         this.ref.markForCheck();
