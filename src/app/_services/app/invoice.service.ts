@@ -3,9 +3,7 @@ import { environment } from './../../../environments/environment';
 import { InvoiceModel } from '@app/_models';
 import { InvoiceParam } from './../../_models/param/invoice.param';
 import { AppService } from '../core/app.service';
-import { HttpParams, HttpClient, HttpHeaders } from '@angular/common/http';
-import { of } from 'rxjs';
-import { AppConstant } from '@app/_mock/mock.data';
+import { HttpParams, HttpHeaders } from '@angular/common/http';
 import { HttpService } from '@app/core/http/http.service';
 
 @Injectable({
@@ -13,8 +11,6 @@ import { HttpService } from '@app/core/http/http.service';
 })
 export class InvoiceService {
   constructor(
-    private appConstant: AppConstant,
-    private httpClient: HttpClient,
     private httpService: HttpService,
     private appService: AppService) { }
 
@@ -52,7 +48,6 @@ export class InvoiceService {
     return this.appService.post(`/invoices/${invoiceId}/adjust`, invoiceModel);
   }
 
-
   replaceInvoice(invoiceId: number, invoiceModel: InvoiceModel) {
     return this.appService.post(`/invoices/${invoiceId}/replace`, invoiceModel);
   }
@@ -85,8 +80,6 @@ export class InvoiceService {
       return this.appService.get(`/invoices`, httpParams);
     }
     return this.appService.get(`/invoices`);
-
-    // return of(this.appConstant.invoiceList);
   }
 
   /** END INVOICE */
@@ -118,7 +111,6 @@ export class InvoiceService {
   }
 
   signed(invoiceId: number, signEncode: any) {
-    const body = new URLSearchParams();
     return this.appService.postForText(`/invoices/${invoiceId}/signed`, signEncode);
   }
 }

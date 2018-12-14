@@ -159,10 +159,10 @@
                         </div>
                         <div class="col-md-8 col-lg-8">
                           <div class="input-group">
-                            <input [readonly]="viewMode" formControlName="invoiceDate" class="form-control form-control-sm text-bold"
+                            <input appAutofocus [readonly]="viewMode" formControlName="invoiceDate" class="form-control form-control-sm text-bold"
                               [ngClass]="{ 'control-invalid': submitted && addForm.controls['invoiceDate'].errors }"
                               placeholder="DD/MM/YYYY" (bsValueChange)="invoiceDateValueChange($event)" [isDisabled]="viewMode"
-                              [bsConfig]="bsConfig" #dinvoiceDate="bsDatepicker" bsDatepicker />
+                              [bsConfig]="bsConfig" #dinvoiceDate="bsDatepicker" bsDatepicker/>
                             <div class="input-group-append">
                               <button [disabled]="viewMode" class="btn btn-icons btn-inverse-light btn-md" (click)="dinvoiceDate.toggle()"
                                 [attr.aria-expanded]="dinvoiceDate.isOpen" type="button">
@@ -183,7 +183,8 @@
                             [items]="comboForm" [(ngModel)]="formPicked" (change)="onFormChange($event)" [clearable]="false"
                             [searchable]="false" bindLabel="code" bindValue="value">
                           </ng-select>
-                          <input *ngIf="viewMode" readonly="readonly" formControlName="form" class="form-control form-control-sm text-right"
+                          <input *ngIf="viewMode" readonly="readonly" 
+                            formControlName="form" class="form-control form-control-sm"
                             type="text" />
                           <app-control-message *ngIf="submitted" [control]="addForm.controls['form']"></app-control-message>
                         </div>
@@ -199,7 +200,10 @@
                             bindValue="value">
                           </ng-select>
 
-                          <input *ngIf="viewMode" readonly="readonly" formControlName="serial" class="form-control form-control-sm text-right"
+                          <input *ngIf="viewMode" 
+                              readonly="readonly" 
+                              formControlName="serial" 
+                              class="form-control form-control-sm"
                             type="text" />
                           <app-control-message *ngIf="submitted" [control]="addForm.controls['serial']"></app-control-message>
                         </div>
@@ -217,15 +221,15 @@
                     <div class="col-md-3 col-lg-3">
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label"><label>Mã KH</label></div>
-                        <div class="col-md-8 col-lg-8">
-                          <ng-select *ngIf="!viewMode" formControlName="customerCode" [loading]="customerLoading"
+                        <div class="col-md-8 col-lg-8 dropdown_expand">
+                          <ng-select *ngIf="!viewMode" dropdownPosition="bottom" formControlName="customerCode" [loading]="customerLoading"
                             (change)="onCustomerChange($event)" [items]="customerArr" [addTag]="true" [virtualScroll]="true"
                             bindLabel="customer_code" bindValue="customer_code">
                             <ng-template ng-header-tmp>
                               <small class="form-text text-muted">Tổng: <b>{{customerArr.length}}</b></small>
                             </ng-template>
                             <ng-template ng-option-tmp let-item="item" let-index="index">
-                              <b>{{item.customer_code}}</b> {{item.customer_name}}
+                              <b>{{item.customer_code}}</b> {{item.org}}
                             </ng-template>
                           </ng-select>
                           <input type="text" *ngIf="viewMode" readonly="readonly" formControlName="customerCode" class="form-control form-control-sm" />
@@ -236,14 +240,14 @@
                     <div class="col-md-3 col-lg-3">
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label required"><label>Mã số thuế</label></div>
-                        <div class="col-md-8 col-lg-8">
-                          <ng-select *ngIf="!viewMode" formControlName="customerTax" (change)="onCustomerChange($event)"
+                        <div class="col-md-8 col-lg-8 dropdown_expand">
+                          <ng-select *ngIf="!viewMode" dropdownPosition="bottom" formControlName="customerTax" (change)="onCustomerChange($event)"
                             [items]="customerArr" [virtualScroll]="true" bindLabel="tax_code" [addTag]="true" bindValue="tax_code">
                             <ng-template ng-header-tmp>
                               <small class="form-text text-muted">Tổng: <b>{{customerArr.length}}</b></small>
                             </ng-template>
                             <ng-template ng-option-tmp let-item="item" let-index="index">
-                              <b>{{item.tax_code}}</b> {{item.customer_name}}
+                              <b>{{item.tax_code}}</b> {{item.org}}
                             </ng-template>
                           </ng-select>
                           <input type="text" *ngIf="viewMode" readonly="readonly" formControlName="customerTax" class="form-control form-control-sm" />
@@ -282,6 +286,7 @@
                             <p class="error text-danger" *ngIf="submitted && addForm.hasError('invalidOrgName')">
                                 Vui lòng không để trống Tên đơn vị hoặc Người mua!
                             </p>
+                            <app-control-message *ngIf="submitted" [control]="addForm.controls['customerOrg']"></app-control-message>
                         </div>
                       </div>
                     </div>
@@ -293,6 +298,7 @@
                           <p class="error text-danger" *ngIf="submitted && addForm.hasError('invalidOrgName')">
                               Vui lòng không để trống Tên đơn vị hoặc Người mua!
                           </p>
+                          <app-control-message *ngIf="submitted" [control]="addForm.controls['customerName']"></app-control-message>
                         </div>
                       </div>
                     </div>
@@ -413,13 +419,13 @@
                           </td>
 
                           <td class="no-padding">
-                            <input formControlName="price" [readonly]="viewMode" currencyMask [options]="{ prefix: '', allowNegative: false, precision: 0  }"
+                            <input formControlName="price" [readonly]="viewMode" currencyMask [options]="{ prefix: '', allowNegative: false, precision: 0, thousands:'.'}"
                               (ngModelChange)="priceValueChange($event, idx)" class="form-control form-control-sm text-right"
                               type="text" />
                           </td>
 
                           <td class="no-padding text-right is-viewable">
-                            <label class="mt-2 mr-2">{{lineAmount[idx] | number:'.0-2'}}</label>
+                            <label class="mt-2 mr-2">{{ formatCurrency(lineAmount[idx]) }}</label>
                           </td>
 
                           <td [(hidden)]="hiddenExColumn" class="no-padding">
@@ -429,7 +435,7 @@
                           </td>
 
                           <td [(hidden)]="hiddenExColumn" class="no-padding text-right is-viewable">
-                            <label class="mt-2 mr-2">{{lineDiscount[idx] | number:'.0-2'}}</label>
+                            <label class="mt-2 mr-2">{{ formatCurrency(lineDiscount[idx]) }}</label>
                           </td>
 
                           <td class="no-padding vat-line">
@@ -443,11 +449,11 @@
                           </td>
 
                           <td class="no-padding text-right is-viewable">
-                            <label class="mt-2 mr-2">{{linePriceTax[idx] | number:'.0-2'}}</label>
+                            <label class="mt-2 mr-2">{{ formatCurrency(linePriceTax[idx]) }}</label>
                           </td>
 
                           <td class="no-padding text-right is-viewable">
-                            <label class="mt-2 mr-2">{{lineAmoutWt[idx] | number:'.0-2'}}</label>
+                            <label class="mt-2 mr-2">{{ formatCurrency(lineAmoutWt[idx]) }}</label>
                           </td>
 
                           <div *ngIf="!viewMode" class="sticky-btn__td">
@@ -469,19 +475,19 @@
                           <th></th>
                           <th></th>
                           <th class="text-right">
-                            {{ sumLinePrice() | number:'.0-2'}}
+                            {{ formatCurrency(sumLinePrice()) }}
                           </th>
                           <th class="text-right">
-                            {{ sumLineAmount() | number:'.0-2'}}
+                            {{ formatCurrency(sumLineAmount()) }}
                           </th>
                           <th [hidden]="hiddenExColumn" class="text-right"></th>
                           <th [hidden]="hiddenExColumn" class="text-right"></th>
                           <th></th>
                           <th class="text-right">
-                            {{ sumLinePriceTax() | number:'.0-2'}}
+                            {{ formatCurrency(sumLinePriceTax()) }}
                           </th>
                           <th class="text-right">
-                            {{ sumLineAmountWt() | number:'.0-2'}}
+                            {{ formatCurrency(sumLineAmountWt()) }}
                           </th>
                         </tr>
                       </tfoot>

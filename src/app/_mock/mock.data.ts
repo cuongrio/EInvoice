@@ -624,6 +624,7 @@ export class AppConstant {
                 "form": "1",
                 "serial": "1",
                 "invoice_no": "0000127",
+                "status": "CREATED",
                 "invoice_date": "2018-12-02",
                 "seller": {
                     "name": "Công ty TNHH Dịch Vụ Nova XXX",
@@ -651,6 +652,7 @@ export class AppConstant {
             {
                 "invoice_id": 391,
                 "form": "1",
+                "status": "SIGNED",
                 "serial": "1",
                 "invoice_no": "0000141",
                 "invoice_date": "2018-12-02",
@@ -681,6 +683,7 @@ export class AppConstant {
                 "invoice_id": 385,
                 "form": "1",
                 "serial": "1",
+                "status": "DISPOSED",
                 "invoice_no": "0000135",
                 "invoice_date": "2018-12-02",
                 "seller": {

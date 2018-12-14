@@ -15,165 +15,220 @@
     <div class="content-wrapper">
       <div class="content-list">
         <div class="card card-shadow">
-          <div class="card-body">
+          <div class="card-body card-body__list">
             <h4 class="card-title">
-              <span class="pull-left">Danh sách hóa đơn</span>
-              <button (click)="expandSearchClicked()" type="button pull-left" class="btn btn-link">
+              <span class="card-title_heading">Danh sách hóa đơn</span>
+              <button (click)="expandSearchClicked()" type="button" class="btn btn-md btn-link">
                 <i *ngIf="expandSearch" class="fas fa-chevron-down"></i>
                 <i *ngIf="!expandSearch" class="fas fa-chevron-up"></i>
               </button>
             </h4>
-            <div class="row grid-margin">
-              <div class="col-12">
-                <div class="search-box">
-                  <div [hidden]="!expandSearch" class="card shadow-nohover">
-                    <div class="card-body">
-                      <form class="form-horizontal" #ngSearchForm="ngForm" [formGroup]="searchForm" (ngSubmit)="onSubmit(searchForm.value)">
-                        <div class="row">
-                          <div class="col-md-3 col-lg-3">
-                            <div class="form-group row">
-                              <div class="col-md-4 col-lg-4 col-form-label"><label>Số hóa đơn</label></div>
-                              <div class="col-md-8 col-lg-8">
-                                <input formControlName="invoiceNo" type="text" class="form-control form-control-sm"
-                                  placeholder="Số hóa đơn" />
-                              </div>
+            <div class="grid-margin">
+              <div class="search-box">
+                <div [hidden]="!expandSearch" class="card shadow-nohover">
+                  <div class="card-body">
+                    <form class="form-horizontal" #ngSearchForm="ngForm" [formGroup]="searchForm" (ngSubmit)="onSubmit(searchForm.value)">
+                      <div class="row">
+                        <div class="col-md-3 col-lg-3">
+                          <div class="form-group row">
+                            <div class="col-md-4 col-lg-4 col-form-label"><label>Số hóa đơn</label></div>
+                            <div class="col-md-8 col-lg-8">
+                              <input formControlName="invoiceNo" type="text" class="form-control form-control-sm"
+                                placeholder="Số hóa đơn" />
                             </div>
                           </div>
+                        </div>
 
-                          <div class="col-md-3 col-lg-3">
-                            <div class="form-group row">
-                              <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Mẫu số</label></div>
-                              <div class="col-md-8 col-lg-8">
-                                <ng-select formControlName="form" [loading]="formLoading" [items]="comboForm" (change)="onFormChange($event)"
-                                  [searchable]="false" bindLabel="code" bindValue="value">
-                                </ng-select>
-                              </div>
+                        <div class="col-md-3 col-lg-3">
+                          <div class="form-group row">
+                            <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Mẫu số</label></div>
+                            <div class="col-md-8 col-lg-8">
+                              <ng-select formControlName="form" [loading]="formLoading" [items]="comboForm" (change)="onFormChange($event)"
+                                [searchable]="false" bindLabel="code" bindValue="value">
+                              </ng-select>
                             </div>
                           </div>
+                        </div>
 
-                          <div class="col-md-3 col-lg-3">
-                            <div class="form-group row">
-                              <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Ký hiệu</label></div>
-                              <div class="col-md-8 col-lg-8">
-                                <ng-select formControlName="serial" [loading]="serialLoading" [items]="comboSerial"
-                                  [searchable]="false" bindLabel="code" bindValue="value">
-                                </ng-select>
-                              </div>
+                        <div class="col-md-3 col-lg-3">
+                          <div class="form-group row">
+                            <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Ký hiệu</label></div>
+                            <div class="col-md-8 col-lg-8">
+                              <ng-select formControlName="serial" [loading]="serialLoading" [items]="comboSerial"
+                                [searchable]="false" bindLabel="code" bindValue="value">
+                              </ng-select>
                             </div>
                           </div>
+                        </div>
 
-                          <div class="col-md-3 col-lg-3">
-                            <div class="form-group row">
-                              <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Mã số thuế</label></div>
-                              <div class="col-md-8 col-lg-8">
-                                <input formControlName="orgTaxCode" type="text" class="form-control form-control-sm"
-                                  placeholder="Mã số thuế" />
-                              </div>
+                        <div class="col-md-3 col-lg-3">
+                          <div class="form-group row">
+                            <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Mã số thuế</label></div>
+                            <div class="col-md-8 col-lg-8">
+                              <input formControlName="orgTaxCode" type="text" class="form-control form-control-sm"
+                                placeholder="Mã số thuế" />
                             </div>
                           </div>
+                        </div>
 
-                          <div class="col-md-3 col-lg-3">
-                            <div class="form-group row">
-                              <div class="col-md-4 col-lg-4 col-form-label"><label>Từ ngày</label></div>
-                              <div class="col-md-8 col-lg-8">
-                                <div class="input-group">
-                                  <input formControlName="fromDate" class="form-control form-control-sm" placeholder="DD/MM/YYYY"
-                                    triggers="dblclick:click" [bsConfig]="bsConfig" #dfromDate="bsDatepicker"
-                                    bsDatepicker />
-                                  <div class="input-group-append">
-                                    <button class="btn btn-inverse-light btn-md" (click)="dfromDate.toggle()"
-                                      [attr.aria-expanded]="dfromDate.isOpen" type="button">
-                                      <i class="fas fa-calendar"></i>
-                                    </button>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div class="col-md-3 col-lg-3">
-                            <div class="form-group row">
-                              <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Đến ngày</label></div>
-                              <div class="col-md-8 col-lg-8">
-                                <div class="input-group">
-                                  <input formControlName="toDate" class="form-control form-control-sm" placeholder="DD/MM/YYYY"
-                                    [bsConfig]="bsConfig" #dtoDate="bsDatepicker" triggers="dblclick:click"
-                                    bsDatepicker />
-                                  <div class="input-group-append">
-                                    <button class="btn btn-inverse-light btn-md" (click)="dtoDate.toggle()"
-                                      [attr.aria-expanded]="dtoDate.isOpen" type="button">
-                                      <i class="fas fa-calendar"></i>
-                                    </button>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div class="col-md-3 col-lg-3">
-                            <div class="form-group row">
-                              <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Trạng thái</label></div>
-                              <div class="col-md-8 col-lg-8">
-                                <ng-select formControlName="status" [loading]="statusLoading" [items]="comboStatus"
-                                  [searchable]="false" bindLabel="value" bindValue="code">
-                                </ng-select>
-                              </div>
-                            </div>
-                          </div>
-
-
-                          <div class="col-md-3 col-lg-3">
-                            <div class="form-group row">
-                              <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Sắp xếp</label></div>
-                              <div class="col-md-8 col-lg-8">
-                                <div class="container-half">
-                                  <div class="select-half">
-                                    <ng-select formControlName="sortBy" [items]="sortByArr" [clearable]="false"
-                                      [searchable]="false" bindLabel="code" bindValue="value">
-                                    </ng-select>
-                                  </div>
-                                  <div class="select-half">
-                                    <ng-select formControlName="sort" [items]="sortArr" [clearable]="false"
-                                      [searchable]="false" bindLabel="code" bindValue="value">
-                                    </ng-select>
-                                  </div>
+                        <div class="col-md-3 col-lg-3">
+                          <div class="form-group row">
+                            <div class="col-md-4 col-lg-4 col-form-label"><label>Từ ngày</label></div>
+                            <div class="col-md-8 col-lg-8">
+                              <div class="input-group">
+                                <input formControlName="fromDate" class="form-control form-control-sm" placeholder="DD/MM/YYYY"
+                                  triggers="dblclick:click" [bsConfig]="bsConfig" #dfromDate="bsDatepicker"
+                                  bsDatepicker />
+                                <div class="input-group-append">
+                                  <button class="btn btn-inverse-light btn-md" (click)="dfromDate.toggle()"
+                                    [attr.aria-expanded]="dfromDate.isOpen" type="button">
+                                    <i class="fas fa-calendar"></i>
+                                  </button>
                                 </div>
                               </div>
                             </div>
                           </div>
                         </div>
-                      </form>
-                    </div>
+
+                        <div class="col-md-3 col-lg-3">
+                          <div class="form-group row">
+                            <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Đến ngày</label></div>
+                            <div class="col-md-8 col-lg-8">
+                              <div class="input-group">
+                                <input formControlName="toDate" class="form-control form-control-sm" placeholder="DD/MM/YYYY"
+                                  [bsConfig]="bsConfig" #dtoDate="bsDatepicker" triggers="dblclick:click" bsDatepicker />
+                                <div class="input-group-append">
+                                  <button class="btn btn-inverse-light btn-md" (click)="dtoDate.toggle()"
+                                    [attr.aria-expanded]="dtoDate.isOpen" type="button">
+                                    <i class="fas fa-calendar"></i>
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="col-md-3 col-lg-3">
+                          <div class="form-group row">
+                            <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Trạng thái</label></div>
+                            <div class="col-md-8 col-lg-8">
+                              <ng-select formControlName="status" [loading]="statusLoading" [items]="comboStatus"
+                                [searchable]="false" bindLabel="value" bindValue="code">
+                              </ng-select>
+                            </div>
+                          </div>
+                        </div>
+
+
+                        <div class="col-md-3 col-lg-3">
+                          <div class="form-group row">
+                            <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Sắp xếp</label></div>
+                            <div class="col-md-8 col-lg-8">
+                              <div class="container-half">
+                                <div class="select-half">
+                                  <ng-select formControlName="sortBy" [items]="sortByArr" [clearable]="false"
+                                    [searchable]="false" bindLabel="code" bindValue="value">
+                                  </ng-select>
+                                </div>
+                                <div class="select-half">
+                                  <ng-select formControlName="sort" [items]="sortArr" [clearable]="false" [searchable]="false"
+                                    bindLabel="code" bindValue="value">
+                                  </ng-select>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
                   </div>
                 </div>
               </div>
 
-              <div class="col-12">
-                <div class="template-ein navbar-action">
-                  <button [disabled]="isSearching" [hidden]="!expandSearch" type="button" class="btn btn-md btn-info btn-search"
-                    (click)="ngSearchForm.ngSubmit.emit()">
-                    <i *ngIf="!isSearching" class="icon-magnifier"></i>
-                    <i *ngIf="isSearching" class="fa fa-spinner fa-spin"></i> Tìm kiếm
-                  </button>
-                  <button type="button" routerLink="/invoices/createNew" class="btn btn-md btn-success">
-                    <i class="fas fa-plus"></i> Thêm
-                  </button>
-                  <button id="openButton" type="button" (click)="openRowClicked()" class="btn  btn-md btn-outline-primary">
-                    <i class="fas fa-edit"></i> Mở
-                  </button>
-                  <button id="copyButton" (click)="copyRowClicked()" type="button" class="btn btn-md btn-outline-primary">
-                    <i class="fas fa-copy"></i> Sao chép
-                  </button>
-                  <button id="printButton" type="button" (click)="printRowClicked()" class="btn btn-md btn-outline-primary">
-                    <i class="fas fa-print"></i> In
-                  </button>
-                  <button id="printTranformButton" (click)="printTransformRowClicked()" type="button" class="btn btn-md btn-outline-primary">
-                    <i class="fas fa-retweet"></i> In chuyển đổi
-                  </button>
-                  <button id="signButton" type="button" (click)="openModalMd(listToken)" class="btn btn-md btn-outline-primary">
-                    <i class="fas fa-key"></i> Ký
-                  </button>
-                  <ng-template #listToken>
+              <div class="template-ein navbar-action">
+                <button [disabled]="isSearching" [hidden]="!expandSearch" type="button" class="btn btn-md btn-info btn-search"
+                  (click)="ngSearchForm.ngSubmit.emit()">
+                  <i *ngIf="!isSearching" class="icon-magnifier"></i>
+                  <i *ngIf="isSearching" class="fa fa-spinner fa-spin"></i> Tìm kiếm
+                </button>
+                <button type="button" routerLink="/invoices/createNew" class="btn btn-md btn-success">
+                  <i class="fas fa-plus"></i> Thêm
+                </button>
+                <button id="openButton" type="button" (click)="openRowClicked()" class="btn  btn-md btn-outline-primary">
+                  <i class="fas fa-edit"></i> Mở
+                </button>
+                <button id="copyButton" (click)="copyRowClicked()" type="button" class="btn btn-md btn-outline-primary">
+                  <i class="fas fa-copy"></i> Sao chép
+                </button>
+                <button id="printButton" type="button" (click)="printRowClicked()" class="btn btn-md btn-outline-primary">
+                  <i class="fas fa-print"></i> In
+                </button>
+                <button id="printTranformButton" (click)="printTransformRowClicked()" type="button" class="btn btn-md btn-outline-primary">
+                  <i class="fas fa-retweet"></i> In chuyển đổi
+                </button>
+                <button id="signButton" type="button" (click)="openModalMd(listToken)" class="btn btn-md btn-outline-primary">
+                  <i class="fas fa-key"></i> Ký
+                </button>
+                <ng-template #listToken>
+                  <ngx-spinner [visible]="signButtonLoading" [config]="spinnerConfig"></ngx-spinner>
+                  <div class="modal-header">
+                    <h4 class="modal-title pull-left">Xác nhận token</h4>
+                    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <p *ngIf="signErrorMessage" class="error">
+                      {{signErrorMessage}}
+                    </p>
+                    <ng-select [loading]="signTokenLoading" [items]="listTokenAvaiable" (change)="onTokenChange($event)"
+                      [clearable]="false" [searchable]="false" bindLabel="name" bindValue="alias">
+                      <ng-template ng-option-tmp let-item="item">
+                        <div class="avaible-tokens">
+                          <div *ngIf="item.isExpired;else isExpried">
+                            <div class="token-name is-expired"><b>Tên: </b>{{item.name}}</div>
+                            <label class="is-expired">
+                              <b>Hiệu lực: </b> {{item.effectiveDate}}
+                            </label>
+                          </div>
+
+                          <ng-template #isExpried>
+                            <div class="token-name is-effective"><b>Tên: </b>{{item.name}}</div>
+                            <label class="is-effective">
+                              <b>Hiệu lực: </b> {{item.effectiveDate}}
+                            </label>
+                          </ng-template>
+                        </div>
+                      </ng-template>
+                    </ng-select>
+
+                    <div class="btn-group">
+                      <button type="button" [disabled]="signButtonDisabled" class="btn btn-primary mr-1 no-br" (click)="tokenChoiceClicked()">
+                        <i *ngIf="signButtonLoading" class="fa fa-spinner fa-spin"></i>
+                        <i *ngIf="!signButtonLoading" class="fas fa-key"></i>
+                        {{ signButtonLoading ? 'Vui lòng chờ...' : 'Ký' }}
+                      </button>
+                      <button type="button" class="btn btn-default" (click)="modalRef.hide()">Bỏ qua</button>
+                    </div>
+                  </div>
+                </ng-template>
+
+                <button id="approveButton" type="button" (click)="approveClicked()" class="btn btn-md btn-success">
+                  <i class="fas fa-check"></i> Duyệt
+                </button>
+                <button id="disposeButton" type="button" (click)="openModal(disposeConfirm)" class="btn btn-md btn-outline-danger">
+                  <i class="fas fa-trash"></i> Hủy hóa đơn
+                </button>
+                <ng-template #disposeConfirm>
+                  <div class="modal-body text-center">
+                    <div class="dispose-content">
+                        <p class="heading">Xác nhận hủy hóa đơn?</p>
+                        <button type="button" class="btn btn-primary mr-1" (click)="disposeConfirmToken(disposeToken)">Đồng ý</button>
+                        <button type="button" class="btn btn-default" (click)="modalRef.hide()">Bỏ qua</button>
+                    </div>
+                  </div>
+                </ng-template>
+                <ng-template #disposeToken>
                     <ngx-spinner [visible]="signButtonLoading" [config]="spinnerConfig"></ngx-spinner>
                     <div class="modal-header">
                       <h4 class="modal-title pull-left">Xác nhận token</h4>
@@ -195,7 +250,7 @@
                                 <b>Hiệu lực: </b> {{item.effectiveDate}}
                               </label>
                             </div>
-
+  
                             <ng-template #isExpried>
                               <div class="token-name is-effective"><b>Tên: </b>{{item.name}}</div>
                               <label class="is-effective">
@@ -205,51 +260,33 @@
                           </div>
                         </ng-template>
                       </ng-select>
-
+  
                       <div class="btn-group">
-                        <button type="button" [disabled]="signButtonDisabled" class="btn btn-primary mr-1 no-br"
-                          (click)="tokenChoiceClicked()">
-                          <i *ngIf="signButtonLoading" class="fa fa-spinner fa-spin"></i>
-                          <i *ngIf="!signButtonLoading" class="fas fa-key"></i>
-                          {{ signButtonLoading ? 'Vui lòng chờ...' : 'Ký' }}
+                        <button type="button" [disabled]="disposeDisabled" class="btn btn-primary mr-1 no-br" (click)="disposeConfirmClicked()">
+                          <i *ngIf="disposeButtonLoading" class="fa fa-spinner fa-spin"></i>
+                          <i *ngIf="!disposeButtonLoading" class="fas fa-check"></i>
+                          {{ disposeButtonLoading ? 'Vui lòng chờ...' : 'Hủy hóa đơn' }}
                         </button>
                         <button type="button" class="btn btn-default" (click)="modalRef.hide()">Bỏ qua</button>
                       </div>
                     </div>
                   </ng-template>
-
-                  <button id="approveButton" type="button" (click)="approveClicked()" class="btn btn-md btn-success">
-                    <i class="fas fa-check"></i> Duyệt
-                  </button>
-                  <button id="receiveExcelButton" type="button" (click)="receiveExcelClicked()" class="btn btn-md btn-outline-primary">
-                    <i class="fas fa-file-excel"></i> Nhận Excel
-                  </button>
-                  <button id="disposeButton" type="button" (click)="openModal(disposeConfirm)" class="btn btn-md btn-outline-danger">
-                    <i class="fas fa-trash"></i> Hủy hóa đơn
-                  </button>
-                  <ng-template #disposeConfirm>
-                    <div class="modal-body text-center">
-                      <p>Xác nhận hủy hóa đơn?</p>
-                      <button type="button" class="btn btn-primary mr-1" (click)="disposeConfirmClicked()">Đồng ý</button>
-                      <button type="button" class="btn btn-default" (click)="modalRef.hide()">Bỏ qua</button>
-                    </div>
-                  </ng-template>
-                </div>
               </div>
             </div>
 
             <div class="table-wrapper">
+              <input id="pageSize" type="hidden" class="id-hidden" [(ngModel)]="pageSize" />
               <table id="invoiceTable" class="table display dataTable invoiceTable">
                 <thead>
                   <tr>
-                    <th></th>
-                    <th>Trạng thái</th>
+                    <th>#</th>
+                    <th>T.Thái</th>
                     <th>Số hóa đơn</th>
                     <th>Ngày HĐ</th>
-                    <th>Khách hàng</th>
+                    <th>Đơn vị</th>
                     <th>MST</th>
                     <th>Địa chỉ</th>
-                    <th class="text-right">Tiền chưa thuế</th>
+                    <th class="text-right">Tiền</th>
                     <th class="text-right">Tiền thuế</th>
                     <th class="text-right">Tổng tiền</th>
                   </tr>
@@ -258,14 +295,12 @@
             </div>
             <div class="ngb-pagination">
               <div class="page-info">
-                <ng-select [items]="pageSize" [searchable]="false" bindLabel="code" bindValue="value">
-                </ng-select>
-                <label>Trang {{ page }}: {{ totalElements }} dòng | Tổng số: {{ totalPages }} trang.</label>
+                <select class="page-size_menu" (change)="onSizeChange($event.target.value)" [(ngModel)]="pageSize">
+                  <option *ngFor="let item of pageSizeList" value="{{item.code}}">{{item.value}}</option>
+                </select>
+                <label class="pager-footer_info">Trang {{ page }}: {{ totalElements }} dòng | Tổng số: {{ totalPages }}
+                  trang.</label>
               </div>
-              <!--
-                <ngb-pagination class="d-flex justify-content-end" [pageSize]="itemsPerPage" [collectionSize]="totalItems"
-                [(page)]="page" (pageChange)="onPageChange($event)" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"></ngb-pagination>
-              -->
 
               <div *ngIf="totalPages > 1">
                 <ngb-pagination class="d-flex justify-content-end" [pageSize]="itemsPerPage" [collectionSize]="totalItems"

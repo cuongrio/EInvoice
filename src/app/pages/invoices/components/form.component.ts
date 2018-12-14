@@ -135,14 +135,14 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     this.config.addTagText = 'Thêm';
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.createItemsForm();
     this.initNewRow();
     this.initSpinnerConfig();
-    this.initRouter();
-    this.loadReferences();
-    this.loadCustomers();
-    this.loadGoods();
+    await this.initRouter();
+    await this.loadReferences();
+    await this.loadCustomers();
+    await this.loadGoods();
   }
 
   ngOnDestroy() {
@@ -163,12 +163,12 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
       this.ref.markForCheck();
       window.open(fileURL);
       setTimeout(function () {
-        this.signTokenLoading = false;
+        this.previewLoading = false;
         this.ref.markForCheck();
       }.bind(this), 200);
     }, err => {
       setTimeout(function () {
-        this.signTokenLoading = false;
+        this.previewLoading = false;
         this.ref.markForCheck();
       }.bind(this), 200);
       this.ref.markForCheck();
@@ -414,7 +414,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
   /*** CUSTOMER CHANGE */
   public onCustomerChange(customer: any) {
-    console.log(customer);
     this.initDataForm(customer);
     this.ref.markForCheck();
   }
@@ -589,6 +588,13 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     return this.sumColumn(this.linePriceOrigin);
   }
 
+  public formatCurrency(price: number) {
+    if (price > 0) {
+      return price.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+    }
+    return price;
+  }
+
   // SUBMIT ACTION CASE
   private submitForPreview(invoiceModel: InvoiceModel) {
     this.invoiceService.preview(invoiceModel).subscribe(data => {
@@ -739,7 +745,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     urlSegmentArr.forEach((item: UrlSegment, idx: number) => {
       segmentMerged += item.path;
     });
-    console.log(segmentMerged);
     if (segmentMerged.indexOf('refresh') === -1) {
       return false;
     }
@@ -779,26 +784,24 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
   private loadSerialByForm(form: string) {
     this.serialLoading = true;
+    this.comboSerial = new Array<SelectData>();
     if (form && form.length > 0) {
       const comboType = `COMBO_SERIAL_${form}`;
 
-      this.references.forEach((item: SelectData, index: number) => {
+      const comboSerialStorage = JSON.parse(sessionStorage.getItem('comboSerialStorage'));
+      comboSerialStorage.forEach((item: SelectData, index: number) => {
         if (item.type === comboType) {
           this.comboSerial.push(item);
         }
       });
+      if (this.comboSerial.length > 0) {
+        this.serialPicked = this.comboSerial[0].value;
+      }
     }
 
     // set default picked
-    if (this.comboSerial.length > 0) {
-      this.serialPicked = this.comboSerial[0].value;
-      this.addForm.patchValue({
-        serial: this.serialPicked
-      });
-    }
     setTimeout(function () {
       this.serialLoading = false;
-      this.ref.markForCheck();
     }.bind(this), 200);
   }
 
@@ -890,12 +893,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     this.comboHTTT = new Array<SelectData>();
     this.comboStatus = new Array<SelectData>();
     this.comboSerialStorage = new Array<SelectData>();
-
-    sessionStorage.setItem('comboForm', '');
-    sessionStorage.setItem('comboHTTT', '');
-    sessionStorage.setItem('comboTaxRate', '');
-    sessionStorage.setItem('comboStatus', '');
-    sessionStorage.setItem('comboSerialStorage', '');
     this.referenceService.referenceInfo().subscribe((items: SelectData[]) => {
       const selectItems = items as SelectData[];
       this.references = selectItems;
@@ -940,28 +937,30 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
           paymentType: this.htttModel
         });
       }
-      // set to localstorage
-      sessionStorage.setItem('comboForm', JSON.stringify(this.comboForm));
-      sessionStorage.setItem('comboHTTT', JSON.stringify(this.comboHTTT));
-      sessionStorage.setItem('comboTaxRate', JSON.stringify(this.comboTaxRate));
-      sessionStorage.setItem('comboStatus', JSON.stringify(this.comboStatus));
-      sessionStorage.setItem('comboSerialStorage', JSON.stringify(this.comboSerialStorage));
-
-      setTimeout(function () {
-        this.taxRateLoading = false;
-        this.formLoading = false;
-        this.htttLoading = false;
-        this.ref.markForCheck();
-      }.bind(this), 200);
+      this.storeDataSession();
+      this.waitForReference();
     }, err => {
-      setTimeout(function () {
-        this.taxRateLoading = false;
-        this.formLoading = false;
-        this.htttLoading = false;
-        this.ref.markForCheck();
-      }.bind(this), 200);
+      this.waitForReference();
       this.errorHandler(err);
     });
+  }
+
+  private waitForReference() {
+    setTimeout(function () {
+      this.taxRateLoading = false;
+      this.formLoading = false;
+      this.htttLoading = false;
+      this.ref.markForCheck();
+    }.bind(this), 200);
+  }
+
+  private storeDataSession() {
+    // set to localstorage
+    sessionStorage.setItem('comboForm', JSON.stringify(this.comboForm));
+    sessionStorage.setItem('comboHTTT', JSON.stringify(this.comboHTTT));
+    sessionStorage.setItem('comboTaxRate', JSON.stringify(this.comboTaxRate));
+    sessionStorage.setItem('comboStatus', JSON.stringify(this.comboStatus));
+    sessionStorage.setItem('comboSerialStorage', JSON.stringify(this.comboSerialStorage));
   }
 
   private initDataForm(customer: CustomerData) {
@@ -1043,7 +1042,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
               this.disabledAdjust = true;
               this.disabledReplace = true;
             }
-            if (data.status && data.status === 'SIGNED') {
+            if (data.status === 'SIGNED') {
               this.disabledSign = true;
               this.disabledEdit = true;
               this.disabledAdjust = false;
@@ -1051,6 +1050,12 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
             }
             if (data.status === 'APPROVED' || data.status === 'SIGNED') {
               this.disabledInCD = false;
+            }
+            if (data.status === 'DISPOSED') {
+              this.disabledEdit = true;
+              this.disabledAdjust = true;
+              this.disabledReplace = true;
+              this.disabledPrintTranform = true;
             }
           }
           if (segment === 'copy') {
@@ -1077,6 +1082,8 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     this.formPicked = data.form;
 
     this.addForm.patchValue({
+      serial: data.serial,
+      form: data.form,
       customerCode: data.customer.customer_code,
       customerTax: data.customer.tax_code,
       customerEmail: data.customer.email,
@@ -1139,11 +1146,11 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
       form: ['', Validators.compose([Validators.required])],
       serial: ['', Validators.compose([Validators.required])],
       customerCode: '',
-      customerName: ['', Validators.compose([Validators.required])],
+      customerName: '',
       customerTax: ['', Validators.compose([Validators.required])],
       customerEmail: ['', Validators.compose([Validators.email])],
       customerPhone: '',
-      customerOrg: ['', Validators.compose([Validators.required])],
+      customerOrg: '',
       paymentType: ['', Validators.compose([Validators.required])],
       customerBankAccount: '',
       customerBank: '',
@@ -1154,9 +1161,11 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
         validator: (formControl: FormControl) => {
           const customerOrg = formControl.get('customerOrg').value;
           const customerName = formControl.get('customerName').value;
-          if (customerName.length === 0 && customerOrg.length === 0) {
+          if (customerName.length === 0
+            && customerOrg.length === 0) {
             return { invalidOrgName: true };
           }
+          return null;
         }
       });
 

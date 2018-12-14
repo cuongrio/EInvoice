@@ -41,6 +41,8 @@ export class InvoicesComponent implements OnInit {
   public signErrorMessage: string;
   public signButtonDisabled = true;
   public signButtonLoading = false;
+  public disposeDisabled = true;
+  public disposeButtonLoading = false;
 
   public formLoading = false;
   public serialLoading = false;
@@ -59,6 +61,8 @@ export class InvoicesComponent implements OnInit {
   public totalItems = 0;
   public totalElements = 0;
   public totalPages = 0;
+  public pageSizeList = new Array<any>();
+  public pageSize: number;
 
   public configSingleBox = {
     noResultsFound: ' ',
@@ -77,10 +81,6 @@ export class InvoicesComponent implements OnInit {
   private defaultSort = 'ASC';
   private defaultSortBy = 'invoiceNo';
 
-  private token: string;
-  private tenant: string;
-  private detailApi: string;
-
   constructor(
     private modalService: BsModalService,
     private ref: ChangeDetectorRef,
@@ -93,18 +93,28 @@ export class InvoicesComponent implements OnInit {
     private invoiceService: InvoiceService,
     private formBuilder: FormBuilder
   ) {
-    this.token = authenticationService.credentials.token;
-    this.tenant = authenticationService.credentials.tenant;
-    this.detailApi = `${environment.serverUrl}/${this.tenant}/invoices`;
+    // // override the route reuse strategy
+    // this.router.routeReuseStrategy.shouldReuseRoute = function () {
+    //   return false;
+    // };
+
+    // this.router.events.subscribe((evt) => {
+    //   if (evt instanceof NavigationEnd) {
+    //     // trick the Router into believing it's last link wasn't previously loaded
+    //     this.router.navigated = false;
+    //     // if you need to scroll back to top, here is the right place
+    //     window.scrollTo(0, 0);
+    //   }
+    // });
   }
 
   async ngOnInit() {
     this.initDefault();
     this.initForm();
-    await this.loadReferences();
-    this.initDataTable();
-    this.initRouter();
     this.initSpinnerConfig();
+    await this.loadReferences();
+    await this.initRouter();
+    this.initDataTable();
   }
 
   public expandSearchClicked() {
@@ -130,6 +140,7 @@ export class InvoicesComponent implements OnInit {
     this.signErrorMessage = '';
     if (token) {
       this.signButtonDisabled = false;
+      this.disposeDisabled = false;
       this.tokenPicked = token;
     }
   }
@@ -137,7 +148,6 @@ export class InvoicesComponent implements OnInit {
   public async tokenChoiceClicked() {
     this.signButtonDisabled = true;
     this.signButtonLoading = true;
-    localStorage.setItem('token-picked', JSON.stringify(this.tokenPicked));
     const invoiceId = +this.getCheckboxesValue();
     const dataToken = await this.invoiceService.sign(invoiceId)
       .toPromise().catch(err => {
@@ -175,11 +185,10 @@ export class InvoicesComponent implements OnInit {
   public onSubmit(form: any) {
     this.page = 1;
     this.isSearching = true;
-    console.log(form);
 
     const invoiceParam: InvoiceParam = this.formatForm(form);
-    invoiceParam.page = JSON.stringify(this.page);
-    console.log(invoiceParam);
+    invoiceParam.page = +this.page;
+    invoiceParam.size = this.pageSize;
 
     localStorage.setItem('userquery', JSON.stringify(invoiceParam));
     this.router.navigate([], { replaceUrl: true, queryParams: invoiceParam });
@@ -198,12 +207,31 @@ export class InvoicesComponent implements OnInit {
         invoiceParam = {};
       }
 
-      invoiceParam.page = JSON.stringify(this.page);
-
+      invoiceParam.page = +this.page;
+      invoiceParam.size = this.pageSizeList[0].code;
       // call service
       this.router.navigate([], { replaceUrl: true, queryParams: invoiceParam });
       this.callServiceAndBindTable(invoiceParam);
     }
+  }
+
+  public onSizeChange(size: number) {
+    console.log('size: ' + size);
+    this.isSearching = true;
+    const userquery = localStorage.getItem('userquery');
+    let invoiceParam: InvoiceParam;
+    if (userquery) {
+      invoiceParam = JSON.parse(userquery);
+    } else {
+      invoiceParam = {};
+    }
+    invoiceParam.page = +this.page;
+    invoiceParam.size = size;
+    // call service
+    this.router.navigate([], { replaceUrl: true, queryParams: invoiceParam });
+    this.callServiceAndBindTable(invoiceParam);
+
+    $('#invoiceTable').DataTable().page.len(size).draw();
   }
 
   // BUTTON ACTION
@@ -223,7 +251,7 @@ export class InvoicesComponent implements OnInit {
       const file = new Blob([data], { type: 'application/pdf' });
       const fileURL = URL.createObjectURL(file);
       this.ref.markForCheck();
-      window.open(fileURL, '_self');
+      window.open(fileURL, '_blank');
     }, err => {
       this.ref.markForCheck();
       this.errorHandler(err);
@@ -235,7 +263,7 @@ export class InvoicesComponent implements OnInit {
     this.invoiceService.printTransform(invoiceId).subscribe(data => {
       const file = new Blob([data], { type: 'application/pdf' });
       const fileURL = URL.createObjectURL(file);
-      window.open(fileURL, '_self');
+      window.open(fileURL, '_blank');
     }, err => {
       const initialState = {
         message: 'Hóa đơn chỉ được in chuyển đổi một lần!',
@@ -283,7 +311,7 @@ export class InvoicesComponent implements OnInit {
     const invoiceId = +this.getCheckboxesValue();
     this.invoiceService.approveInvoice(invoiceId).subscribe(
       data => {
-        console.log(JSON.stringify(data));
+        this.reloadPage();
       },
       err => {
         this.errorHandler(err);
@@ -291,39 +319,52 @@ export class InvoicesComponent implements OnInit {
     );
   }
 
-  public receiveExcelClicked() {
-    const invoiceId = +this.getCheckboxesValue();
-    this.invoiceService.disposeInvoice(invoiceId).subscribe(
-      data => {
-        console.log(JSON.stringify(data));
-      },
-      err => {
-        this.errorHandler(err);
-      }
-    );
+  public disposeConfirmToken(template: TemplateRef<any>) {
+    this.modalRef.hide();
+    this.loadTokenData();
+    this.modalRef = this.modalService.show(template, { class: 'modal-token' });
   }
 
   public disposeConfirmClicked() {
     const invoiceId = +this.getCheckboxesValue();
-    this.invoiceService.disposeInvoice(invoiceId).subscribe(
-      data => {
-        this.modalRef.hide();
-        const initialState = {
-          message: 'Đã hủy hóa đơn thành công!',
-          title: 'Thành công!',
-          class: 'success',
-          highlight: `Hóa đơn #${data.invoice_id}`
-        };
-        this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
-      },
-      err => {
-        this.modalRef.hide();
-        this.errorHandler(err);
-      }
-    );
+    const status = this.getStatusValue();
+    if (status === 'SIGNED') {
+      this.invoiceService.disposeSignedInvoice(invoiceId).subscribe(
+        data => {
+          this.modalRef.hide();
+          const initialState = {
+            message: 'Đã hủy hóa đơn thành công!',
+            title: 'Thành công!',
+            class: 'success',
+            highlight: `Hóa đơn #${data.invoice_id}`
+          };
+          this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+          this.reloadPage();
+        },
+        err => {
+          this.modalRef.hide();
+          this.errorHandler(err);
+        });
+    } else {
+      this.invoiceService.disposeInvoice(invoiceId).subscribe(
+        data => {
+          this.modalRef.hide();
+          const initialState = {
+            message: 'Đã hủy hóa đơn thành công!',
+            title: 'Thành công!',
+            class: 'success',
+            highlight: `Hóa đơn #${data.invoice_id}`
+          };
+          this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+        },
+        err => {
+          this.modalRef.hide();
+          this.errorHandler(err);
+        });
+    }
   }
 
-  public get pageSize() {
+  public dummyPageSize() {
     return [{
       code: 20,
       value: '20'
@@ -337,22 +378,41 @@ export class InvoicesComponent implements OnInit {
   }
 
   // END BUTTON ACTION
-  private getCheckboxesValue() {
+  private getCheckboxesValue(): any {
     const itemsChecked = new Array<string>();
     $('input:checkbox[name=stickchoice]:checked').each(function () {
       const item: string = $(this).val();
       itemsChecked.push(item);
     });
-    return itemsChecked;
+    if (itemsChecked.length > 0) {
+      return itemsChecked[0];
+    }
+    return 0;
+  }
+
+  private getStatusValue() {
+    const itemsChecked = new Array<string>();
+    $('input:checkbox[name=stickchoice]:checked').each(function () {
+      const parent = $(this).closest('.form-check');
+      const status = parent.find('.status-hidden').val();
+      itemsChecked.push(status);
+    });
+    if (itemsChecked.length > 0) {
+      return itemsChecked[0];
+    }
+    return '';
   }
 
   private initRouter() {
     if (this.activeRouter.snapshot.queryParams) {
       const routerParams = JSON.parse(JSON.stringify(this.activeRouter.snapshot.queryParams));
-      console.log(routerParams);
+
       if (routerParams['page']) {
         this.page = +routerParams['page'];
         this.previousPage = +routerParams['page'];
+      }
+      if (routerParams['size']) {
+        this.pageSize = +routerParams['size'];
       }
       if (routerParams['fromDate']) {
         routerParams['fromDate'] = this.convertDatetoDisplay(routerParams['fromDate']);
@@ -364,12 +424,13 @@ export class InvoicesComponent implements OnInit {
       // set default value form
       (<FormGroup>this.searchForm).patchValue(routerParams, { onlySelf: true });
     }
-    const invoiceParam: InvoiceParam = { page: JSON.stringify(this.page) };
+    const invoiceParam: InvoiceParam = { page: +this.page, size: this.pageSize };
     // call service
     this.callServiceAndBindTable(invoiceParam);
   }
 
   private initDefault() {
+    this.pageSize = 20;
     const expandSearchTmp = localStorage.getItem('expandSearch');
     if (expandSearchTmp) {
       this.expandSearch = JSON.parse(expandSearchTmp);
@@ -440,7 +501,6 @@ export class InvoicesComponent implements OnInit {
     this.searchForm = this.formBuilder.group({
       sort: '',
       sortBy: '',
-      size: '',
       fromDate: '',
       toDate: '',
       invoiceNo: '',
@@ -455,16 +515,15 @@ export class InvoicesComponent implements OnInit {
   }
 
   private initDataTable() {
-    const $data_table = $('#invoiceTable');
     const statusJson = sessionStorage.getItem('comboStatus');
     let statusArr: any;
     if (statusJson) {
       statusArr = JSON.parse(statusJson) as SelectData[];
     }
-    const table = $data_table.DataTable({
+    const table = $('#invoiceTable').DataTable({
       paging: false,
       searching: false,
-      retrieve: true,
+      retrieve: false,
       serverSide: false,
       bLengthChange: false,
       info: false,
@@ -477,11 +536,11 @@ export class InvoicesComponent implements OnInit {
         $(row).addClass('row-parent');
       },
       columnDefs: [{
-        width: '20px',
+        width: '15px',
         targets: 0,
         orderable: false
       }, {
-        width: '60px',
+        width: '30px',
         targets: 1,
         render: function (data: any) {
           return '<span>' + data + '</span>';
@@ -499,7 +558,7 @@ export class InvoicesComponent implements OnInit {
         targets: 3
       },
       {
-        width: '80px',
+        width: '250px',
         targets: 4
       },
       {
@@ -507,7 +566,11 @@ export class InvoicesComponent implements OnInit {
         targets: 5
       },
       {
-        width: '100px',
+        width: '250px',
+        targets: 6
+      },
+      {
+        width: '70px',
         targets: 7,
         render: function (data: any) {
           if (data && data !== 'null') {
@@ -518,7 +581,7 @@ export class InvoicesComponent implements OnInit {
         }
       },
       {
-        width: '100px',
+        width: '70px',
         targets: 8,
         render: function (data: any) {
           if (data && data !== 'null') {
@@ -529,7 +592,7 @@ export class InvoicesComponent implements OnInit {
         }
       },
       {
-        width: '100px',
+        width: '70px',
         targets: 9,
         render: function (data: any) {
           if (data && data !== 'null') {
@@ -542,7 +605,7 @@ export class InvoicesComponent implements OnInit {
       ],
       columns: [{
         orderable: false,
-        className: 'action-control',
+        className: 'cbox',
         data: function (row: any, type: any) {
           if (type === 'display' && row.invoice_id && row.invoice_id !== 'null') {
             return `
@@ -550,7 +613,8 @@ export class InvoicesComponent implements OnInit {
                 <label class="form-check-label">
                   <input type="checkbox" name="stickchoice" value="${row.invoice_id}" class="form-check-input">
                   <i class="input-helper"></i></label>
-                  <input type="hidden" class="invoice-hidden" value="${row.invoice_id}">
+                  <input type="hidden" class="id-hidden" value="${row.invoice_id}">
+                  <input type="hidden" class="status-hidden" value="${row.status}">
               </div>
             `;
           } else {
@@ -587,7 +651,7 @@ export class InvoicesComponent implements OnInit {
       {
         data: function (row: any, type: any) {
           if (type === 'display' && row.customer && row.customer !== 'null') {
-            return row.customer.customer_name;
+            return row.customer.org;
           } else {
             return '<span></span>';
           }
@@ -657,15 +721,13 @@ export class InvoicesComponent implements OnInit {
       $('#openButton').prop('disabled', status);
       $('#copyButton').prop('disabled', status);
       $('#printButton').prop('disabled', status);
-      $('#printTranformButton').prop('disabled', status);
-      $('#signButton').prop('disabled', status);
       $('#approveButton').prop('disabled', status);
       $('#disposeButton').prop('disabled', status);
     }
 
     function formatCurrency(price: number) {
       if (price > 0) {
-        return price.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+        return price.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
       }
       return price;
     }
@@ -673,37 +735,60 @@ export class InvoicesComponent implements OnInit {
     // disabled all button
     bindButtonStatus(true);
 
-    $('#invoiceTable tbody').on('dblclick', 'tr.row-parent', function (e: any) {
-      e.preventDefault();
-      const invoiceId = $(this).find('.invoice-hidden').val();
-      const openUrl = window.location.origin + '/invoices/open/' + invoiceId;
-      window.open(openUrl, '_self');
-    });
-
     // selected row
-    $('#invoiceTable tbody').on('click', 'td.action-control', function (e: any) {
-      e.preventDefault();
-      $('input:checkbox[name=stickchoice]').each(function () {
-        $(this).prop('checked', false);
-      });
-
-      const tr = $(this).closest('tr');
-
-      if (tr.hasClass('selected')) {
-        tr.removeClass('selected');
-        tr.find('input:checkbox[name=stickchoice]')
-          .prop('checked', false);
-
-        bindButtonStatus(true);
+    let clicks = 0;
+    $('#invoiceTable tbody').on('mousedown', 'tr.row-parent', function (event: any) {
+      event.preventDefault();
+      clicks++;
+      setTimeout(function () { clicks = 0; }, 300);
+      if (clicks === 2) {
+        $(this)
+          .find('input:checkbox[name=stickchoice]')
+          .prop('checked', true);
+        $('#openButton').click();
       } else {
-        table.$('tr.selected').removeClass('selected');
-        tr.addClass('selected');
-        console.log('herekrke');
-        tr.find('input:checkbox[name=stickchoice]').prop('checked', true);
+        $('input:checkbox[name=stickchoice]').each(function () {
+          $(this).prop('checked', false);
+        });
 
-        bindButtonStatus(false);
+        if ($(this).hasClass('selected')) {
+          $(this).removeClass('selected');
+          $(this)
+            .find('input:checkbox[name=stickchoice]')
+            .prop('checked', false);
+
+          bindButtonStatus(true);
+        } else {
+          // init status
+          $('#signButton').prop('disabled', false);
+          $('#printTranformButton').prop('disabled', true);
+
+          table.$('tr.selected').removeClass('selected');
+          $(this).addClass('selected');
+          $(this)
+            .find('input:checkbox[name=stickchoice]')
+            .prop('checked', true);
+
+          const status = $(this).find('.status-hidden').val();
+          if (status === 'DISPOSED') {
+            $('#signButton').prop('disabled', true);
+            $('#printTranformButton').prop('disabled', true);
+            $('#openButton').prop('disabled', false);
+            $('#copyButton').prop('disabled', true);
+            $('#printButton').prop('disabled', false);
+            $('#approveButton').prop('disabled', true);
+            $('#disposeButton').prop('disabled', true);
+          } else {
+            bindButtonStatus(false);
+            $('#approveButton').prop('disabled', true);
+            if (status === 'SIGNED') {
+              $('#approveButton').prop('disabled', false);
+              $('#signButton').prop('disabled', true);
+              $('#printTranformButton').prop('disabled', false);
+            }
+          }
+        }
       }
-      return false;
     });
   }
 
@@ -724,9 +809,6 @@ export class InvoicesComponent implements OnInit {
     }
     if (form.sortBy) {
       invoiceParamsForamat.sortBy = form.sortBy;
-    }
-    if (form.size) {
-      invoiceParamsForamat.size = form.size;
     }
     if (form.fromDate) {
       const fromDate = this.convertDateToQuery(form.fromDate);
@@ -755,6 +837,7 @@ export class InvoicesComponent implements OnInit {
   }
 
   private loadReferences() {
+    this.pageSizeList = this.dummyPageSize();
 
     // check in session
     const statusJson = sessionStorage.getItem('comboStatus');
@@ -828,12 +911,7 @@ export class InvoicesComponent implements OnInit {
         }
       }
 
-      // set default value
-      sessionStorage.setItem('comboForm', JSON.stringify(this.comboForm));
-      sessionStorage.setItem('comboHTTT', JSON.stringify(comboHTTT));
-      sessionStorage.setItem('comboTaxRate', JSON.stringify(comboTaxRate));
-      sessionStorage.setItem('comboStatus', JSON.stringify(this.comboStatus));
-      sessionStorage.setItem('comboSerialStorage', JSON.stringify(comboSerialStorage));
+      this.storeDataSession(comboHTTT, comboTaxRate, comboSerialStorage);
       this.comboSerial = comboSerialStorage;
 
       this.resetLoading();
@@ -841,6 +919,32 @@ export class InvoicesComponent implements OnInit {
       this.resetLoading();
       this.errorHandler(err);
     });
+  }
+
+  private storeDataSession(comboHTTT: any, comboTaxRate: any, comboSerialStorage: any) {
+    // set default value
+    sessionStorage.setItem('comboForm', JSON.stringify(this.comboForm));
+    sessionStorage.setItem('comboHTTT', JSON.stringify(comboHTTT));
+    sessionStorage.setItem('comboTaxRate', JSON.stringify(comboTaxRate));
+    sessionStorage.setItem('comboStatus', JSON.stringify(this.comboStatus));
+    sessionStorage.setItem('comboSerialStorage', JSON.stringify(comboSerialStorage));
+  }
+
+  private reloadPage() {
+    this.isSearching = true;
+    const userquery = localStorage.getItem('userquery');
+    let invoiceParam: InvoiceParam;
+    if (userquery) {
+      invoiceParam = JSON.parse(userquery);
+    } else {
+      invoiceParam = {};
+    }
+
+    invoiceParam.page = +this.page;
+    invoiceParam.size = this.pageSizeList[0].code;
+    // call service
+    this.router.navigate([], { replaceUrl: true, queryParams: invoiceParam });
+    this.callServiceAndBindTable(invoiceParam);
   }
 
   private resetLoading() {

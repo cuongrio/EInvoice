@@ -12,7 +12,7 @@ export class GoodService {
 
   /**** LIST *** */
   getList() {
-    return this.appService.get(`/goods`);
+   return this.appService.get(`/goods`);
    // return of(this.appConstant.goodList);
   }
 

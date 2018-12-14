@@ -4,10 +4,10 @@ import { SelectData } from '@app/_models';
 @Injectable()
 export class UtilsService {
   getStatusName(code: string, arr: Array<SelectData>): string {
-    if(!code){
+    if (!code) {
       return code;
     }
-    if (arr.length == 0) {
+    if (arr.length === 0) {
       const statusJson = sessionStorage.getItem('comboStatus');
       arr = JSON.parse(statusJson) as SelectData[];
     }
@@ -15,10 +15,10 @@ export class UtilsService {
     return status ? status.value : code;
   }
   getPaymentTypeName(code: string, arr: Array<SelectData>): string {
-    if(!code){
+    if (!code) {
       return code;
     }
-    if (arr.length == 0) {
+    if (arr.length === 0) {
       const statusJson = sessionStorage.getItem('comboHTTT');
       arr = JSON.parse(statusJson) as SelectData[];
     }

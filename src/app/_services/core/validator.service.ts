@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { FormGroup, ValidationErrors } from '@angular/forms';
 
 /**
  * This is a singleton class
@@ -12,7 +13,7 @@ export class ValidationService {
       notSame: 'Xác nhận mật khẩu không khớp!',
       invalidEmail: 'Sai định dạng Email!',
       invalidPassword: 'Mật khẩu phải từ 6-20 ký tự, cho phép chữ, số và ký tự !@#$%^&*',
-      invalidOrgName: 'Vui lòng không để trống Tên đơn vị hoặc Người mua',
+      invalidOrgName: 'Tên đơn vị hoặc Người mua không để trống!',
       minlength: `Nhập ít nhất ${validatorValue.requiredLength} ký tự!`
     };
 
@@ -42,5 +43,16 @@ export class ValidationService {
     } else {
       return { invalidPassword: true };
     }
+  }
+
+  atLeastOne(...fields: string[]) {
+    return (fg: FormGroup): ValidationErrors | null => {
+      return fields.some(fieldName => {
+        const field = fg.get(fieldName).value;
+        return field && field.length > 0 ? true : false;
+      })
+        ? null
+        : ({ atLeastOne: 'Tên đơn vị hoặc Người mua không để trống!' } as ValidationErrors);
+    };
   }
 }

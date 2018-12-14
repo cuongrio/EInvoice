@@ -1,8 +1,8 @@
 ﻿export class InvoiceParam {
   sort?: string;
   sortBy?: string;
-  size?: string;
-  page?: string;
+  size?: number;
+  page?: number;
   fromDate?: string;
   toDate?: string;
   invoiceNo?: string;

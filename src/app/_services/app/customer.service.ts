@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { environment } from './../../../environments/environment';
 import { CustomerModel } from './../../_models/customer.model';
 import { AppService } from '@app/_services/core/app.service';
 import { AppConstant } from '@app/_mock/mock.data';
@@ -14,7 +13,6 @@ export class CustomerService {
   // CUSTOMERS
   getList() {
     return this.appService.get(`/customers`);
-   // return of(this.appConstant.customerList);
   }
 
   retrieveById(customerId: number) {

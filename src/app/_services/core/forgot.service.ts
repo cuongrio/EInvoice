@@ -1,12 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { HttpService } from '@app/core';
 import { environment } from './../../../environments/environment';
 
 @Injectable()
 export class ForgotPassService {
     constructor(
-        private router: Router,
         private httpService: HttpService
     ) { }
 
