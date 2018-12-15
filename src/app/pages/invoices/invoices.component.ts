@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, TemplateRef, ChangeDetectorRef, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 import { DatePipe } from '@angular/common';
@@ -21,7 +21,7 @@ type ArrayObject = Array<{ code: string; value: string }>;
   selector: 'app-invoices',
   templateUrl: './invoices.component.html'
 })
-export class InvoicesComponent implements OnInit {
+export class InvoicesComponent implements OnInit, AfterViewInit {
   public sortArr: string[] = ['ASC', 'DESC'];
   public sortByArr: ArrayObject = [
     { code: 'Số hóa đơn', value: 'invoiceNo' },
@@ -114,6 +114,15 @@ export class InvoicesComponent implements OnInit {
     this.initDataReference();
   }
 
+
+  ngAfterViewInit() {
+    console.log('after view init');
+    if (window.location.href.indexOf('page_y') !== -1) {
+      const match = window.location.href.split('?')[1].split('&')[0].split('=');
+      document.getElementsByTagName('body')[0].scrollTop = +match[1];
+    }
+  }
+
   public expandSearchClicked() {
     if (this.expandSearch) {
       this.expandSearch = false;
@@ -166,6 +175,7 @@ export class InvoicesComponent implements OnInit {
         this.modalRef.hide();
         this.signButtonDisabled = false;
         this.signButtonLoading = false;
+        this.reloadPage();
         const initialState = {
           message: 'Đã ký thành công hóa đơn!',
           title: 'Thông báo!',
@@ -948,6 +958,10 @@ export class InvoicesComponent implements OnInit {
   }
 
   private reloadPage() {
+    // keep scroll
+    const page_y = document.getElementsByTagName('body')[0].scrollTop;
+    localStorage.setItem('page_y', page_y + '');
+
     let invoiceParam: InvoiceParam;
     this.isSearching = true;
     const userquery = localStorage.getItem('userquery');
