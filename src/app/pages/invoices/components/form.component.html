@@ -5,7 +5,7 @@
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb">
             <li class="breadcrumb-item"><a routerLink="/">Trang chủ</a></li>
-            <li class="breadcrumb-item"><a routerLink="/invoices">Danh sách hóa đơn</a></li>
+            <li class="breadcrumb-item"><a routerLink="/invoices/refresh">Danh sách hóa đơn</a></li>
             <li *ngIf="invoiceId && segmentRouter=='open'" class="breadcrumb-item active" aria-current="page">Mở hóa
               đơn</li>
             <li *ngIf="invoiceId && segmentRouter=='copy'" class="breadcrumb-item active" aria-current="page">Sao chép
@@ -81,15 +81,13 @@
 
                 <div class="btn-group">
                   <button type="button" [disabled]="signButtonDisabled" class="btn btn-primary mr-1 no-br" (click)="tokenChoiceClicked()">
-                    <i *ngIf="signButtonLoading" class="fa fa-spinner fa-spin"></i>
-                    <i *ngIf="!signButtonLoading" class="fas fa-key"></i>
-                    {{ signButtonLoading ? 'Vui lòng chờ...' : 'Ký' }}
+                    <i class="fas fa-key"></i> Ký
                   </button>
                   <button type="button" class="btn btn-default" (click)="modalRef.hide()">Bỏ qua</button>
                 </div>
               </div>
             </ng-template>
-            <button routerLink="/invoices" type="button" class="btn btn-md btn-light">
+            <button routerLink="/invoices/refresh" type="button" class="btn btn-md btn-light">
               <i class="fas fa-share-square"></i> Thoát
             </button>
 
@@ -180,7 +178,7 @@
                         <div class="col-md-4 col-lg-4 col-form-label"><label class="required">Mẫu số</label></div>
                         <div class="col-md-8 col-lg-8">
                           <ng-select *ngIf="!viewMode" formControlName="form" [loading]="formLoading" [ngClass]="{ 'is-viewable': viewMode }"
-                            [items]="comboForm" [(ngModel)]="formPicked" (change)="onFormChange($event)" [clearable]="false"
+                            [items]="comboForm" (change)="onFormChange($event)" [clearable]="false"
                             [searchable]="false" bindLabel="code" bindValue="value">
                           </ng-select>
                           <input *ngIf="viewMode" readonly="readonly" 

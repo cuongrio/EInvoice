@@ -106,12 +106,11 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   public customerArr: Array<CustomerData>;
   public goodArr: Array<GoodData>;
 
-  public comboStatus = new Array<SelectData>();
-  public comboHTTT = new Array<SelectData>();
-  public comboForm = new Array<SelectData>();
-  public comboSerial = new Array<SelectData>();
-  public comboTaxRate = new Array<SelectData>();
-  public comboSerialStorage = new Array<SelectData>();
+  public comboStatus: SelectData[];
+  public comboHTTT: SelectData[];
+  public comboForm: SelectData[];
+  public comboSerial: SelectData[];
+  public comboTaxRate: SelectData[];
 
   private subscription: Subscription;
 
@@ -135,14 +134,14 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     this.config.addTagText = 'Thêm';
   }
 
-  async ngOnInit() {
+  ngOnInit() {
     this.createItemsForm();
     this.initNewRow();
     this.initSpinnerConfig();
-    await this.initRouter();
-    await this.loadReferences();
-    await this.loadCustomers();
-    await this.loadGoods();
+    this.loadReferences();
+    this.initRouter();
+    this.loadCustomers();
+    this.loadGoods();
   }
 
   ngOnDestroy() {
@@ -427,7 +426,13 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
       return;
     }
     this.comboSerial = new Array<SelectData>();
+
+    this.serialLoading = true;
     this.loadSerialByForm(selectData.value);
+    // set default picked
+    setTimeout(function () {
+      this.serialLoading = false;
+    }.bind(this), 200);
   }
 
   public onSerialChange(serialValue: any) {
@@ -551,21 +556,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
     this.priceTaxPopulator(idx, taxRate);
     this.amountWtPopulator(idx);
-  }
-
-  public loadFormBox() {
-    this.formLoading = true;
-    if (this.comboForm && this.comboForm.length > 0) {
-      this.formPicked = this.comboForm[0].value;
-      this.addForm.patchValue({
-        form: this.formPicked
-      });
-      this.formLoading = false;
-      return;
-    }
-    if (!this.references) {
-      this.loadReferences();
-    }
   }
 
   // sum tong
@@ -783,26 +773,23 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   }
 
   private loadSerialByForm(form: string) {
-    this.serialLoading = true;
-    this.comboSerial = new Array<SelectData>();
+    const comboSerial = new Array<SelectData>();
     if (form && form.length > 0) {
       const comboType = `COMBO_SERIAL_${form}`;
 
-      const comboSerialStorage = JSON.parse(sessionStorage.getItem('comboSerialStorage'));
-      comboSerialStorage.forEach((item: SelectData, index: number) => {
-        if (item.type === comboType) {
-          this.comboSerial.push(item);
-        }
-      });
+      const comboSerialJson = JSON.parse(sessionStorage.getItem('comboSerial'));
+      if (comboSerialJson) {
+        comboSerialJson.forEach((item: SelectData, index: number) => {
+          if (item.type === comboType) {
+            comboSerial.push(item);
+          }
+        });
+      }
+      this.comboSerial = comboSerial;
       if (this.comboSerial.length > 0) {
         this.serialPicked = this.comboSerial[0].value;
       }
     }
-
-    // set default picked
-    setTimeout(function () {
-      this.serialLoading = false;
-    }.bind(this), 200);
   }
 
   private recaculator(idx: number, taxRate: number, price: number, quantity: number) {
@@ -880,6 +867,37 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   }
 
   private loadReferences() {
+    // check in session
+    const formJson = sessionStorage.getItem('comboForm');
+    if (formJson) {
+      this.comboForm = JSON.parse(formJson) as SelectData[];
+    }
+
+    const httpJson = sessionStorage.getItem('comboHTTT');
+    if (httpJson) {
+      this.comboHTTT = JSON.parse(httpJson) as SelectData[];
+    }
+
+    const comboTaxRateJson = sessionStorage.getItem('comboTaxRate');
+    if (comboTaxRateJson) {
+      this.comboTaxRate = JSON.parse(comboTaxRateJson) as SelectData[];
+    }
+
+    const statusJson = sessionStorage.getItem('comboStatus');
+    if (statusJson) {
+      this.comboStatus = JSON.parse(statusJson) as SelectData[];
+    }
+
+    const comboSerialJson = sessionStorage.getItem('comboSerial');
+    if (comboSerialJson) {
+      this.comboSerial = JSON.parse(comboSerialJson) as SelectData[];
+    }
+
+    if (this.comboForm && this.comboSerial
+      && this.comboHTTT && this.comboTaxRate
+      && this.comboStatus) {
+      return;
+    }
 
     // loading
     this.formLoading = true;
@@ -887,38 +905,37 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     this.htttLoading = true;
 
     // reset object
-    this.comboForm = new Array<SelectData>();
-    this.comboTaxRate = new Array<SelectData>();
-    this.comboTaxRate = new Array<SelectData>();
-    this.comboHTTT = new Array<SelectData>();
-    this.comboStatus = new Array<SelectData>();
-    this.comboSerialStorage = new Array<SelectData>();
+    const comboForm = new Array<SelectData>();
+    const comboTaxRate = new Array<SelectData>();
+    const comboHTTT = new Array<SelectData>();
+    const comboStatus = new Array<SelectData>();
+    const comboSerial = new Array<SelectData>();
+
     this.referenceService.referenceInfo().subscribe((items: SelectData[]) => {
       const selectItems = items as SelectData[];
       this.references = selectItems;
-
 
       for (let i = 0; i < selectItems.length; i++) {
         const selectItem = new SelectData();
         Object.assign(selectItem, selectItems[i]);
 
         if (selectItem.type === 'COMBO_TAX_RATE_CODE') {
-          this.comboTaxRate.push(selectItem);
+          comboTaxRate.push(selectItem);
         }
 
         if (selectItem.type === 'COMBO_FORM') {
-          this.comboForm.push(selectItem);
+          comboForm.push(selectItem);
         }
 
         if (selectItem.type === 'COMBO_PAYMENT') {
-          this.comboHTTT.push(selectItem);
+          comboHTTT.push(selectItem);
         }
         if (selectItem.type === 'COMBO_INVOICE_STATUS') {
-          this.comboStatus.push(selectItem);
+          comboStatus.push(selectItem);
         }
         if (selectItem.type.startsWith('COMBO_SERIAL_')) {
           // save to sesssion
-          this.comboSerialStorage.push(selectItem);
+          comboSerial.push(selectItem);
         }
       }
 
@@ -937,6 +954,12 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
           paymentType: this.htttModel
         });
       }
+      this.comboTaxRate = comboTaxRate;
+      this.comboForm = comboForm;
+      this.comboHTTT = comboHTTT;
+      this.comboStatus = comboStatus;
+      this.comboSerial = comboSerial;
+
       this.storeDataSession();
       this.waitForReference();
     }, err => {
@@ -960,7 +983,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     sessionStorage.setItem('comboHTTT', JSON.stringify(this.comboHTTT));
     sessionStorage.setItem('comboTaxRate', JSON.stringify(this.comboTaxRate));
     sessionStorage.setItem('comboStatus', JSON.stringify(this.comboStatus));
-    sessionStorage.setItem('comboSerialStorage', JSON.stringify(this.comboSerialStorage));
+    sessionStorage.setItem('comboSerial', JSON.stringify(this.comboSerial));
   }
 
   private initDataForm(customer: CustomerData) {
@@ -993,6 +1016,8 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     this.segmentRouter = segment;
     this.canPreview = true;
 
+    console.log('initRouter');
+
     // case create new
     return this.subscription = this.activatedRoute.params.subscribe((params: any) => {
       if (params.id) {
@@ -1015,6 +1040,27 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
             this.adjustForm = data.form;
             this.adjustSerial = data.serial;
 
+            if (data.status === 'CREATED') {
+              this.disabledSign = false;
+              this.disabledAdjust = true;
+              this.disabledReplace = true;
+            }
+            if (data.status === 'SIGNED') {
+              this.disabledSign = true;
+              this.disabledEdit = true;
+              this.disabledAdjust = false;
+              this.disabledReplace = false;
+            }
+            if (data.status === 'APPROVED' || data.status === 'SIGNED') {
+              this.disabledInCD = false;
+            }
+            if (data.status === 'DISPOSED') {
+              this.disabledEdit = true;
+              this.disabledAdjust = true;
+              this.disabledReplace = true;
+              this.disabledPrintTranform = true;
+            }
+
             // set view name
             // view name
             this.viewNameData = {
@@ -1035,27 +1081,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
               };
               this.disabledAdjust = true;
               this.disabledReplace = true;
-            }
-
-            if (data.status === 'CREATED') {
-              this.disabledSign = false;
-              this.disabledAdjust = true;
-              this.disabledReplace = true;
-            }
-            if (data.status === 'SIGNED') {
-              this.disabledSign = true;
-              this.disabledEdit = true;
-              this.disabledAdjust = false;
-              this.disabledReplace = false;
-            }
-            if (data.status === 'APPROVED' || data.status === 'SIGNED') {
-              this.disabledInCD = false;
-            }
-            if (data.status === 'DISPOSED') {
-              this.disabledEdit = true;
-              this.disabledAdjust = true;
-              this.disabledReplace = true;
-              this.disabledPrintTranform = true;
             }
           }
           if (segment === 'copy') {

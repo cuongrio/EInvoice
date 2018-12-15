@@ -43,7 +43,8 @@
                           <div class="form-group row">
                             <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Mẫu số</label></div>
                             <div class="col-md-8 col-lg-8">
-                              <ng-select formControlName="form" [loading]="formLoading" [items]="comboForm" (change)="onFormChange($event)"
+                              <ng-select formControlName="form" [loading]="formLoading" [items]="comboForm"
+                              (change)="onFormChange($event)"
                                 [searchable]="false" bindLabel="code" bindValue="value">
                               </ng-select>
                             </div>
@@ -204,9 +205,7 @@
 
                     <div class="btn-group">
                       <button type="button" [disabled]="signButtonDisabled" class="btn btn-primary mr-1 no-br" (click)="tokenChoiceClicked()">
-                        <i *ngIf="signButtonLoading" class="fa fa-spinner fa-spin"></i>
-                        <i *ngIf="!signButtonLoading" class="fas fa-key"></i>
-                        {{ signButtonLoading ? 'Vui lòng chờ...' : 'Ký' }}
+                        <i class="fas fa-key"></i> Ký
                       </button>
                       <button type="button" class="btn btn-default" (click)="modalRef.hide()">Bỏ qua</button>
                     </div>

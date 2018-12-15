@@ -1,13 +1,12 @@
-import { Component, OnInit, TemplateRef, ChangeDetectorRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
+import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import * as moment from 'moment';
 import { InvoiceService, ReferenceService } from '@app/_services';
 import { InvoiceParam, InvoiceListData, SelectData } from '@app/_models';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { AuthenticationService } from '@app/core/authentication/authentication.service';
-import { environment } from '@env/environment';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import { AlertComponent } from '@app//shared/alert/alert.component';
 import { TokenService } from './../../_services/app/token.service';
@@ -48,9 +47,9 @@ export class InvoicesComponent implements OnInit {
   public serialLoading = false;
   public statusLoading = false;
 
-  public comboForm = new Array<SelectData>();
-  public comboSerial = new Array<SelectData>();
-  public comboStatus = new Array<SelectData>();
+  public comboForm: SelectData[];
+  public comboSerial: SelectData[];
+  public comboStatus: SelectData[];
 
   // expand search
   public expandSearch: boolean;
@@ -108,13 +107,11 @@ export class InvoicesComponent implements OnInit {
     // });
   }
 
-  async ngOnInit() {
+  ngOnInit() {
     this.initDefault();
     this.initForm();
     this.initSpinnerConfig();
-    await this.loadReferences();
-    await this.initRouter();
-    this.initDataTable();
+    this.initDataReference();
   }
 
   public expandSearchClicked() {
@@ -404,29 +401,38 @@ export class InvoicesComponent implements OnInit {
   }
 
   private initRouter() {
-    if (this.activeRouter.snapshot.queryParams) {
-      const routerParams = JSON.parse(JSON.stringify(this.activeRouter.snapshot.queryParams));
+    console.log('initRouter');
+    const urlSegment: UrlSegment[] = this.activeRouter.snapshot.url;
 
-      if (routerParams['page']) {
-        this.page = +routerParams['page'];
-        this.previousPage = +routerParams['page'];
-      }
-      if (routerParams['size']) {
-        this.pageSize = +routerParams['size'];
-      }
-      if (routerParams['fromDate']) {
-        routerParams['fromDate'] = this.convertDatetoDisplay(routerParams['fromDate']);
-      }
-      if (routerParams['toDate']) {
-        routerParams['toDate'] = this.convertDatetoDisplay(routerParams['toDate']);
-      }
+    if (urlSegment && urlSegment[0]
+      && urlSegment[0].path === 'refresh') {
+      this.reloadPage();
+    } else {
+      if (this.activeRouter.snapshot.queryParams) {
+        const routerParams = JSON.parse(JSON.stringify(this.activeRouter.snapshot.queryParams));
+        if (routerParams) {
+          if (routerParams['page']) {
+            this.page = +routerParams['page'];
+            this.previousPage = +routerParams['page'];
+          }
+          if (routerParams['size']) {
+            this.pageSize = +routerParams['size'];
+          }
+          if (routerParams['fromDate']) {
+            routerParams['fromDate'] = this.convertDatetoDisplay(routerParams['fromDate']);
+          }
+          if (routerParams['toDate']) {
+            routerParams['toDate'] = this.convertDatetoDisplay(routerParams['toDate']);
+          }
 
-      // set default value form
-      (<FormGroup>this.searchForm).patchValue(routerParams, { onlySelf: true });
+          // set default value form
+          (<FormGroup>this.searchForm).patchValue(routerParams, { onlySelf: true });
+        }
+        const invoiceParam: InvoiceParam = { page: +this.page, size: this.pageSize };
+        // call service
+        this.callServiceAndBindTable(invoiceParam);
+      }
     }
-    const invoiceParam: InvoiceParam = { page: +this.page, size: this.pageSize };
-    // call service
-    this.callServiceAndBindTable(invoiceParam);
   }
 
   private initDefault() {
@@ -515,6 +521,7 @@ export class InvoicesComponent implements OnInit {
   }
 
   private initDataTable() {
+    console.log('initDataTable');
     const statusJson = sessionStorage.getItem('comboStatus');
     let statusArr: any;
     if (statusJson) {
@@ -790,6 +797,8 @@ export class InvoicesComponent implements OnInit {
         }
       }
     });
+
+    console.log('initDataTable done');
   }
 
   private initSpinnerConfig() {
@@ -836,7 +845,7 @@ export class InvoicesComponent implements OnInit {
     return invoiceParamsForamat;
   }
 
-  private loadReferences() {
+  private initDataReference() {
     this.pageSizeList = this.dummyPageSize();
 
     // check in session
@@ -850,36 +859,40 @@ export class InvoicesComponent implements OnInit {
       this.comboForm = JSON.parse(formJson) as SelectData[];
     }
 
-    const serialJson = sessionStorage.getItem('comboSerialStorage');
+    const serialJson = sessionStorage.getItem('comboSerial');
     if (serialJson) {
       this.comboSerial = JSON.parse(serialJson) as SelectData[];
     }
 
-    if (this.comboStatus && this.comboStatus.length > 0
-      && this.comboForm && this.comboForm.length > 0) {
+    if (this.comboStatus && this.comboForm) {
+      this.initDataTable();
+      this.initRouter();
+      this.ref.markForCheck();
       return;
     }
 
     // reset object
     this.formLoading = true;
     this.serialLoading = true;
-    this.comboForm = new Array<SelectData>();
-    this.comboSerial = new Array<SelectData>();
-    this.comboStatus = new Array<SelectData>();
+    const comboForm = new Array<SelectData>();
+    const comboStatus = new Array<SelectData>();
+
     const comboTaxRate = new Array<SelectData>();
     const comboHTTT = new Array<SelectData>();
-    const comboSerialStorage = new Array<SelectData>();
+    const comboSerial = new Array<SelectData>();
 
     // check session
     const comboFormStr = sessionStorage.getItem('comboForm');
     if (comboFormStr) {
       this.comboForm = JSON.parse(comboFormStr);
     }
-    const comboSerialStr = sessionStorage.getItem('comboSerialStorage');
+    const comboSerialStr = sessionStorage.getItem('comboSerial');
     if (comboSerialStr) {
       this.comboSerial = JSON.parse(comboSerialStr);
     }
-    if (this.comboForm.length > 0 && this.comboSerial.length > 0) {
+    if (this.comboForm && this.comboSerial) {
+      this.initDataTable();
+      this.initRouter();
       this.resetLoading();
       return;
     }
@@ -896,24 +909,27 @@ export class InvoicesComponent implements OnInit {
         }
 
         if (selectItem.type === 'COMBO_FORM') {
-          this.comboForm.push(selectItem);
+          comboForm.push(selectItem);
         }
 
         if (selectItem.type === 'COMBO_PAYMENT') {
           comboHTTT.push(selectItem);
         }
         if (selectItem.type === 'COMBO_INVOICE_STATUS') {
-          this.comboStatus.push(selectItem);
+          comboStatus.push(selectItem);
         }
         if (selectItem.type.startsWith('COMBO_SERIAL_')) {
           // save to sesssion
-          comboSerialStorage.push(selectItem);
+          comboSerial.push(selectItem);
         }
       }
 
-      this.storeDataSession(comboHTTT, comboTaxRate, comboSerialStorage);
-      this.comboSerial = comboSerialStorage;
-
+      this.storeDataSession(comboHTTT, comboTaxRate, comboSerial, comboForm, comboStatus);
+      this.comboSerial = comboSerial;
+      this.comboForm = comboForm;
+      this.comboStatus = comboStatus;
+      this.initDataTable();
+      this.initRouter();
       this.resetLoading();
     }, err => {
       this.resetLoading();
@@ -921,29 +937,33 @@ export class InvoicesComponent implements OnInit {
     });
   }
 
-  private storeDataSession(comboHTTT: any, comboTaxRate: any, comboSerialStorage: any) {
+  private storeDataSession(comboHTTT: any, comboTaxRate: any,
+    comboSerial: any, comboForm: any, comboStatus: any) {
     // set default value
-    sessionStorage.setItem('comboForm', JSON.stringify(this.comboForm));
+    sessionStorage.setItem('comboForm', JSON.stringify(comboForm));
     sessionStorage.setItem('comboHTTT', JSON.stringify(comboHTTT));
     sessionStorage.setItem('comboTaxRate', JSON.stringify(comboTaxRate));
-    sessionStorage.setItem('comboStatus', JSON.stringify(this.comboStatus));
-    sessionStorage.setItem('comboSerialStorage', JSON.stringify(comboSerialStorage));
+    sessionStorage.setItem('comboStatus', JSON.stringify(comboStatus));
+    sessionStorage.setItem('comboSerial', JSON.stringify(comboSerial));
   }
 
   private reloadPage() {
+    let invoiceParam: InvoiceParam;
     this.isSearching = true;
     const userquery = localStorage.getItem('userquery');
-    let invoiceParam: InvoiceParam;
     if (userquery) {
       invoiceParam = JSON.parse(userquery);
+      // set default value form
+      (<FormGroup>this.searchForm).patchValue(invoiceParam, { onlySelf: true });
     } else {
-      invoiceParam = {};
+      invoiceParam = {
+        page: +this.page,
+        size: this.pageSizeList[0].code
+      };
     }
-
-    invoiceParam.page = +this.page;
-    invoiceParam.size = this.pageSizeList[0].code;
     // call service
     this.router.navigate([], { replaceUrl: true, queryParams: invoiceParam });
+
     this.callServiceAndBindTable(invoiceParam);
   }
 
@@ -956,13 +976,14 @@ export class InvoicesComponent implements OnInit {
   }
 
   private loadSerialByForm(form: string) {
+    console.log('loadSerialByForm');
     this.serialLoading = true;
     this.comboSerial = new Array<SelectData>();
     if (form && form.length > 0) {
       const comboType = `COMBO_SERIAL_${form}`;
 
-      const comboSerialStorage = JSON.parse(sessionStorage.getItem('comboSerialStorage'));
-      comboSerialStorage.forEach((item: SelectData, index: number) => {
+      const comboSerial = JSON.parse(sessionStorage.getItem('comboSerial'));
+      comboSerial.forEach((item: SelectData, index: number) => {
         if (item.type === comboType) {
           this.comboSerial.push(item);
         }

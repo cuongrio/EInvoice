@@ -11,7 +11,7 @@
         <div class="d-flex flex-row">
             <img *ngIf="class==='success'" src="./assets/images/success.png" class="img-sm" alt="sucess image">
             <img *ngIf="class==='error'" src="./assets/images/sorry.png" class="img-sm" alt="error image">
-            <div class="ml-1">
+            <div class="ml-1 mt-2">
                 <h6 *ngIf="highlight">{{highlight}}</h6>
                 <p *ngIf="message" class="text-muted word-break">{{message}}</p>
                 <button (click)="bsModalRef.hide()" type="button" class="btn btn-md btn-primary modal-button_close">

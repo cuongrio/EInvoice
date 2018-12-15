@@ -10,10 +10,15 @@ export const InvoicesRoutes: Routes = [
     data: { title: 'Danh mục hóa đơn' },
     runGuardsAndResolvers: 'always'
   }, {
+    path: 'refresh',
+    component: InvoicesComponent,
+    data: { title: 'Danh mục hóa đơn' },
+    runGuardsAndResolvers: 'always'
+  }, {
     path: 'createNew',
     component: InvoiceFormComponent,
     data: { title: 'Tạo mới hóa đơn' }
-  },  {
+  }, {
     path: 'copy/:id',
     component: InvoiceFormComponent,
     data: { title: 'Tạo mới từ hóa đơn sao chép' }
