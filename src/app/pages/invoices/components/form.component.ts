@@ -79,10 +79,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-blue'
   };
 
-  public formPicked: string;
-  public serialPicked: string;
-  public htttModel: string;
-
   public references: Array<SelectData>;
   public noItemLine = false;
   public hiddenExColumn = true;
@@ -419,20 +415,16 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
   public onFormChange(selectData: SelectData) {
     if (!selectData) {
-      this.serialPicked = null;
       this.addForm.patchValue({
         serial: ''
       });
+      const serialJson = sessionStorage.getItem('comboSerial');
+      if (serialJson) {
+        this.comboSerial = JSON.parse(serialJson) as SelectData[];
+      }
       return;
     }
-    this.comboSerial = new Array<SelectData>();
-
-    this.serialLoading = true;
     this.loadSerialByForm(selectData.value);
-    // set default picked
-    setTimeout(function () {
-      this.serialLoading = false;
-    }.bind(this), 200);
   }
 
   public onSerialChange(serialValue: any) {
@@ -787,7 +779,9 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
       }
       this.comboSerial = comboSerial;
       if (this.comboSerial.length > 0) {
-        this.serialPicked = this.comboSerial[0].value;
+        this.addForm.patchValue({
+          serial: this.comboSerial[0].value
+        });
       }
     }
   }
@@ -896,6 +890,12 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     if (this.comboForm && this.comboSerial
       && this.comboHTTT && this.comboTaxRate
       && this.comboStatus) {
+      const firstForm = this.comboForm[0].code;
+      this.loadSerialByForm(firstForm);
+      this.addForm.patchValue({
+        form: firstForm,
+        paymentType: this.comboHTTT[0].code
+      });
       return;
     }
 
@@ -941,17 +941,16 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
       // set default value
       if (this.comboForm.length > 0) {
-        this.formPicked = this.comboForm[0].value;
+        const formPicked = this.comboForm[0].code;
         this.addForm.patchValue({
-          form: this.formPicked
+          form: formPicked
         });
-        this.loadSerialByForm(this.formPicked);
+        this.loadSerialByForm(formPicked);
       }
 
       if (this.comboHTTT.length > 0) {
-        this.htttModel = this.comboHTTT[0].code;
         this.addForm.patchValue({
-          paymentType: this.htttModel
+          paymentType: this.comboHTTT[0].code
         });
       }
       this.comboTaxRate = comboTaxRate;
@@ -1103,8 +1102,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
     // load serialcombobox
     this.loadSerialByForm(data.form);
-    this.serialPicked = data.serial;
-    this.formPicked = data.form;
 
     this.addForm.patchValue({
       serial: data.serial,

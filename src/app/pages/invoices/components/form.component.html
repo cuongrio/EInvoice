@@ -160,7 +160,8 @@
                             <input appAutofocus [readonly]="viewMode" formControlName="invoiceDate" class="form-control form-control-sm text-bold"
                               [ngClass]="{ 'control-invalid': submitted && addForm.controls['invoiceDate'].errors }"
                               placeholder="DD/MM/YYYY" (bsValueChange)="invoiceDateValueChange($event)" [isDisabled]="viewMode"
-                              [bsConfig]="bsConfig" #dinvoiceDate="bsDatepicker" bsDatepicker/>
+                              [bsConfig]="bsConfig" triggers="none"
+                               #dinvoiceDate="bsDatepicker" bsDatepicker/>
                             <div class="input-group-append">
                               <button [disabled]="viewMode" class="btn btn-icons btn-inverse-light btn-md" (click)="dinvoiceDate.toggle()"
                                 [attr.aria-expanded]="dinvoiceDate.isOpen" type="button">
@@ -179,7 +180,7 @@
                         <div class="col-md-8 col-lg-8">
                           <ng-select *ngIf="!viewMode" formControlName="form" [loading]="formLoading" [ngClass]="{ 'is-viewable': viewMode }"
                             [items]="comboForm" (change)="onFormChange($event)" [clearable]="false"
-                            [searchable]="false" bindLabel="code" bindValue="value">
+                            [searchable]="false" bindLabel="value" bindValue="code">
                           </ng-select>
                           <input *ngIf="viewMode" readonly="readonly" 
                             formControlName="form" class="form-control form-control-sm"
@@ -194,8 +195,8 @@
                         <div class="col-md-4 col-lg-4 col-form-label"><label class="required">Ký hiệu</label></div>
                         <div class="col-md-8 col-lg-8">
                           <ng-select *ngIf="!viewMode" formControlName="serial" [loading]="serialLoading" [items]="comboSerial"
-                            [(ngModel)]="serialPicked" [clearable]="false" [searchable]="false" bindLabel="code"
-                            bindValue="value">
+                            [clearable]="false" [searchable]="false" bindLabel="value"
+                            bindValue="code">
                           </ng-select>
 
                           <input *ngIf="viewMode" 
@@ -315,7 +316,7 @@
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label"><label class="required">HTTT</label></div>
                         <div class="col-md-8 col-lg-8">
-                          <ng-select *ngIf="!viewMode" [markFirst]="true" formControlName="paymentType" [(ngModel)]="htttModel"
+                          <ng-select *ngIf="!viewMode" formControlName="paymentType"
                             [items]="comboHTTT" [clearable]="false" [searchable]="false" bindLabel="value" bindValue="code">
                           </ng-select>
                           <input *ngIf="viewMode" [value]="paymentTypeName" readonly="readonly" class="form-control form-control-sm"
