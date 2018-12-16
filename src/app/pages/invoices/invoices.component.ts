@@ -277,6 +277,10 @@ export class InvoicesComponent implements OnInit {
       this.searchForm.patchValue({
         serial: ''
       });
+      const serialJson = sessionStorage.getItem('comboSerial');
+      if (serialJson) {
+        this.comboSerial = JSON.parse(serialJson) as SelectData[];
+      }
       return;
     }
     this.loadSerialByForm(selectData.value);
@@ -920,7 +924,6 @@ export class InvoicesComponent implements OnInit {
           comboStatus.push(selectItem);
         }
         if (selectItem.type.startsWith('COMBO_SERIAL_')) {
-          // save to sesssion
           comboSerial.push(selectItem);
         }
       }
@@ -977,18 +980,17 @@ export class InvoicesComponent implements OnInit {
   }
 
   private loadSerialByForm(form: string) {
-    console.log('loadSerialByForm');
     this.serialLoading = true;
-    this.comboSerial = new Array<SelectData>();
-    if (form && form.length > 0) {
-      const comboType = `COMBO_SERIAL_${form}`;
-
-      const comboSerial = JSON.parse(sessionStorage.getItem('comboSerial'));
-      comboSerial.forEach((item: SelectData, index: number) => {
+    const comboSerialArr = new Array<SelectData>();
+    const comboType = `COMBO_SERIAL_${form}`;
+    const comboSerialJson = JSON.parse(sessionStorage.getItem('comboSerial'));
+    if (comboSerialJson) {
+      comboSerialJson.forEach((item: SelectData, index: number) => {
         if (item.type === comboType) {
-          this.comboSerial.push(item);
+          comboSerialArr.push(item);
         }
       });
+      this.comboSerial = comboSerialArr;
     }
 
     // set default picked
