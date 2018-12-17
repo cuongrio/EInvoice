@@ -105,7 +105,7 @@ export class CustomerFormComponent implements OnInit {
       customer_code: ['', Validators.compose([Validators.required])],
       customer_name: ['', Validators.compose([Validators.required])],
       org: ['', Validators.compose([Validators.required])],
-      tax_code: ['', Validators.compose([Validators.required])],
+      tax_code: '',
       address: '',
       bank_account: '',
       bank: '',

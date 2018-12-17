@@ -1,4 +1,6 @@
 export class ViewNameData {
   status?: string;
-  paymentType?: string;
+  payment_method?: string;
+  form?: string;
+  serial?: string;
 }

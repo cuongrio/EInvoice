@@ -10,7 +10,7 @@ export class InvoiceModel {
   invoice_date: string;
   order_no: string;
   customer: CustomerData;
-  paymentType: string;
+  payment_method: string;
   total_before_tax: number;
   total_tax: number;
   total: number;

@@ -1,10 +1,10 @@
 import {
   Component, OnInit, OnDestroy, TemplateRef,
-  ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit
+  ChangeDetectionStrategy, ChangeDetectorRef
 } from '@angular/core';
 import { FormGroup, FormArray, Validators, FormBuilder, FormControl } from '@angular/forms';
-import { ActivatedRoute, Router, UrlSegment, NavigationEnd } from '@angular/router';
-import { Subscription, combineLatest } from 'rxjs';
+import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import { AlertComponent } from '@app//shared/alert/alert.component';
@@ -15,7 +15,6 @@ import { SelectData, GoodData, InvoiceModel, ProductData, TokenData, ViewNameDat
 import { CustomerService } from './../../../_services/app/customer.service';
 import { GoodService, TokenService } from '@app/_services';
 import { ReferenceService } from './../../../_services/app/reference.service';
-import { Location } from '@angular/common';
 
 import * as moment from 'moment';
 import { NgSelectConfig } from '@ng-select/ng-select';
@@ -37,6 +36,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   public isReplace = false;
   public currentAdjust: AdjustData;
   public viewNameData: ViewNameData;
+  public keptForUpdate: ViewNameData;
 
   // signed
   public tokenPicked: TokenData;
@@ -54,6 +54,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   public disabledInCD = true;
   public disabledAdd = false;
   public disabledSign = true;
+  public disabledExit = false;
   public disabledPrintTranform = true;
   public disabledAdjust = true;
   public disabledReplace = true;
@@ -72,6 +73,8 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   public customerLoading = false;
   public goodLoading = false;
   public signTokenLoading = false;
+
+  public isEditing = false;
 
   public modalRef: BsModalRef;
 
@@ -108,12 +111,13 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   public comboSerial: SelectData[];
   public comboTaxRate: SelectData[];
 
+  public customerTaxPicked: string;
+
   private subscription: Subscription;
 
   constructor(
     private config: NgSelectConfig,
     private ref: ChangeDetectorRef,
-    private location: Location,
     private router: Router,
     private formBuilder: FormBuilder,
     private tokenService: TokenService,
@@ -146,6 +150,11 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
   public editClicked() {
     this.viewMode = false;
+    this.disabledAdd = true;
+    this.disabledEdit = true;
+    this.isEditing = true;
+    this.disabledExit = true;
+    this.disabledSign = true;
     this.ref.markForCheck();
   }
 
@@ -176,8 +185,13 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     this.invoiceDatePicked = dateFormate;
   }
 
-  public backClicked() {
-    this.location.back();
+  public ignoreClicked() {
+    this.disabledExit = false;
+    if (this.segmentRouter === 'open') {
+      this.resolvedLink(this.invoiceId);
+    } else {
+      this.router.navigate(['/invoices']);
+    }
   }
 
   public adjustClicked() {
@@ -249,6 +263,8 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
       this.previewLoading = false;
       return;
     }
+    this.disabledExit = false;
+    this.disabledSign = false;
     const invoiceModel = new InvoiceModel();
     // general
     invoiceModel.form = dataForm.form;
@@ -272,8 +288,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     invoiceModel.customer.customer_code = dataForm.customerCode;
     invoiceModel.customer.phone = dataForm.phone;
 
-    // paymentType
-    invoiceModel.paymentType = dataForm.paymentType;
+    invoiceModel.payment_method = dataForm.payment_method;
 
     invoiceModel.total_before_tax = this.sumLineAmount();
     invoiceModel.total = this.sumLineAmountWt();
@@ -310,6 +325,9 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
             // case update
             invoiceModel.invoice_id = this.invoiceId;
             invoiceModel.invoice_no = this.invoiceNo;
+            invoiceModel.form = this.keptForUpdate.form;
+            invoiceModel.serial = this.keptForUpdate.serial;
+
             return this.submitForUpdate(invoiceModel);
           }
         }
@@ -333,6 +351,18 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
       this.submitted = false;
       this.viewMode = false;
     }
+  }
+
+  public updateTaxCode(val: string) {
+    this.addForm.patchValue({
+      customerTax: val
+    });
+  }
+
+  public updateCustomerCode(val: string) {
+    this.addForm.patchValue({
+      customerCode: val
+    });
   }
 
   public onTokenChange(token: any) {
@@ -486,18 +516,18 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     this.itemFormArray.push(fg);
 
     // init first value
-    this.lineAmount.push(null);
-    this.linePriceTax.push(null);
-    this.lineAmoutWt.push(null);
+    this.lineAmount.push(0);
+    this.linePriceTax.push(0);
+    this.lineAmoutWt.push(0);
     this.linePriceOrigin.push(0);
     this.lineDiscount.push(0);
     this.linePriceWt.push(0);
     this.taxModel.push('10');
   }
 
-  public get paymentTypeName() {
-    if (this.viewNameData && this.viewNameData.paymentType) {
-      return this.utilsService.getPaymentTypeName(this.viewNameData.paymentType, this.comboHTTT);
+  public get paymentMethodName() {
+    if (this.viewNameData && this.viewNameData.payment_method) {
+      return this.utilsService.getPaymentMethodName(this.viewNameData.payment_method, this.comboHTTT);
     }
     return '';
   }
@@ -894,7 +924,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
       this.loadSerialByForm(firstForm);
       this.addForm.patchValue({
         form: firstForm,
-        paymentType: this.comboHTTT[0].code
+        payment_method: this.comboHTTT[0].code
       });
       return;
     }
@@ -950,7 +980,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
       if (this.comboHTTT.length > 0) {
         this.addForm.patchValue({
-          paymentType: this.comboHTTT[0].code
+          payment_method: this.comboHTTT[0].code
         });
       }
       this.comboTaxRate = comboTaxRate;
@@ -1014,8 +1044,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     const segment = urlSegmentArr[0].path;
     this.segmentRouter = segment;
     this.canPreview = true;
-
-    console.log('initRouter');
+    this.keptForUpdate = {};
 
     // case create new
     return this.subscription = this.activatedRoute.params.subscribe((params: any) => {
@@ -1038,6 +1067,12 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
             this.setFormWithDefaultData(data, 'open');
             this.adjustForm = data.form;
             this.adjustSerial = data.serial;
+
+            // kept data
+            this.keptForUpdate = {
+              form: data.form,
+              serial: data.serial
+            };
 
             if (data.status === 'CREATED') {
               this.disabledSign = false;
@@ -1064,7 +1099,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
             // view name
             this.viewNameData = {
               status: data.status,
-              paymentType: data.paymentType
+              payment_method: data.payment_method
             };
 
             // get data for adjust
@@ -1169,11 +1204,11 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
       serial: ['', Validators.compose([Validators.required])],
       customerCode: '',
       customerName: '',
-      customerTax: ['', Validators.compose([Validators.required])],
+      customerTax: '',
       customerEmail: ['', Validators.compose([Validators.email])],
       customerPhone: '',
       customerOrg: '',
-      paymentType: ['', Validators.compose([Validators.required])],
+      payment_method: ['', Validators.compose([Validators.required])],
       customerBankAccount: '',
       customerBank: '',
       status: '',
@@ -1183,8 +1218,11 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
         validator: (formControl: FormControl) => {
           const customerOrg = formControl.get('customerOrg').value;
           const customerName = formControl.get('customerName').value;
-          if (customerName.length === 0
-            && customerOrg.length === 0) {
+          if (!customerName && !customerOrg) {
+            return { invalidOrgName: true };
+          }
+          if (customerName && customerName.length === 0
+            && customerOrg && customerOrg.length === 0) {
             return { invalidOrgName: true };
           }
           return null;

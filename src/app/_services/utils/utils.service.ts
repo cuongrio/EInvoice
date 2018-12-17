@@ -14,7 +14,7 @@ export class UtilsService {
     const status = arr.find(i => (i.code === code));
     return status ? status.value : code;
   }
-  getPaymentTypeName(code: string, arr: Array<SelectData>): string {
+  getPaymentMethodName(code: string, arr: Array<SelectData>): string {
     if (!code) {
       return code;
     }

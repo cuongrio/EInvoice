@@ -42,6 +42,15 @@
   }
 }
 
+.table{
+  .form-control {
+    &:focus {
+      border: 0 !important;
+      box-shadow:none !important;
+    }
+  }
+}
+
 .modal-content {
   .form-group {
     margin-bottom: 1rem !important;

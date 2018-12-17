@@ -13,7 +13,12 @@ export class AlertComponent implements OnInit {
   public highlight: string;
   public list: any[] = [];
 
-  constructor(public bsModalRef: BsModalRef) {}
+  constructor(public bsModalRef: BsModalRef) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    if (!this.message) {
+      this.message = 'Đã có lỗi xảy ra!';
+      this.class = 'error';
+    }
+  }
 }

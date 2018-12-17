@@ -152,7 +152,7 @@
                   <i *ngIf="!isSearching" class="icon-magnifier"></i>
                   <i *ngIf="isSearching" class="fa fa-spinner fa-spin"></i> Tìm kiếm
                 </button>
-                <button type="button" routerLink="/invoices/createNew" class="btn btn-md btn-success">
+                <button type="button" routerLink="/invoices/createNew" class="btn btn-md btn-primary">
                   <i class="fas fa-plus"></i> Thêm
                 </button>
                 <button id="openButton" type="button" (click)="openRowClicked()" class="btn  btn-md btn-outline-primary">
@@ -162,7 +162,9 @@
                   <i class="fas fa-copy"></i> Sao chép
                 </button>
                 <button id="printButton" type="button" (click)="printRowClicked()" class="btn btn-md btn-outline-primary">
-                  <i class="fas fa-print"></i> In
+                  <i *ngIf="printLoading" class="fa fa-spinner fa-spin"></i>
+                  <i *ngIf="!printLoading" class="fas fa-print"></i>
+                  In
                 </button>
                 <button id="printTranformButton" (click)="printTransformRowClicked()" type="button" class="btn btn-md btn-outline-primary">
                   <i class="fas fa-retweet"></i> In chuyển đổi
@@ -280,11 +282,12 @@
                   <tr>
                     <th>#</th>
                     <th>T.Thái</th>
-                    <th>Số hóa đơn</th>
+                    <th>Loại HĐ</th>
+                    <th>Số HĐ</th>
                     <th>Ngày HĐ</th>
                     <th>Đơn vị</th>
                     <th>MST</th>
-                    <th>Địa chỉ</th>
+                    
                     <th class="text-right">Tiền</th>
                     <th class="text-right">Tiền thuế</th>
                     <th class="text-right">Tổng tiền</th>

@@ -14,8 +14,8 @@ export class AuthenticationService {
   private _credentials: UserModel | null;
 
   constructor(private httpService: HttpService, private cookieService: CookieService) {
-    // check on cookie and session
-    const savedCredentials = cookieService.get(credentialsKey) || sessionStorage.getItem(credentialsKey);
+    // check on cookie
+    const savedCredentials = cookieService.get(credentialsKey);
     if (savedCredentials) {
       this._credentials = JSON.parse(savedCredentials);
     }
@@ -55,32 +55,30 @@ export class AuthenticationService {
    * @return The user credentials or null if the user is not authenticated.
    */
   get credentials(): UserModel | null {
-    return this._credentials;
+    if (this._credentials) {
+      return this._credentials;
+    }
+    const userCookie = this.cookieService.get(credentialsKey);
+    if (userCookie) {
+      const user = JSON.parse(userCookie) as UserModel;
+      return user;
+    }
   }
 
-  /**
-   * Sets the user credentials.
-   * The credentials may be persisted across sessions by setting the `remember` parameter to true.
-   * Otherwise, the credentials are only persisted for the current session.
-   * @param credentials The user credentials.
-   * @param remember True to remember credentials across sessions.
-   */
   public setCredentials(userLogged?: UserModel, remember?: boolean) {
     this._credentials = userLogged || null;
 
     if (userLogged) {
-      const serverUrl  = `${environment.serverUrl}/${userLogged.tenant}`;
-      this.cookieService.set(credentialsKey, JSON.stringify(userLogged));
-      this.cookieService.set(serverUrlKey, serverUrl);
-      sessionStorage.setItem(serverUrlKey, serverUrl);
+      const serverUrl = `${environment.serverUrl}/${userLogged.tenant}`;
       if (remember) {
-        sessionStorage.setItem(credentialsKey, JSON.stringify(userLogged));
+        this.cookieService.set(credentialsKey, JSON.stringify(userLogged), 7);
+        this.cookieService.set(serverUrlKey, serverUrl, 7);
+      } else {
+        this.cookieService.set(credentialsKey, JSON.stringify(userLogged));
+        this.cookieService.set(serverUrlKey, serverUrl);
       }
     } else {
-      sessionStorage.removeItem(credentialsKey);
       this.cookieService.delete(credentialsKey);
-
-      sessionStorage.removeItem(serverUrlKey);
       this.cookieService.delete(serverUrlKey);
     }
   }

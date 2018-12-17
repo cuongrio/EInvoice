@@ -21,7 +21,7 @@ export class LoginComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private authenticationService: AuthenticationService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.createForm();
@@ -30,6 +30,9 @@ export class LoginComponent implements OnInit {
   onSubmit(dataForm: UserModel) {
     this.submitted = true;
     this.isLoading = true;
+
+    const remember = dataForm.remember;
+
     this.authenticationService
       .login(dataForm)
       .pipe(
@@ -42,7 +45,7 @@ export class LoginComponent implements OnInit {
         credentials => {
           this.submitted = false;
           const userLogged = credentials as UserModel;
-          this.authenticationService.setCredentials(userLogged);
+          this.authenticationService.setCredentials(userLogged, remember);
           this.route.queryParams.subscribe(params =>
             this.router.navigate([params.redirect || '/'], { replaceUrl: true })
           );

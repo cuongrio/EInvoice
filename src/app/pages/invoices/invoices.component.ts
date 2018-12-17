@@ -42,6 +42,7 @@ export class InvoicesComponent implements OnInit {
   public signButtonLoading = false;
   public disposeDisabled = true;
   public disposeButtonLoading = false;
+  public printLoading = false;
 
   public formLoading = false;
   public serialLoading = false;
@@ -214,7 +215,6 @@ export class InvoicesComponent implements OnInit {
   }
 
   public onSizeChange(size: number) {
-    console.log('size: ' + size);
     this.isSearching = true;
     const userquery = localStorage.getItem('userquery');
     let invoiceParam: InvoiceParam;
@@ -244,12 +244,25 @@ export class InvoicesComponent implements OnInit {
   }
 
   public printRowClicked() {
+    this.printLoading = true;
     const invoiceId = +this.getCheckboxesValue();
     this.invoiceService.print(invoiceId).subscribe(data => {
       const file = new Blob([data], { type: 'application/pdf' });
       const fileURL = URL.createObjectURL(file);
       this.ref.markForCheck();
       window.open(fileURL, '_blank');
+      setTimeout(function () {
+        this.printLoading = false;
+        this.ref.markForCheck();
+      }.bind(this), 200);
+      // disable all button
+      $('#openButton').prop('disabled', true);
+      $('#printTranformButton').prop('disabled', true);
+      $('#copyButton').prop('disabled', true);
+      $('#signButton').prop('disabled', true);
+      $('#printButton').prop('disabled', true);
+      $('#approveButton').prop('disabled', true);
+      $('#disposeButton').prop('disabled', true);
     }, err => {
       this.ref.markForCheck();
       this.errorHandler(err);
@@ -262,6 +275,15 @@ export class InvoicesComponent implements OnInit {
       const file = new Blob([data], { type: 'application/pdf' });
       const fileURL = URL.createObjectURL(file);
       window.open(fileURL, '_blank');
+
+      // disable all button
+      $('#openButton').prop('disabled', true);
+      $('#printTranformButton').prop('disabled', true);
+      $('#copyButton').prop('disabled', true);
+      $('#signButton').prop('disabled', true);
+      $('#printButton').prop('disabled', true);
+      $('#approveButton').prop('disabled', true);
+      $('#disposeButton').prop('disabled', true);
     }, err => {
       const initialState = {
         message: 'Hóa đơn chỉ được in chuyển đổi một lần!',
@@ -406,7 +428,6 @@ export class InvoicesComponent implements OnInit {
   }
 
   private initRouter() {
-    console.log('initRouter');
     const urlSegment: UrlSegment[] = this.activeRouter.snapshot.url;
 
     if (urlSegment && urlSegment[0]
@@ -526,7 +547,6 @@ export class InvoicesComponent implements OnInit {
   }
 
   private initDataTable() {
-    console.log('initDataTable');
     const statusJson = sessionStorage.getItem('comboStatus');
     let statusArr: any;
     if (statusJson) {
@@ -557,31 +577,25 @@ export class InvoicesComponent implements OnInit {
         render: function (data: any) {
           return '<span>' + data + '</span>';
         }
-      },
-      {
-        width: '80px',
-        targets: 2,
+      }, {
+        width: '50px',
+        targets: 2
+      }, {
+        width: '50px',
+        targets: 3,
         render: function (data: any) {
-          return '<label class="badge badge-info">' + data + '</label>';
+          return '<span class="text-bold">' + data + '</span>';
         }
-      },
-      {
+      }, {
         width: '60px',
-        targets: 3
-      },
-      {
-        width: '250px',
         targets: 4
-      },
-      {
-        width: '60px',
+      }, {
+        width: '400px',
         targets: 5
-      },
-      {
-        width: '250px',
+      }, {
+        width: '60px',
         targets: 6
-      },
-      {
+      }, {
         width: '70px',
         targets: 7,
         render: function (data: any) {
@@ -646,6 +660,14 @@ export class InvoicesComponent implements OnInit {
             return '<span></span>';
           }
         }
+      }, {
+        data: function (row: any, type: any) {
+          if (type === 'display' && row.invoice_type && row.invoice_type !== 'null') {
+            return `<span>${row.invoice_type}</span>`;
+          } else {
+            return '<span></span>';
+          }
+        }
       },
       {
         data: 'invoice_no'
@@ -677,17 +699,7 @@ export class InvoicesComponent implements OnInit {
             return '<span></span>';
           }
         }
-      },
-      {
-        data: function (row: any, type: any) {
-          if (type === 'display' && row.customer && row.customer !== 'null') {
-            return row.customer.address;
-          } else {
-            return '<span></span>';
-          }
-        }
-      },
-      {
+      }, {
         data: function (row: any, type: any) {
           if (type === 'display') {
             return formatCurrency(row.total_before_tax);
@@ -746,6 +758,8 @@ export class InvoicesComponent implements OnInit {
 
     // disabled all button
     bindButtonStatus(true);
+    $('#signButton').prop('disabled', true);
+    $('#printTranformButton').prop('disabled', true);
 
     // selected row
     let clicks = 0;
@@ -770,9 +784,11 @@ export class InvoicesComponent implements OnInit {
             .prop('checked', false);
 
           bindButtonStatus(true);
+          $('#signButton').prop('disabled', true);
+          $('#printTranformButton').prop('disabled', true);
         } else {
           // init status
-          $('#signButton').prop('disabled', false);
+          $('#signButton').prop('disabled', true);
           $('#printTranformButton').prop('disabled', true);
 
           table.$('tr.selected').removeClass('selected');
@@ -791,6 +807,9 @@ export class InvoicesComponent implements OnInit {
             $('#approveButton').prop('disabled', true);
             $('#disposeButton').prop('disabled', true);
           } else {
+            if (status === 'CREATED') {
+              $('#signButton').prop('disabled', false);
+            }
             bindButtonStatus(false);
             $('#approveButton').prop('disabled', true);
             if (status === 'SIGNED') {
@@ -802,8 +821,6 @@ export class InvoicesComponent implements OnInit {
         }
       }
     });
-
-    console.log('initDataTable done');
   }
 
   private initSpinnerConfig() {

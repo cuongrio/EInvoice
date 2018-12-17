@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UserModel } from '@app/_models';
 import { AuthenticationService } from '@app/core/authentication/authentication.service';
@@ -12,10 +12,10 @@ declare interface RouteInfo {
 }
 
 export const ROUTES: RouteInfo[] = [
-  { path: '/dashboard', title: 'Trang chủ', icon: 'link-icon icon-screen-desktop' },
+  // { path: '/dashboard', title: 'Trang chủ', icon: 'link-icon icon-screen-desktop' },
+  { path: '/invoices', title: 'Danh sách hóa đơn', icon: 'link-icon icon-docs' },
   { path: '/products', title: 'Hàng hóa', icon: 'link-icon icon-disc' },
   { path: '/customers', title: 'Tệp khách hàng', icon: 'link-icon icon-pie-chart' },
-  { path: '/invoices', title: 'Danh sách hóa đơn', icon: 'link-icon icon-docs' },
   { path: '/report', title: 'Báo cáo', icon: 'link-icon icon-calculator' },
   { path: '/info', title: 'Thông tin Công ty', icon: 'link-icon icon-book-open' }
 ];
