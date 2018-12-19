@@ -26,9 +26,8 @@
             <button type="button" (click)="editClicked()" [disabled]="disabledEdit" class="btn btn-md btn-outline-primary"><i
                 class="fas fa-edit"></i>
               Sửa</button>
-
-            <button type="button" [disabled]="viewMode" (click)="isPreview=false; ngAddForm.ngSubmit.emit()" class="btn btn-md btn-success">
-              <i class="fas fa-save"></i> Lưu
+            <button id="copyButton" type="button" class="btn btn-md btn-outline-primary">
+              <i class="fas fa-copy"></i> Sao chép
             </button>
             <button *ngIf="canPreview" type="button" [disabled]="previewLoading || viewMode" (click)="isPreview=true; ngAddForm.ngSubmit.emit()"
               class="btn btn-md btn-outline-primary">
@@ -87,11 +86,29 @@
                 </div>
               </div>
             </ng-template>
+
+            <button id="approveButton" type="button" (click)="openModal(approveConfirm)" class="btn btn-md btn-success">
+              <i class="fas fa-check"></i> Duyệt
+            </button>
+            <ng-template #approveConfirm>
+              <div class="modal-body text-center">
+                <div class="dispose-content">
+                  <p class="heading">Xác nhận duyệt hóa đơn?</p>
+                  <button type="button" class="btn btn-primary mr-1">Đồng ý</button>
+                  <button type="button" class="btn btn-default" (click)="modalRef.hide()">Bỏ qua</button>
+                </div>
+              </div>
+            </ng-template>
+
             <button [disabled]="disabledExit" routerLink="/invoices/refresh" type="button" class="btn btn-md btn-light">
               <i class="fas fa-share-square"></i> Thoát
             </button>
 
             <div class="pull-right mt-2">
+              <button [disabled]="disabledInCD" (click)="printTransformRowClicked()" type="button" class="btn btn-md btn-outline-primary"><i
+                  class="fas fa-print"></i>
+                In chuyển đổi</button>
+
               <button type="button" (click)="adjustClicked()" [disabled]="disabledAdjust" class="btn btn-md btn-outline-primary"><i
                   class="fas fa-edit"></i>
                 Điều chỉnh
@@ -99,10 +116,9 @@
               <button type="button" (click)="replaceClicked()" [disabled]="disabledReplace" class="btn btn-md btn-outline-primary">
                 <i class="fa fa-retweet"></i> Thay thế
               </button>
-
-              <button [disabled]="disabledInCD" (click)="printTransformRowClicked()" type="button" class="btn btn-md btn-outline-primary"><i
-                  class="fas fa-print"></i>
-                In chuyển đổi</button>
+              <button id="disposeButton" type="button" class="btn btn-md btn-outline-danger">
+                <i class="fas fa-trash"></i> Hủy hóa đơn
+              </button>
             </div>
           </div>
         </div>
@@ -235,7 +251,8 @@
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label"><label>Mã số thuế</label></div>
                         <div class="col-md-8 col-lg-8 dropdown_expand">
-                          <ng-select *ngIf="!viewMode" dropdownPosition="bottom" formControlName="customerTax" (change)="onCustomerChange($event)"
+                          <ng-select *ngIf="!viewMode" (focus)="onTaxCodeFocus()" [(ngModel)]="taxCodePicked"
+                            dropdownPosition="bottom" formControlName="customerTax" (change)="onCustomerChange($event)"
                             [addTag]="true" (keyup)="updateTaxCode($event.target.value)" [items]="customerArr"
                             [virtualScroll]="true" bindLabel="tax_code" bindValue="tax_code">
                             <ng-template ng-header-tmp>

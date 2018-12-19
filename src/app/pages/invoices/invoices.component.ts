@@ -22,10 +22,13 @@ type ArrayObject = Array<{ code: string; value: string }>;
   templateUrl: './invoices.component.html'
 })
 export class InvoicesComponent implements OnInit {
-  public sortArr: string[] = ['ASC', 'DESC'];
+  public sortArr: ArrayObject = [
+    { value: 'Tăng dần', code: 'ASC' },
+    { value: 'Giảm dần', code: 'DESC' }
+  ];
   public sortByArr: ArrayObject = [
-    { code: 'Số hóa đơn', value: 'invoiceNo' },
-    { code: 'Ngày hóa đơn', value: 'invoiceDate' }
+    { value: 'Số hóa đơn', code: 'invoiceNo' },
+    { value: 'Ngày hóa đơn', code: 'invoiceDate' }
   ];
 
   // searching button
@@ -51,6 +54,7 @@ export class InvoicesComponent implements OnInit {
   public comboForm: SelectData[];
   public comboSerial: SelectData[];
   public comboStatus: SelectData[];
+  public comboInvoiceType: SelectData[];
 
   // expand search
   public expandSearch: boolean;
@@ -75,11 +79,6 @@ export class InvoicesComponent implements OnInit {
 
   private previousPage = 0;
   private tokenPicked: TokenData;
-
-  // select option
-
-  private defaultSort = 'ASC';
-  private defaultSortBy = 'invoiceNo';
 
   constructor(
     private modalService: BsModalService,
@@ -335,9 +334,18 @@ export class InvoicesComponent implements OnInit {
     const invoiceId = +this.getCheckboxesValue();
     this.invoiceService.approveInvoice(invoiceId).subscribe(
       data => {
+        this.modalRef.hide();
+        const initialState = {
+          message: 'Đã duyệt hóa đơn thành công!',
+          title: 'Thành công!',
+          class: 'success',
+          highlight: `Hóa đơn #${invoiceId}`
+        };
+        this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
         this.reloadPage();
       },
       err => {
+        this.modalRef.hide();
         this.errorHandler(err);
       }
     );
@@ -542,16 +550,34 @@ export class InvoicesComponent implements OnInit {
       orgTaxCode: ''
     });
 
-    this.searchForm.controls['sort'].setValue(this.defaultSort, { onlySelf: true });
-    this.searchForm.controls['sortBy'].setValue(this.defaultSortBy, { onlySelf: true });
+    this.searchForm.patchValue({
+      sort: 'DESC',
+      sortBy: 'invoiceNo'
+    });
+  }
+
+  private getDataStatus(): any {
+    const json = sessionStorage.getItem('comboStatus');
+    let arr: any;
+    if (json) {
+      arr = JSON.parse(json) as SelectData[];
+    }
+    return arr;
+  }
+
+  private getDataInvoiceType(): any {
+    const json = sessionStorage.getItem('comboInvoiceType');
+    let arr: any;
+    if (json) {
+      arr = JSON.parse(json) as SelectData[];
+    }
+    return arr;
   }
 
   private initDataTable() {
-    const statusJson = sessionStorage.getItem('comboStatus');
-    let statusArr: any;
-    if (statusJson) {
-      statusArr = JSON.parse(statusJson) as SelectData[];
-    }
+    const statusArr = this.getDataStatus();
+    const invoiceTypeArr = this.getDataInvoiceType();
+
     const table = $('#invoiceTable').DataTable({
       paging: false,
       searching: false,
@@ -572,7 +598,7 @@ export class InvoicesComponent implements OnInit {
         targets: 0,
         orderable: false
       }, {
-        width: '30px',
+        width: '20px',
         targets: 1,
         render: function (data: any) {
           return '<span>' + data + '</span>';
@@ -650,7 +676,6 @@ export class InvoicesComponent implements OnInit {
       }, {
         data: function (row: any, type: any) {
           if (type === 'display' && row.status && row.status !== 'null') {
-            // get in session storage
             if (statusArr) {
               const status = statusArr.find((i: SelectData) => (i.code === row.status));
               return `<span>${status.value}</span>`;
@@ -663,6 +688,10 @@ export class InvoicesComponent implements OnInit {
       }, {
         data: function (row: any, type: any) {
           if (type === 'display' && row.invoice_type && row.invoice_type !== 'null') {
+            if (invoiceTypeArr) {
+              const invoiceTypeName = invoiceTypeArr.find((i: SelectData) => (i.code === row.invoice_type));
+              return `<span>${invoiceTypeName.value}</span>`;
+            }
             return `<span>${row.invoice_type}</span>`;
           } else {
             return '<span></span>';
@@ -684,8 +713,18 @@ export class InvoicesComponent implements OnInit {
       },
       {
         data: function (row: any, type: any) {
-          if (type === 'display' && row.customer && row.customer !== 'null') {
-            return row.customer.org;
+          if (type === 'display' && row.customer
+            && row.customer !== 'null' && row.customer.org) {
+            const org: string = row.customer.org;
+            let orgFormat: string;
+            if (org.length <= 65) {
+              orgFormat = org;
+            } else {
+              orgFormat = org.substring(0, 65);
+              const lastWordIndex = orgFormat.lastIndexOf(' ');
+              orgFormat = orgFormat.substring(0, lastWordIndex) + '...';
+            }
+            return `<span class="lh-medium" title="${org}">${orgFormat}</span>`;
           } else {
             return '<span></span>';
           }
@@ -871,22 +910,27 @@ export class InvoicesComponent implements OnInit {
     this.pageSizeList = this.dummyPageSize();
 
     // check in session
-    const statusJson = sessionStorage.getItem('comboStatus');
-    if (statusJson) {
-      this.comboStatus = JSON.parse(statusJson) as SelectData[];
+    let json = sessionStorage.getItem('comboStatus');
+    if (json) {
+      this.comboStatus = JSON.parse(json) as SelectData[];
     }
 
-    const formJson = sessionStorage.getItem('comboForm');
-    if (formJson) {
-      this.comboForm = JSON.parse(formJson) as SelectData[];
+    json = sessionStorage.getItem('comboInvoiceType');
+    if (json) {
+      this.comboInvoiceType = JSON.parse(json) as SelectData[];
     }
 
-    const serialJson = sessionStorage.getItem('comboSerial');
-    if (serialJson) {
-      this.comboSerial = JSON.parse(serialJson) as SelectData[];
+    json = sessionStorage.getItem('comboForm');
+    if (json) {
+      this.comboForm = JSON.parse(json) as SelectData[];
     }
 
-    if (this.comboStatus && this.comboForm) {
+    json = sessionStorage.getItem('comboSerial');
+    if (json) {
+      this.comboSerial = JSON.parse(json) as SelectData[];
+    }
+
+    if (this.comboStatus && this.comboForm && this.comboInvoiceType) {
       this.initDataTable();
       this.initRouter();
       this.ref.markForCheck();
@@ -898,6 +942,7 @@ export class InvoicesComponent implements OnInit {
     this.serialLoading = true;
     const comboForm = new Array<SelectData>();
     const comboStatus = new Array<SelectData>();
+    const comboInvoiceType = new Array<SelectData>();
 
     const comboTaxRate = new Array<SelectData>();
     const comboHTTT = new Array<SelectData>();
@@ -940,15 +985,19 @@ export class InvoicesComponent implements OnInit {
         if (selectItem.type === 'COMBO_INVOICE_STATUS') {
           comboStatus.push(selectItem);
         }
+        if (selectItem.type === 'COMBO_INVOICE_TYPE') {
+          comboInvoiceType.push(selectItem);
+        }
         if (selectItem.type.startsWith('COMBO_SERIAL_')) {
           comboSerial.push(selectItem);
         }
       }
 
-      this.storeDataSession(comboHTTT, comboTaxRate, comboSerial, comboForm, comboStatus);
+      this.storeDataSession(comboHTTT, comboTaxRate, comboSerial, comboForm, comboStatus, comboInvoiceType);
       this.comboSerial = comboSerial;
       this.comboForm = comboForm;
       this.comboStatus = comboStatus;
+      this.comboInvoiceType = comboInvoiceType;
       this.initDataTable();
       this.initRouter();
       this.resetLoading();
@@ -959,13 +1008,14 @@ export class InvoicesComponent implements OnInit {
   }
 
   private storeDataSession(comboHTTT: any, comboTaxRate: any,
-    comboSerial: any, comboForm: any, comboStatus: any) {
+    comboSerial: any, comboForm: any, comboStatus: any, comboInvoiceType: any) {
     // set default value
     sessionStorage.setItem('comboForm', JSON.stringify(comboForm));
     sessionStorage.setItem('comboHTTT', JSON.stringify(comboHTTT));
     sessionStorage.setItem('comboTaxRate', JSON.stringify(comboTaxRate));
     sessionStorage.setItem('comboStatus', JSON.stringify(comboStatus));
     sessionStorage.setItem('comboSerial', JSON.stringify(comboSerial));
+    sessionStorage.setItem('comboInvoiceType', JSON.stringify(comboInvoiceType));
   }
 
   private reloadPage() {

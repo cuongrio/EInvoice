@@ -43,8 +43,7 @@
                           <div class="form-group row">
                             <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Mẫu số</label></div>
                             <div class="col-md-8 col-lg-8">
-                              <ng-select formControlName="form" [loading]="formLoading" [items]="comboForm"
-                              (change)="onFormChange($event)"
+                              <ng-select formControlName="form" [loading]="formLoading" [items]="comboForm" (change)="onFormChange($event)"
                                 [searchable]="false" bindLabel="code" bindValue="value">
                               </ng-select>
                             </div>
@@ -128,12 +127,12 @@
                               <div class="container-half">
                                 <div class="select-half">
                                   <ng-select formControlName="sortBy" [items]="sortByArr" [clearable]="false"
-                                    [searchable]="false" bindLabel="code" bindValue="value">
+                                    [searchable]="false" bindLabel="value" bindValue="code">
                                   </ng-select>
                                 </div>
                                 <div class="select-half">
                                   <ng-select formControlName="sort" [items]="sortArr" [clearable]="false" [searchable]="false"
-                                    bindLabel="code" bindValue="value">
+                                    bindLabel="value" bindValue="code">
                                   </ng-select>
                                 </div>
                               </div>
@@ -147,11 +146,6 @@
               </div>
 
               <div class="template-ein navbar-action">
-                <button [disabled]="isSearching" [hidden]="!expandSearch" type="button" class="btn btn-md btn-info btn-search"
-                  (click)="ngSearchForm.ngSubmit.emit()">
-                  <i *ngIf="!isSearching" class="icon-magnifier"></i>
-                  <i *ngIf="isSearching" class="fa fa-spinner fa-spin"></i> Tìm kiếm
-                </button>
                 <button type="button" routerLink="/invoices/createNew" class="btn btn-md btn-primary">
                   <i class="fas fa-plus"></i> Thêm
                 </button>
@@ -160,6 +154,10 @@
                 </button>
                 <button id="copyButton" (click)="copyRowClicked()" type="button" class="btn btn-md btn-outline-primary">
                   <i class="fas fa-copy"></i> Sao chép
+                </button>
+                <button [disabled]="isSearching" type="button" class="btn btn-md btn-info btn-search" (click)="ngSearchForm.ngSubmit.emit()">
+                  <i *ngIf="!isSearching" class="icon-magnifier"></i>
+                  <i *ngIf="isSearching" class="fa fa-spinner fa-spin"></i> Tìm kiếm
                 </button>
                 <button id="printButton" type="button" (click)="printRowClicked()" class="btn btn-md btn-outline-primary">
                   <i *ngIf="printLoading" class="fa fa-spinner fa-spin"></i>
@@ -214,22 +212,44 @@
                   </div>
                 </ng-template>
 
-                <button id="approveButton" type="button" (click)="approveClicked()" class="btn btn-md btn-success">
+                <button id="approveButton" type="button" (click)="openModal(approveConfirm)" class="btn btn-md btn-success">
                   <i class="fas fa-check"></i> Duyệt
                 </button>
-                <button id="disposeButton" type="button" (click)="openModal(disposeConfirm)" class="btn btn-md btn-outline-danger">
-                  <i class="fas fa-trash"></i> Hủy hóa đơn
-                </button>
-                <ng-template #disposeConfirm>
+                <ng-template #approveConfirm>
                   <div class="modal-body text-center">
                     <div class="dispose-content">
-                        <p class="heading">Xác nhận hủy hóa đơn?</p>
-                        <button type="button" class="btn btn-primary mr-1" (click)="disposeConfirmToken(disposeToken)">Đồng ý</button>
-                        <button type="button" class="btn btn-default" (click)="modalRef.hide()">Bỏ qua</button>
+                      <p class="heading">Xác nhận duyệt hóa đơn?</p>
+                      <button type="button" class="btn btn-primary mr-1" (click)="approveClicked()">Đồng ý</button>
+                      <button type="button" class="btn btn-default" (click)="modalRef.hide()">Bỏ qua</button>
                     </div>
                   </div>
                 </ng-template>
-                <ng-template #disposeToken>
+
+                <div class="pull-right mt-2">
+                  <button type="button" class="btn btn-md btn-outline-primary"><i class="fas fa-print"></i>
+                    In chuyển đổi</button>
+
+                  <button type="button" class="btn btn-md btn-outline-primary"><i class="fas fa-edit"></i>
+                    Điều chỉnh
+                  </button>
+                  <button type="button" class="btn btn-md btn-outline-primary">
+                    <i class="fa fa-retweet"></i> Thay thế
+                  </button>
+
+                  <button id="disposeButton" type="button" (click)="openModal(disposeConfirm)" class="btn btn-md btn-outline-danger">
+                    <i class="fas fa-trash"></i> Hủy hóa đơn
+                  </button>
+                  <ng-template #disposeConfirm>
+                    <div class="modal-body text-center">
+                      <div class="dispose-content">
+                        <p class="heading">Xác nhận hủy hóa đơn?</p>
+                        <button type="button" class="btn btn-primary mr-1" (click)="disposeConfirmToken(disposeToken)">Đồng
+                          ý</button>
+                        <button type="button" class="btn btn-default" (click)="modalRef.hide()">Bỏ qua</button>
+                      </div>
+                    </div>
+                  </ng-template>
+                  <ng-template #disposeToken>
                     <ngx-spinner [visible]="signButtonLoading" [config]="spinnerConfig"></ngx-spinner>
                     <div class="modal-header">
                       <h4 class="modal-title pull-left">Xác nhận token</h4>
@@ -251,7 +271,7 @@
                                 <b>Hiệu lực: </b> {{item.effectiveDate}}
                               </label>
                             </div>
-  
+
                             <ng-template #isExpried>
                               <div class="token-name is-effective"><b>Tên: </b>{{item.name}}</div>
                               <label class="is-effective">
@@ -261,7 +281,7 @@
                           </div>
                         </ng-template>
                       </ng-select>
-  
+
                       <div class="btn-group">
                         <button type="button" [disabled]="disposeDisabled" class="btn btn-primary mr-1 no-br" (click)="disposeConfirmClicked()">
                           <i *ngIf="disposeButtonLoading" class="fa fa-spinner fa-spin"></i>
@@ -272,6 +292,7 @@
                       </div>
                     </div>
                   </ng-template>
+                </div>
               </div>
             </div>
 
@@ -287,7 +308,7 @@
                     <th>Ngày HĐ</th>
                     <th>Đơn vị</th>
                     <th>MST</th>
-                    
+
                     <th class="text-right">Tiền</th>
                     <th class="text-right">Tiền thuế</th>
                     <th class="text-right">Tổng tiền</th>

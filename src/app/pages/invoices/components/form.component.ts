@@ -111,9 +111,12 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   public comboSerial: SelectData[];
   public comboTaxRate: SelectData[];
 
-  public customerTaxPicked: string;
+  public taxCodePicked: string;
 
   private subscription: Subscription;
+
+  private customerCodePicked: string;
+  private customerTaxCode: string;
 
   constructor(
     private config: NgSelectConfig,
@@ -353,7 +356,12 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     }
   }
 
+  public onTaxCodeFocus() {
+    console.log('focus: ' + this.taxCodePicked);
+  }
+
   public updateTaxCode(val: string) {
+    this.taxCodePicked = val;
     this.addForm.patchValue({
       customerTax: val
     });
