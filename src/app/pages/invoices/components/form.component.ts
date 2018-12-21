@@ -20,7 +20,8 @@ import * as moment from 'moment';
 import { NgSelectConfig } from '@ng-select/ng-select';
 import { ISpinnerConfig, SPINNER_PLACEMENT, SPINNER_ANIMATIONS } from '@hardpool/ngx-spinner';
 import { AdjustData } from './../../../_models/data/adjust.data';
-
+import { ItemsList } from '@ng-select/ng-select/ng-select/items-list';
+declare var $: any;
 @Component({
   selector: 'app-invoice-form',
   templateUrl: './form.component.html',
@@ -111,12 +112,10 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   public comboSerial: SelectData[];
   public comboTaxRate: SelectData[];
 
-  public taxCodePicked: string;
+  public customerCodePicked: string;
+  public customerTaxPicked: string;
 
   private subscription: Subscription;
-
-  private customerCodePicked: string;
-  private customerTaxCode: string;
 
   constructor(
     private config: NgSelectConfig,
@@ -356,21 +355,40 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  public onTaxCodeFocus() {
-    console.log('focus: ' + this.taxCodePicked);
-  }
-
   public updateTaxCode(val: string) {
-    this.taxCodePicked = val;
-    this.addForm.patchValue({
-      customerTax: val
-    });
+    if (val && val.length > 0) {
+      this.addForm.patchValue({
+        customerTax: val
+      });
+    }
   }
 
   public updateCustomerCode(val: string) {
-    this.addForm.patchValue({
-      customerCode: val
-    });
+    if (val && val.length > 0) {
+      this.addForm.patchValue({
+        customerCode: val
+      });
+    }
+  }
+
+  public customerCodeFocus(event: any) {
+    if (this.customerCodePicked) {
+      event.target.value = this.customerCodePicked;
+    }
+  }
+
+  public customerTaxFocus(event: any) {
+    if (this.customerTaxPicked) {
+      event.target.value = this.customerTaxPicked;
+    }
+  }
+
+  public hideCustomerCodeInput() {
+    $('#customerCode').find('input[role="combobox"]').val('');
+  }
+
+  public hideCustomerTaxInput() {
+    $('#customerTax').find('input[role="combobox"]').val('');
   }
 
   public onTokenChange(token: any) {
@@ -448,6 +466,10 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   /*** CUSTOMER CHANGE */
   public onCustomerChange(customer: any) {
     this.initDataForm(customer);
+    const comboInput = $('#customerCode').find('input[role="combobox"]');
+    if (comboInput) {
+      comboInput.val('');
+    }
     this.ref.markForCheck();
   }
 

@@ -195,11 +195,11 @@
 }
 
 .form-group{
-  .ng-select-single{
+  .ng-select{
     .ng-select-container{
         height: 31px !important;
         min-height: 31px !important;
-  
+
         .ng-clear-wrapper{
           width: 10px !important;
           .ng-clear{
@@ -552,6 +552,21 @@ table {
     tr.tr-expand td.details-control {
       background: url("./assets/images/details_close.png") no-repeat center center;
       width: 15px !important;
+    }
+
+    tr.row-parent{
+      td{
+        span{
+          -webkit-user-select: all; 
+          -moz-user-select: all;    
+          -ms-user-select: all;    
+          user-select: all;   
+          
+          &:hover{
+            cursor: text;
+          }
+        }
+      }
     }
   }
 }

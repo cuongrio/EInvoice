@@ -598,7 +598,7 @@ export class InvoicesComponent implements OnInit {
         targets: 0,
         orderable: false
       }, {
-        width: '20px',
+        width: '50px',
         targets: 1,
         render: function (data: any) {
           return '<span>' + data + '</span>';
@@ -659,7 +659,7 @@ export class InvoicesComponent implements OnInit {
         orderable: false,
         className: 'cbox',
         data: function (row: any, type: any) {
-          if (type === 'display' && row.invoice_id && row.invoice_id !== 'null') {
+          if (type === 'display' && row.invoice_id) {
             return `
               <div class="form-check">
                 <label class="form-check-label">
@@ -675,7 +675,7 @@ export class InvoicesComponent implements OnInit {
         }
       }, {
         data: function (row: any, type: any) {
-          if (type === 'display' && row.status && row.status !== 'null') {
+          if (type === 'display' && row.status) {
             if (statusArr) {
               const status = statusArr.find((i: SelectData) => (i.code === row.status));
               return `<span>${status.value}</span>`;
@@ -687,7 +687,7 @@ export class InvoicesComponent implements OnInit {
         }
       }, {
         data: function (row: any, type: any) {
-          if (type === 'display' && row.invoice_type && row.invoice_type !== 'null') {
+          if (type === 'display' && row.invoice_type) {
             if (invoiceTypeArr) {
               const invoiceTypeName = invoiceTypeArr.find((i: SelectData) => (i.code === row.invoice_type));
               return `<span>${invoiceTypeName.value}</span>`;
@@ -713,8 +713,9 @@ export class InvoicesComponent implements OnInit {
       },
       {
         data: function (row: any, type: any) {
-          if (type === 'display' && row.customer
-            && row.customer !== 'null' && row.customer.org) {
+          if (type === 'display'
+            && row.customer
+            && row.customer.org) {
             const org: string = row.customer.org;
             let orgFormat: string;
             if (org.length <= 65) {
@@ -732,8 +733,10 @@ export class InvoicesComponent implements OnInit {
       },
       {
         data: function (row: any, type: any) {
-          if (type === 'display' && row.customer && row.customer !== 'null') {
-            return row.customer.tax_code;
+          if (type === 'display'
+            && row.customer
+            && row.customer.tax_code) {
+            return `<span>${row.customer.tax_code}</span>`;
           } else {
             return '<span></span>';
           }
@@ -741,7 +744,7 @@ export class InvoicesComponent implements OnInit {
       }, {
         data: function (row: any, type: any) {
           if (type === 'display') {
-            return formatCurrency(row.total_before_tax);
+            return `<span>${formatCurrency(row.total_before_tax)}</span>`;
           } else {
             return '<span></span>';
           }
@@ -750,7 +753,7 @@ export class InvoicesComponent implements OnInit {
       {
         data: function (row: any, type: any) {
           if (type === 'display') {
-            return formatCurrency(row.total_tax);
+            return `<span>${formatCurrency(row.total_tax)}</span>`;
           } else {
             return '<span></span>';
           }
@@ -759,7 +762,7 @@ export class InvoicesComponent implements OnInit {
       {
         data: function (row: any, type: any) {
           if (type === 'display') {
-            return formatCurrency(row.total);
+            return `<span>${formatCurrency(row.total)}</span>`;
           } else {
             return '<span></span>';
           }
@@ -800,22 +803,23 @@ export class InvoicesComponent implements OnInit {
     $('#signButton').prop('disabled', true);
     $('#printTranformButton').prop('disabled', true);
 
+    $('#invoiceTable tbody').on('click', 'tr.row-parent > td > span', function (event: any) {
+      event.preventDefault();
+      event.stopPropagation();
+    });
+
     // selected row
     let clicks = 0;
-    $('#invoiceTable tbody').on('mousedown', 'tr.row-parent', function (event: any) {
+    $('#invoiceTable tbody').on('click', 'tr.row-parent', function (event: any) {
       event.preventDefault();
       clicks++;
-      setTimeout(function () { clicks = 0; }, 300);
+      setTimeout(function () { clicks = 0; }, 450);
       if (clicks === 2) {
         $(this)
           .find('input:checkbox[name=stickchoice]')
           .prop('checked', true);
         $('#openButton').click();
       } else {
-        $('input:checkbox[name=stickchoice]').each(function () {
-          $(this).prop('checked', false);
-        });
-
         if ($(this).hasClass('selected')) {
           $(this).removeClass('selected');
           $(this)
@@ -826,6 +830,10 @@ export class InvoicesComponent implements OnInit {
           $('#signButton').prop('disabled', true);
           $('#printTranformButton').prop('disabled', true);
         } else {
+          $('input:checkbox[name=stickchoice]').each(function () {
+            $(this).prop('checked', false);
+          });
+
           // init status
           $('#signButton').prop('disabled', true);
           $('#printTranformButton').prop('disabled', true);
