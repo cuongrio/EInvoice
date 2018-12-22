@@ -26,7 +26,7 @@
             <button type="button" (click)="editClicked()" [disabled]="disabledEdit" class="btn btn-md btn-outline-primary"><i
                 class="fas fa-edit"></i>
               Sửa</button>
-            <button id="copyButton" type="button" class="btn btn-md btn-outline-primary">
+            <button [disabled]="disabledCopy" type="button" class="btn btn-md btn-outline-primary">
               <i class="fas fa-copy"></i> Sao chép
             </button>
             <button *ngIf="canPreview" type="button" [disabled]="previewLoading || viewMode" (click)="isPreview=true; ngAddForm.ngSubmit.emit()"
@@ -87,7 +87,7 @@
               </div>
             </ng-template>
 
-            <button id="approveButton" type="button" (click)="openModal(approveConfirm)" class="btn btn-md btn-success">
+            <button [disabled]="disabledApproved" type="button" (click)="openModal(approveConfirm)" class="btn btn-md btn-success">
               <i class="fas fa-check"></i> Duyệt
             </button>
             <ng-template #approveConfirm>
@@ -116,9 +116,64 @@
               <button type="button" (click)="replaceClicked()" [disabled]="disabledReplace" class="btn btn-md btn-outline-primary">
                 <i class="fa fa-retweet"></i> Thay thế
               </button>
-              <button id="disposeButton" type="button" class="btn btn-md btn-outline-danger">
+
+              <button [disabled]="disabledDisposed" type="button" (click)="openModal(disposeConfirm)" class="btn btn-md btn-outline-danger">
                 <i class="fas fa-trash"></i> Hủy hóa đơn
               </button>
+              <ng-template #disposeConfirm>
+                <div class="modal-body text-center">
+                  <div class="dispose-content">
+                    <p class="heading">Xác nhận hủy hóa đơn?</p>
+                    <button type="button" class="btn btn-primary mr-1" (click)="disposeConfirmToken(disposeToken)">Đồng
+                      ý</button>
+                    <button type="button" class="btn btn-default" (click)="modalRef.hide()">Bỏ qua</button>
+                  </div>
+                </div>
+              </ng-template>
+              <ng-template #disposeToken>
+                <ngx-spinner [visible]="signButtonLoading" [config]="spinnerConfig"></ngx-spinner>
+                <div class="modal-header">
+                  <h4 class="modal-title pull-left">Xác nhận token</h4>
+                  <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <p *ngIf="signErrorMessage" class="error">
+                    {{signErrorMessage}}
+                  </p>
+                  <ng-select [loading]="signTokenLoading" [items]="listTokenAvaiable" (change)="onTokenChange($event)"
+                    [clearable]="false" [searchable]="false" bindLabel="name" bindValue="alias">
+                    <ng-template ng-option-tmp let-item="item">
+                      <div class="avaible-tokens">
+                        <div *ngIf="item.isExpired;else isExpried">
+                          <div class="token-name is-expired"><b>Tên: </b>{{item.name}}</div>
+                          <label class="is-expired">
+                            <b>Hiệu lực: </b> {{item.effectiveDate}}
+                          </label>
+                        </div>
+
+                        <ng-template #isExpried>
+                          <div class="token-name is-effective"><b>Tên: </b>{{item.name}}</div>
+                          <label class="is-effective">
+                            <b>Hiệu lực: </b> {{item.effectiveDate}}
+                          </label>
+                        </ng-template>
+                      </div>
+                    </ng-template>
+                  </ng-select>
+
+                  <div class="btn-group">
+                    <button type="button" [disabled]="disposeDisabled" class="btn btn-primary mr-1 no-br" (click)="disposeConfirmClicked()">
+                      <i *ngIf="disposeButtonLoading" class="fa fa-spinner fa-spin"></i>
+                      <i *ngIf="!disposeButtonLoading" class="fas fa-check"></i>
+                      {{ disposeButtonLoading ? 'Vui lòng chờ...' : 'Hủy hóa đơn' }}
+                    </button>
+                    <button type="button" class="btn btn-default" (click)="modalRef.hide()">Bỏ qua</button>
+                  </div>
+                </div>
+              </ng-template>
+
             </div>
           </div>
         </div>
@@ -231,19 +286,10 @@
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label"><label>Mã KH</label></div>
                         <div class="col-md-8 col-lg-8 dropdown_expand">
-                          <ng-select *ngIf="!viewMode" 
-                            id="customerCode"
-                            dropdownPosition="bottom" formControlName="customerCode"
-                            [loading]="customerLoading" 
-                            (keyup)="updateCustomerCode($event.target.value)"
-                            (change)="onCustomerChange($event)"
-                            [(ngModel)]="customerCodePicked"
-                            [items]="customerArr"
-                            (focus)="customerCodeFocus($event)"
-                            (blur)="hideCustomerCodeInput()"
-                            [addTag]="true"
-                            [virtualScroll]="true" 
-                            bindLabel="customer_code"
+                          <ng-select *ngIf="!viewMode" id="customerCode" dropdownPosition="bottom" formControlName="customerCode"
+                            [loading]="customerLoading" (keyup)="updateCustomerCode($event.target.value)" (change)="onCustomerCodeChange($event)"
+                            [(ngModel)]="customerCodePicked" [items]="customerArr" (focus)="customerCodeFocus($event)"
+                            (blur)="hideCustomerCodeInput()" [addTag]="true" [virtualScroll]="true" bindLabel="customer_code"
                             bindValue="customer_code">
                             <ng-template ng-option-tmp let-item="item" let-index="index">
                               <b>{{item.customer_code}}</b> {{item.org}}
@@ -258,19 +304,10 @@
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label"><label>Mã số thuế</label></div>
                         <div class="col-md-8 col-lg-8 dropdown_expand">
-                          <ng-select *ngIf="!viewMode" 
-                            id="customerTax"
-                            dropdownPosition="bottom" formControlName="customerTax" 
-                            (change)="onCustomerChange($event)"
-                            (focus)="customerTaxFocus($event)"
-                            (blur)="hideCustomerTaxInput()"
-                            (keyup)="updateTaxCode($event.target.value)" 
-                            [items]="customerArr"
-                            [(ngModel)]="customerTaxPicked"
-                            [addTag]="true"
-                            [virtualScroll]="true" 
-                            bindLabel="tax_code"
-                            bindValue="tax_code">
+                          <ng-select *ngIf="!viewMode" id="customerTax" dropdownPosition="bottom" formControlName="customerTax"
+                            (change)="onCustomerTaxChange($event)" (focus)="customerTaxFocus($event)" (blur)="hideCustomerTaxInput()"
+                            (keyup)="updateTaxCode($event.target.value)" [items]="customerArr" [(ngModel)]="customerTaxPicked"
+                            [addTag]="true" [virtualScroll]="true" bindLabel="tax_code" bindValue="tax_code">
                             <ng-template ng-option-tmp let-item="item" let-index="index">
                               <b>{{item.tax_code}}</b> {{item.org}}
                             </ng-template>
@@ -296,8 +333,7 @@
                       <div class="form-group row">
                         <div class="col-md-4 col-lg-4 col-form-label"><label>Mã ĐH</label></div>
                         <div class="col-md-8 col-lg-8">
-                          <input type="text" [readonly]="viewMode" formControlName="orderNo" placeholder="Mã đơn hàng"
-                            class="form-control form-control-sm" />
+                          <input type="text" [readonly]="viewMode" formControlName="orderNo" class="form-control form-control-sm" />
                         </div>
                       </div>
                     </div>

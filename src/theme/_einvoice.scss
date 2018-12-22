@@ -530,6 +530,7 @@ table {
   }
 
   .dataTables_scrollBody {
+    overflow: hidden !important;
     .dataTable {
       width: 100% !important;
     }
@@ -782,7 +783,7 @@ table {
 .table.dataTable {
   &.invoiceTable {
     td {
-      padding: 2px 5px !important;
+      padding: 0px 5px !important;
     }
     
     .subtable_invoice{
@@ -930,6 +931,15 @@ label.error {
 
 .form-control-custom {
   background: aliceblue !important;
+}
+
+td.cbox{
+  position: relative !important;
+  .hidden-col{
+    opacity:0 !important; 
+    position:absolute !important; 
+    left:9999px !important; 
+  }
 }
 
 .input-group {

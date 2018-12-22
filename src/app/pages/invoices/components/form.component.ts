@@ -55,10 +55,13 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   public disabledInCD = true;
   public disabledAdd = false;
   public disabledSign = true;
+  public disabledCopy = false;
   public disabledExit = false;
   public disabledPrintTranform = true;
   public disabledAdjust = true;
   public disabledReplace = true;
+  public disabledDisposed = false;
+  public disabledApproved = false;
   public canPreview = true;
 
   public addForm: FormGroup;
@@ -157,6 +160,22 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     this.isEditing = true;
     this.disabledExit = true;
     this.disabledSign = true;
+
+    // check for CustomerCode
+    const isCodeComplete = this.existCustomerCodeComplete();
+    if (!isCodeComplete) {
+      const comboInput = $('#customerCode').find('input[role="combobox"]');
+      if (comboInput) {
+        comboInput.val(this.customerCodePicked);
+      }
+    }
+    const existTaxComplete = this.existCustomerTaxComplete();
+    if (!isCodeComplete) {
+      const comboInput = $('#customerTax').find('input[role="combobox"]');
+      if (comboInput) {
+        comboInput.val(this.customerTaxPicked);
+      }
+    }
     this.ref.markForCheck();
   }
 
@@ -339,10 +358,62 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     }
   }
 
+  public openModal(template: TemplateRef<any>) {
+    this.modalRef = this.modalService.show(template, { class: 'modal-sm' });
+  }
+
   public openModalMd(template: TemplateRef<any>) {
     this.signErrorMessage = '';
     this.loadTokenData();
     this.modalRef = this.modalService.show(template, { class: 'modal-token' });
+  }
+
+  public disposeConfirmToken(template: TemplateRef<any>) {
+    this.modalRef.hide();
+    this.loadTokenData();
+    this.modalRef = this.modalService.show(template, { class: 'modal-token' });
+  }
+
+  public disposeConfirmClicked() {
+    const status = this.addForm.controls['status'].value;
+    if (status === 'DISPOSED') {
+      return;
+    }
+    if (status === 'SIGNED') {
+      this.invoiceService.disposeSignedInvoice(this.invoiceId).subscribe(
+        data => {
+          this.modalRef.hide();
+          const initialState = {
+            message: 'Đã hủy hóa đơn thành công!',
+            title: 'Thành công!',
+            class: 'success',
+            highlight: `Hóa đơn #${data.invoice_id}`
+          };
+          this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+          this.resolvedLink(this.invoiceId);
+        },
+        err => {
+          this.modalRef.hide();
+          this.errorHandler(err);
+        });
+    } else {
+      this.invoiceService.disposeInvoice(this.invoiceId).subscribe(
+        data => {
+          this.modalRef.hide();
+          const initialState = {
+            message: 'Đã hủy hóa đơn thành công!',
+            title: 'Thành công!',
+            class: 'success',
+            highlight: `Hóa đơn #${data.invoice_id}`
+          };
+          this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+          this.resolvedLink(this.invoiceId);
+        },
+        err => {
+          this.modalRef.hide();
+          this.errorHandler(err);
+        });
+    }
   }
 
   public addNewButtonClicked() {
@@ -464,11 +535,20 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   }
 
   /*** CUSTOMER CHANGE */
-  public onCustomerChange(customer: any) {
+  public onCustomerCodeChange(customer: any) {
     this.initDataForm(customer);
-    const comboInput = $('#customerCode').find('input[role="combobox"]');
-    if (comboInput) {
-      comboInput.val('');
+    const comboCodeInput = $('#customerCode').find('input[role="combobox"]');
+    if (comboCodeInput) {
+      comboCodeInput.val('');
+    }
+    this.ref.markForCheck();
+  }
+
+  public onCustomerTaxChange(customer: any) {
+    this.initDataForm(customer);
+    const comboTaxInput = $('#customerTax').find('input[role="combobox"]');
+    if (comboTaxInput) {
+      comboTaxInput.val('');
     }
     this.ref.markForCheck();
   }
@@ -1072,6 +1152,11 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   private initRouter() {
     const urlSegmentArr: UrlSegment[] = this.activatedRoute.snapshot.url;
     const segment = urlSegmentArr[0].path;
+    let subSegment: string;
+    // sub segment
+    if (urlSegmentArr.length === 3) {
+      subSegment = urlSegmentArr[2].path;
+    }
     this.segmentRouter = segment;
     this.canPreview = true;
     this.keptForUpdate = {};
@@ -1115,7 +1200,8 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
               this.disabledAdjust = false;
               this.disabledReplace = false;
             }
-            if (data.status === 'APPROVED' || data.status === 'SIGNED') {
+            if (data.status === 'APPROVED'
+              || data.status === 'SIGNED') {
               this.disabledInCD = false;
             }
             if (data.status === 'DISPOSED') {
@@ -1123,6 +1209,9 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
               this.disabledAdjust = true;
               this.disabledReplace = true;
               this.disabledPrintTranform = true;
+              this.disabledDisposed = true;
+              this.disabledCopy = true;
+
             }
 
             // set view name
@@ -1149,6 +1238,18 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
           }
           if (segment === 'copy') {
             this.setFormWithDefaultData(data, 'copy');
+          }
+          if (subSegment === 'adjust') {
+            this.adjustClicked();
+            this.disabledCopy = true;
+            this.disabledDisposed = true;
+            this.disabledApproved = true;
+          }
+          if (subSegment === 'replace') {
+            this.replaceClicked();
+            this.disabledCopy = true;
+            this.disabledDisposed = true;
+            this.disabledApproved = true;
           }
           this.ref.markForCheck();
           return true;
@@ -1181,6 +1282,8 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
       customerAddress: data.customer.address,
     });
 
+    this.customerCodePicked = data.customer.customer_code;
+    this.customerTaxPicked = data.customer.tax_code;
     if (usercase === 'open') {
       const invoiceDate = moment(data.invoice_date).format('DD-MM-YYYY');
       this.invoiceDatePicked = invoiceDate;
@@ -1223,6 +1326,24 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
         this.lineDiscount[idx] = (this.lineAmount[idx] * item.discount_rate) / 100;
       });
     }
+  }
+
+  private existCustomerCodeComplete(): boolean {
+    this.customerArr.forEach((item: CustomerData, index: number, arr: any) => {
+      if (item.customer_code === this.customerCodePicked) {
+        return true;
+      }
+    });
+    return false;
+  }
+
+  private existCustomerTaxComplete(): boolean {
+    this.customerArr.forEach((item: CustomerData, index: number, arr: any) => {
+      if (item.tax_code === this.customerTaxPicked) {
+        return true;
+      }
+    });
+    return false;
   }
 
   private createItemsForm() {

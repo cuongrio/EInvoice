@@ -164,9 +164,7 @@
                   <i *ngIf="!printLoading" class="fas fa-print"></i>
                   In
                 </button>
-                <button id="printTranformButton" (click)="printTransformRowClicked()" type="button" class="btn btn-md btn-outline-primary">
-                  <i class="fas fa-retweet"></i> In chuyển đổi
-                </button>
+
                 <button id="signButton" type="button" (click)="openModalMd(listToken)" class="btn btn-md btn-outline-primary">
                   <i class="fas fa-key"></i> Ký
                 </button>
@@ -226,13 +224,14 @@
                 </ng-template>
 
                 <div class="pull-right mt-2">
-                  <button type="button" class="btn btn-md btn-outline-primary"><i class="fas fa-print"></i>
-                    In chuyển đổi</button>
+                  <button id="printTranformButton" (click)="printTransformRowClicked()" type="button" class="btn btn-md btn-outline-primary">
+                    <i class="fas fa-retweet"></i> In chuyển đổi
+                  </button>
 
-                  <button type="button" class="btn btn-md btn-outline-primary"><i class="fas fa-edit"></i>
+                  <button id="adjustButton" (click)="openAdjustClicked()" type="button" class="btn btn-md btn-outline-primary"><i class="fas fa-edit"></i>
                     Điều chỉnh
                   </button>
-                  <button type="button" class="btn btn-md btn-outline-primary">
+                  <button id="replaceButton" (click)="openReplaceClicked()" type="button" class="btn btn-md btn-outline-primary">
                     <i class="fa fa-retweet"></i> Thay thế
                   </button>
 
@@ -301,7 +300,6 @@
               <table id="invoiceTable" class="table display dataTable invoiceTable">
                 <thead>
                   <tr>
-                    <th>#</th>
                     <th>T.Thái</th>
                     <th>Loại HĐ</th>
                     <th>Số HĐ</th>

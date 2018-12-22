@@ -237,6 +237,16 @@ export class InvoicesComponent implements OnInit {
     this.router.navigate([`/invoices/open/${invoiceId}`]);
   }
 
+  public openAdjustClicked() {
+    const invoiceId = this.getCheckboxesValue();
+    this.router.navigate([`/invoices/open/${invoiceId}/adjust`]);
+  }
+
+  public openReplaceClicked() {
+    const invoiceId = this.getCheckboxesValue();
+    this.router.navigate([`/invoices/open/${invoiceId}/replace`]);
+  }
+
   public copyRowClicked() {
     const invoiceId = this.getCheckboxesValue();
     this.router.navigate([`/invoices/copy/${invoiceId}`]);
@@ -594,34 +604,41 @@ export class InvoicesComponent implements OnInit {
         $(row).addClass('row-parent');
       },
       columnDefs: [{
-        width: '15px',
-        targets: 0,
-        orderable: false
-      }, {
         width: '50px',
-        targets: 1,
+        targets: 0,
         render: function (data: any) {
           return '<span>' + data + '</span>';
         }
       }, {
         width: '50px',
-        targets: 2
+        targets: 1
       }, {
         width: '50px',
-        targets: 3,
+        targets: 2,
         render: function (data: any) {
           return '<span class="text-bold">' + data + '</span>';
         }
       }, {
         width: '60px',
-        targets: 4
+        targets: 3
       }, {
         width: '400px',
-        targets: 5
+        targets: 4
       }, {
         width: '60px',
-        targets: 6
+        targets: 5
       }, {
+        width: '70px',
+        targets: 6,
+        render: function (data: any) {
+          if (data && data !== 'null') {
+            return '<span class="number-format">' + data + '</span>';
+          } else {
+            return '<span></span>';
+          }
+        }
+      },
+      {
         width: '70px',
         targets: 7,
         render: function (data: any) {
@@ -642,38 +659,9 @@ export class InvoicesComponent implements OnInit {
             return '<span></span>';
           }
         }
-      },
-      {
-        width: '70px',
-        targets: 9,
-        render: function (data: any) {
-          if (data && data !== 'null') {
-            return '<span class="number-format">' + data + '</span>';
-          } else {
-            return '<span></span>';
-          }
-        }
       }
       ],
       columns: [{
-        orderable: false,
-        className: 'cbox',
-        data: function (row: any, type: any) {
-          if (type === 'display' && row.invoice_id) {
-            return `
-              <div class="form-check">
-                <label class="form-check-label">
-                  <input type="checkbox" name="stickchoice" value="${row.invoice_id}" class="form-check-input">
-                  <i class="input-helper"></i></label>
-                  <input type="hidden" class="id-hidden" value="${row.invoice_id}">
-                  <input type="hidden" class="status-hidden" value="${row.status}">
-              </div>
-            `;
-          } else {
-            return '<span></span>';
-          }
-        }
-      }, {
         data: function (row: any, type: any) {
           if (type === 'display' && row.status) {
             if (statusArr) {
@@ -699,7 +687,21 @@ export class InvoicesComponent implements OnInit {
         }
       },
       {
-        data: 'invoice_no'
+        className: 'cbox',
+        data: function (row: any, type: any) {
+          if (type === 'display' && row.invoice_no) {
+            return `
+                  <span>${row.invoice_no}</span>
+                  <div class="hidden-col">
+                    <input type="checkbox" name="stickchoice" value="${row.invoice_id}" class="td-checkbox-hidden">
+                    <input type="hidden" class="id-hidden" value="${row.invoice_id}">
+                    <input type="hidden" class="status-hidden" value="${row.status}">
+                  </div>
+              `;
+          } else {
+            return '<span></span>';
+          }
+        }
       },
       {
         data: function (row: any, type: any) {
@@ -802,10 +804,14 @@ export class InvoicesComponent implements OnInit {
     bindButtonStatus(true);
     $('#signButton').prop('disabled', true);
     $('#printTranformButton').prop('disabled', true);
+    $('#adjustButton').prop('disabled', true);
+    $('#replaceButton').prop('disabled', true);
 
     $('#invoiceTable tbody').on('click', 'tr.row-parent > td > span', function (event: any) {
       event.preventDefault();
       event.stopPropagation();
+      const tr = $(this).closest('tr');
+      tr.click();
     });
 
     // selected row
@@ -813,23 +819,14 @@ export class InvoicesComponent implements OnInit {
     $('#invoiceTable tbody').on('click', 'tr.row-parent', function (event: any) {
       event.preventDefault();
       clicks++;
-      setTimeout(function () { clicks = 0; }, 450);
+      setTimeout(function () { clicks = 0; }, 300);
       if (clicks === 2) {
         $(this)
           .find('input:checkbox[name=stickchoice]')
           .prop('checked', true);
         $('#openButton').click();
       } else {
-        if ($(this).hasClass('selected')) {
-          $(this).removeClass('selected');
-          $(this)
-            .find('input:checkbox[name=stickchoice]')
-            .prop('checked', false);
-
-          bindButtonStatus(true);
-          $('#signButton').prop('disabled', true);
-          $('#printTranformButton').prop('disabled', true);
-        } else {
+        if (!$(this).hasClass('selected')) {
           $('input:checkbox[name=stickchoice]').each(function () {
             $(this).prop('checked', false);
           });
@@ -837,6 +834,8 @@ export class InvoicesComponent implements OnInit {
           // init status
           $('#signButton').prop('disabled', true);
           $('#printTranformButton').prop('disabled', true);
+          $('#adjustButton').prop('disabled', false);
+          $('#replaceButton').prop('disabled', false);
 
           table.$('tr.selected').removeClass('selected');
           $(this).addClass('selected');
@@ -853,6 +852,8 @@ export class InvoicesComponent implements OnInit {
             $('#printButton').prop('disabled', false);
             $('#approveButton').prop('disabled', true);
             $('#disposeButton').prop('disabled', true);
+            $('#adjustButton').prop('disabled', true);
+            $('#replaceButton').prop('disabled', true);
           } else {
             if (status === 'CREATED') {
               $('#signButton').prop('disabled', false);
@@ -863,6 +864,8 @@ export class InvoicesComponent implements OnInit {
               $('#approveButton').prop('disabled', false);
               $('#signButton').prop('disabled', true);
               $('#printTranformButton').prop('disabled', false);
+              $('#adjustButton').prop('disabled', false);
+              $('#replaceButton').prop('disabled', false);
             }
           }
         }
