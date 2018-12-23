@@ -304,7 +304,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
       }
     }
 
-    this.ref.markForCheck();
+    console.log(this.addForm.invalid + '---' + this.noItemLine);
     if (this.addForm.invalid || this.noItemLine) {
       this.previewLoading = false;
       return;
@@ -635,7 +635,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
       item_line: '',
       item_code: '',
       item_name: ['', Validators.required],
-      unit: ['', Validators.required],
+      unit: '',
       price: ['', Validators.required],
       tax_rate: ['', Validators.required],
       tax_rate_code: '',

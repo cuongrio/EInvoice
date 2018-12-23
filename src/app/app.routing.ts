@@ -14,7 +14,7 @@ import { ForgotPassComponent } from './forgot/forgot-pass.component';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'invoices',
+    redirectTo: 'dashboard',
     pathMatch: 'full'
   },
   {
@@ -22,10 +22,10 @@ const routes: Routes = [
     component: PageLayoutComponent,
     canActivate: [AuthenticationGuard],
     children: [
-      // {
-      //   path: 'dashboard',
-      //   loadChildren: './pages/dashboard/dashboard.module#DashboardModule'
-      // },
+      {
+        path: 'dashboard',
+        loadChildren: './pages/dashboard/dashboard.module#DashboardModule'
+      },
       {
         path: 'customers',
         loadChildren: './pages/customers/customers.module#CustomersModule'

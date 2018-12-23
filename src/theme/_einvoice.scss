@@ -542,6 +542,14 @@ table {
     overflow: hidden !important;
     .dataTable {
       width: 100% !important;
+      td.cbox{
+        position: relative !important;
+        .hidden-col{
+          opacity:0 !important; 
+          position:absolute !important; 
+          left:9999px !important; 
+        }
+      }
     }
     &::-webkit-scrollbar {
       width: 6px;
@@ -951,15 +959,6 @@ label.error {
 
 .form-control-custom {
   background: aliceblue !important;
-}
-
-td.cbox{
-  position: relative !important;
-  .hidden-col{
-    opacity:0 !important; 
-    position:absolute !important; 
-    left:9999px !important; 
-  }
 }
 
 .input-group {

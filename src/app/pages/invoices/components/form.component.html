@@ -433,7 +433,7 @@
                             cột</button>
                         </div>
                       </div>
-                      <table class="table table-bordered no-border-right">
+                      <table class="table table-bordered">
                         <thead>
                           <tr>
                             <th class="bg-smoke" style="width: 20px;">#</th>
@@ -486,7 +486,9 @@
                             </td>
 
                             <td class="no-padding">
-                              <input formControlName="price" [readonly]="viewMode" currencyMask [options]="{ prefix: '', allowNegative: false, precision: 0, thousands:'.'}"
+                              <input formControlName="price" [readonly]="viewMode"
+                              [ngClass]="{ 'control-invalid': submitted && pItem.hasError('required', 'price') }"
+                               currencyMask [options]="{ prefix: '', allowNegative: false, precision: 0, thousands:'.'}"
                                 (ngModelChange)="priceValueChange($event, idx)" class="form-control form-control-sm text-right"
                                 type="text" />
                             </td>

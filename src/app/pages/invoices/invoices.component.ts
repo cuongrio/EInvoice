@@ -594,7 +594,6 @@ export class InvoicesComponent implements OnInit {
       paging: false,
       searching: false,
       retrieve: false,
-      ordering: true,
       serverSide: false,
       bLengthChange: false,
       info: false,
@@ -603,120 +602,120 @@ export class InvoicesComponent implements OnInit {
       language: {
         emptyTable: 'Không có dữ liệu'
       },
-      createdRow: function (row: any, data: any, index: number) {
+      createdRow: function (row: any) {
         $(row).addClass('row-parent');
       },
       columnDefs: [{
         width: '50px',
         targets: 0,
-        render: function (data: any) {
-          return data;
+        createdCell: function (td: any, cellData: string) {
+          if (cellData && cellData.length > 0) {
+            $(td).attr('data-order', cellData);
+            $(td).attr('data-sort', cellData);
+            if (statusArr) {
+              const status = statusArr.find((i: SelectData) => (i.code === cellData));
+              $(td).html(status.value);
+            }
+          }
         }
       }, {
         width: '50px',
-        targets: 1
+        targets: 1,
+        createdCell: function (td: any, cellData: string) {
+          if (cellData && cellData.length > 0) {
+            $(td).attr('data-order', cellData);
+            $(td).attr('data-sort', cellData);
+            if (invoiceTypeArr) {
+              const invoiceType = invoiceTypeArr.find((i: SelectData) => (i.code === cellData));
+              $(td).html(invoiceType.value);
+            }
+          }
+        }
       }, {
         width: '50px',
         targets: 2,
-        render: function (data: any) {
-          return '<span class="text-bold">' + data + '</span>';
+        createdCell: function (td: any, cellData: string) {
+          $(td).html(`<span class="text-bold">${cellData}</span>`);
+          if (cellData && cellData.length > 0) {
+            $(td).attr('data-order', cellData);
+            $(td).attr('data-sort', cellData);
+          }
         }
       }, {
         width: '60px',
-        targets: 3
+        targets: 3,
+        createdCell: function (td: any, cellData: string) {
+          if (cellData && cellData.length > 0) {
+            $(td).attr('data-order', cellData);
+            $(td).attr('data-sort', cellData);
+            const dateFormate = moment(cellData).format('DD/MM/YYYY');
+            $(td).html(dateFormate);
+            return `${dateFormate}`;
+          }
+        }
       }, {
         width: '400px',
-        targets: 4
+        targets: 4,
+        orderable: false,
       }, {
         width: '60px',
-        targets: 5
+        targets: 5,
+        createdCell: function (td: any, cellData: string) {
+          if (cellData && cellData.length > 0) {
+            $(td).attr('data-order', cellData);
+            $(td).attr('data-sort', cellData);
+          }
+        }
       }, {
         width: '70px',
         targets: 6,
-        render: function (data: any) {
-          if (data && data !== 'null') {
-            return '<span class="number-format">' + data + '</span>';
-          } else {
-            return '<span></span>';
+        createdCell: function (td: any, cellData: number) {
+          if (cellData && cellData > 0) {
+            $(td).attr('data-order', cellData);
+            $(td).attr('data-sort', cellData);
+            const cellformat = formatCurrency(cellData);
+            $(td).html(cellformat);
           }
         }
       },
       {
         width: '70px',
         targets: 7,
-        render: function (data: any) {
-          if (data && data !== 'null') {
-            return '<span class="number-format">' + data + '</span>';
-          } else {
-            return '<span></span>';
+        createdCell: function (td: any, cellData: number) {
+          if (cellData && cellData > 0) {
+            $(td).attr('data-order', cellData);
+            $(td).attr('data-sort', cellData);
+            const cellformat = formatCurrency(cellData);
+            $(td).html(cellformat);
           }
         }
       },
       {
         width: '70px',
         targets: 8,
-        render: function (data: any) {
-          if (data && data !== 'null') {
-            return '<span class="number-format">' + data + '</span>';
-          } else {
-            return '<span></span>';
+        createdCell: function (td: any, cellData: number) {
+          if (cellData && cellData > 0) {
+            $(td).attr('data-order', cellData);
+            $(td).attr('data-sort', cellData);
+            const cellformat = formatCurrency(cellData);
+            $(td).html(cellformat);
           }
         }
       }
       ],
       columns: [{
-        data: function (row: any, type: any) {
-          if (type === 'display' && row.status) {
-            if (statusArr) {
-              const status = statusArr.find((i: SelectData) => (i.code === row.status));
-              return `${status.value}`;
-            }
-            return `<span>${row.status}</span>`;
-          } else {
-            return '<span></span>';
-          }
-        }
+        data: 'status'
       }, {
-        data: function (row: any, type: any) {
-          if (type === 'display' && row.invoice_type) {
-            if (invoiceTypeArr) {
-              const invoiceTypeName = invoiceTypeArr.find((i: SelectData) => (i.code === row.invoice_type));
-              return `<span>${invoiceTypeName.value}</span>`;
-            }
-            return `<span>${row.invoice_type}</span>`;
-          } else {
-            return '<span></span>';
-          }
-        }
+        data: 'invoice_type'
       },
       {
-        className: 'cbox',
-        data: function (row: any, type: any) {
-          if (type === 'display' && row.invoice_no) {
-            return `
-                  <span>${row.invoice_no}</span>
-                  <div class="hidden-col">
-                    <input type="checkbox" name="stickchoice" value="${row.invoice_id}" class="td-checkbox-hidden">
-                    <input type="hidden" class="id-hidden" value="${row.invoice_id}">
-                    <input type="hidden" class="status-hidden" value="${row.status}">
-                  </div>
-              `;
-          } else {
-            return '<span></span>';
-          }
-        }
+        data: 'invoice_no'
       },
       {
-        data: function (row: any, type: any) {
-          if (type === 'display' && row.invoice_date && row.invoice_date !== 'null') {
-            const dateFormate = moment(row.invoice_date).format('DD/MM/YYYY');
-            return `<span>${dateFormate}</span>`;
-          } else {
-            return '<span></span>';
-          }
-        }
+        data: 'invoice_date'
       },
       {
+        className: 'lh-medium cbox',
         data: function (row: any, type: any) {
           if (type === 'display'
             && row.customer
@@ -730,48 +729,31 @@ export class InvoicesComponent implements OnInit {
               const lastWordIndex = orgFormat.lastIndexOf(' ');
               orgFormat = orgFormat.substring(0, lastWordIndex) + '...';
             }
-            return `<span class="lh-medium" title="${org}">${orgFormat}</span>`;
+            return `
+              <span class="lh-medium" title="${org}">${orgFormat}</span>
+              <div class="hidden-col">
+              <input type="checkbox" name="stickchoice" value="${row.invoice_id}" class="td-checkbox-hidden">
+              <input type="hidden" class="id-hidden" value="${row.invoice_id}">
+              <input type="hidden" class="status-hidden" value="${row.status}">
+              </div>
+            `;
           } else {
-            return '<span></span>';
-          }
-        }
-      },
-      {
-        data: function (row: any, type: any) {
-          if (type === 'display'
-            && row.customer
-            && row.customer.tax_code) {
-            return `<span>${row.customer.tax_code}</span>`;
-          } else {
-            return '<span></span>';
+            return '';
           }
         }
       }, {
-        data: function (row: any, type: any) {
-          if (type === 'display') {
-            return `<span>${formatCurrency(row.total_before_tax)}</span>`;
-          } else {
-            return '<span></span>';
-          }
-        }
+        data: 'customer.tax_code'
+      }, {
+        className: 'text-right',
+        data: 'total_before_tax'
       },
       {
-        data: function (row: any, type: any) {
-          if (type === 'display') {
-            return `<span>${formatCurrency(row.total_tax)}</span>`;
-          } else {
-            return '<span></span>';
-          }
-        }
+        className: 'text-right',
+        data: 'total_tax'
       },
       {
-        data: function (row: any, type: any) {
-          if (type === 'display') {
-            return `<span>${formatCurrency(row.total)}</span>`;
-          } else {
-            return '<span></span>';
-          }
-        }
+        className: 'text-right',
+        data: 'total'
       }
       ],
       select: {
@@ -779,7 +761,7 @@ export class InvoicesComponent implements OnInit {
         items: 'cells',
         info: false
       },
-      order: [[3, 'desc']],
+      order: [[2, 'desc']],
       drawCallback: function () {
         const pagination = $(this)
           .closest('.dataTables_wrapper')

@@ -7,12 +7,12 @@ export const InvoicesRoutes: Routes = [
   {
     path: '',
     component: InvoicesComponent,
-    data: { title: 'Danh mục hóa đơn' },
+    data: { title: 'Danh sách hóa đơn' },
     runGuardsAndResolvers: 'always'
   }, {
     path: 'refresh',
     component: InvoicesComponent,
-    data: { title: 'Danh mục hóa đơn' },
+    data: { title: 'Danh sách hóa đơn' },
     runGuardsAndResolvers: 'always'
   }, {
     path: 'createNew',
