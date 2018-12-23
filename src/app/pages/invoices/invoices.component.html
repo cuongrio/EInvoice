@@ -11,21 +11,175 @@
         </nav>
       </div>
     </div>
-
     <div class="content-wrapper">
       <div class="content-list">
         <div class="card card-shadow">
-          <div class="card-body card-body__list">
-            <h4 class="card-title">
-              <span class="card-title_heading">Danh sách hóa đơn</span>
-              <button (click)="expandSearchClicked()" type="button" class="btn btn-md btn-link">
-                <i *ngIf="expandSearch" class="fas fa-chevron-down"></i>
-                <i *ngIf="!expandSearch" class="fas fa-chevron-up"></i>
-              </button>
-            </h4>
+          <div class="card-body ein-card-body">
             <div class="grid-margin">
-              <div class="search-box">
-                <div [hidden]="!expandSearch" class="card shadow-nohover">
+
+              <div class="template-ein navbar-action">
+                <button type="button" routerLink="/invoices/createNew" class="btn btn-md btn-primary">
+                  <i class="fas fa-plus"></i> Thêm
+                </button>
+                <button id="openButton" type="button" (click)="openRowClicked()" class="btn  btn-md btn-outline-primary">
+                  <i class="fas fa-edit"></i> Mở
+                </button>
+                <button id="copyButton" (click)="copyRowClicked()" type="button" class="btn btn-md btn-outline-primary">
+                  <i class="fas fa-copy"></i> Sao chép
+                </button>
+
+                <div class="btn-group">
+                  <button [disabled]="isSearching" type="button" class="btn btn-md btn-primary btn-search" (click)="ngSearchForm.ngSubmit.emit()">
+                    <i *ngIf="!isSearching" class="icon-magnifier"></i>
+                    <i *ngIf="isSearching" class="fa fa-spinner fa-spin"></i> Tìm kiếm
+                  </button>
+                  <button (click)="resetForm()" type="button" class="btn btn-md btn-icons btn-inverse-default">
+                    <i class="fas fa-undo"></i>
+                  </button>
+                  <button (click)="expandSearchClicked()" type="button" class="btn btn-md btn-icons btn-inverse-primary">
+                    <i *ngIf="expandSearch" class="fas fa-chevron-down"></i>
+                    <i *ngIf="!expandSearch" class="fas fa-chevron-up"></i>
+                  </button>
+                </div>
+
+                <button id="printButton" type="button" (click)="printRowClicked()" class="btn btn-md btn-outline-primary">
+                  <i *ngIf="printLoading" class="fa fa-spinner fa-spin"></i>
+                  <i *ngIf="!printLoading" class="fas fa-print"></i>
+                  In
+                </button>
+
+                <button id="signButton" type="button" (click)="openModalMd(listToken)" class="btn btn-md btn-outline-primary">
+                  <i class="fas fa-key"></i> Ký
+                </button>
+                <ng-template #listToken>
+                  <ngx-spinner [visible]="signButtonLoading" [config]="spinnerConfig"></ngx-spinner>
+                  <div class="modal-header">
+                    <h4 class="modal-title pull-left">Xác nhận token</h4>
+                    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <p *ngIf="signErrorMessage" class="error">
+                      {{signErrorMessage}}
+                    </p>
+                    <ng-select [loading]="signTokenLoading" [items]="listTokenAvaiable" (change)="onTokenChange($event)"
+                      [clearable]="false" [searchable]="false" bindLabel="name" bindValue="alias">
+                      <ng-template ng-option-tmp let-item="item">
+                        <div class="avaible-tokens">
+                          <div *ngIf="item.isExpired;else isExpried">
+                            <div class="token-name is-expired"><b>Tên: </b>{{item.name}}</div>
+                            <label class="is-expired">
+                              <b>Hiệu lực: </b> {{item.effectiveDate}}
+                            </label>
+                          </div>
+
+                          <ng-template #isExpried>
+                            <div class="token-name is-effective"><b>Tên: </b>{{item.name}}</div>
+                            <label class="is-effective">
+                              <b>Hiệu lực: </b> {{item.effectiveDate}}
+                            </label>
+                          </ng-template>
+                        </div>
+                      </ng-template>
+                    </ng-select>
+
+                    <div class="btn-group">
+                      <button type="button" [disabled]="signButtonDisabled" class="btn btn-primary mr-1 no-br" (click)="tokenChoiceClicked()">
+                        <i class="fas fa-key"></i> Ký
+                      </button>
+                      <button type="button" class="btn btn-default" (click)="modalRef.hide()">Bỏ qua</button>
+                    </div>
+                  </div>
+                </ng-template>
+
+                <button id="approveButton" type="button" (click)="openModal(approveConfirm)" class="btn btn-md btn-success">
+                  <i class="fas fa-check"></i> Duyệt
+                </button>
+                <ng-template #approveConfirm>
+                  <div class="modal-body text-center">
+                    <div class="dispose-content">
+                      <p class="heading">Xác nhận duyệt hóa đơn?</p>
+                      <button type="button" class="btn btn-primary mr-1" (click)="approveClicked()">Đồng ý</button>
+                      <button type="button" class="btn btn-default" (click)="modalRef.hide()">Bỏ qua</button>
+                    </div>
+                  </div>
+                </ng-template>
+
+                <div class="pull-right mt-2">
+                  <button id="printTranformButton" (click)="printTransformRowClicked()" type="button" class="btn btn-md btn-outline-primary">
+                    <i class="fas fa-retweet"></i> In chuyển đổi
+                  </button>
+
+                  <button id="adjustButton" (click)="openAdjustClicked()" type="button" class="btn btn-md btn-outline-primary"><i
+                      class="fas fa-edit"></i>
+                    Điều chỉnh
+                  </button>
+                  <button id="replaceButton" (click)="openReplaceClicked()" type="button" class="btn btn-md btn-outline-primary">
+                    <i class="fa fa-retweet"></i> Thay thế
+                  </button>
+
+                  <button id="disposeButton" type="button" (click)="openModal(disposeConfirm)" class="btn btn-md btn-outline-danger">
+                    <i class="fas fa-trash"></i> Hủy hóa đơn
+                  </button>
+                  <ng-template #disposeConfirm>
+                    <div class="modal-body text-center">
+                      <div class="dispose-content">
+                        <p class="heading">Xác nhận hủy hóa đơn?</p>
+                        <button type="button" class="btn btn-primary mr-1" (click)="disposeConfirmToken(disposeToken)">Đồng
+                          ý</button>
+                        <button type="button" class="btn btn-default" (click)="modalRef.hide()">Bỏ qua</button>
+                      </div>
+                    </div>
+                  </ng-template>
+                  <ng-template #disposeToken>
+                    <ngx-spinner [visible]="signButtonLoading" [config]="spinnerConfig"></ngx-spinner>
+                    <div class="modal-header">
+                      <h4 class="modal-title pull-left">Xác nhận token</h4>
+                      <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <p *ngIf="signErrorMessage" class="error">
+                        {{signErrorMessage}}
+                      </p>
+                      <ng-select [loading]="signTokenLoading" [items]="listTokenAvaiable" (change)="onTokenChange($event)"
+                        [clearable]="false" [searchable]="false" bindLabel="name" bindValue="alias">
+                        <ng-template ng-option-tmp let-item="item">
+                          <div class="avaible-tokens">
+                            <div *ngIf="item.isExpired;else isExpried">
+                              <div class="token-name is-expired"><b>Tên: </b>{{item.name}}</div>
+                              <label class="is-expired">
+                                <b>Hiệu lực: </b> {{item.effectiveDate}}
+                              </label>
+                            </div>
+
+                            <ng-template #isExpried>
+                              <div class="token-name is-effective"><b>Tên: </b>{{item.name}}</div>
+                              <label class="is-effective">
+                                <b>Hiệu lực: </b> {{item.effectiveDate}}
+                              </label>
+                            </ng-template>
+                          </div>
+                        </ng-template>
+                      </ng-select>
+
+                      <div class="btn-group">
+                        <button type="button" [disabled]="disposeDisabled" class="btn btn-primary mr-1 no-br" (click)="disposeConfirmClicked()">
+                          <i *ngIf="disposeButtonLoading" class="fa fa-spinner fa-spin"></i>
+                          <i *ngIf="!disposeButtonLoading" class="fas fa-check"></i>
+                          {{ disposeButtonLoading ? 'Vui lòng chờ...' : 'Hủy hóa đơn' }}
+                        </button>
+                        <button type="button" class="btn btn-default" (click)="modalRef.hide()">Bỏ qua</button>
+                      </div>
+                    </div>
+                  </ng-template>
+                </div>
+              </div>
+
+              <div [hidden]="!expandSearch" class="search-box">
+                <div class="card shadow-nohover">
                   <div class="card-body">
                     <form class="form-horizontal" #ngSearchForm="ngForm" [formGroup]="searchForm" (ngSubmit)="onSubmit(searchForm.value)">
                       <div class="row">
@@ -119,7 +273,6 @@
                           </div>
                         </div>
 
-
                         <div class="col-md-3 col-lg-3">
                           <div class="form-group row">
                             <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Sắp xếp</label></div>
@@ -145,155 +298,9 @@
                 </div>
               </div>
 
-              <div class="template-ein navbar-action">
-                <button type="button" routerLink="/invoices/createNew" class="btn btn-md btn-primary">
-                  <i class="fas fa-plus"></i> Thêm
-                </button>
-                <button id="openButton" type="button" (click)="openRowClicked()" class="btn  btn-md btn-outline-primary">
-                  <i class="fas fa-edit"></i> Mở
-                </button>
-                <button id="copyButton" (click)="copyRowClicked()" type="button" class="btn btn-md btn-outline-primary">
-                  <i class="fas fa-copy"></i> Sao chép
-                </button>
-                <button [disabled]="isSearching" type="button" class="btn btn-md btn-info btn-search" (click)="ngSearchForm.ngSubmit.emit()">
-                  <i *ngIf="!isSearching" class="icon-magnifier"></i>
-                  <i *ngIf="isSearching" class="fa fa-spinner fa-spin"></i> Tìm kiếm
-                </button>
-                <button id="printButton" type="button" (click)="printRowClicked()" class="btn btn-md btn-outline-primary">
-                  <i *ngIf="printLoading" class="fa fa-spinner fa-spin"></i>
-                  <i *ngIf="!printLoading" class="fas fa-print"></i>
-                  In
-                </button>
-
-                <button id="signButton" type="button" (click)="openModalMd(listToken)" class="btn btn-md btn-outline-primary">
-                  <i class="fas fa-key"></i> Ký
-                </button>
-                <ng-template #listToken>
-                  <ngx-spinner [visible]="signButtonLoading" [config]="spinnerConfig"></ngx-spinner>
-                  <div class="modal-header">
-                    <h4 class="modal-title pull-left">Xác nhận token</h4>
-                    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div class="modal-body">
-                    <p *ngIf="signErrorMessage" class="error">
-                      {{signErrorMessage}}
-                    </p>
-                    <ng-select [loading]="signTokenLoading" [items]="listTokenAvaiable" (change)="onTokenChange($event)"
-                      [clearable]="false" [searchable]="false" bindLabel="name" bindValue="alias">
-                      <ng-template ng-option-tmp let-item="item">
-                        <div class="avaible-tokens">
-                          <div *ngIf="item.isExpired;else isExpried">
-                            <div class="token-name is-expired"><b>Tên: </b>{{item.name}}</div>
-                            <label class="is-expired">
-                              <b>Hiệu lực: </b> {{item.effectiveDate}}
-                            </label>
-                          </div>
-
-                          <ng-template #isExpried>
-                            <div class="token-name is-effective"><b>Tên: </b>{{item.name}}</div>
-                            <label class="is-effective">
-                              <b>Hiệu lực: </b> {{item.effectiveDate}}
-                            </label>
-                          </ng-template>
-                        </div>
-                      </ng-template>
-                    </ng-select>
-
-                    <div class="btn-group">
-                      <button type="button" [disabled]="signButtonDisabled" class="btn btn-primary mr-1 no-br" (click)="tokenChoiceClicked()">
-                        <i class="fas fa-key"></i> Ký
-                      </button>
-                      <button type="button" class="btn btn-default" (click)="modalRef.hide()">Bỏ qua</button>
-                    </div>
-                  </div>
-                </ng-template>
-
-                <button id="approveButton" type="button" (click)="openModal(approveConfirm)" class="btn btn-md btn-success">
-                  <i class="fas fa-check"></i> Duyệt
-                </button>
-                <ng-template #approveConfirm>
-                  <div class="modal-body text-center">
-                    <div class="dispose-content">
-                      <p class="heading">Xác nhận duyệt hóa đơn?</p>
-                      <button type="button" class="btn btn-primary mr-1" (click)="approveClicked()">Đồng ý</button>
-                      <button type="button" class="btn btn-default" (click)="modalRef.hide()">Bỏ qua</button>
-                    </div>
-                  </div>
-                </ng-template>
-
-                <div class="pull-right mt-2">
-                  <button id="printTranformButton" (click)="printTransformRowClicked()" type="button" class="btn btn-md btn-outline-primary">
-                    <i class="fas fa-retweet"></i> In chuyển đổi
-                  </button>
-
-                  <button id="adjustButton" (click)="openAdjustClicked()" type="button" class="btn btn-md btn-outline-primary"><i class="fas fa-edit"></i>
-                    Điều chỉnh
-                  </button>
-                  <button id="replaceButton" (click)="openReplaceClicked()" type="button" class="btn btn-md btn-outline-primary">
-                    <i class="fa fa-retweet"></i> Thay thế
-                  </button>
-
-                  <button id="disposeButton" type="button" (click)="openModal(disposeConfirm)" class="btn btn-md btn-outline-danger">
-                    <i class="fas fa-trash"></i> Hủy hóa đơn
-                  </button>
-                  <ng-template #disposeConfirm>
-                    <div class="modal-body text-center">
-                      <div class="dispose-content">
-                        <p class="heading">Xác nhận hủy hóa đơn?</p>
-                        <button type="button" class="btn btn-primary mr-1" (click)="disposeConfirmToken(disposeToken)">Đồng
-                          ý</button>
-                        <button type="button" class="btn btn-default" (click)="modalRef.hide()">Bỏ qua</button>
-                      </div>
-                    </div>
-                  </ng-template>
-                  <ng-template #disposeToken>
-                    <ngx-spinner [visible]="signButtonLoading" [config]="spinnerConfig"></ngx-spinner>
-                    <div class="modal-header">
-                      <h4 class="modal-title pull-left">Xác nhận token</h4>
-                      <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      <p *ngIf="signErrorMessage" class="error">
-                        {{signErrorMessage}}
-                      </p>
-                      <ng-select [loading]="signTokenLoading" [items]="listTokenAvaiable" (change)="onTokenChange($event)"
-                        [clearable]="false" [searchable]="false" bindLabel="name" bindValue="alias">
-                        <ng-template ng-option-tmp let-item="item">
-                          <div class="avaible-tokens">
-                            <div *ngIf="item.isExpired;else isExpried">
-                              <div class="token-name is-expired"><b>Tên: </b>{{item.name}}</div>
-                              <label class="is-expired">
-                                <b>Hiệu lực: </b> {{item.effectiveDate}}
-                              </label>
-                            </div>
-
-                            <ng-template #isExpried>
-                              <div class="token-name is-effective"><b>Tên: </b>{{item.name}}</div>
-                              <label class="is-effective">
-                                <b>Hiệu lực: </b> {{item.effectiveDate}}
-                              </label>
-                            </ng-template>
-                          </div>
-                        </ng-template>
-                      </ng-select>
-
-                      <div class="btn-group">
-                        <button type="button" [disabled]="disposeDisabled" class="btn btn-primary mr-1 no-br" (click)="disposeConfirmClicked()">
-                          <i *ngIf="disposeButtonLoading" class="fa fa-spinner fa-spin"></i>
-                          <i *ngIf="!disposeButtonLoading" class="fas fa-check"></i>
-                          {{ disposeButtonLoading ? 'Vui lòng chờ...' : 'Hủy hóa đơn' }}
-                        </button>
-                        <button type="button" class="btn btn-default" (click)="modalRef.hide()">Bỏ qua</button>
-                      </div>
-                    </div>
-                  </ng-template>
-                </div>
-              </div>
             </div>
+
+
 
             <div class="table-wrapper">
               <input id="pageSize" type="hidden" class="id-hidden" [(ngModel)]="pageSize" />
@@ -307,9 +314,9 @@
                     <th>Đơn vị</th>
                     <th>MST</th>
 
-                    <th class="text-right">Tiền</th>
-                    <th class="text-right">Tiền thuế</th>
-                    <th class="text-right">Tổng tiền</th>
+                    <th>Tiền</th>
+                    <th>Tiền thuế</th>
+                    <th>Tổng tiền</th>
                   </tr>
                 </thead>
               </table>

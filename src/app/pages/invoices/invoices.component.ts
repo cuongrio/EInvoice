@@ -92,19 +92,6 @@ export class InvoicesComponent implements OnInit {
     private invoiceService: InvoiceService,
     private formBuilder: FormBuilder
   ) {
-    // // override the route reuse strategy
-    // this.router.routeReuseStrategy.shouldReuseRoute = function () {
-    //   return false;
-    // };
-
-    // this.router.events.subscribe((evt) => {
-    //   if (evt instanceof NavigationEnd) {
-    //     // trick the Router into believing it's last link wasn't previously loaded
-    //     this.router.navigated = false;
-    //     // if you need to scroll back to top, here is the right place
-    //     window.scrollTo(0, 0);
-    //   }
-    // });
   }
 
   ngOnInit() {
@@ -114,6 +101,14 @@ export class InvoicesComponent implements OnInit {
     this.initDataReference();
   }
 
+  public resetForm() {
+    this.searchForm.reset();
+    this.searchForm.patchValue({
+      sort: 'DESC',
+      sortBy: 'invoiceNo'
+    });
+    this.onSubmit(this.searchForm.value);
+  }
   public expandSearchClicked() {
     if (this.expandSearch) {
       this.expandSearch = false;
@@ -332,11 +327,11 @@ export class InvoicesComponent implements OnInit {
         this.ref.markForCheck();
       }.bind(this), 200);
     }, err => {
+      this.signErrorMessage = 'Có lỗi khi tương tác với Plugin, xin hãy kiểm tra lại AHoadon Plugin!';
       setTimeout(function () {
         this.signTokenLoading = false;
         this.ref.markForCheck();
       }.bind(this), 200);
-      this.errorHandler(err);
     });
   }
 
@@ -537,6 +532,13 @@ export class InvoicesComponent implements OnInit {
           $('#invoiceTable')
             .dataTable()
             .fnAddData(invoiceList.contents);
+        } else {
+          this.totalElements = 0;
+          this.totalPages = 0;
+          this.totalItems = 0;
+          $('#invoiceTable')
+            .dataTable()
+            .fnClearTable();
         }
       }
 
@@ -592,6 +594,7 @@ export class InvoicesComponent implements OnInit {
       paging: false,
       searching: false,
       retrieve: false,
+      ordering: true,
       serverSide: false,
       bLengthChange: false,
       info: false,
@@ -607,7 +610,7 @@ export class InvoicesComponent implements OnInit {
         width: '50px',
         targets: 0,
         render: function (data: any) {
-          return '<span>' + data + '</span>';
+          return data;
         }
       }, {
         width: '50px',
@@ -666,7 +669,7 @@ export class InvoicesComponent implements OnInit {
           if (type === 'display' && row.status) {
             if (statusArr) {
               const status = statusArr.find((i: SelectData) => (i.code === row.status));
-              return `<span>${status.value}</span>`;
+              return `${status.value}`;
             }
             return `<span>${row.status}</span>`;
           } else {
@@ -776,7 +779,7 @@ export class InvoicesComponent implements OnInit {
         items: 'cells',
         info: false
       },
-      order: [[2, 'desc']],
+      order: [[3, 'desc']],
       drawCallback: function () {
         const pagination = $(this)
           .closest('.dataTables_wrapper')
@@ -899,8 +902,8 @@ export class InvoicesComponent implements OnInit {
       const toDate = this.convertDateToQuery(form.toDate);
       invoiceParamsForamat.toDate = toDate;
     }
-    if (form.invoiceNo) {
-      invoiceParamsForamat.invoiceNo = form.invoiceNo;
+    if (form.invoiceNo && form.invoiceNo.length > 0) {
+      invoiceParamsForamat.invoiceNo = form.invoiceNo.trim();
     }
     if (form.form) {
       invoiceParamsForamat.form = form.form;
@@ -908,8 +911,8 @@ export class InvoicesComponent implements OnInit {
     if (form.serial) {
       invoiceParamsForamat.serial = form.serial;
     }
-    if (form.orgTaxCode) {
-      invoiceParamsForamat.orgTaxCode = form.orgTaxCode;
+    if (form.orgTaxCode && form.orgTaxCode.length > 0) {
+      invoiceParamsForamat.orgTaxCode = form.orgTaxCode.trim();
     }
     if (form.status) {
       invoiceParamsForamat.status = form.status;

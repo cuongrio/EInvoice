@@ -1,4 +1,9 @@
 /* Data Tables */
+.dataTables_scroll{
+  .dataTables_scrollHeadInner{
+    padding-top: 5px;
+  }
+}
 .dataTables_wrapper {
   padding-left: 0;
   padding-right: 0;
@@ -20,12 +25,17 @@
   }
 
   .dataTable {
+    margin-top: 0px !important;
     .btn {
       padding: 0.1rem 1rem;
       vertical-align: top;
     }
 
     thead {
+      tr > th{
+        padding-top: 0px;
+        padding-bottom: 7px;
+      }
       .sorting,
       .sorting_asc,
       .sorting_asc_disabled,
@@ -33,19 +43,7 @@
       .sorting_desc_disabled {
         &:after,
         &:before {
-          line-height: 3.5;
-          font-family: "simple-line-icons";
-          font-size: 0.65rem;
-        }
-
-        &:before {
-          content: "\e607";
-          right: 1.2em;
-        }
-
-        &:after {
-          content: "\e604";
-          right: 0.2em;
+          line-height: 1;
         }
       }
     }

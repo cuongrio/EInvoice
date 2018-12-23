@@ -61,7 +61,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   public disabledAdjust = true;
   public disabledReplace = true;
   public disabledDisposed = false;
-  public disabledApproved = false;
+  public disabledApproved = true;
   public canPreview = true;
 
   public addForm: FormGroup;
@@ -153,6 +153,11 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
+  public copyClicked() {
+    if (this.segmentRouter === 'open' && this.invoiceId) {
+      this.router.navigate([`/invoices/copy/${this.invoiceId}`]);
+    }
+  }
   public editClicked() {
     this.viewMode = false;
     this.disabledAdd = true;
@@ -162,21 +167,41 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     this.disabledSign = true;
 
     // check for CustomerCode
-    const isCodeComplete = this.existCustomerCodeComplete();
-    if (!isCodeComplete) {
+    let iscomplete = this.existCustomerCodeComplete();
+    if (!iscomplete) {
       const comboInput = $('#customerCode').find('input[role="combobox"]');
       if (comboInput) {
         comboInput.val(this.customerCodePicked);
       }
     }
-    const existTaxComplete = this.existCustomerTaxComplete();
-    if (!isCodeComplete) {
+    iscomplete = this.existCustomerTaxComplete();
+    if (!iscomplete) {
       const comboInput = $('#customerTax').find('input[role="combobox"]');
       if (comboInput) {
         comboInput.val(this.customerTaxPicked);
       }
     }
     this.ref.markForCheck();
+  }
+
+  public approveClicked() {
+    this.invoiceService.approveInvoice(this.invoiceId).subscribe(
+      data => {
+        this.modalRef.hide();
+        const initialState = {
+          message: 'Đã duyệt hóa đơn thành công!',
+          title: 'Thành công!',
+          class: 'success',
+          highlight: `Hóa đơn #${this.invoiceId}`
+        };
+        this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+        this.resolvedLink(this.invoiceId);
+      },
+      err => {
+        this.modalRef.hide();
+        this.errorHandler(err);
+      }
+    );
   }
 
   public printRowClicked() {
@@ -251,11 +276,11 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
         this.ref.markForCheck();
       }.bind(this), 200);
     }, err => {
+      this.signErrorMessage = 'Có lỗi khi tương tác với Plugin, xin hãy kiểm tra lại AHoadon Plugin!';
       setTimeout(function () {
         this.signTokenLoading = false;
         this.ref.markForCheck();
       }.bind(this), 200);
-      this.errorHandler(err);
     });
   }
 
@@ -1172,6 +1197,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
           this.disabledEdit = false;
           this.viewMode = true;
           this.disabledReplace = false;
+          this.disabledCopy = false;
         }
 
         this.canPreview = false;
@@ -1199,6 +1225,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
               this.disabledEdit = true;
               this.disabledAdjust = false;
               this.disabledReplace = false;
+              this.disabledApproved = false;
             }
             if (data.status === 'APPROVED'
               || data.status === 'SIGNED') {
@@ -1211,7 +1238,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
               this.disabledPrintTranform = true;
               this.disabledDisposed = true;
               this.disabledCopy = true;
-
             }
 
             // set view name
@@ -1238,11 +1264,14 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
           }
           if (segment === 'copy') {
             this.setFormWithDefaultData(data, 'copy');
+            this.disabledCopy = true;
           }
           if (subSegment === 'adjust') {
             this.adjustClicked();
             this.disabledCopy = true;
             this.disabledDisposed = true;
+            this.disabledApproved = true;
+            this.disabledPrintTranform = true;
             this.disabledApproved = true;
           }
           if (subSegment === 'replace') {
@@ -1250,6 +1279,8 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
             this.disabledCopy = true;
             this.disabledDisposed = true;
             this.disabledApproved = true;
+            this.disabledApproved = true;
+            this.disabledPrintTranform = true;
           }
           this.ref.markForCheck();
           return true;
@@ -1313,7 +1344,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
         controlArray.controls[idx].get('item_name').setValue(item.item_name);
         controlArray.controls[idx].get('unit').setValue(item.unit);
         controlArray.controls[idx].get('price').setValue(item.price);
-        controlArray.controls[idx].get('tax_rate').setValue(item.tax_rate);
         this.taxModel[idx] = item.tax_rate + '';
         controlArray.controls[idx].get('quantity').setValue(item.quantity);
         controlArray.controls[idx].get('discount_rate').setValue(item.discount_rate);
