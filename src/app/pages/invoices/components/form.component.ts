@@ -134,7 +134,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     private customerService: CustomerService,
     private referenceService: ReferenceService
   ) {
-    this.config.notFoundText = 'Không có kết quả';
+    this.config.notFoundText = 'Không có dữ liệu';
     this.config.loadingText = 'Đang tải..';
     this.config.addTagText = 'Thêm';
   }
@@ -304,7 +304,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
       }
     }
 
-    console.log(this.addForm.invalid + '---' + this.noItemLine);
     if (this.addForm.invalid || this.noItemLine) {
       this.previewLoading = false;
       return;
@@ -906,17 +905,24 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
     this.clearFormArray(this.itemFormArray);
     this.addForm.reset();
-
-    // set default
-    this.loadCustomers();
-    this.loadGoods();
     this.initNewRow();
-
     const dateFormate = moment(new Date()).format('DD-MM-YYYY');
     this.invoiceDatePicked = dateFormate;
     this.addForm.patchValue({
       invoiceDate: dateFormate
     });
+
+    if (this.comboForm && this.comboSerial
+      && this.comboHTTT && this.comboTaxRate
+      && this.comboStatus) {
+      const firstForm = this.comboForm[0].code;
+      this.loadSerialByForm(firstForm);
+      this.addForm.patchValue({
+        form: firstForm,
+        payment_method: this.comboHTTT[0].code
+      });
+    }
+
   }
 
   private errorSignHandler(err: any) {
@@ -1185,6 +1191,17 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     this.segmentRouter = segment;
     this.canPreview = true;
     this.keptForUpdate = {};
+
+    if (segment === 'createNew') {
+      this.disabledDisposed = true;
+      this.disabledCopy = true;
+      this.disabledAdjust = true;
+      this.disabledApproved = true;
+      this.disabledEdit = true;
+      this.disabledInCD = true;
+      this.disabledPrintTranform = true;
+      this.disabledReplace = true;
+    }
 
     // case create new
     return this.subscription = this.activatedRoute.params.subscribe((params: any) => {

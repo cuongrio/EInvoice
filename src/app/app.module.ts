@@ -20,7 +20,6 @@ import { SharedModule } from '@app/shared';
 // list page routes
 import { AppComponent } from './app.component';
 import { PageLayoutComponent } from './pages/page-layout.component';
-import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/login.component';
 import { NotFoundComponent } from './exception/not-found.component';
 import { BadRequestComponent } from './exception/bad-request.component';
@@ -32,7 +31,6 @@ import { CookieService } from 'ngx-cookie-service';
 import { AppService } from './_services/core/app.service';
 import { CoreModule } from './core/core.module';
 import { HttpService } from './core/http/http.service';
-import { AppConstant } from './_mock/mock.data';
 import { TranslateModule } from '@ngx-translate/core';
 import { AppDirectiveModule } from './_directives/directive.module';
 
@@ -41,7 +39,6 @@ import { AppDirectiveModule } from './_directives/directive.module';
     AppComponent,
     PageLayoutComponent,
     LoginComponent,
-    RegisterComponent,
     ForgotPassComponent,
     NotFoundComponent,
     ServerErrorComponent,
@@ -67,7 +64,7 @@ import { AppDirectiveModule } from './_directives/directive.module';
     AppDirectiveModule
   ],
 
-  providers: [ValidationService, ForgotPassService, CookieService, HttpService, AppService, AppConstant],
+  providers: [ValidationService, ForgotPassService, CookieService, HttpService, AppService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

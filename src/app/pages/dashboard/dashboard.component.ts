@@ -38,7 +38,8 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  public formatCurrency(price: number) {
+  public formatCurrency(priceStr: string) {
+    const price = +priceStr;
     if (price > 0) {
       return price.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
     }

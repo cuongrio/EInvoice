@@ -105,14 +105,14 @@ export class CustomersComponent implements OnInit, AfterViewInit {
   }
 
   public openClicked() {
-    const customerId = +this.getCheckboxesValue();
-    this.customerService.retrieveById(customerId).subscribe(data => {
-      const initialState = {
-        dataForm: data,
-        viewMode: true
-      };
-      this.modalRef = this.modalService.show(CustomerFormComponent, { class: 'modal-lg', initialState });
-    });
+    // const customerId = +this.getCheckboxesValue();
+    // this.customerService.retrieveById(customerId).subscribe(data => {
+    //   const initialState = {
+    //     dataForm: data,
+    //     viewMode: true
+    //   };
+    //   this.modalRef = this.modalService.show(CustomerFormComponent, { class: 'modal-lg', initialState });
+    // });
 
   }
 
@@ -121,23 +121,23 @@ export class CustomersComponent implements OnInit, AfterViewInit {
   }
 
   public deleteClicked() {
-    const customerId = +this.getCheckboxesValue();
-    this.customerService.delete(customerId).subscribe(
-      data => {
-        this.modalRef.hide();
-        const initialState = {
-          message: 'Đã hủy đối tượng thành công!',
-          title: 'Thành công!',
-          class: 'success',
-          highlight: `Đối tượng #(${data.customer_id}) ${data.customer_name}`
-        };
-        this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
-      },
-      err => {
-        this.modalRef.hide();
-        this.errorHandler(err);
-      }
-    );
+    // const customerId = +this.getCheckboxesValue();
+    // this.customerService.delete(customerId).subscribe(
+    //   data => {
+    //     this.modalRef.hide();
+    //     const initialState = {
+    //       message: 'Đã hủy đối tượng thành công!',
+    //       title: 'Thành công!',
+    //       class: 'success',
+    //       highlight: `Đối tượng #(${data.customer_id}) ${data.customer_name}`
+    //     };
+    //     this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+    //   },
+    //   err => {
+    //     this.modalRef.hide();
+    //     this.errorHandler(err);
+    //   }
+    // );
   }
 
   public onPageChange(page: number) { }

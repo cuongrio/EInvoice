@@ -2,13 +2,12 @@ import { Injectable } from '@angular/core';
 import { ProductModel } from '@app/_models';
 import { of } from 'rxjs';
 import { AppService } from '@app/_services/core/app.service';
-import { AppConstant } from '@app/_mock/mock.data';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GoodService {
-  constructor(private appConstant: AppConstant, private appService: AppService) { }
+  constructor(private appService: AppService) { }
 
   /**** LIST *** */
   getList() {
@@ -21,7 +20,6 @@ export class GoodService {
   }
 
   delete(goodId: number) {
-    return of(this.appConstant.customerDetail);
   }
 
   retrieveById(goodId: number) {

@@ -115,23 +115,23 @@ export class ProductsComponent implements OnInit, AfterViewInit {
   public editClicked() { }
 
   public deleteClicked() {
-    const goodId = +this.getCheckboxesValue();
-    this.productService.delete(goodId).subscribe(
-      data => {
-        this.modalRef.hide();
-        const initialState = {
-          message: 'Đã hủy đối tượng thành công!',
-          title: 'Thành công!',
-          class: 'success',
-          highlight: `Đối tượng #(${data.customer_id}) ${data.customer_name}`
-        };
-        this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
-      },
-      err => {
-        this.modalRef.hide();
-        this.errorHandler(err);
-      }
-    );
+    // const goodId = +this.getCheckboxesValue();
+    // this.productService.delete(goodId).subscribe(
+    //   data => {
+    //     this.modalRef.hide();
+    //     const initialState = {
+    //       message: 'Đã hủy đối tượng thành công!',
+    //       title: 'Thành công!',
+    //       class: 'success',
+    //       highlight: `Đối tượng #(${data.customer_id}) ${data.customer_name}`
+    //     };
+    //     this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+    //   },
+    //   err => {
+    //     this.modalRef.hide();
+    //     this.errorHandler(err);
+    //   }
+    // );
   }
 
   public copyClicked() { }

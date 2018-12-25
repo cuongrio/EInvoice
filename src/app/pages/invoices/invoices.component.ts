@@ -12,6 +12,7 @@ import { AlertComponent } from '@app//shared/alert/alert.component';
 import { TokenService } from './../../_services/app/token.service';
 import { TokenData } from './../../_models/data/token.data';
 import { ISpinnerConfig, SPINNER_PLACEMENT, SPINNER_ANIMATIONS } from '@hardpool/ngx-spinner';
+import { NgSelectConfig } from '@ng-select/ng-select';
 
 declare var $: any;
 
@@ -81,6 +82,7 @@ export class InvoicesComponent implements OnInit {
   private tokenPicked: TokenData;
 
   constructor(
+    private config: NgSelectConfig,
     private modalService: BsModalService,
     private ref: ChangeDetectorRef,
     private datePipe: DatePipe,
@@ -92,6 +94,9 @@ export class InvoicesComponent implements OnInit {
     private invoiceService: InvoiceService,
     private formBuilder: FormBuilder
   ) {
+    this.config.notFoundText = 'Không có dữ liệu';
+    this.config.loadingText = 'Đang tải..';
+    this.config.addTagText = 'Thêm';
   }
 
   ngOnInit() {
