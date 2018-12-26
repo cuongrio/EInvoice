@@ -51,7 +51,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-key"></i></span>
                                     </div>
-                                    <input type="text" formControlName="password" placeholder="Nhập mật khẩu" class="form-control" />
+                                    <input type="password" formControlName="password" placeholder="Nhập mật khẩu" class="form-control" />
                                 </div>
                                 <app-control-message *ngIf="submitted" [control]="confirmPassForm.controls['password']"></app-control-message>
                             </div>
@@ -61,7 +61,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-lock"></i></span>
                                     </div>
-                                    <input type="text" formControlName="confirmPass" placeholder="Nhập lại mật khẩu"
+                                    <input type="password" formControlName="confirmPass" placeholder="Nhập lại mật khẩu"
                                         class="form-control" />
                                 </div>
                                 <p class="error text-danger" *ngIf="submitted && confirmPassForm.hasError('notSame')">

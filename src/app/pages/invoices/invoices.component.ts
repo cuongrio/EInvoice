@@ -207,6 +207,8 @@ export class InvoicesComponent implements OnInit {
 
       invoiceParam.page = +this.page;
       invoiceParam.size = this.pageSizeList[0].code;
+      
+      localStorage.setItem('userquery', JSON.stringify(invoiceParam));
       // call service
       this.router.navigate([], { replaceUrl: true, queryParams: invoiceParam });
       this.callServiceAndBindTable(invoiceParam);
@@ -264,17 +266,9 @@ export class InvoicesComponent implements OnInit {
         this.printLoading = false;
         this.ref.markForCheck();
       }.bind(this), 200);
-      // disable all button
-      $('#openButton').prop('disabled', true);
-      $('#printTranformButton').prop('disabled', true);
-      $('#copyButton').prop('disabled', true);
-      $('#signButton').prop('disabled', true);
-      $('#printButton').prop('disabled', true);
-      $('#approveButton').prop('disabled', true);
-      $('#disposeButton').prop('disabled', true);
     }, err => {
-      this.ref.markForCheck();
       this.errorHandler(err);
+      this.ref.markForCheck();
     });
   }
 
@@ -284,15 +278,6 @@ export class InvoicesComponent implements OnInit {
       const file = new Blob([data], { type: 'application/pdf' });
       const fileURL = URL.createObjectURL(file);
       window.open(fileURL, '_blank');
-
-      // disable all button
-      $('#openButton').prop('disabled', true);
-      $('#printTranformButton').prop('disabled', true);
-      $('#copyButton').prop('disabled', true);
-      $('#signButton').prop('disabled', true);
-      $('#printButton').prop('disabled', true);
-      $('#approveButton').prop('disabled', true);
-      $('#disposeButton').prop('disabled', true);
     }, err => {
       const initialState = {
         message: 'Hóa đơn chỉ được in chuyển đổi một lần!',
@@ -452,30 +437,38 @@ export class InvoicesComponent implements OnInit {
       && urlSegment[0].path === 'refresh') {
       this.reloadPage();
     } else {
-      if (this.activeRouter.snapshot.queryParams) {
-        const routerParams = JSON.parse(JSON.stringify(this.activeRouter.snapshot.queryParams));
-        if (routerParams) {
-          if (routerParams['page']) {
-            this.page = +routerParams['page'];
-            this.previousPage = +routerParams['page'];
-          }
-          if (routerParams['size']) {
-            this.pageSize = +routerParams['size'];
-          }
-          if (routerParams['fromDate']) {
-            routerParams['fromDate'] = this.convertDatetoDisplay(routerParams['fromDate']);
-          }
-          if (routerParams['toDate']) {
-            routerParams['toDate'] = this.convertDatetoDisplay(routerParams['toDate']);
-          }
+      let invoiceParam: InvoiceParam;
+      const userquery = localStorage.getItem('userquery');
+      if (userquery) {
+        invoiceParam = JSON.parse(userquery);
+        // set default value form
+        (<FormGroup>this.searchForm).patchValue(invoiceParam, { onlySelf: true });
+      } else {
+        if (this.activeRouter.snapshot.queryParams) {
+          const routerParams = JSON.parse(JSON.stringify(this.activeRouter.snapshot.queryParams));
+          if (routerParams) {
+            if (routerParams['page']) {
+              this.page = +routerParams['page'];
+              this.previousPage = +routerParams['page'];
+            }
+            if (routerParams['size']) {
+              this.pageSize = +routerParams['size'];
+            }
+            if (routerParams['fromDate']) {
+              routerParams['fromDate'] = this.convertDatetoDisplay(routerParams['fromDate']);
+            }
+            if (routerParams['toDate']) {
+              routerParams['toDate'] = this.convertDatetoDisplay(routerParams['toDate']);
+            }
 
-          // set default value form
-          (<FormGroup>this.searchForm).patchValue(routerParams, { onlySelf: true });
+            // set default value form
+            (<FormGroup>this.searchForm).patchValue(routerParams, { onlySelf: true });
+          }
+          invoiceParam = { page: +this.page, size: this.pageSize };
         }
-        const invoiceParam: InvoiceParam = { page: +this.page, size: this.pageSize };
-        // call service
-        this.callServiceAndBindTable(invoiceParam);
       }
+      // call service
+      this.callServiceAndBindTable(invoiceParam);
     }
   }
 
@@ -737,9 +730,10 @@ export class InvoicesComponent implements OnInit {
             return `
               <span class="lh-medium" title="${org}">${orgFormat}</span>
               <div class="hidden-col">
-              <input type="checkbox" name="stickchoice" value="${row.invoice_id}" class="td-checkbox-hidden">
-              <input type="hidden" class="id-hidden" value="${row.invoice_id}">
-              <input type="hidden" class="status-hidden" value="${row.status}">
+                <input type="checkbox" name="stickchoice" value="${row.invoice_id}" class="td-checkbox-hidden">
+                <input type="hidden" class="id-hidden" value="${row.invoice_id}">
+                <input type="hidden" class="status-hidden" value="${row.status}">
+                <input type="hidden" class="type-hidden" value="${row.invoice_type}">
               </div>
             `;
           } else {
@@ -775,14 +769,6 @@ export class InvoicesComponent implements OnInit {
       }
     });
 
-    function bindButtonStatus(status: boolean) {
-      $('#openButton').prop('disabled', status);
-      $('#copyButton').prop('disabled', status);
-      $('#printButton').prop('disabled', status);
-      $('#approveButton').prop('disabled', status);
-      $('#disposeButton').prop('disabled', status);
-    }
-
     function formatCurrency(price: number) {
       if (price > 0) {
         return price.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
@@ -791,7 +777,11 @@ export class InvoicesComponent implements OnInit {
     }
 
     // disabled all button
-    bindButtonStatus(true);
+    $('#openButton').prop('disabled', true);
+    $('#copyButton').prop('disabled', true);
+    $('#printButton').prop('disabled', true);
+    $('#approveButton').prop('disabled', true);
+    $('#disposeButton').prop('disabled', true);
     $('#signButton').prop('disabled', true);
     $('#printTranformButton').prop('disabled', true);
     $('#adjustButton').prop('disabled', true);
@@ -834,6 +824,8 @@ export class InvoicesComponent implements OnInit {
             .prop('checked', true);
 
           const status = $(this).find('.status-hidden').val();
+          const type = $(this).find('.type-hidden').val();
+
           if (status === 'DISPOSED') {
             $('#signButton').prop('disabled', true);
             $('#printTranformButton').prop('disabled', true);
@@ -848,15 +840,30 @@ export class InvoicesComponent implements OnInit {
             if (status === 'CREATED') {
               $('#signButton').prop('disabled', false);
             }
-            bindButtonStatus(false);
-            $('#approveButton').prop('disabled', true);
+            $('#openButton').prop('disabled', false);
+            $('#copyButton').prop('disabled', false);
+            $('#printButton').prop('disabled', false);
+            $('#approveButton').prop('disabled', false);
+            $('#disposeButton').prop('disabled', false);
+            $('#printTranformButton').prop('disabled', false);
             if (status === 'SIGNED') {
               $('#approveButton').prop('disabled', false);
-              $('#signButton').prop('disabled', true);
               $('#printTranformButton').prop('disabled', false);
-              $('#adjustButton').prop('disabled', false);
-              $('#replaceButton').prop('disabled', false);
+              $('#signButton').prop('disabled', true);
             }
+
+            if (status === 'APPROVED') {
+              $('#printTranformButton').prop('disabled', false);
+              $('#approveButton').prop('disabled', true);
+              $('#signButton').prop('disabled', true);
+            }
+          }
+
+          if (type === 'REPLACE' || type === 'REPLACED') {
+            $('#replaceButton').prop('disabled', true);
+          }
+          if (type === 'ADJ' || type === 'ADJED') {
+            $('#adjustButton').prop('disabled', true);
           }
         }
       }

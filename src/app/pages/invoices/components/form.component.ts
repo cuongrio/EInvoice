@@ -1239,7 +1239,6 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
             }
             if (data.status === 'SIGNED') {
               this.disabledSign = true;
-              this.disabledEdit = true;
               this.disabledAdjust = false;
               this.disabledReplace = false;
               this.disabledApproved = false;
@@ -1247,6 +1246,9 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
             if (data.status === 'APPROVED'
               || data.status === 'SIGNED') {
               this.disabledInCD = false;
+              this.disabledAdjust = false;
+              this.disabledReplace = false;
+              this.disabledEdit = true;
             }
             if (data.status === 'DISPOSED') {
               this.disabledEdit = true;
@@ -1275,8 +1277,12 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
                 ref_invoice_date: data.ref_invoice_date,
                 secure_id: data.secure_id
               };
-              this.disabledAdjust = true;
-              this.disabledReplace = true;
+              if (data.invoice_type === 'REPLACE' || data.invoice_type === 'REPLACED') {
+                this.disabledReplace = true;
+              }
+              if (data.invoice_type === 'ADJ' || data.invoice_type === 'ADJED') {
+                this.disabledAdjust = true;
+              }
             }
           }
           if (segment === 'copy') {
@@ -1285,17 +1291,24 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
           }
           if (subSegment === 'adjust') {
             this.adjustClicked();
+            const dateFormate = moment(new Date()).format('DD-MM-YYYY');
+            this.invoiceDatePicked = dateFormate;
+            this.addForm.patchValue({
+              invoiceDate: dateFormate,
+              form: data.form,
+              serial: data.serial,
+              payment_method: data.payment_method
+            });
+
             this.disabledCopy = true;
             this.disabledDisposed = true;
             this.disabledApproved = true;
             this.disabledPrintTranform = true;
-            this.disabledApproved = true;
           }
           if (subSegment === 'replace') {
             this.replaceClicked();
             this.disabledCopy = true;
             this.disabledDisposed = true;
-            this.disabledApproved = true;
             this.disabledApproved = true;
             this.disabledPrintTranform = true;
           }
@@ -1361,15 +1374,16 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
         controlArray.controls[idx].get('item_name').setValue(item.item_name);
         controlArray.controls[idx].get('unit').setValue(item.unit);
         controlArray.controls[idx].get('price').setValue(item.price);
-        this.taxModel[idx] = item.tax_rate + '';
         controlArray.controls[idx].get('quantity').setValue(item.quantity);
         controlArray.controls[idx].get('discount_rate').setValue(item.discount_rate);
         controlArray.controls[idx].get('discount').setValue(0);
+        controlArray.controls[idx].get('tax_rate').setValue(item.tax_rate);
 
         this.linePriceTax.splice(idx, 0, item.tax);
         this.lineAmount.splice(idx, 0, item.amount);
         this.lineAmoutWt.splice(idx, 0, item.amount_wt);
         this.linePriceWt.splice(idx, 0, item.price_wt);
+        this.taxModel[idx] = item.tax_rate + '';
         this.lineDiscount[idx] = (this.lineAmount[idx] * item.discount_rate) / 100;
       });
     }
@@ -1441,6 +1455,11 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   }
 
   private initForAdjustAndReplace() {
+    const dateFormate = moment(new Date()).format('DD-MM-YYYY');
+    this.invoiceDatePicked = dateFormate;
+    this.addForm.patchValue({
+      invoiceDate: dateFormate
+    });
     this.clearFormArray(this.itemFormArray);
     this.initNewRow();
     this.lineAmount = new Array<number>();
