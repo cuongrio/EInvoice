@@ -3,5 +3,6 @@ export class GoodParam {
   goodName?: string;
   goodGroup?: string;
   unit?: string;
-  page?: string;
+  page?: number;
+  size?: number;
 }

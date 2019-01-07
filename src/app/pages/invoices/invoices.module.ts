@@ -45,7 +45,6 @@ import { AppDirectiveModule } from '@app/_directives/directive.module';
     TooltipModule.forRoot(),
     PaginationModule.forRoot(),
     BsDatepickerModule.forRoot(),
-    PopoverModule.forRoot(),
     ModalModule.forRoot(),
     AppDirectiveModule,
     SharedModule

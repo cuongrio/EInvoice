@@ -66,8 +66,8 @@ export class InvoicesComponent implements OnInit {
   public totalItems = 0;
   public totalElements = 0;
   public totalPages = 0;
-  public pageSizeList = new Array<any>();
-  public pageSize: number;
+  public pageSizeList = new Array<any>(); 
+  public sizeNumber: any;
 
   public configSingleBox = {
     noResultsFound: ' ',
@@ -124,13 +124,13 @@ export class InvoicesComponent implements OnInit {
   }
 
   public openModal(template: TemplateRef<any>) {
-    this.modalRef = this.modalService.show(template, { class: 'modal-sm' });
+    this.modalRef = this.modalService.show(template, { animated: false, class: 'modal-sm' });
   }
 
   public openModalMd(template: TemplateRef<any>) {
     this.signErrorMessage = '';
     this.loadTokenData();
-    this.modalRef = this.modalService.show(template, { class: 'modal-token' });
+    this.modalRef = this.modalService.show(template, { animated: false, class: 'modal-token' });
   }
 
   public onTokenChange(token: any) {
@@ -173,7 +173,7 @@ export class InvoicesComponent implements OnInit {
           class: 'success',
           highlight: `Hóa đơn #${invoiceId}`
         };
-        this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+        this.modalRef = this.modalService.show(AlertComponent, {animated: false, class: 'modal-sm', initialState });
       }, err => {
         this.errorSignHandler(err);
       });
@@ -186,7 +186,7 @@ export class InvoicesComponent implements OnInit {
 
     const invoiceParam: InvoiceParam = this.formatForm(form);
     invoiceParam.page = +this.page;
-    invoiceParam.size = this.pageSize;
+    invoiceParam.size = +this.sizeNumber;
 
     localStorage.setItem('userquery', JSON.stringify(invoiceParam));
     this.router.navigate([], { replaceUrl: true, queryParams: invoiceParam });
@@ -207,7 +207,7 @@ export class InvoicesComponent implements OnInit {
 
       invoiceParam.page = +this.page;
       invoiceParam.size = this.pageSizeList[0].code;
-      
+
       localStorage.setItem('userquery', JSON.stringify(invoiceParam));
       // call service
       this.router.navigate([], { replaceUrl: true, queryParams: invoiceParam });
@@ -215,7 +215,11 @@ export class InvoicesComponent implements OnInit {
     }
   }
 
-  public onSizeChange(size: number) {
+  public onSizeChange(sizeObj: any) {
+    let size = 20;
+    if (sizeObj != null) {
+      size = sizeObj.code;
+    }
     this.isSearching = true;
     const userquery = localStorage.getItem('userquery');
     let invoiceParam: InvoiceParam;
@@ -224,8 +228,10 @@ export class InvoicesComponent implements OnInit {
     } else {
       invoiceParam = {};
     }
-    invoiceParam.page = +this.page;
+    invoiceParam.page = 1;
     invoiceParam.size = size;
+
+    localStorage.setItem('userquery', JSON.stringify(invoiceParam));
     // call service
     this.router.navigate([], { replaceUrl: true, queryParams: invoiceParam });
     this.callServiceAndBindTable(invoiceParam);
@@ -284,7 +290,7 @@ export class InvoicesComponent implements OnInit {
         title: 'Hóa đơn đã in chuyển đổi',
         class: 'error'
       };
-      this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+      this.modalRef = this.modalService.show(AlertComponent, { animated: false, class: 'modal-sm', initialState });
     });
   }
 
@@ -336,7 +342,7 @@ export class InvoicesComponent implements OnInit {
           class: 'success',
           highlight: `Hóa đơn #${invoiceId}`
         };
-        this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+        this.modalRef = this.modalService.show(AlertComponent, { animated: false, class: 'modal-sm', initialState });
         this.reloadPage();
       },
       err => {
@@ -349,7 +355,7 @@ export class InvoicesComponent implements OnInit {
   public disposeConfirmToken(template: TemplateRef<any>) {
     this.modalRef.hide();
     this.loadTokenData();
-    this.modalRef = this.modalService.show(template, { class: 'modal-token' });
+    this.modalRef = this.modalService.show(template, { animated: false, class: 'modal-token' });
   }
 
   public disposeConfirmClicked() {
@@ -365,7 +371,7 @@ export class InvoicesComponent implements OnInit {
             class: 'success',
             highlight: `Hóa đơn #${data.invoice_id}`
           };
-          this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+          this.modalRef = this.modalService.show(AlertComponent, { animated: false, class: 'modal-sm', initialState });
           this.reloadPage();
         },
         err => {
@@ -382,7 +388,7 @@ export class InvoicesComponent implements OnInit {
             class: 'success',
             highlight: `Hóa đơn #${data.invoice_id}`
           };
-          this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+          this.modalRef = this.modalService.show(AlertComponent, { animated: false, class: 'modal-sm', initialState });
         },
         err => {
           this.modalRef.hide();
@@ -393,14 +399,14 @@ export class InvoicesComponent implements OnInit {
 
   public dummyPageSize() {
     return [{
-      code: 20,
-      value: '20'
+      "code": 20,
+      "value": '20'
     }, {
-      code: 50,
-      value: '50'
+      "code": 50,
+      "value": '50'
     }, {
-      code: 100,
-      value: '100'
+      "code": 100,
+      "value": '100'
     }];
   }
 
@@ -431,49 +437,31 @@ export class InvoicesComponent implements OnInit {
   }
 
   private initRouter() {
-    const urlSegment: UrlSegment[] = this.activeRouter.snapshot.url;
-
-    if (urlSegment && urlSegment[0]
-      && urlSegment[0].path === 'refresh') {
-      this.reloadPage();
-    } else {
-      let invoiceParam: InvoiceParam;
-      const userquery = localStorage.getItem('userquery');
-      if (userquery) {
-        invoiceParam = JSON.parse(userquery);
-        // set default value form
-        (<FormGroup>this.searchForm).patchValue(invoiceParam, { onlySelf: true });
-      } else {
-        if (this.activeRouter.snapshot.queryParams) {
-          const routerParams = JSON.parse(JSON.stringify(this.activeRouter.snapshot.queryParams));
-          if (routerParams) {
-            if (routerParams['page']) {
-              this.page = +routerParams['page'];
-              this.previousPage = +routerParams['page'];
-            }
-            if (routerParams['size']) {
-              this.pageSize = +routerParams['size'];
-            }
-            if (routerParams['fromDate']) {
-              routerParams['fromDate'] = this.convertDatetoDisplay(routerParams['fromDate']);
-            }
-            if (routerParams['toDate']) {
-              routerParams['toDate'] = this.convertDatetoDisplay(routerParams['toDate']);
-            }
-
-            // set default value form
-            (<FormGroup>this.searchForm).patchValue(routerParams, { onlySelf: true });
-          }
-          invoiceParam = { page: +this.page, size: this.pageSize };
+    if (this.activeRouter.snapshot.queryParams) {
+      let routerParams = JSON.parse(JSON.stringify(this.activeRouter.snapshot.queryParams));
+      console.log('routerParams: ' + JSON.stringify(routerParams));
+      if (Object.keys(routerParams).length !== 0) {
+        if (routerParams['page']) {
+          this.page = +routerParams['page'];
+          this.previousPage = +routerParams['page'];
         }
+        if (routerParams['size']) {
+          this.sizeNumber = +routerParams['size'];
+        }
+        if (routerParams['fromDate']) {
+          routerParams['fromDate'] = this.convertDatetoDisplay(routerParams['fromDate']);
+        }
+        if (routerParams['toDate']) {
+          routerParams['toDate'] = this.convertDatetoDisplay(routerParams['toDate']);
+        }
+
+        localStorage.setItem('userquery', JSON.stringify(routerParams));
       }
-      // call service
-      this.callServiceAndBindTable(invoiceParam);
     }
+    this.reloadPage();
   }
 
   private initDefault() {
-    this.pageSize = 20;
     const expandSearchTmp = localStorage.getItem('expandSearch');
     if (expandSearchTmp) {
       this.expandSearch = JSON.parse(expandSearchTmp);
@@ -512,10 +500,11 @@ export class InvoicesComponent implements OnInit {
     if (err.error) {
       initialState.message = err.error.message;
     }
-    this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+    this.modalRef = this.modalService.show(AlertComponent, { animated: false, class: 'modal-sm', initialState });
   }
 
   private callServiceAndBindTable(params: InvoiceParam) {
+    this.isSearching = true;
     this.invoiceService.queryInvoices(params).subscribe((data: any) => {
       if (data) {
         const invoiceList = data as InvoiceListData;
@@ -540,10 +529,12 @@ export class InvoicesComponent implements OnInit {
         }
       }
 
-      this.isSearching = false;
+      setTimeout(function () {
+        this.isSearching = false;
+        this.ref.markForCheck();
+      }.bind(this), 200);
     }, err => {
-      this.isSearching = false;
-      this.errorHandler(err);
+      this.router.navigate(['/500']);
     });
   }
 
@@ -604,8 +595,13 @@ export class InvoicesComponent implements OnInit {
         $(row).addClass('row-parent');
       },
       columnDefs: [{
+        width: '16px',
+        searchable: false,
+        orderable: false,
+        targets: 0
+      }, {
         width: '50px',
-        targets: 0,
+        targets: 1,
         createdCell: function (td: any, cellData: string) {
           if (cellData && cellData.length > 0) {
             $(td).attr('data-order', cellData);
@@ -618,7 +614,7 @@ export class InvoicesComponent implements OnInit {
         }
       }, {
         width: '50px',
-        targets: 1,
+        targets: 2,
         createdCell: function (td: any, cellData: string) {
           if (cellData && cellData.length > 0) {
             $(td).attr('data-order', cellData);
@@ -631,7 +627,7 @@ export class InvoicesComponent implements OnInit {
         }
       }, {
         width: '50px',
-        targets: 2,
+        targets: 3,
         createdCell: function (td: any, cellData: string) {
           $(td).html(`<span class="text-bold">${cellData}</span>`);
           if (cellData && cellData.length > 0) {
@@ -641,23 +637,21 @@ export class InvoicesComponent implements OnInit {
         }
       }, {
         width: '60px',
-        targets: 3,
+        targets: 4,
         createdCell: function (td: any, cellData: string) {
           if (cellData && cellData.length > 0) {
             $(td).attr('data-order', cellData);
             $(td).attr('data-sort', cellData);
             const dateFormate = moment(cellData).format('DD/MM/YYYY');
             $(td).html(dateFormate);
-            return `${dateFormate}`;
           }
         }
       }, {
-        width: '400px',
-        targets: 4,
+        targets: 5,
         orderable: false,
       }, {
         width: '60px',
-        targets: 5,
+        targets: 6,
         createdCell: function (td: any, cellData: string) {
           if (cellData && cellData.length > 0) {
             $(td).attr('data-order', cellData);
@@ -665,18 +659,6 @@ export class InvoicesComponent implements OnInit {
           }
         }
       }, {
-        width: '70px',
-        targets: 6,
-        createdCell: function (td: any, cellData: number) {
-          if (cellData && cellData > 0) {
-            $(td).attr('data-order', cellData);
-            $(td).attr('data-sort', cellData);
-            const cellformat = formatCurrency(cellData);
-            $(td).html(cellformat);
-          }
-        }
-      },
-      {
         width: '70px',
         targets: 7,
         createdCell: function (td: any, cellData: number) {
@@ -699,9 +681,24 @@ export class InvoicesComponent implements OnInit {
             $(td).html(cellformat);
           }
         }
+      },
+      {
+        width: '70px',
+        targets: 9,
+        createdCell: function (td: any, cellData: number) {
+          if (cellData && cellData > 0) {
+            $(td).attr('data-order', cellData);
+            $(td).attr('data-sort', cellData);
+            const cellformat = formatCurrency(cellData);
+            $(td).html(cellformat);
+          }
+        }
       }
       ],
       columns: [{
+        className: 'text-bold',
+        data: 'invoice_id'
+      }, {
         data: 'status'
       }, {
         data: 'invoice_type'
@@ -768,6 +765,12 @@ export class InvoicesComponent implements OnInit {
         pagination.toggle(this.api().page.info().pages > 1);
       }
     });
+
+    table.on('order.dt search.dt', function () {
+      table.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell: any, i: number) {
+        cell.innerHTML = i + 1;
+      });
+    }).draw();
 
     function formatCurrency(price: number) {
       if (price > 0) {
@@ -916,6 +919,7 @@ export class InvoicesComponent implements OnInit {
 
   private initDataReference() {
     this.pageSizeList = this.dummyPageSize();
+    this.sizeNumber = 20; 
 
     // check in session
     let json = sessionStorage.getItem('comboStatus');
@@ -1028,10 +1032,13 @@ export class InvoicesComponent implements OnInit {
 
   private reloadPage() {
     let invoiceParam: InvoiceParam;
-    this.isSearching = true;
+
     const userquery = localStorage.getItem('userquery');
     if (userquery) {
       invoiceParam = JSON.parse(userquery);
+      this.page = invoiceParam.page;
+      this.sizeNumber = +invoiceParam.size;
+
       // set default value form
       (<FormGroup>this.searchForm).patchValue(invoiceParam, { onlySelf: true });
     } else {

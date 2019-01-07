@@ -14,7 +14,8 @@
   font-family: $type-1;
 
   a {
-    color: theme-color(success);
+    color: #0073dd;
+    font-weight: 600;
     font-size: inherit;
   }
   @media (max-width: 991px) {

@@ -378,13 +378,18 @@ legend.scheduler-border {
   font-size: 12px;
   font-weight: 400;
 }
-.ngb-pagination {
-  margin-top: 10px;
-  position: relative;
-  min-height: 35px;
+.ngb-pagination {  
+  &.bottom-pagination{
+    padding: 4px 0px;
+    display: flex;
+    flex-flow: row;
+    flex-grow: row;
+    justify-content: space-between;
+    align-items: center;
+  }
 
   .pagination{
-    margin-bottom: 10px;
+    margin-bottom: 0 !important;
     .page-item{
       .page-link{
         padding: 4px 10px !important;
@@ -394,19 +399,16 @@ legend.scheduler-border {
   }
 
   .page-info {
-    position: absolute;
-    top: -3px;
-    left: 0;
+    display: block;
     font-size: 13px;
-    .page-size_menu{
-      border-radius: 3px;
-      padding: 3px;
-      height: 26px;
+    .form-group{
+      margin-top: 4px;
     }
     
     .pager-footer_info{
       padding: 8px 0px;
       margin-left: 8px;
+      margin-bottom: 0 !important;
     }
   }
 }
@@ -499,8 +501,7 @@ table {
   border-right: 0 !important;
 }
 
-.search-box {
-  margin-bottom: 8px;
+.search-box { 
   .card {
     .card-body {
       background: aliceblue;
@@ -525,7 +526,6 @@ table {
 }
 
 .table-wrapper {
-  border: 1px solid #dedede;
   position: relative;
 
   .dataTables_info {
@@ -723,6 +723,14 @@ table {
   height: 200px;
   @extend .d-flex;
   @extend .align-items-center;
+}
+
+.paging-top__group{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+  padding: 8px 0px;
 }
 
 .documentation {

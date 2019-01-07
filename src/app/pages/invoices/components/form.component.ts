@@ -194,7 +194,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
           class: 'success',
           highlight: `Hóa đơn #${this.invoiceId}`
         };
-        this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+        this.modalRef = this.modalService.show(AlertComponent, { animated: false, class: 'modal-sm', initialState });
         this.resolvedLink(this.invoiceId);
       },
       err => {
@@ -383,19 +383,19 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   }
 
   public openModal(template: TemplateRef<any>) {
-    this.modalRef = this.modalService.show(template, { class: 'modal-sm' });
+    this.modalRef = this.modalService.show(template, { animated: false, class: 'modal-sm' });
   }
 
   public openModalMd(template: TemplateRef<any>) {
     this.signErrorMessage = '';
     this.loadTokenData();
-    this.modalRef = this.modalService.show(template, { class: 'modal-token' });
+    this.modalRef = this.modalService.show(template, { animated: false, class: 'modal-token' });
   }
 
   public disposeConfirmToken(template: TemplateRef<any>) {
     this.modalRef.hide();
     this.loadTokenData();
-    this.modalRef = this.modalService.show(template, { class: 'modal-token' });
+    this.modalRef = this.modalService.show(template, { animated: false, class: 'modal-token' });
   }
 
   public disposeConfirmClicked() {
@@ -413,7 +413,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
             class: 'success',
             highlight: `Hóa đơn #${data.invoice_id}`
           };
-          this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+          this.modalRef = this.modalService.show(AlertComponent, { animated: false, class: 'modal-sm', initialState });
           this.resolvedLink(this.invoiceId);
         },
         err => {
@@ -430,7 +430,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
             class: 'success',
             highlight: `Hóa đơn #${data.invoice_id}`
           };
-          this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+          this.modalRef = this.modalService.show(AlertComponent, { animated: false, class: 'modal-sm', initialState });
           this.resolvedLink(this.invoiceId);
         },
         err => {
@@ -529,7 +529,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
           highlight: `Hóa đơn #${invoiceNo}`
         };
 
-        this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+        this.modalRef = this.modalService.show(AlertComponent, { animated: false, class: 'modal-sm', initialState });
         this.resolvedLink(invoiceId);
       }, err => {
         this.errorSignHandler(err);
@@ -554,7 +554,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
         title: 'Hóa đơn đã in chuyển đổi',
         class: 'error'
       };
-      this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+      this.modalRef = this.modalService.show(AlertComponent, { animated: false, class: 'modal-sm', initialState });
     });
   }
 
@@ -764,7 +764,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
         class: 'success',
         highlight: `Số hóa đơn mới: #${data.invoice_no}.`
       };
-      this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+      this.modalRef = this.modalService.show(AlertComponent, { animated: false, class: 'modal-sm', initialState });
       this.resolvedLink(data.invoice_id);
       return true;
     }, err => {
@@ -777,7 +777,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
       if (err.error) {
         initialState.message = err.error.message;
       }
-      this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+      this.modalRef = this.modalService.show(AlertComponent, { animated: false, class: 'modal-sm', initialState });
       this.submitted = false;
     });
   }
@@ -790,7 +790,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
         class: 'success',
         highlight: `Số hóa đơn mới: #${data.invoice_no}.`
       };
-      this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+      this.modalRef = this.modalService.show(AlertComponent, { animated: false, class: 'modal-sm', initialState });
       this.resolvedLink(data.invoice_id);
       return true;
     }, err => {
@@ -803,7 +803,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
       if (err.error) {
         initialState.message = err.error.message;
       }
-      this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+      this.modalRef = this.modalService.show(AlertComponent, { animated: false, class: 'modal-sm', initialState });
       this.submitted = false;
     });
   }
@@ -816,7 +816,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
         class: 'success',
         highlight: `Hóa đơn: #${data.invoice_no}.`
       };
-      this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+      this.modalRef = this.modalService.show(AlertComponent, { animated: false, class: 'modal-sm', initialState });
       this.resolvedLink(data.invoice_id);
     }, err => {
       const initialState = {
@@ -828,7 +828,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
       if (err.error) {
         initialState.message = err.error.message;
       }
-      this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+      this.modalRef = this.modalService.show(AlertComponent, { animated: false, class: 'modal-sm', initialState });
       this.submitted = false;
     });
   }
@@ -842,7 +842,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
           class: 'success',
           highlight: `Hóa đơn: #${data.invoice_no}.`
         };
-        this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+        this.modalRef = this.modalService.show(AlertComponent, { animated: false, class: 'modal-sm', initialState });
         this.resolvedLink(data.invoice_id);
       },
       err => {
@@ -855,7 +855,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
         if (err.error) {
           initialState.message = err.error.message;
         }
-        this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+        this.modalRef = this.modalService.show(AlertComponent, { animated: false, class: 'modal-sm', initialState });
         this.submitted = false;
       });
   }
@@ -874,7 +874,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
       }
     }
 
-    this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+    this.modalRef = this.modalService.show(AlertComponent, { animated: false, class: 'modal-sm', initialState });
   }
 
   private resolvedLink(invoice_id: number) {
@@ -1377,8 +1377,9 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
         controlArray.controls[idx].get('quantity').setValue(item.quantity);
         controlArray.controls[idx].get('discount_rate').setValue(item.discount_rate);
         controlArray.controls[idx].get('discount').setValue(0);
-        controlArray.controls[idx].get('tax_rate').setValue(item.tax_rate);
-
+        if (usercase !== 'copy') {
+          controlArray.controls[idx].get('tax_rate').setValue(item.tax_rate);
+        }
         this.linePriceTax.splice(idx, 0, item.tax);
         this.lineAmount.splice(idx, 0, item.amount);
         this.lineAmoutWt.splice(idx, 0, item.amount_wt);

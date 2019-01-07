@@ -101,7 +101,7 @@ export class CustomersComponent implements OnInit, AfterViewInit {
     const initialState = {
       viewMode: false
     };
-    this.modalRef = this.modalService.show(CustomerFormComponent, { class: 'modal-lg', initialState });
+    this.modalRef = this.modalService.show(CustomerFormComponent, { animated: false, class: 'modal-lg', initialState });
   }
 
   public openClicked() {
@@ -111,13 +111,13 @@ export class CustomersComponent implements OnInit, AfterViewInit {
     //     dataForm: data,
     //     viewMode: true
     //   };
-    //   this.modalRef = this.modalService.show(CustomerFormComponent, { class: 'modal-lg', initialState });
+    //   this.modalRef = this.modalService.show(CustomerFormComponent, { animated: false, class: 'modal-lg', initialState });
     // });
 
   }
 
   public openModal(template: TemplateRef<any>) {
-    this.modalRef = this.modalService.show(template, { class: 'modal-sm' });
+    this.modalRef = this.modalService.show(template, { animated: false, class: 'modal-sm' });
   }
 
   public deleteClicked() {
@@ -131,7 +131,7 @@ export class CustomersComponent implements OnInit, AfterViewInit {
     //       class: 'success',
     //       highlight: `Đối tượng #(${data.customer_id}) ${data.customer_name}`
     //     };
-    //     this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+    //     this.modalRef = this.modalService.show(AlertComponent, { animated: false, class: 'modal-sm', initialState });
     //   },
     //   err => {
     //     this.modalRef.hide();
@@ -152,7 +152,7 @@ export class CustomersComponent implements OnInit, AfterViewInit {
     if (err.error && err.error.message) {
       initialState.message = err.error.message;
     }
-    this.modalRef = this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+    this.modalRef = this.modalService.show(AlertComponent, { animated: false, class: 'modal-sm', initialState });
   }
 
   private getCheckboxesValue() {

@@ -1,9 +1,4 @@
-/* Data Tables */
-.dataTables_scroll{
-  .dataTables_scrollHeadInner{
-    padding-top: 5px;
-  }
-}
+
 .dataTables_wrapper {
   padding-left: 0;
   padding-right: 0;
@@ -33,7 +28,7 @@
 
     thead {
       tr > th{
-        padding-top: 0px;
+        padding-top: 7px;
         padding-bottom: 7px;
       }
       .sorting,

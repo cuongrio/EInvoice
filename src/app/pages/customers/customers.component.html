@@ -1,4 +1,3 @@
-<!-- partial -->
 <div class="container-fluid page-body-wrapper">
   <div class="main-panel">
     <div class="jumbotron jumbotron-fluid">
@@ -6,7 +5,7 @@
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb">
             <li class="breadcrumb-item"><a routerLink="/">Trang chủ</a></li>
-            <li class="breadcrumb-item active"><a routerLink="/invoices">Khách hàng</a></li>
+            <li class="breadcrumb-item active"><a routerLink="/products">Hàng hóa</a></li>
           </ol>
         </nav>
       </div>
@@ -14,92 +13,98 @@
     <div class="content-wrapper">
       <div class="content-list">
         <div class="card card-shadow">
-          <div class="card-body card-body__list">
-            <h4 class="card-title">
-              <span class="pull-left">Danh sách khách hàng</span>
-              <button (click)="expandSearchClicked()" type="button pull-left" class="btn btn-link">
-                <i *ngIf="expandSearch" class="fas fa-chevron-down"></i>
-                <i *ngIf="!expandSearch" class="fas fa-chevron-up"></i>
-              </button>
-            </h4>
-            <div class="row grid-margin">
-              <div class="col-12">
-                <div class="search-box">
-                  <div [hidden]="!expandSearch" class="card shadow-nohover">
-                    <div class="card-body">
-                      <form class="form-horizontal" #ngSearchForm="ngForm" [formGroup]="searchForm" (ngSubmit)="onSubmit(searchForm.value)">
-                        <div class="row">
-                          <div class="col-md-3 col-lg-3">
-                            <div class="form-group row">
-                              <div class="col-md-4 col-lg-4 col-form-label"><label>Mã đối tượng</label></div>
-                              <div class="col-md-8 col-lg-8">
-                                <input formControlName="customer_code" type="text" class="form-control form-control-sm" />
-                              </div>
-                            </div>
-                          </div>
+          <div class="card-body ein-card-body">
+            <div class="search-box_wapper">
+              <div class="template-ein navbar-action">
+                <button type="button" routerLink="/products/createNew" class="btn btn-md btn-primary">
+                  <i class="fas fa-plus"></i> Thêm
+                </button>
+                <button id="openButton" type="button" (click)="openRowClicked()" class="btn  btn-md btn-outline-primary">
+                  <i class="fas fa-edit"></i> Mở
+                </button>
+                <button (click)="expandSearchClicked()" type="button" class="btn btn-md btn-outline-primary">
+                  <i *ngIf="expandSearch" class="fas fa-chevron-down"></i>
+                  <i *ngIf="!expandSearch" class="fas fa-chevron-up"></i> Tìm kiếm
+                </button>
 
-                          <div class="col-md-3 col-lg-3">
-                            <div class="form-group row">
-                              <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Tên đối tượng</label></div>
-                              <div class="col-md-8 col-lg-8">
-                                <input formControlName="customer_name" type="text" class="form-control form-control-sm" />
-                              </div>
-                            </div>
-                          </div>
+                <button id="deleteButton" type="button" form="ngForm" class="btn btn-md btn-outline-danger" (click)="openModal(disposeConfirm)">
+                  <i class="fas fa-trash"></i> Xóa
+                </button>
+                <ng-template #disposeConfirm>
+                  <div class="modal-body text-center">
+                    <p>Xác nhận xóa dòng hàng?</p>
+                    <button type="button" class="btn btn-primary mr-1" (click)="deleteClicked()">Đồng ý</button>
+                    <button type="button" class="btn btn-default" (click)="modalRef.hide()">Bỏ qua</button>
+                  </div>
+                </ng-template>
+                <button id="copyButton" type="button" class="btn btn-md btn-outline-primary">
+                  <i id="copyLoading" class="fa fa-spinner fa-spin"></i>
+                  <i id="copyLoaded" class="fas fa-copy"></i>
+                  Sao chép
+                </button>
+              </div>
 
-                          <div class="col-md-3 col-lg-3">
-                            <div class="form-group row">
-                              <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Điện thoại</label></div>
-                              <div class="col-md-8 col-lg-8">
-                                <input formControlName="phone" type="text" class="form-control form-control-sm" />
-                              </div>
-                            </div>
-                          </div>
-
-                          <div class="col-md-3 col-lg-3">
-                            <div class="form-group row">
-                              <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Mã số thuế</label></div>
-                              <div class="col-md-8 col-lg-8">
-                                <input formControlName="tax_code" type="text" class="form-control form-control-sm" />
-                              </div>
+              <div [hidden]="!expandSearch" class="search-box">
+                <div class="card shadow-nohover">
+                  <div class="card-body">
+                    <form class="form-horizontal" #ngSearchForm="ngForm" [formGroup]="searchForm" (ngSubmit)="onSubmit(searchForm.value)">
+                      <div class="row">
+                        <div class="col-md-3 col-lg-3">
+                          <div class="form-group row">
+                            <div class="col-md-4 col-lg-4 col-form-label"><label>Mã hàng</label></div>
+                            <div class="col-md-8 col-lg-8">
+                              <input formControlName="code" type="text" class="form-control form-control-sm" />
                             </div>
                           </div>
                         </div>
 
-                      </form>
-                    </div>
+                        <div class="col-md-3 col-lg-3">
+                          <div class="form-group row">
+                            <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Tên hàng</label></div>
+                            <div class="col-md-8 col-lg-8">
+                              <input formControlName="name" type="text" class="form-control form-control-sm" />
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="col-md-3 col-lg-3">
+                          <div class="form-group row">
+                            <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Nhóm</label></div>
+                            <div class="col-md-8 col-lg-8">
+                              <input formControlName="group" type="text" class="form-control form-control-sm" />
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="col-md-3 col-lg-3">
+                          <div class="form-group row">
+                            <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Đơn vị tính</label></div>
+                            <div class="col-md-8 col-lg-8">
+                              <input formControlName="unit" type="text" class="form-control form-control-sm" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
                   </div>
                 </div>
               </div>
 
-              <div class="col-12">
-                <div class="template-ein navbar-action">
-                  <button [hidden]="!expandSearch" type="button" form="ngForm" class="btn btn-md btn-info" (click)="ngSearchForm.ngSubmit.emit()">
-                    <i class="icon-magnifier"></i> Tìm kiếm
+              <div [hidden]="!expandSearch" class="paging-top__group">
+                <div class="btn-group">
+                  <button [disabled]="isSearching" type="button" class="btn btn-md btn-primary btn-search" (click)="ngSearchForm.ngSubmit.emit()">
+                    <i *ngIf="!isSearching" class="icon-magnifier"></i>
+                    <i *ngIf="isSearching" class="fa fa-spinner fa-spin"></i> Tìm kiếm
                   </button>
-                  <button type="button" form="ngForm" class="btn btn-md btn-success" (click)="addNewClicked()">
-                    <i class="fas fa-plus"></i> Thêm mới
+                  <button (click)="resetForm()" type="button" class="btn btn-md btn-inverse-default">
+                    <i class="fas fa-undo"></i> reset
                   </button>
+                </div>
 
-                  <button id="editButton" type="button" form="ngForm" class="btn btn-md btn-outline-primary" (click)="openClicked()">
-                    <i class="fas fa-edit"></i> Mở
-                  </button>
 
-                  <button id="deleteButton" type="button" form="ngForm" class="btn btn-md btn-outline-danger" (click)="openModal(disposeConfirm)">
-                    <i class="fas fa-trash"></i> Xóa
-                  </button>
-                  <ng-template #disposeConfirm>
-                    <div class="modal-body text-center">
-                      <p>Xác nhận xóa đối tượng?</p>
-                      <button type="button" class="btn btn-primary mr-1" (click)="deleteClicked()">Đồng ý</button>
-                      <button type="button" class="btn btn-default" (click)="modalRef.hide()">Bỏ qua</button>
-                    </div>
-                  </ng-template>
-                  <button id="copyButton" type="button" class="btn btn-md btn-outline-primary">
-                    <i id="copyLoading" class="fa fa-spinner fa-spin"></i>
-                    <i id="copyLoaded" class="fas fa-copy"></i>
-                    Sao chép
-                  </button>
+                <div class="ngb-pagination" *ngIf="totalPages > 1">
+                  <ngb-pagination class="justify-content-end" [pageSize]="itemsPerPage" [collectionSize]="totalItems"
+                    [(page)]="page" (pageChange)="onPageChange($event)" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"></ngb-pagination>
                 </div>
               </div>
             </div>
@@ -122,15 +127,18 @@
                 </thead>
               </table>
             </div>
-            <div class="ngb-pagination">
-              <div class="page-info">Trang {{ page }}: {{ totalElements }} dòng | Tổng số: {{ totalPages }} trang.</div>
-              <!--
-                  <ngb-pagination class="d-flex justify-content-end" [pageSize]="itemsPerPage" [collectionSize]="totalItems"
-                  [(page)]="page" (pageChange)="onPageChange($event)" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"></ngb-pagination>
-                -->
+            <div class="ngb-pagination bottom-pagination">
+              <div class="page-info">
+                <select class="page-size_menu" (change)="onSizeChange($event.target.value)" [(ngModel)]="pageSize">
+                  <option *ngFor="let item of pageSizeList" value="{{item.code}}">{{item.value}}</option>
+                </select>
+                <label class="pager-footer_info">Trang {{ page }}: {{ totalElements }} dòng | Tổng số: {{ totalPages }}
+                  trang.</label>
+              </div>
+
               <div *ngIf="totalPages > 1">
-                <ngb-pagination class="d-flex justify-content-end" [pageSize]="itemsPerPage" [collectionSize]="totalItems"
-                  [(page)]="page" (pageChange)="onPageChange($event)" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"></ngb-pagination>
+                <ngb-pagination [pageSize]="itemsPerPage" [collectionSize]="totalItems" [(page)]="page" (pageChange)="onPageChange($event)"
+                  [maxSize]="5" [rotate]="true" [boundaryLinks]="true"></ngb-pagination>
               </div>
             </div>
           </div>

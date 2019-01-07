@@ -433,7 +433,7 @@
                             cột</button>
                         </div>
                       </div>
-                      <table class="table table-bordered">
+                      <table class="table table-bordered border-right-0">
                         <thead>
                           <tr>
                             <th class="bg-smoke" style="width: 20px;">#</th>
@@ -566,7 +566,7 @@
                 </form>
                 <div class="row text-center">
                   <div *ngIf="!viewMode" class="btn-group btn-form__footer">
-                    <button type="button" (click)="isPreview=false; ngAddForm.ngSubmit.emit()" class="btn btn-md btn-success">
+                    <button type="button" (click)="isPreview=false; ngAddForm.ngSubmit.emit()" class="btn btn-md btn-primary">
                       <i class="fas fa-save"></i> Lưu
                     </button>
                     <button (click)="ignoreClicked()" type="button" class="btn btn-md">

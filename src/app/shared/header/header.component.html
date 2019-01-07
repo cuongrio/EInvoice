@@ -5,10 +5,10 @@
         <!-- <a class="navbar-brand brand-logo" href="index.html"><img src="./assets/images/logo.svg" alt="logo" /></a>
         <a class="navbar-brand brand-logo-mini" href="index.html"><img src="./assets/images/logo-mini.svg" alt="logo" /></a> -->
       </div>
-      <div class="navbar-menu-wrapper d-flex align-items-center justify-content-between flex-grow-1">  
+      <div class="navbar-menu-wrapper d-flex align-items-center justify-content-between flex-grow-1">
         <ul class="navbar-nav navbar-nav-right mr-0 ml-auto">
           <li class="nav-item nav-profile dropdown">
-            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown"> 
+            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
               <span class="nav-profile-name">{{userLogged.name}}</span>
             </a>
             <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
@@ -26,11 +26,68 @@
   <div class="nav-bottom">
     <div class="container">
       <ul class="nav page-navigation">
-        <li routerLinkActive="active" *ngFor="let menuItem of menuItems" class="nav-item">
-          <a class="nav-link" [routerLink]="[menuItem.path]">
-            <i [class]="menuItem.icon"></i> <span>{{menuItem.title}}</span>
+        <li routerLinkActive="active" class="nav-item">
+          <a class="nav-link" routerLink="/dashboard">
+            <i class="link-icon icon-screen-desktop"></i> <span>Trang chủ</span>
           </a>
         </li>
+
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/invoices">
+            <i class="link-icon icon-docs"></i> <span>Danh sách hóa đơn</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/products">
+            <i class="link-icon icon-disc"></i> <span>Hàng hóa</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/customers">
+            <i class="link-icon icon-pie-chart"></i> <span>Khách hàng</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <div class="nav-link">
+            <i class="link-icon icon-book-open"></i>
+            <span class="menu-title">
+              Danh mục
+            </span><i class="menu-arrow"></i>
+          </div>
+
+          <div class="submenu">
+            <ul class="submenu-item">
+              <li class="nav-item"><a class="nav-link" [routerLink]="['/info']" routerLinkActive="router-link-active" >Công ty</a></li>
+              <li class="nav-item"><a class="nav-link" href="#">Thiết lập hóa đơn</a></li>
+              <li class="nav-item"><a class="nav-link" href="#">Tùy chỉnh</a></li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/report">
+            <i class="link-icon icon-disc"></i> <span>Báo cáo</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="link-icon icon-book-open"></i>
+            <span class="menu-title">
+              Tiện ích
+            </span><i class="menu-arrow"></i>
+          </a>
+
+          <div class="submenu">
+            <ul class="submenu-item">
+              <li class="nav-item"><a class="nav-link" href="#">Duyệt theo lô</a></li>
+            </ul>
+          </div>
+        </li>
+
       </ul>
     </div>
   </div>

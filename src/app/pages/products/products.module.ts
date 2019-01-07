@@ -21,6 +21,9 @@ import { UtilsService } from '@app/_services/utils/utils.service';
 import { ProductsComponent } from './products.component';
 import { ProductFormComponent } from './components/form.component';
 import { ValidationService, GoodService } from '@app/_services';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { NgxCurrencyModule } from 'ngx-currency';
+import { NgxSpinnerModule } from '@hardpool/ngx-spinner';
 
 @NgModule({
   imports: [
@@ -33,12 +36,15 @@ import { ValidationService, GoodService } from '@app/_services';
     HttpClientModule,
     AlertModule.forRoot(),
     NgbModule,
+    NgSelectModule,
+    AlertModule.forRoot(),
+    NgbModule,
+    NgxCurrencyModule,
+    NgxSpinnerModule,
     TooltipModule.forRoot(),
     PaginationModule.forRoot(),
     BsDatepickerModule.forRoot(),
-    PopoverModule.forRoot(),
     ModalModule.forRoot(),
-
     SharedModule
   ],
   entryComponents: [ProductFormComponent],

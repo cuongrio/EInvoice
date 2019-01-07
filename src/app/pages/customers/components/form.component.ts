@@ -66,7 +66,7 @@ export class CustomerFormComponent implements OnInit {
             class: 'success',
             highlight: `Đối tượng #(${data.customer_id}) ${data.customer_name}`
           };
-          this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+          this.modalService.show(AlertComponent, { animated: false, class: 'modal-sm', initialState });
         },
         err => {
           if (err.error && err.error.message) {
@@ -87,7 +87,7 @@ export class CustomerFormComponent implements OnInit {
             class: 'success',
             highlight: `Đối tượng #(${data.customer_id}) ${data.customer_name}`
           };
-          this.modalService.show(AlertComponent, { class: 'modal-sm', initialState });
+          this.modalService.show(AlertComponent, { animated: false, class: 'modal-sm', initialState });
         },
         err => {
           if (err.error && err.error.message) {
