@@ -6,7 +6,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import { ProductFormComponent } from './components/form.component';
 import * as moment from 'moment';
 import { GoodService } from '@app/_services';
-import { ProductModel } from '@app/_models';
+import { ProductModel, PagingData } from '@app/_models';
 import { AlertComponent } from '@app/shared/alert/alert.component';
 import { GoodParam } from './../../_models/param/good.param';
 
@@ -25,6 +25,7 @@ export class ProductsComponent implements OnInit {
   public expandSearch: boolean;
   public searchForm: FormGroup;
   public page = 1;
+
   // pagination
   public itemsPerPage = 20;
   public totalItems = 0;
@@ -78,35 +79,14 @@ export class ProductsComponent implements OnInit {
   public onSubmit(form: any) { }
 
   public addNewClicked() {
-    this.modalRef = this.modalService.show(ProductFormComponent, {animated: false, class: 'modal-lg' });
+    this.modalRef = this.modalService.show(ProductFormComponent, { animated: false, class: 'modal-lg' });
   }
 
   public editClicked() { }
 
-  public deleteClicked() {
-    // const goodId = +this.getCheckboxesValue();
-    // this.productService.delete(goodId).subscribe(
-    //   data => {
-    //     this.modalRef.hide();
-    //     const initialState = {
-    //       message: 'Đã hủy đối tượng thành công!',
-    //       title: 'Thành công!',
-    //       class: 'success',
-    //       highlight: `Đối tượng #(${data.customer_id}) ${data.customer_name}`
-    //     };
-    //     this.modalRef = this.modalService.show(AlertComponent, {animated: false, class: 'modal-sm', initialState });
-    //   },
-    //   err => {
-    //     this.modalRef.hide();
-    //     this.errorHandler(err);
-    //   }
-    // );
-  }
-
   public copyClicked() { }
 
   public onPageChange(page: number) {
-
   }
 
   public onSizeChange(sizeObj: any) {
@@ -174,18 +154,28 @@ export class ProductsComponent implements OnInit {
     this.isSearching = true;
     this.productService.getList().subscribe(data => {
       if (data) {
-        const goodList = data as Array<ProductModel>;
-        this.totalElements = goodList.length;
-        this.totalPages = goodList.length / 20;
-        this.totalItems = goodList.length;
+        const list = data as PagingData;
+        if (list.contents.length > 0) {
+          this.totalElements = list.total_elements;
+          this.totalPages = list.total_pages;
+          this.totalItems = list.total_pages * this.itemsPerPage;
 
-        $('#productTable')
-          .dataTable()
-          .fnClearTable();
-        $('#productTable')
-          .dataTable()
-          .fnAddData(goodList);
+          $('#productTable')
+            .dataTable()
+            .fnClearTable();
+          $('#productTable')
+            .dataTable()
+            .fnAddData(list.contents);
+        } else {
+          this.totalElements = 0;
+          this.totalPages = 0;
+          this.totalItems = 0;
+          $('#productTable')
+            .dataTable()
+            .fnClearTable();
+        }
       }
+
       setTimeout(function () {
         this.isSearching = false;
         this.ref.markForCheck();
@@ -248,6 +238,7 @@ export class ProductsComponent implements OnInit {
           if (cellData && cellData.length > 0) {
             $(td).attr('data-order', cellData);
             $(td).attr('data-sort', cellData);
+            $(td).html(cellData);
           }
         }
       }, { // gia ban
@@ -269,7 +260,7 @@ export class ProductsComponent implements OnInit {
             $(td).attr('data-order', cellData);
             $(td).attr('data-sort', cellData);
             $(td).html(cellData + '%');
-          }else{
+          } else {
             $(td).attr('data-order', '0');
             $(td).attr('data-sort', '0');
             $(td).html('0%');
@@ -282,8 +273,7 @@ export class ProductsComponent implements OnInit {
           if (cellData && cellData.length > 0) {
             $(td).attr('data-order', cellData);
             $(td).attr('data-sort', cellData);
-            const dateFormate = moment(cellData).format('DD/MM/YYYY');
-            $(td).html(dateFormate);
+            $(td).html(cellData);
           }
         }
       }],
@@ -296,11 +286,21 @@ export class ProductsComponent implements OnInit {
       }, {
         className: 'cbox',
         data: function (row: any, type: any) {
-          if (type === 'display' && row.goods_name) { 
+          if (type === 'display'
+            && row.goods_name) {
+            const org: string = row.goods_name;
+            let orgFormat: string;
+            if (org.length <= 120) {
+              orgFormat = org;
+            } else {
+              orgFormat = org.substring(0, 120);
+              const lastWordIndex = orgFormat.lastIndexOf(' ');
+              orgFormat = orgFormat.substring(0, lastWordIndex) + '...';
+            }
             return `
-              <span>${row.goods_name}</span>
+              <span class="lh-medium" title="${org}">${orgFormat}</span>
               <div class="hidden-col">
-                <input type="checkbox" name="stickchoice" value="${row.goods_code}" class="td-checkbox-hidden">
+              <input type="checkbox" name="stickchoice" value="${row.goods_id}" class="td-checkbox-hidden">
               </div>
             `;
           } else {
@@ -316,7 +316,7 @@ export class ProductsComponent implements OnInit {
         className: 'text-right',
         data: 'tax_rate'
       }, {
-        data: 'insert_date'
+        data: 'goods_group'
       }],
       select: {
         style: 'single',

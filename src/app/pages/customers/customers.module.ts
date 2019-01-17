@@ -21,9 +21,14 @@ import { UtilsService } from '@app/_services/utils/utils.service';
 import { CustomersComponent } from './customers.component';
 import { CustomerFormComponent } from './components/form.component';
 import { CustomersRoutes } from './customers.routing';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { NgxSpinnerModule } from '@hardpool/ngx-spinner';
+import { NgxCurrencyModule } from 'ngx-currency';
 
 @NgModule({
   imports: [
+    CommonModule,
+
     CommonModule,
 
     RouterModule.forChild(CustomersRoutes),
@@ -33,12 +38,15 @@ import { CustomersRoutes } from './customers.routing';
     HttpClientModule,
     AlertModule.forRoot(),
     NgbModule,
+    NgSelectModule,
+    AlertModule.forRoot(),
+    NgbModule,
+    NgxCurrencyModule,
+    NgxSpinnerModule,
     TooltipModule.forRoot(),
     PaginationModule.forRoot(),
     BsDatepickerModule.forRoot(),
-    PopoverModule.forRoot(),
     ModalModule.forRoot(),
-
     SharedModule
   ],
   entryComponents: [CustomerFormComponent],

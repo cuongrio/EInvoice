@@ -26,17 +26,6 @@
                   <i *ngIf="expandSearch" class="fas fa-chevron-down"></i>
                   <i *ngIf="!expandSearch" class="fas fa-chevron-up"></i> Tìm kiếm
                 </button>
-
-                <button id="deleteButton" type="button" form="ngForm" class="btn btn-md btn-outline-danger" (click)="openModal(disposeConfirm)">
-                  <i class="fas fa-trash"></i> Xóa
-                </button>
-                <ng-template #disposeConfirm>
-                  <div class="modal-body text-center">
-                    <p>Xác nhận xóa dòng hàng?</p>
-                    <button type="button" class="btn btn-primary mr-1" (click)="deleteClicked()">Đồng ý</button>
-                    <button type="button" class="btn btn-default" (click)="modalRef.hide()">Bỏ qua</button>
-                  </div>
-                </ng-template>
                 <button id="copyButton" type="button" class="btn btn-md btn-outline-primary">
                   <i class="fas fa-copy"></i>
                   Sao chép
@@ -118,7 +107,7 @@
                     <th>ĐVT</th>
                     <th class="text-right">Giá bán</th>
                     <th class="text-right">%VAT</th>
-                    <th>Ngày tạo</th>
+                    <th>Nhóm</th>
                   </tr>
                 </thead>
               </table>

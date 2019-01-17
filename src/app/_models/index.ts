@@ -10,7 +10,7 @@ export * from './data/good.data';
 export * from './data/product.data';
 export * from './data/select.data';
 
-export * from './data/invoice.list.data';
+export * from './data/paging.data';
 export * from './data/sign.data';
 export * from './data/token.data';
 export * from './data/adjust.data';

@@ -4,7 +4,7 @@ import { ActivatedRoute, Router, UrlSegment } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import * as moment from 'moment';
 import { InvoiceService, ReferenceService } from '@app/_services';
-import { InvoiceParam, InvoiceListData, SelectData } from '@app/_models';
+import { InvoiceParam, PagingData, SelectData } from '@app/_models';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { AuthenticationService } from '@app/core/authentication/authentication.service';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
@@ -507,18 +507,18 @@ export class InvoicesComponent implements OnInit {
     this.isSearching = true;
     this.invoiceService.queryInvoices(params).subscribe((data: any) => {
       if (data) {
-        const invoiceList = data as InvoiceListData;
-        if (invoiceList.contents.length > 0) {
-          this.totalElements = invoiceList.total_elements;
-          this.totalPages = invoiceList.total_pages;
-          this.totalItems = invoiceList.total_pages * this.itemsPerPage;
+        const list = data as PagingData;
+        if (list.contents.length > 0) {
+          this.totalElements = list.total_elements;
+          this.totalPages = list.total_pages;
+          this.totalItems = list.total_pages * this.itemsPerPage;
 
           $('#invoiceTable')
             .dataTable()
             .fnClearTable();
           $('#invoiceTable')
             .dataTable()
-            .fnAddData(invoiceList.contents);
+            .fnAddData(list.contents);
         } else {
           this.totalElements = 0;
           this.totalPages = 0;
@@ -717,10 +717,10 @@ export class InvoicesComponent implements OnInit {
             && row.customer.org) {
             const org: string = row.customer.org;
             let orgFormat: string;
-            if (org.length <= 65) {
+            if (org.length <= 55) {
               orgFormat = org;
             } else {
-              orgFormat = org.substring(0, 65);
+              orgFormat = org.substring(0, 55);
               const lastWordIndex = orgFormat.lastIndexOf(' ');
               orgFormat = orgFormat.substring(0, lastWordIndex) + '...';
             }
