@@ -6,7 +6,7 @@
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb">
             <li class="breadcrumb-item"><a routerLink="/">Trang chủ</a></li>
-            <li class="breadcrumb-item active"><a routerLink="/invoices">Danh sách hóa đơn</a></li>
+            <li class="breadcrumb-item active"><a routerLink="/hoa-don">Danh sách hóa đơn</a></li>
           </ol>
         </nav>
       </div>
@@ -17,7 +17,7 @@
           <div class="card-body ein-card-body">
             <div class="search-box_wapper">
               <div class="template-ein navbar-action">
-                <button type="button" routerLink="/invoices/createNew" class="btn btn-md btn-primary">
+                <button type="button" routerLink="/hoa-don/tao-moi" class="btn btn-md btn-primary">
                   <i class="fas fa-plus"></i> Thêm
                 </button>
                 <button id="openButton" type="button" (click)="openRowClicked()" class="btn  btn-md btn-outline-primary">
@@ -307,8 +307,7 @@
               </div>
             </div>
 
-            <div class="table-wrapper">
-              <input id="pageSize" type="hidden" class="id-hidden" [(ngModel)]="pageSize" />
+            <div class="table-wrapper"> 
               <table id="invoiceTable" class="table display dataTable table-bordered invoiceTable">
                 <thead>
                   <tr>

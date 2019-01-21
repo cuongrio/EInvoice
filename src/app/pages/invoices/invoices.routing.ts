@@ -10,32 +10,32 @@ export const InvoicesRoutes: Routes = [
     data: { title: 'Danh sách hóa đơn' },
     runGuardsAndResolvers: 'always'
   }, {
-    path: 'refresh',
+    path: 'lam-moi',
     component: InvoicesComponent,
     data: { title: 'Danh sách hóa đơn' },
     runGuardsAndResolvers: 'always'
   }, {
-    path: 'createNew',
+    path: 'tao-moi',
     component: InvoiceFormComponent,
     data: { title: 'Tạo mới hóa đơn' }
   }, {
-    path: 'copy/:id',
+    path: 'sao-chep/:id',
     component: InvoiceFormComponent,
     data: { title: 'Tạo mới từ hóa đơn sao chép' }
   }, {
-    path: 'open/:id',
+    path: 'chi-tiet/:id',
     component: InvoiceFormComponent,
     data: { title: 'Đang mở hóa đơn' }
   }, {
-    path: 'open/:id/adjust',
+    path: 'chi-tiet/:id/dieu-chinh',
     component: InvoiceFormComponent,
     data: { title: 'Điều chỉnh hóa đơn' }
   }, {
-    path: 'open/:id/replace',
+    path: 'chi-tiet/:id/thay-the',
     component: InvoiceFormComponent,
     data: { title: 'Thay thế hóa đơn' }
   }, {
-    path: 'open/:id/refresh',
+    path: 'chi-tiet/:id/lam-moi',
     component: InvoiceFormComponent,
     data: { title: 'Đang mở hóa đơn' }
   }

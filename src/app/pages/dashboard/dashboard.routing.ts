@@ -6,6 +6,6 @@ export const DashboardRoutes: Routes = [
   {
     path: '',
     component: DashboardComponent,
-    data: { title: 'Dashboard' }
+    data: { title: 'Trang chủ' }
   }
 ];

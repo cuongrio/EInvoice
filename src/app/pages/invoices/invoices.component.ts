@@ -190,6 +190,17 @@ export class InvoicesComponent implements OnInit {
 
     localStorage.setItem('userquery', JSON.stringify(invoiceParam));
     this.router.navigate([], { replaceUrl: true, queryParams: invoiceParam });
+    // disabled all button
+    $('#openButton').prop('disabled', true);
+    $('#copyButton').prop('disabled', true);
+    $('#printButton').prop('disabled', true);
+    $('#approveButton').prop('disabled', true);
+    $('#disposeButton').prop('disabled', true);
+    $('#signButton').prop('disabled', true);
+    $('#printTranformButton').prop('disabled', true);
+    $('#adjustButton').prop('disabled', true);
+    $('#replaceButton').prop('disabled', true);
+
     this.callServiceAndBindTable(invoiceParam);
   }
 
@@ -242,22 +253,22 @@ export class InvoicesComponent implements OnInit {
   // BUTTON ACTION
   public openRowClicked() {
     const invoiceId = this.getCheckboxesValue();
-    this.router.navigate([`/invoices/open/${invoiceId}`]);
+    this.router.navigate([`/hoa-don/chi-tiet/${invoiceId}`]);
   }
 
   public openAdjustClicked() {
     const invoiceId = this.getCheckboxesValue();
-    this.router.navigate([`/invoices/open/${invoiceId}/adjust`]);
+    this.router.navigate([`/hoa-don/chi-tiet/${invoiceId}/dieu-chinh`]);
   }
 
   public openReplaceClicked() {
     const invoiceId = this.getCheckboxesValue();
-    this.router.navigate([`/invoices/open/${invoiceId}/replace`]);
+    this.router.navigate([`/hoa-don/chi-tiet/${invoiceId}/thay-the`]);
   }
 
   public copyRowClicked() {
     const invoiceId = this.getCheckboxesValue();
-    this.router.navigate([`/invoices/copy/${invoiceId}`]);
+    this.router.navigate([`/hoa-don/sao-chep/${invoiceId}`]);
   }
 
   public printRowClicked() {

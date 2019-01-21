@@ -158,9 +158,9 @@ export class CustomersComponent implements OnInit, AfterViewInit {
     this.callServiceAndBindTable(null);
   }
 
-  private callServiceAndBindTable(params: CustomerParam) {
+  private callServiceAndBindTable(param: CustomerParam) {
     this.isSearching = true;
-    this.customerService.getList().subscribe(data => {
+    this.customerService.queryCustomers(param).subscribe(data => {
       if (data) {
         const list = data as PagingData;
         if (list.contents.length > 0) {

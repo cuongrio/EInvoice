@@ -14,7 +14,7 @@ import { ForgotPassComponent } from './forgot/forgot-pass.component';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'dashboard',
+    redirectTo: 'trang-chu',
     pathMatch: 'full'
   },
   {
@@ -23,38 +23,38 @@ const routes: Routes = [
     canActivate: [AuthenticationGuard],
     children: [
       {
-        path: 'dashboard',
+        path: 'trang-chu',
         loadChildren: './pages/dashboard/dashboard.module#DashboardModule'
       },
       {
-        path: 'customers',
+        path: 'khach-hang',
         loadChildren: './pages/customers/customers.module#CustomersModule'
       },
       {
-        path: 'products',
+        path: 'hang-hoa',
         loadChildren: './pages/products/products.module#ProductsModule'
       },
       {
-        path: 'invoices',
+        path: 'hoa-don',
         loadChildren: './pages/invoices/invoices.module#InvoicesModule'
       },
       {
-        path: 'info',
+        path: 'thong-tin',
         loadChildren: './pages/info/info.module#InfoModule'
       },
       {
-        path: 'report',
+        path: 'bao-cao',
         loadChildren: './pages/report/report.module#ReportModule'
       }
     ]
   },
   {
-    path: 'login',
+    path: 'dang-nhap',
     component: LoginComponent,
     data: { title: 'Thông tin đăng nhập' }
   },
   {
-    path: 'public/resetpass',
+    path: 'public/doi-mat-khau',
     component: ForgotPassComponent,
     data: { title: 'Reset mật khẩu' }
   },

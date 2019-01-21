@@ -33,6 +33,7 @@ import { CoreModule } from './core/core.module';
 import { HttpService } from './core/http/http.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { AppDirectiveModule } from './_directives/directive.module';
+import { AppConstant } from './_mock/mock.data';
 
 @NgModule({
   declarations: [
@@ -64,7 +65,7 @@ import { AppDirectiveModule } from './_directives/directive.module';
     AppDirectiveModule
   ],
 
-  providers: [ValidationService, ForgotPassService, CookieService, HttpService, AppService],
+  providers: [ValidationService, ForgotPassService, CookieService, HttpService, AppService, AppConstant],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

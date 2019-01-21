@@ -20,7 +20,6 @@ import * as moment from 'moment';
 import { NgSelectConfig } from '@ng-select/ng-select';
 import { ISpinnerConfig, SPINNER_PLACEMENT, SPINNER_ANIMATIONS } from '@hardpool/ngx-spinner';
 import { AdjustData } from './../../../_models/data/adjust.data';
-import { ItemsList } from '@ng-select/ng-select/ng-select/items-list';
 declare var $: any;
 @Component({
   selector: 'app-invoice-form',
@@ -66,6 +65,8 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
   public addForm: FormGroup;
   public submitted = false;
+
+  public isChangeInvoice = false;
 
   public viewCustomerCode = false;
 
@@ -154,10 +155,19 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   }
 
   public copyClicked() {
-    if (this.segmentRouter === 'open' && this.invoiceId) {
-      this.router.navigate([`/invoices/copy/${this.invoiceId}`]);
+    if (this.segmentRouter === 'chi-tiet' && this.invoiceId) {
+      this.router.navigate([`/hoa-don/sao-chep/${this.invoiceId}`]);
     }
   }
+
+  public redirectToAdjust(){
+    this.router.navigate([`/hoa-don/chi-tiet/${this.invoiceId}/dieu-chinh`]);
+  }
+
+  public redirectToReplace(){
+    this.router.navigate([`/hoa-don/chi-tiet/${this.invoiceId}/thay-the`]);
+  }
+
   public editClicked() {
     this.viewMode = false;
     this.disabledAdd = true;
@@ -233,14 +243,14 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
   public ignoreClicked() {
     this.disabledExit = false;
-    if (this.segmentRouter === 'open') {
+    if (this.segmentRouter === 'chi-tiet') {
       this.resolvedLink(this.invoiceId);
     } else {
-      this.router.navigate(['/invoices']);
+      this.router.navigate(['/hoa-don']);
     }
   }
 
-  public adjustClicked() {
+  public initAdjust() {
     this.currentAdjust = null;
     this.isAdjust = true;
     this.isReplace = false;
@@ -248,7 +258,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     this.ref.markForCheck();
   }
 
-  public replaceClicked() {
+  public initReplace() {
     this.currentAdjust = null;
     this.isReplace = true;
     this.isAdjust = false;
@@ -258,7 +268,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
   cancelClicked() {
     this.addForm.reset();
-    this.router.navigate(['/invoices']);
+    this.router.navigate(['/hoa-don']);
   }
 
   public loadTokenData() {
@@ -441,8 +451,8 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   }
 
   public addNewButtonClicked() {
-    if (this.segmentRouter !== 'createNew') {
-      this.router.navigate(['/invoices/createNew']);
+    if (this.segmentRouter !== 'tao-moi') {
+      this.router.navigate(['/hoa-don/tao-moi']);
     } else {
       this.resetForm();
       this.submitted = false;
@@ -879,9 +889,9 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
   private resolvedLink(invoice_id: number) {
     if (this.isRouterRefresh()) {
-      this.router.navigate([`/invoices/open/${invoice_id}`]);
+      this.router.navigate([`/hoa-don/chi-tiet/${invoice_id}`]);
     } else {
-      this.router.navigate([`/invoices/open/${invoice_id}/refresh`]);
+      this.router.navigate([`/hoa-don/chi-tiet/${invoice_id}/lam-moi`]);
     }
   }
 
@@ -891,7 +901,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     urlSegmentArr.forEach((item: UrlSegment, idx: number) => {
       segmentMerged += item.path;
     });
-    if (segmentMerged.indexOf('refresh') === -1) {
+    if (segmentMerged.indexOf('lam-moi') === -1) {
       return false;
     }
     return true;
@@ -989,13 +999,15 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     }
 
     this.goodLoading = true;
-    this.goodService.getList().subscribe((items: GoodData[]) => {
-      this.goodArr = items as GoodData[];
-      sessionStorage.setItem('goodAutocomplete', JSON.stringify(this.goodArr));
-      setTimeout(function () {
-        this.goodLoading = false;
-        this.ref.markForCheck();
-      }.bind(this), 200);
+    this.goodService.queryGoods().subscribe(data => {
+      if(data.contents){
+        this.goodArr = data.contents as GoodData[];
+        sessionStorage.setItem('goodAutocomplete', JSON.stringify(this.goodArr));
+        setTimeout(function () {
+          this.goodLoading = false;
+          this.ref.markForCheck();
+        }.bind(this), 200);
+      }
 
     }, err => {
       setTimeout(function () {
@@ -1021,13 +1033,15 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     }
 
     this.customerLoading = true;
-    this.customerService.getList().subscribe((items: CustomerData[]) => {
-      this.customerArr = items as CustomerData[];
-      sessionStorage.setItem('customerAutocomplete', JSON.stringify(this.customerArr));
-      setTimeout(function () {
-        this.customerLoading = false;
-        this.ref.markForCheck();
-      }.bind(this), 200);
+    this.customerService.queryCustomers().subscribe(data => {
+      if(data.contents){
+        this.customerArr = data.contents as CustomerData[];
+        sessionStorage.setItem('customerAutocomplete', JSON.stringify(this.customerArr));
+        setTimeout(function () {
+          this.customerLoading = false;
+          this.ref.markForCheck();
+        }.bind(this), 200);
+      }
     });
   }
 
@@ -1192,7 +1206,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     this.canPreview = true;
     this.keptForUpdate = {};
 
-    if (segment === 'createNew') {
+    if (segment === 'tao-moi') {
       this.disabledDisposed = true;
       this.disabledCopy = true;
       this.disabledAdjust = true;
@@ -1207,7 +1221,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     return this.subscription = this.activatedRoute.params.subscribe((params: any) => {
       if (params.id) {
         this.invoiceId = params.id;
-        if (segment === 'open') {
+        if (segment === 'chi-tiet') {
 
           // button status
           this.disabledAdjust = false;
@@ -1221,8 +1235,8 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
         return this.invoiceService.retrieveInvoiceById(this.invoiceId).subscribe(data => {
           this.invoiceNo = data.invoice_no;
-          if (segment === 'open') {
-            this.setFormWithDefaultData(data, 'open');
+          if (segment === 'chi-tiet') {
+            this.setFormWithDefaultData(data, 'chi-tiet');
             this.adjustForm = data.form;
             this.adjustSerial = data.serial;
 
@@ -1285,12 +1299,13 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
               }
             }
           }
-          if (segment === 'copy') {
+          if (segment === 'sao-chep') {
             this.setFormWithDefaultData(data, 'copy');
             this.disabledCopy = true;
           }
-          if (subSegment === 'adjust') {
-            this.adjustClicked();
+          if (subSegment === 'dieu-chinh') {
+            this.isChangeInvoice = true;
+            this.initAdjust();
             const dateFormate = moment(new Date()).format('DD-MM-YYYY');
             this.invoiceDatePicked = dateFormate;
             this.addForm.patchValue({
@@ -1305,8 +1320,9 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
             this.disabledApproved = true;
             this.disabledPrintTranform = true;
           }
-          if (subSegment === 'replace') {
-            this.replaceClicked();
+          if (subSegment === 'thay-the') {
+            this.isChangeInvoice = true;
+            this.initReplace();
             this.disabledCopy = true;
             this.disabledDisposed = true;
             this.disabledApproved = true;
@@ -1345,7 +1361,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
     this.customerCodePicked = data.customer.customer_code;
     this.customerTaxPicked = data.customer.tax_code;
-    if (usercase === 'open') {
+    if (usercase === 'chi-tiet') {
       const invoiceDate = moment(data.invoice_date).format('DD-MM-YYYY');
       this.invoiceDatePicked = invoiceDate;
       this.addForm.patchValue({

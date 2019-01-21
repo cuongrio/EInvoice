@@ -5,8 +5,8 @@
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb">
             <li class="breadcrumb-item"><a routerLink="/">Trang chủ</a></li>
-            <li class="breadcrumb-item"><a routerLink="/invoices/refresh">Danh sách hóa đơn</a></li>
-            <li *ngIf="invoiceId && segmentRouter=='open'" class="breadcrumb-item active" aria-current="page">Mở hóa
+            <li class="breadcrumb-item"><a routerLink="/hoa-don/lam-moi">Danh sách hóa đơn</a></li>
+            <li *ngIf="invoiceId && segmentRouter=='chi-tiet'" class="breadcrumb-item active" aria-current="page">Mở hóa
               đơn</li>
             <li *ngIf="invoiceId && segmentRouter=='copy'" class="breadcrumb-item active" aria-current="page">Sao chép
               hóa
@@ -106,7 +106,7 @@
                     </div>
                   </ng-template>
 
-                  <button [disabled]="disabledExit" routerLink="/invoices/refresh" type="button" class="btn btn-md btn-light">
+                  <button [disabled]="disabledExit" routerLink="/hoa-don/lam-moi" type="button" class="btn btn-md btn-light">
                     <i class="fas fa-share-square"></i> Thoát
                   </button>
 
@@ -115,11 +115,15 @@
                         class="fas fa-print"></i>
                       In chuyển đổi</button>
 
-                    <button type="button" (click)="adjustClicked()" [disabled]="disabledAdjust" class="btn btn-md btn-outline-primary"><i
+                    <button type="button" (click)="redirectToAdjust()"
+                      *ngIf="!isChangeInvoice"
+                      [disabled]="disabledAdjust" class="btn btn-md btn-outline-primary"><i
                         class="fas fa-edit"></i>
                       Điều chỉnh
                     </button>
-                    <button type="button" (click)="replaceClicked()" [disabled]="disabledReplace" class="btn btn-md btn-outline-primary">
+                    <button type="button" (click)="redirectToReplace()"
+                      *ngIf="!isChangeInvoice"
+                     [disabled]="disabledReplace" class="btn btn-md btn-outline-primary">
                       <i class="fa fa-retweet"></i> Thay thế
                     </button>
 
@@ -195,7 +199,7 @@
                   <span *ngIf="isReplace">
                     Đang viết hóa đơn <b>THAY THẾ</b> cho
                   </span>
-                  <a class="adjustlink" target="_blank" routerLink="/invoices/open/{{invoiceId}}">
+                  <a class="adjustlink" target="_blank" routerLink="/hoa-don/chi-tiet/{{invoiceId}}">
                     hóa đơn số: #{{invoiceNo}} | mẫu: {{adjustForm}} | ký hiệu:{{adjustSerial}}
                   </a>
                 </div>
@@ -213,7 +217,7 @@
                   <span *ngIf="currentAdjust.invoice_type == 'REPLACED'">
                     Hóa đơn này <strong>BỊ THAY THẾ</strong> bởi hóa đơn số:
                   </span>
-                  <a class="adjustlink" target="_blank" routerLink="/invoices/open/{{currentAdjust.ref_invoice_id}}">
+                  <a class="adjustlink" target="_blank" routerLink="/hoa-don/chi-tiet/{{currentAdjust.ref_invoice_id}}">
                     #{{currentAdjust.ref_invoice_no}} | mẫu: {{currentAdjust.ref_invoice_form}} | ký
                     hiệu:{{currentAdjust.ref_invoice_serial}}
                   </a>

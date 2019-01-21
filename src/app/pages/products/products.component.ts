@@ -150,9 +150,9 @@ export class ProductsComponent implements OnInit {
     this.sizeNumber = 20;
   }
 
-  private callServiceAndBindTable(params: GoodParam) {
+  private callServiceAndBindTable(param: GoodParam) {
     this.isSearching = true;
-    this.productService.getList().subscribe(data => {
+    this.productService.queryGoods(param).subscribe(data => {
       if (data) {
         const list = data as PagingData;
         if (list.contents.length > 0) {
