@@ -98,13 +98,37 @@ export class CustomersComponent implements OnInit, AfterViewInit {
 
   }
 
+  public onSizeChange(sizeObj: any) {
+    let size = 20;
+    if (sizeObj != null) {
+      size = sizeObj.code;
+    }
+    this.isSearching = true;
+    const userquery = localStorage.getItem('userquery');
+    let param: CustomerParam;
+    if (userquery) {
+      param = JSON.parse(userquery);
+    } else {
+      param = {};
+    }
+    param.page = 1;
+    param.size = size;
+
+    localStorage.setItem('customerquery', JSON.stringify(param));
+    // call service
+    this.router.navigate([], { replaceUrl: true, queryParams: param });
+    this.callServiceAndBindTable(param);
+
+    $('#customerTable').DataTable().page.len(size).draw();
+  }
+
   public expandSearchClicked() {
     if (this.expandSearch) {
       this.expandSearch = false;
     } else {
       this.expandSearch = true;
     }
-    localStorage.setItem('customerSearch', JSON.stringify(this.expandSearch));
+    localStorage.setItem('isCustomerExpand', JSON.stringify(this.expandSearch));
   }
 
   public addNewClicked() {
@@ -195,7 +219,7 @@ export class CustomersComponent implements OnInit, AfterViewInit {
   }
 
   private initDefault() {
-    const expandSearchTmp = localStorage.getItem('customerSearch');
+    const expandSearchTmp = localStorage.getItem('isCustomerExpand');
     if (expandSearchTmp) {
       this.expandSearch = JSON.parse(expandSearchTmp);
     } else {

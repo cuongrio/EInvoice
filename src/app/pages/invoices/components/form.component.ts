@@ -1048,27 +1048,27 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
   private loadReferences() {
     // check in session
     const formJson = sessionStorage.getItem('comboForm');
-    if (formJson) {
+    if (formJson && formJson != '' && formJson != '[]') {
       this.comboForm = JSON.parse(formJson) as SelectData[];
     }
 
     const httpJson = sessionStorage.getItem('comboHTTT');
-    if (httpJson) {
+    if (httpJson && httpJson != '' && httpJson != '[]') {
       this.comboHTTT = JSON.parse(httpJson) as SelectData[];
     }
 
     const comboTaxRateJson = sessionStorage.getItem('comboTaxRate');
-    if (comboTaxRateJson) {
+    if (comboTaxRateJson && comboTaxRateJson != '' && comboTaxRateJson != '[]') {
       this.comboTaxRate = JSON.parse(comboTaxRateJson) as SelectData[];
     }
 
     const statusJson = sessionStorage.getItem('comboStatus');
-    if (statusJson) {
+    if (statusJson && statusJson != '' && statusJson != '[]') {
       this.comboStatus = JSON.parse(statusJson) as SelectData[];
     }
 
     const comboSerialJson = sessionStorage.getItem('comboSerial');
-    if (comboSerialJson) {
+    if (comboSerialJson && comboSerialJson != '' && comboSerialJson != '[]') {
       this.comboSerial = JSON.parse(comboSerialJson) as SelectData[];
     }
 
@@ -1125,7 +1125,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
       }
 
       // set default value
-      if (this.comboForm.length > 0) {
+      if (this.comboForm && this.comboForm.length > 0) {
         const formPicked = this.comboForm[0].code;
         this.addForm.patchValue({
           form: formPicked
@@ -1133,7 +1133,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
         this.loadSerialByForm(formPicked);
       }
 
-      if (this.comboHTTT.length > 0) {
+      if (this.comboHTTT && this.comboHTTT.length > 0) {
         this.addForm.patchValue({
           payment_method: this.comboHTTT[0].code
         });
@@ -1147,8 +1147,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
       this.storeDataSession();
       this.waitForReference();
     }, err => {
-      this.waitForReference();
-      this.errorHandler(err);
+      this.router.navigate(['/500']);
     });
   }
 

@@ -5,15 +5,13 @@ body.modal-open {
 }
 
 .modal {
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
+  top: 96px;
 
-  &.show {
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-  }
+  // &.show {
+  //   display: flex !important;
+  //   justify-content: center !important;
+  //   align-items: center !important;
+  // }
 
   .modal-dialog {
     display: flex !important;
@@ -57,13 +55,14 @@ body.modal-open {
       min-width: 600px !important;
 
       .modal-body {
-        padding: 4px 40px 20px;
+        padding: 0px 15px;
       }
     }
 
     .modal-content {
       border: 0px !important;
-      border-radius: 0px !important;
+      border-radius: 8px !important;
+      overflow: hidden;
       background: #fff;
       box-shadow: 0 3px 13px rgba(0, 0, 0, 0.5);
 
@@ -78,10 +77,11 @@ body.modal-open {
         -ms-flex-align: center;
         align-items: center;
         font-weight: 600;
-        padding: 0.5rem 1rem !important;
+        padding: 0px 15px 10px !important;
         border-bottom: 0 !important;
 
         .modal-title {
+          margin-top: 10px;
           &.error {
             color: #d8000c;
           }
@@ -119,7 +119,8 @@ body.modal-open {
       .modal-footer {
         background: #f3f4f6;
         border-top: 0 !important;
-        padding: $modal-footer-padding-y $modal-footer-padding-x;
+        padding: 10px 15px;
+        margin-top: 10px;
       }
     }
   }

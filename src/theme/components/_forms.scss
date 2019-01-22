@@ -33,11 +33,11 @@
   }
 
   &.form-control-lg {
-    padding: $input-btn-padding-y-lg 0.75rem;
+    padding: $input-btn-padding-y-lg 0.5rem;
   }
 
   &.form-control-sm {
-    padding: $input-btn-padding-y-sm 0.75rem;
+    padding: $input-btn-padding-y-sm 0.3rem;
     line-height: 22px;
     max-height: 26px !important;
   }
@@ -49,12 +49,6 @@
       border: 0 !important;
       box-shadow:none !important;
     }
-  }
-}
-
-.modal-body{
-  .form-group{
-    margin-bottom: 12px !important;
   }
 }
 

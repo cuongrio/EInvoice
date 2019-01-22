@@ -174,10 +174,8 @@
                         </ng-select>
 
                         <div class="btn-group">
-                          <button type="button" [disabled]="disposeDisabled" class="btn btn-primary mr-1 no-br" (click)="disposeConfirmClicked()">
-                            <i *ngIf="disposeButtonLoading" class="fa fa-spinner fa-spin"></i>
-                            <i *ngIf="!disposeButtonLoading" class="fas fa-check"></i>
-                            {{ disposeButtonLoading ? 'Vui lòng chờ...' : 'Hủy hóa đơn' }}
+                          <button type="button" class="btn btn-primary mr-1 no-br" (click)="disposeConfirmClicked()">
+                            <i class="fas fa-check"></i> Hủy hóa đơn
                           </button>
                           <button type="button" class="btn btn-default" (click)="modalRef.hide()">Bỏ qua</button>
                         </div>
@@ -513,6 +511,7 @@
 
                             <td class="no-padding vat-line">
                               <ng-select *ngIf="!viewMode" formControlName="tax_rate" [(ngModel)]="taxModel[idx]"
+                                [loading]="taxRateLoading"
                                 [ngClass]="{ 'control-invalid': submitted && pItem.hasError('required', 'tax_rate') }"
                                 (change)="taxRateValueChange($event, idx)" [items]="comboTaxRate" [clearable]="false"
                                 [searchable]="false" bindLabel="code" bindValue="value">

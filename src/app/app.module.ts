@@ -34,6 +34,8 @@ import { HttpService } from './core/http/http.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { AppDirectiveModule } from './_directives/directive.module';
 import { AppConstant } from './_mock/mock.data';
+import { UtilitiesComponent } from './utilities/utilities.component';
+import { CategoryComponent } from './pages/category/category.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +45,9 @@ import { AppConstant } from './_mock/mock.data';
     ForgotPassComponent,
     NotFoundComponent,
     ServerErrorComponent,
-    BadRequestComponent
+    BadRequestComponent,
+    UtilitiesComponent,
+    CategoryComponent
   ],
   imports: [
   BrowserModule,

@@ -15,6 +15,6 @@ export class ReferenceService {
   /***TENANT */
   referenceInfo() {
     // return this.appService.get(`/references`);
-    return of(this.appConstant.goodList);
+    return of(this.appConstant.referenceList);
   }
 }

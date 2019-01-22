@@ -3,4 +3,6 @@ export class CustomerParam {
   customerName?: string;
   phone?: string;
   tax_code?: string;
+  page?: number;
+  size?: number;
 }

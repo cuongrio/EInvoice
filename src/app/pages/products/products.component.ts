@@ -89,6 +89,14 @@ export class ProductsComponent implements OnInit {
   public onPageChange(page: number) {
   }
 
+  public openRowClicked(){
+
+  }
+
+  public resetForm(){
+    
+  }
+
   public onSizeChange(sizeObj: any) {
     let size = 20;
     if (sizeObj != null) {
