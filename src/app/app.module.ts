@@ -26,7 +26,6 @@ import { BadRequestComponent } from './exception/bad-request.component';
 import { ServerErrorComponent } from './exception/server-error.component';
 import { ForgotPassComponent } from './forgot/forgot-pass.component';
 import { ValidationService, ForgotPassService } from './_services';
-
 import { CookieService } from 'ngx-cookie-service';
 import { AppService } from './_services/core/app.service';
 import { CoreModule } from './core/core.module';
@@ -34,8 +33,7 @@ import { HttpService } from './core/http/http.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { AppDirectiveModule } from './_directives/directive.module';
 import { AppConstant } from './_mock/mock.data';
-import { UtilitiesComponent } from './utilities/utilities.component';
-import { CategoryComponent } from './pages/category/category.component';
+import { MenuComponent } from './pages/menu/menu.component';
 
 @NgModule({
   declarations: [
@@ -46,8 +44,7 @@ import { CategoryComponent } from './pages/category/category.component';
     NotFoundComponent,
     ServerErrorComponent,
     BadRequestComponent,
-    UtilitiesComponent,
-    CategoryComponent
+    MenuComponent
   ],
   imports: [
   BrowserModule,

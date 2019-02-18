@@ -4,7 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 // import page
 import { PageLayoutComponent } from './pages/page-layout.component';
 import { LoginComponent } from './login/login.component';
-
+import { MenuComponent } from './pages/menu/menu.component';
 import { NotFoundComponent } from './exception/not-found.component';
 import { BadRequestComponent } from './exception/bad-request.component';
 import { ServerErrorComponent } from './exception/server-error.component';
@@ -35,6 +35,11 @@ const routes: Routes = [
         loadChildren: './pages/products/products.module#ProductsModule'
       },
       {
+        path: 'danh-muc',
+        component: MenuComponent,
+        data: { title: 'Danh mục' }
+      },
+      {
         path: 'hoa-don',
         loadChildren: './pages/invoices/invoices.module#InvoicesModule'
       },
@@ -45,6 +50,14 @@ const routes: Routes = [
       {
         path: 'bao-cao',
         loadChildren: './pages/report/report.module#ReportModule'
+      },
+      {
+        path: 'thiet-lap',
+        loadChildren: './pages/settings/setting.module#SettingModule'
+      },
+      {
+        path: 'tien-ich',
+        loadChildren: './pages/utils/utils.module#UtilModule'
       }
     ]
   },
@@ -84,4 +97,4 @@ const routes: Routes = [
   exports: [RouterModule],
   providers: []
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

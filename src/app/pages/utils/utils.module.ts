@@ -2,18 +2,18 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
-import { ReportRoutes } from './report.routing';
-import { ReportComponent } from './report.component';
+import {UtilRoutes} from './utils.routing';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { BulkApproveComponent } from './bulk-approve/bulk-approve.component';
 
 @NgModule({
   imports: [
     CommonModule,
-    RouterModule.forChild(ReportRoutes),
+    RouterModule.forChild(UtilRoutes),
     BsDatepickerModule.forRoot(),
     NgSelectModule,
   ],
-  declarations: [ReportComponent]
+  declarations: [BulkApproveComponent]
 })
-export class ReportModule {}
+export class UtilModule {}

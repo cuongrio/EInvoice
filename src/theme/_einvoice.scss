@@ -1,7 +1,8 @@
 .jumbotron {
   padding: 0 !important;
   margin-bottom: 0px !important;
-  background: #e9ecef;
+  // background: #e9ecef;
+  background: none;
   .breadcrumb {
     border: 0 !important;
     margin-bottom: 0;
@@ -441,9 +442,52 @@ legend.scheduler-border {
 }
 
 .card{
-  .ein-card-body{
-    padding: 3px 12px 3px !important;
+  @media screen and (min-width: 992px) {
+    .card-statistic-body{
+      min-height: 73vh;
+    }
   }
+  
+  @media screen and (min-width: 992px) {
+    .ein-card-body{
+      padding: 3px 12px 3px !important;
+      min-height: 83vh;
+  
+      &.info-card-body{
+        padding: 24px !important;
+    
+        .c_form{
+          border-bottom: 1px dashed #dedede;
+        }
+      }
+
+      &.c-card-body{
+        padding: 10px 12px !important;
+    
+        .c_form{
+          border-bottom: 1px dashed #dedede;
+        }
+      }
+    }
+  }
+}
+
+.bg-company-info{
+  background: url('./assets/images/logo-company.png') center center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.bg-invoice-info{
+  background: url('./assets/images/logo-invoice.png') center center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.bg-custom-info{
+  background: url('./assets/images/logo-custom.png') center center;
+  background-repeat: no-repeat;
+  background-size: contain;
 }
 
 .number-format {
@@ -738,7 +782,6 @@ table {
   max-width: 100%;
   .content-wrapper {
     padding-top: 0;
-    min-height: calc(100vh - #{$footer-height});
   }
 }
 .doc-table-contents,

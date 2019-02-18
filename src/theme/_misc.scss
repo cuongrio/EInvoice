@@ -42,14 +42,10 @@ a {
 }
 
 .content-wrapper {
-  padding: 0 0 2rem;
+  padding: 0 0 1rem;
   max-width: 1240px !important;
   @include make-container();
   @include make-container-max-widths();
-  min-height: calc(100vh - #{$horizontal-navbar-height} - #{$footer-height});
-  &.content-nobreadcrum{
-    min-height: calc(100vh - #{$horizontal-navbar-height} - #{$footer-height} + 15px);
-  }
   @include flex-grow(1);
 }
 
