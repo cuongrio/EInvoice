@@ -444,14 +444,14 @@ legend.scheduler-border {
 .card{
   @media screen and (min-width: 992px) {
     .card-statistic-body{
-      min-height: 73vh;
+      min-height: 65vh;
     }
   }
   
   @media screen and (min-width: 992px) {
     .ein-card-body{
       padding: 3px 12px 3px !important;
-      min-height: 83vh;
+      min-height: 75vh;
   
       &.info-card-body{
         padding: 24px !important;

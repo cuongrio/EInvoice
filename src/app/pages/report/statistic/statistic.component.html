@@ -6,7 +6,8 @@
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb">
             <li class="breadcrumb-item"><a routerLink="/">Trang chủ</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Bảng báo cáo</li>
+            <li class="breadcrumb-item">Bảng báo cáo</li>
+            <li class="breadcrumb-item active" aria-current="page">Thống kê</li>
           </ol>
         </nav>
       </div>
@@ -18,7 +19,7 @@
           <div class="card-body ein-card-body c-card-body">
             <div class="row">
               <div class="container-fluid">
-                <form class="c_form">
+                <form class="c_form" #ngReportForm="ngForm" [formGroup]="reportForm" (ngSubmit)="onSubmit(reportForm.value)">
                   <div class="c_body">
                     <div class="row">
                       <div class="col-md-4 col-lg-4">
@@ -27,7 +28,7 @@
                             <label class="text-bold">Mã khách hàng</label>
                           </div>
                           <div class="col-md-6 col-lg-6">
-                            <input type="text" class="form-control form-control-sm" />
+                            <input appAutofocus formControlName="orgCode" type="text" class="form-control form-control-sm" />
                           </div>
                         </div>
                       </div>
@@ -38,7 +39,7 @@
                             <label class="text-bold">Mã số thuế</label>
                           </div>
                           <div class="col-md-6 col-lg-6">
-                            <input type="text" class="form-control form-control-sm" />
+                            <input formControlName="orgTaxCode" type="text" class="form-control form-control-sm" />
                           </div>
                         </div>
                       </div>
@@ -47,76 +48,55 @@
                     <div class="row">
                       <div class="col-md-4 col-lg-4">
                         <div class="form-group row">
-                          <div class="col-md-4 col-lg-4 col-form-label">
+                          <div class="col-md-4 col-lg-4 col-form-label required">
                             <label class="text-bold">Hình thức In</label>
                           </div>
                           <div class="col-md-6 col-lg-6">
-                            <ng-select
-                              [items]="printTypeCombo"
-                              [clearable]="false"
-                              [searchable]="false"
-                              bindLabel="value"
-                              bindValue="code"
-                            >
+                            <ng-select formControlName="printType"
+                            [(ngModel)]="defaultPrintType"
+                             [items]="printTypeCombo" [clearable]="false"
+                              [searchable]="false" bindLabel="value" bindValue="code">
                             </ng-select>
+                            <app-control-message *ngIf="submitted" [control]="reportForm.controls['printType']"></app-control-message>
                           </div>
                         </div>
                       </div>
 
                       <div class="col-md-4 col-lg-4">
                         <div class="form-group row">
-                          <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Từ ngày</label></div>
+                          <div class="col-md-4 col-lg-4 col-form-label text-right required"><label>Từ ngày</label></div>
                           <div class="col-md-6 col-lg-6">
                             <div class="input-group">
-                              <input
-                                formControlName="fromDate"
-                                class="form-control form-control-sm"
-                                placeholder="DD/MM/YYYY"
-                                triggers="dblclick:click"
-                                [bsConfig]="bsConfig"
-                                #dfromDate="bsDatepicker"
-                                bsDatepicker
-                              />
+                              <input formControlName="fromDate" class="form-control form-control-sm" placeholder="DD/MM/YYYY"
+                              [ngClass]="{ 'control-invalid': submitted && reportForm.controls['fromDate'].errors }"
+                                triggers="dblclick:click" [bsConfig]="bsConfig" #dfromDate="bsDatepicker" bsDatepicker />
                               <div class="input-group-append">
-                                <button
-                                  class="btn btn-inverse-light btn-md"
-                                  (click)="dfromDate.toggle()"
-                                  [attr.aria-expanded]="dfromDate.isOpen"
-                                  type="button"
-                                >
+                                <button class="btn btn-inverse-light btn-md" (click)="dfromDate.toggle()"
+                                  [attr.aria-expanded]="dfromDate.isOpen" type="button">
                                   <i class="fas fa-calendar"></i>
                                 </button>
                               </div>
                             </div>
+                            <app-control-message *ngIf="submitted" [control]="reportForm.controls['fromDate']"></app-control-message>
                           </div>
                         </div>
                       </div>
 
                       <div class="col-md-4 col-lg-4">
                         <div class="form-group row">
-                          <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Đến ngày</label></div>
+                          <div class="col-md-4 col-lg-4 col-form-label text-right required"><label>Đến ngày</label></div>
                           <div class="col-md-6 col-lg-6">
                             <div class="input-group">
-                              <input
-                                formControlName="fromDate"
-                                class="form-control form-control-sm"
-                                placeholder="DD/MM/YYYY"
-                                triggers="dblclick:click"
-                                [bsConfig]="bsConfig"
-                                #dfromDate="bsDatepicker"
-                                bsDatepicker
-                              />
+                              <input formControlName="toDate" class="form-control form-control-sm" placeholder="DD/MM/YYYY"
+                                triggers="dblclick:click" [bsConfig]="bsConfig" #dtoDate="bsDatepicker" bsDatepicker />
                               <div class="input-group-append">
-                                <button
-                                  class="btn btn-inverse-light btn-md"
-                                  (click)="dfromDate.toggle()"
-                                  [attr.aria-expanded]="dfromDate.isOpen"
-                                  type="button"
-                                >
+                                <button class="btn btn-inverse-light btn-md" (click)="dtoDate.toggle()"
+                                  [attr.aria-expanded]="dtoDate.isOpen" type="button">
                                   <i class="fas fa-calendar"></i>
                                 </button>
                               </div>
                             </div>
+                            <app-control-message *ngIf="submitted" [control]="reportForm.controls['toDate']"></app-control-message>
                           </div>
                         </div>
                       </div>
@@ -125,7 +105,9 @@
                 </form>
 
                 <div class="template-ein">
-                  <button type="button" class="btn btn-md btn-primary"><i class="fas fa-file-export"></i> Xuất báo cáo</button>
+                  <button type="button" (click)="isPreview=false; ngReportForm.ngSubmit.emit()" class="btn btn-md btn-primary">
+                    <i class="fa fa fa-share-square"></i> Xuất báo cáo
+                  </button>
                 </div>
               </div>
             </div>

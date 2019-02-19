@@ -15,22 +15,22 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     this.userLogged = this.authenticationService.credentials;
-    this.userLogged = {
-      username: 'cuongtv',
-      password: '123456',
-      name: 'cuongtv',
-      tenant: '1',
-      token: 'token',
-      remember: true
-    };
+    // this.userLogged = {
+    //   username: 'cuongtv',
+    //   password: '123456',
+    //   name: 'cuongtv',
+    //   tenant: '1',
+    //   token: 'token',
+    //   remember: true
+    // };
 
     if(!this.userLogged){
-      this.router.navigate(['/login']);
+      this.router.navigate(['/dang-nhap']);
     }
   }
 
   logoutClicked() {
     this.authenticationService.logout();
-    this.router.navigate(['/login']);
+    this.router.navigate(['/dang-nhap']);
   }
 }

@@ -450,7 +450,6 @@ export class InvoicesComponent implements OnInit {
   private initRouter() {
     if (this.activeRouter.snapshot.queryParams) {
       let routerParams = JSON.parse(JSON.stringify(this.activeRouter.snapshot.queryParams));
-      console.log('routerParams: ' + JSON.stringify(routerParams));
       if (Object.keys(routerParams).length !== 0) {
         if (routerParams['page']) {
           this.page = +routerParams['page'];

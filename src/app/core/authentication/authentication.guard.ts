@@ -12,7 +12,7 @@ export class AuthenticationGuard implements CanActivate {
       return true;
     }
 
-    this.router.navigate(['/login'], { queryParams: { redirect: state.url }, replaceUrl: true });
+    this.router.navigate(['/dang-nhap'], { queryParams: { redirect: state.url }, replaceUrl: true });
     return false;
   }
 }

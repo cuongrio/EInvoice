@@ -56,13 +56,11 @@ export class AuthenticationService {
    */
   get credentials(): UserModel | null {
     if (this._credentials) {
-      console.log(this._credentials.token);
       return this._credentials;
     }
     const userCookie = this.cookieService.get(credentialsKey);
     if (userCookie) {
       const user = JSON.parse(userCookie) as UserModel;
-      console.log(user.token);
       return user;
     }
   }

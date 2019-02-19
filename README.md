@@ -98,7 +98,7 @@ HOA DON
 	-> xóa items
 	
 	
-this.router.navigate(['/login']);
+this.router.navigate(['/dang-nhap']);
 
 if (error.status === 401 || error.status === 402 || error.status === 403) {
 	this.router.navigate(['4xx']);

@@ -12,7 +12,7 @@ export class TokenService {
     private appConstant: AppConstant, private httpClient: HttpClient) { }
 
   listToken() {
-    return of(this.appConstant.listToken);
-    // return this.httpClient.get(`${environment.pluginUrl}/token?fill=all`);
+    // return of(this.appConstant.listToken);
+    return this.httpClient.get(`${environment.pluginUrl}/token?fill=all`);
   }
 }

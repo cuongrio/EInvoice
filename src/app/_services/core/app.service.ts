@@ -21,7 +21,7 @@ export class AppService {
       if (credentials && credentials.tenant) {
         return `${environment.serverUrl}/${credentials.tenant}${url}`;
       } else {
-        this.router.navigate(['/login']);
+        this.router.navigate(['/dang-nhap']);
       }
     }
     return url;
@@ -31,7 +31,7 @@ export class AppService {
     // check url
     const tenantUrl = this.getTenantUrl(url);
     if (tenantUrl === '') {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/dang-nhap']);
     }
     return this.httpService.request('POST', tenantUrl, {
       headers: this.appendHeaderForJson(),
@@ -44,7 +44,7 @@ export class AppService {
     // check url
     const tenantUrl = this.getTenantUrl(url);
     if (tenantUrl === '') {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/dang-nhap']);
     }
     return this.httpService.request('POST', tenantUrl, {
       headers: this.appendHeaderForText(),
@@ -56,7 +56,7 @@ export class AppService {
     // check url
     const tenantUrl = this.getTenantUrl(url);
     if (tenantUrl === '') {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/dang-nhap']);
     }
 
     return this.httpService.request('GET', tenantUrl, {
@@ -69,10 +69,22 @@ export class AppService {
     // check url
     const tenantUrl = this.getTenantUrl(url);
     if (tenantUrl === '') {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/dang-nhap']);
     }
     return this.httpService.request('POST', tenantUrl, {
       headers: this.appendHeaderForJson(),
+      body: body
+    });
+  }
+
+  public postFormData(url: string, body: Object): Observable<any> {
+    // check url
+    const tenantUrl = this.getTenantUrl(url);
+    if (tenantUrl === '') {
+      this.router.navigate(['/dang-nhap']);
+    }
+    return this.httpService.request('POST', tenantUrl, {
+      headers: this.appendHeaderFormData(),
       body: body
     });
   }
@@ -81,7 +93,7 @@ export class AppService {
     // check url
     const tenantUrl = this.getTenantUrl(url);
     if (tenantUrl === '') {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/dang-nhap']);
     }
     return this.httpService.request('PUT', tenantUrl, {
       headers: this.appendHeaderForJson(),
@@ -93,7 +105,7 @@ export class AppService {
     // check url
     const tenantUrl = this.getTenantUrl(url);
     if (tenantUrl === '') {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/dang-nhap']);
     }
 
     return this.httpService.request('DELETE', tenantUrl, {
@@ -113,9 +125,26 @@ export class AppService {
         return headers;
       }
     } else {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/dang-nhap']);
     }
   }
+
+  private appendHeaderFormData(): HttpHeaders {
+    const credentials: UserModel = this.authenticationService.credentials;
+    if (credentials) {
+      const token = credentials.token;
+      if (token !== null) {
+        const headers = new HttpHeaders({
+          'Content-Type': 'form-data',
+          Authorization: 'Bearer ' + token
+        });
+        return headers;
+      }
+    } else {
+      this.router.navigate(['/dang-nhap']);
+    }
+  }
+
 
   private appendHeaderForText(): HttpHeaders {
     const credentials: UserModel = this.authenticationService.credentials;
@@ -129,7 +158,7 @@ export class AppService {
         return headers;
       }
     } else {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/dang-nhap']);
     }
   }
 }

@@ -45,6 +45,7 @@ export class LoginComponent implements OnInit {
         credentials => {
           this.submitted = false;
           const userLogged = credentials as UserModel;
+          console.log(userLogged.token);
           this.authenticationService.setCredentials(userLogged, remember);
           this.route.queryParams.subscribe(params =>
             this.router.navigate([params.redirect || '/'], { replaceUrl: true })
