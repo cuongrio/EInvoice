@@ -10,6 +10,8 @@ import { StatisticComponent } from './statistic/statistic.component';
 import { ReportService } from '@app/_services/app/report.service';
 import { SharedModule } from '@app/shared';
 import { AppDirectiveModule } from '@app/_directives/directive.module';
+import { ModalModule } from 'ngx-bootstrap/modal';
+import { AlertModule } from 'ngx-bootstrap';
 
 @NgModule({
   imports: [
@@ -20,6 +22,8 @@ import { AppDirectiveModule } from '@app/_directives/directive.module';
     FormsModule,
     ReactiveFormsModule,
     AppDirectiveModule,
+    AlertModule.forRoot(),
+    ModalModule.forRoot(),
     SharedModule
   ],
   providers: [ReportService],

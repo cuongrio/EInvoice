@@ -11,12 +11,12 @@ export class DashboardService {
 
     // CUSTOMERS
     statistics() {
-        // return of(this.appConstant.statisticInvoice);
-        return this.appService.get(`/dashboard/statistics/invoice`);
+        return of(this.appConstant.statisticInvoice);
+        // return this.appService.get(`/dashboard/statistics/invoice`);
     }
 
     invoiceRanges() {
-        // return of(this.appConstant.statisticRange);
-        return this.appService.get(`/dashboard/statistics/range`);
+        return of(this.appConstant.statisticRange);
+        // return this.appService.get(`/dashboard/statistics/range`);
     }
 }

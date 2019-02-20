@@ -68,11 +68,11 @@ export class StatisticComponent implements OnInit {
       dataForm.toDate = moment(dataForm.toDate, 'DD-MM-YYYY').format('YYYY-MM-DD');
       
       console.log(dataForm);
-      this.reportService.reportStatistic(dataForm).subscribe(data=> {
-        console.log(data);
-      }, err => {
+      // this.reportService.reportStatistic(dataForm).subscribe(data=> {
+      //   console.log(data);
+      // }, err => {
 
-      });
+      // });
     }
   }
 

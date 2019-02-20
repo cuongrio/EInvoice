@@ -952,7 +952,7 @@ export class InvoicesComponent implements OnInit {
       this.comboSerial = JSON.parse(json) as SelectData[];
     }
 
-    if (this.comboStatus && this.comboForm && this.comboInvoiceType) {
+    if (this.comboStatus && this.comboForm && this.comboInvoiceType && this.comboSerial) {
       this.initDataTable();
       this.initRouter();
       this.ref.markForCheck();
@@ -969,22 +969,6 @@ export class InvoicesComponent implements OnInit {
     const comboTaxRate = new Array<SelectData>();
     const comboHTTT = new Array<SelectData>();
     const comboSerial = new Array<SelectData>();
-
-    // check session
-    const comboFormStr = sessionStorage.getItem('comboForm');
-    if (comboFormStr) {
-      this.comboForm = JSON.parse(comboFormStr);
-    }
-    const comboSerialStr = sessionStorage.getItem('comboSerial');
-    if (comboSerialStr) {
-      this.comboSerial = JSON.parse(comboSerialStr);
-    }
-    if (this.comboForm && this.comboSerial) {
-      this.initDataTable();
-      this.initRouter();
-      this.resetLoading();
-      return;
-    }
 
     // load from references
     this.referenceService.referenceInfo().subscribe((items: SelectData[]) => {

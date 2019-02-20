@@ -15,22 +15,22 @@ export class CustomerService {
   // CUSTOMERS
   queryCustomers(param?: CustomerParam) {
     // mock
-    // return of(this.appConstant.customerList);
+    return of(this.appConstant.customerList);
 
-    if (param) {
-      let httpParams = new HttpParams();
-      Object.keys(param).forEach(function (key: any) {
-        if (param[key]) {
-          if (key === 'page') {
-            httpParams = httpParams.append(key, JSON.stringify(parseInt(param[key], 0) - 1));
-          } else {
-            httpParams = httpParams.append(key, param[key]);
-          }
-        }
-      });
-      return this.appService.get(`/customers`, httpParams);
-    }
-    return this.appService.get(`/customers?page=0&size=10000`);
+    // if (param) {
+    //   let httpParams = new HttpParams();
+    //   Object.keys(param).forEach(function (key: any) {
+    //     if (param[key]) {
+    //       if (key === 'page') {
+    //         httpParams = httpParams.append(key, JSON.stringify(parseInt(param[key], 0) - 1));
+    //       } else {
+    //         httpParams = httpParams.append(key, param[key]);
+    //       }
+    //     }
+    //   });
+    //   return this.appService.get(`/customers`, httpParams);
+    // }
+    // return this.appService.get(`/customers?page=0&size=10000`);
   }
 
   create(customer: CustomerModel) {

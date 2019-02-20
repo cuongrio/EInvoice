@@ -69,29 +69,29 @@ export class InvoiceService {
   }
 
   queryInvoices(invoiceParam?: InvoiceParam) {
-    // return of(this.appConstant.invoiceList);
-    if (invoiceParam) {
-      let httpParams = new HttpParams();
-      Object.keys(invoiceParam).forEach(function (key: any) {
-        if (invoiceParam[key]) {
-          if (key === 'page') {
-            httpParams = httpParams.append(key, JSON.stringify(parseInt(invoiceParam[key], 0) - 1));
-          } else {
-            httpParams = httpParams.append(key, invoiceParam[key]);
-          }
-        }
-      });
-      return this.appService.get(`/invoices`, httpParams);
-    }
-    return this.appService.get(`/invoices?page=0&size=20`);
+    return of(this.appConstant.invoiceList);
+    // if (invoiceParam) {
+    //   let httpParams = new HttpParams();
+    //   Object.keys(invoiceParam).forEach(function (key: any) {
+    //     if (invoiceParam[key]) {
+    //       if (key === 'page') {
+    //         httpParams = httpParams.append(key, JSON.stringify(parseInt(invoiceParam[key], 0) - 1));
+    //       } else {
+    //         httpParams = httpParams.append(key, invoiceParam[key]);
+    //       }
+    //     }
+    //   });
+    //   return this.appService.get(`/invoices`, httpParams);
+    // }
+    // return this.appService.get(`/invoices?page=0&size=20`);
   }
 
   /** END INVOICE */
 
   /*** SIGNED */
   listToken() {
-    // return of(this.appConstant.listToken);
-    return this.appService.get(`${environment.pluginUrl}/token?fill=all`);
+     return of(this.appConstant.listToken);
+    // return this.appService.get(`${environment.pluginUrl}/token?fill=all`);
   }
 
   sign(invoiceId: number) {
