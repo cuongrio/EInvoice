@@ -40,6 +40,20 @@ export class AppService {
     });
   }
 
+
+  public postFormData(url: string, body: Object): Observable<any> {
+    // check url
+    const tenantUrl = this.getTenantUrl(url);
+    if (tenantUrl === '') {
+      this.router.navigate(['/dang-nhap']);
+    }
+    return this.httpService.request('POST', tenantUrl, {
+      headers: this.appendHeaderFormData(),
+      body: body,
+      responseType: 'arraybuffer'
+    });
+  }
+
   public postForText(url: string, body: Object): Observable<any> {
     // check url
     const tenantUrl = this.getTenantUrl(url);
@@ -65,6 +79,30 @@ export class AppService {
     });
   }
 
+  public getTenantInfo(): Observable<any> {
+    const credentials: UserModel = this.authenticationService.credentials;
+    if (credentials && credentials.tenant) {
+      return this.httpService.request('GET', `${environment.serverUrl}/${credentials.tenant}`, {
+        headers: this.appendHeaderForJson()
+      });
+    } else {
+      this.router.navigate(['/dang-nhap']);
+    }
+  }
+
+  public updateTenantInfo(body: Object): Observable<any> {
+    const credentials: UserModel = this.authenticationService.credentials;
+    if (credentials && credentials.tenant) {
+      const tenantUrl = `${environment.serverUrl}/${credentials.tenant}`;
+      return this.httpService.request('PUT', tenantUrl, {
+        headers: this.appendHeaderForJson(),
+        body: body
+      });
+    } else {
+      this.router.navigate(['/dang-nhap']);
+    }
+  }
+
   public post(url: string, body: Object): Observable<any> {
     // check url
     const tenantUrl = this.getTenantUrl(url);
@@ -73,18 +111,6 @@ export class AppService {
     }
     return this.httpService.request('POST', tenantUrl, {
       headers: this.appendHeaderForJson(),
-      body: body
-    });
-  }
-
-  public postFormData(url: string, body: Object): Observable<any> {
-    // check url
-    const tenantUrl = this.getTenantUrl(url);
-    if (tenantUrl === '') {
-      this.router.navigate(['/dang-nhap']);
-    }
-    return this.httpService.request('POST', tenantUrl, {
-      headers: this.appendHeaderFormData(),
       body: body
     });
   }
@@ -135,7 +161,6 @@ export class AppService {
       const token = credentials.token;
       if (token !== null) {
         const headers = new HttpHeaders({
-          'Content-Type': 'form-data',
           Authorization: 'Bearer ' + token
         });
         return headers;

@@ -19,6 +19,9 @@ export class ManifestComponent implements OnInit {
   public submitted = false;
   public formLoading = false;
   public serialLoading = false;
+
+  public successMessage: string;
+  public errMessage: string;
   
   public comboForm: SelectData[];
   public comboSerial: SelectData[];
@@ -52,14 +55,45 @@ export class ManifestComponent implements OnInit {
     this.loadSerialByForm(selectData.value);
   }
 
-  public onSubmit(dataForm: any) {
+  onSubmit(dataForm: any) {
     this.submitted = true;
-    if(dataForm){
+    if (dataForm) {
       // convert date
-      dataForm.fromDate = moment(dataForm.fromDate, 'DD-MM-YYYY').format('YYYY-MM-DD');
-      dataForm.toDate = moment(dataForm.toDate, 'DD-MM-YYYY').format('YYYY-MM-DD');
+      const formData = new FormData();
+
+      // append your data
+      formData.append('orgCode', dataForm.orgCode);
+      formData.append('orgTaxCode', dataForm.orgTaxCode);
+      formData.append('form', dataForm.form);
+      formData.append('serial', dataForm.serial);
+      formData.append('fromDate', moment(dataForm.fromDate, 'DD-MM-YYYY').format('YYYY-MM-DD'));
+      formData.append('toDate', moment(dataForm.toDate, 'DD-MM-YYYY').format('YYYY-MM-DD'));
+
+      console.log(formData);
+      this.errMessage = '';
+      this.successMessage = '';
       
-      console.log(dataForm);
+      this.reportService.reportManifest(formData).subscribe(data => {
+        const file = new Blob([data], { type: 'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const fileURL = URL.createObjectURL(file); 
+        const fileLinkDownload = document.getElementById("excelLink");
+        fileLinkDownload.setAttribute("href", fileURL);
+        fileLinkDownload.setAttribute("download", "bang-ke-hoa-don.xls");
+        fileLinkDownload.setAttribute("style", "display:inline-block;");
+        this.successMessage = "Đã tạo file thành công.";
+      }, err => { 
+        if(err.status){
+          if(err.status === 404){
+            this.errMessage = "Không tìm thấy kết quả!";
+            return;
+          }
+        }
+        if(err.message){
+          this.errMessage = "Đã có lỗi xảy ra: " + err.message;
+          return;
+        }
+        this.errMessage = "Đã có lỗi xảy ra, không thể tạo file báo cáo.";
+      });
     }
   }
 
@@ -79,6 +113,7 @@ export class ManifestComponent implements OnInit {
 
   private initForm() {
     this.reportForm = this.formBuilder.group({
+      orgCode: '',
       orgTaxCode: '',
       form: '',
       serial: '',

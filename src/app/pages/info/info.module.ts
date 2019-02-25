@@ -11,11 +11,12 @@ import { NgSelectModule } from '@ng-select/ng-select';
 
 import { InfoRoutes } from './info.routing';
 import { InfoComponent } from './info.component';
-import { TenantService } from '@app/_services/app/tenant.service';
+import { AppService } from './../../_services/core/app.service';
 
 @NgModule({
   imports: [
-    CommonModule, 
+
+  CommonModule, 
     RouterModule.forChild(InfoRoutes),
     BsDatepickerModule.forRoot(),
     NgSelectModule,
@@ -27,7 +28,7 @@ import { TenantService } from '@app/_services/app/tenant.service';
     SharedModule
   ],
   providers: [
-    TenantService
+    AppService
   ],
   declarations: [InfoComponent]
 })

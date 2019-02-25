@@ -158,7 +158,13 @@
                   <button type="button" (click)="isPreview = false; ngReportForm.ngSubmit.emit()" class="btn btn-md btn-primary">
                     <i class="fa fa fa-share-square"></i> Xuất báo cáo
                   </button>
+                  <a class="btn btn-sm hidden" id="excelLink" href="javascript:void(0)">Tải về file excel</a>
                 </div>
+                <div class="mt-2">
+                  <p class="text-green" *ngIf="successMessage">{{successMessage}}</p>
+                  <p class="text-red" *ngIf="errMessage">{{errMessage}}</p>
+                </div>
+
               </div>
             </div>
           </div>

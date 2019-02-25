@@ -10,11 +10,20 @@ import { of } from 'rxjs';
 export class ReferenceService {
   constructor(
     private appConstant: AppConstant,
-    private appService: AppService) {}
+    private appService: AppService) { }
 
   /***TENANT */
   referenceInfo() {
-     // return this.appService.get(`/references`);
-    return of(this.appConstant.referenceList);
+    return this.appService.get(`/references`);
+    // return of(this.appConstant.referenceList);
+  }
+
+  preferencesList() {
+    return this.appService.get(`/preferences`);
+    // return of(this.appConstant.referenceList);
+  }
+
+  updatePreference(urlSeg: String) {
+    return this.appService.post(`/preferences/${urlSeg}`, null);
   }
 }

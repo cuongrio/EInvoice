@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';  
 import { AppService } from '@app/_services/core/app.service'; 
+import { ReportStatistic } from '@app/_models';
 
 @Injectable({
   providedIn: 'root'
@@ -7,11 +8,11 @@ import { AppService } from '@app/_services/core/app.service';
 export class ReportService {
   constructor(private appService: AppService) { }
 
-  reportStatistic(dataForm: any) {
-    return this.appService.postFormData(`/reports/report-statistic/`, dataForm);
+  reportStatistic(formData: FormData) {
+    return this.appService.postFormData(`/reports/report-statistic/`, formData);
   }
 
-  reportManifest(dataForm: any) {
-    return this.appService.postFormData(`/reports/report-manifest/`, dataForm);
+  reportManifest(formData: FormData) {
+    return this.appService.postFormData(`/reports/report-manifest/`, formData);
   }
 }

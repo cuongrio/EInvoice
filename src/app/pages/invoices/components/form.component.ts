@@ -160,11 +160,11 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     }
   }
 
-  public redirectToAdjust(){
+  public redirectToAdjust() {
     this.router.navigate([`/hoa-don/chi-tiet/${this.invoiceId}/dieu-chinh`]);
   }
 
-  public redirectToReplace(){
+  public redirectToReplace() {
     this.router.navigate([`/hoa-don/chi-tiet/${this.invoiceId}/thay-the`]);
   }
 
@@ -1000,7 +1000,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
     this.goodLoading = true;
     this.goodService.queryGoods().subscribe(data => {
-      if(data.contents){
+      if (data.contents) {
         this.goodArr = data.contents as GoodData[];
         sessionStorage.setItem('goodAutocomplete', JSON.stringify(this.goodArr));
         setTimeout(function () {
@@ -1034,7 +1034,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
     this.customerLoading = true;
     this.customerService.queryCustomers().subscribe(data => {
-      if(data.contents){
+      if (data.contents) {
         this.customerArr = data.contents as CustomerData[];
         sessionStorage.setItem('customerAutocomplete', JSON.stringify(this.customerArr));
         setTimeout(function () {
@@ -1147,7 +1147,11 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
       this.storeDataSession();
       this.waitForReference();
     }, err => {
-      this.router.navigate(['/500']);
+      if (err.status === 403) {
+        this.router.navigate(['/dang-nhap']);
+      } else {
+        this.router.navigate(['/500']);
+      }
     });
   }
 

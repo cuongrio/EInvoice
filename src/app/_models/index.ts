@@ -10,6 +10,9 @@ export * from './data/good.data';
 export * from './data/product.data';
 export * from './data/select.data';
 
+export * from './data/report-manifest.data';
+export * from './data/report-statistic.data';
+
 export * from './data/paging.data';
 export * from './data/sign.data';
 export * from './data/token.data';

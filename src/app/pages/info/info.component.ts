@@ -1,12 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { SelectData } from '@app/_models';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import * as moment from 'moment';
-import { ReferenceService } from '@app/_services';
-import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
-import { BsModalService } from 'ngx-bootstrap/modal';
-import { AlertComponent } from '@app//shared/alert/alert.component';
-import { TenantService } from '@app/_services/app/tenant.service';
+import { AppService } from './../../_services/core/app.service';
 
 @Component({
   selector: 'app-info',
@@ -15,20 +9,23 @@ import { TenantService } from '@app/_services/app/tenant.service';
 export class InfoComponent {
   public infoForm: FormGroup;
   public submitted = false;
+  public successMessage: string;
+  public errMessage: string;
 
   constructor(
-    private tenantService: TenantService,
-    private referenceService: ReferenceService,
+    private appService: AppService,
     private formBuilder: FormBuilder,
-    private modalService: BsModalService,
+    private ref: ChangeDetectorRef
   ) {
     this.initForm();
   }
   public onSubmit(dataForm: any) {
     this.submitted = true;
-    if(dataForm){
-      console.log(dataForm);
-    }
+    this.appService.updateTenantInfo(dataForm).subscribe(data=>{
+      this.successMessage = "Đã cập nhật thành công.";
+    }, err=>{
+      this.errMessage = "Đã xảy ra lỗi. " + err.message;
+    });
   }
 
   private initForm() {
@@ -41,13 +38,14 @@ export class InfoComponent {
       bank_account: '',
       bank: '',
     });
-    //this.predefineValue();
+    this.predefineValue();
   }
 
   private predefineValue(){
-    this.infoForm.patchValue({
-      
+    this.appService.getTenantInfo().subscribe(data=>{
+      this.infoForm.patchValue(data);
+    }, err=>{
+      this.errMessage = "Đã xảy ra lỗi. " + err.message;
     });
   }
-
 }
