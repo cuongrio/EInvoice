@@ -24,13 +24,11 @@ import { CustomersRoutes } from './customers.routing';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { NgxSpinnerModule } from '@hardpool/ngx-spinner';
 import { NgxCurrencyModule } from 'ngx-currency';
+import { CustomerImportExcelComponent } from './components/import-excel.component';
 
 @NgModule({
   imports: [
     CommonModule,
-
-    CommonModule,
-
     RouterModule.forChild(CustomersRoutes),
     FormsModule,
     ReactiveFormsModule,
@@ -49,8 +47,8 @@ import { NgxCurrencyModule } from 'ngx-currency';
     ModalModule.forRoot(),
     SharedModule
   ],
-  entryComponents: [CustomerFormComponent],
-  declarations: [CustomersComponent, CustomerFormComponent],
+  entryComponents: [CustomerFormComponent, CustomerImportExcelComponent],
+  declarations: [CustomersComponent, CustomerFormComponent, CustomerImportExcelComponent],
   providers: [CustomerService, UtilsService, DatePipe, ValidationService]
 })
 export class CustomersModule {}

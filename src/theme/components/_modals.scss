@@ -101,6 +101,8 @@ body.modal-open {
 
       .modal-body {
         min-height: 120px;
+        padding: 10px 15px;
+        border-top: 1px dashed #e3e3e3;
         img.img-sm {
           width: 60px !important;
           height: 60px !important;

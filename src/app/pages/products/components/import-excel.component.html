@@ -1,0 +1,24 @@
+<div class="form-dialog">
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">
+            Upload Hàng hóa
+        </h4>
+        <button *ngIf="viewMode" (click)="viewMode=false" type="button" class="btn btn-sm btn-link">
+            <i class="far fa-edit"></i>
+        </button>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="upload-xls">
+            <input type="file" (change)="incomingfile($event)" placeholder="Upload file"
+                accept=".xlsx">
+            <button type="button" class="btn btn-info" (click)="Upload()">Tải lên</button>
+        </div>
+        <div *ngIf="errors && errors.length > 0" class="err-box scroll-host">
+            <p *ngFor="let err of errors; let i = index;" class="error">&#8208; {{i+1}}. {{err}}</p>
+        </div>
+        <p *ngIf="isSuccess" class="mt-2 text-green">Tất cả đối tượng được imported.</p>
+    </div>
+</div>

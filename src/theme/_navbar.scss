@@ -105,7 +105,9 @@
                 font-size: 0.9rem;
                 margin-top: 0;
                 position: absolute;
-                top: calc(#{$navbar-height} - 30px);
+                top: 23px;
+                color: #fff;
+                background: #0073dd;
                 right: 0;
                 left: auto;
                 border: 0;
@@ -149,6 +151,7 @@
                   &:hover,
                   &:focus {
                     cursor: pointer;
+                    background: transparent;
                   }
 
                   i {

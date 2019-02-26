@@ -1,13 +1,18 @@
 <nav class="navbar horizontal-layout col-lg-12 col-12 p-0">
   <div class="nav-top flex-grow-1">
     <div class="container d-flex flex-row h-100 align-items-center">
+      <div class="text-center navbar-brand-wrapper d-flex align-items-center">
+        <a class="navbar-brand brand-logo" routerLink="/"><img src="assets/images/invoice-logo.png" alt="logo" /></a>
+      </div>
+
       <div class="navbar-menu-wrapper d-flex align-items-center justify-content-between flex-grow-1">
         <ul class="navbar-nav navbar-nav-right mr-0 ml-auto">
           <li class="nav-item nav-profile dropdown">
             <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
               <span class="nav-profile-name">{{ name }}</span>
             </a>
-            <div class="dropdown-menu dropdown-menu-right navbar-dropdown no-min-width" aria-labelledby="profileDropdown">
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown no-min-width"
+              aria-labelledby="profileDropdown">
               <a (click)="logoutClicked()" class="dropdown-item">
                 <i class="icon-logout text-primary mr-2"></i>
                 Đăng xuất
@@ -40,27 +45,27 @@
 
         <li class="nav-item">
           <a class="nav-link" routerLink="/khach-hang">
-            <i class="link-icon icon-pie-chart"></i> <span>Khách hàng</span>
+            <i class="link-icon fa fa-user-circle"></i> <span>Khách hàng</span>
           </a>
         </li>
- 
+
         <li class="nav-item">
-            <div class="nav-link">
-              <i class="link-icon icon-book-open"></i>
-              <span class="menu-title">Báo cáo </span><i class="menu-arrow"></i>
-            </div>
-  
-            <div class="submenu">
-              <ul class="submenu-item">
-                <li class="nav-item"><a class="nav-link" routerLink="/bao-cao/thong-ke">Thống kê</a></li>
-                <li class="nav-item"><a class="nav-link" routerLink="/bao-cao/bang-ke">Bảng kê manifest</a></li>
-              </ul>
-            </div>
-          </li>
+          <div class="nav-link">
+            <i class="link-icon icon-book-open"></i>
+            <span class="menu-title">Báo cáo </span><i class="menu-arrow"></i>
+          </div>
+
+          <div class="submenu">
+            <ul class="submenu-item">
+              <li class="nav-item"><a class="nav-link" routerLink="/bao-cao/thong-ke">Thống kê</a></li>
+              <li class="nav-item"><a class="nav-link" routerLink="/bao-cao/bang-ke">Bảng kê manifest</a></li>
+            </ul>
+          </div>
+        </li>
 
         <li class="nav-item">
           <a class="nav-link" routerLink="/danh-muc">
-            <i class="link-icon icon-book-open"></i>
+            <i class="link-icon fa fa-th-list"></i>
             <span class="menu-title"> Danh mục </span><i class="menu-arrow"></i>
           </a>
 
@@ -75,7 +80,7 @@
 
         <li class="nav-item">
           <a routerLink="/tien-ich" class="nav-link">
-            <i class="link-icon icon-book-open"></i>
+            <i class="link-icon fa fa-wrench"></i>
             <span class="menu-title"> Tiện ích </span><i class="menu-arrow"></i>
           </a>
 

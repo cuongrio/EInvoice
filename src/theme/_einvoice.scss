@@ -645,6 +645,10 @@ table {
   }
 }
 
+.icon-logout{
+  color: #fff !important;
+}
+
 /****SCROLLBAR***/
 .scroll-host {
   &::-webkit-scrollbar {
@@ -655,6 +659,25 @@ table {
   &::-webkit-scrollbar-thumb {
     -webkit-box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.3);
     background-color: #e9ecef;
+  }
+}
+
+.upload-xls{
+  input{
+    font-size: 13px !important;
+  }
+}
+
+.err-box{
+  margin: 16px 0px;
+  max-height: 180px;
+  border-top: 1px dashed #eee;
+  overflow-y: scroll;
+  padding-top: 5px;
+  padding-bottom: 5px;
+
+  p.error{
+    margin: 0;
   }
 }
 

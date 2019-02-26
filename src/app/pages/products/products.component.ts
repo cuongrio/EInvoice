@@ -2,13 +2,13 @@ import { Component, OnInit, ChangeDetectorRef, TemplateRef } from '@angular/core
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import { ProductFormComponent } from './components/form.component';
 import * as moment from 'moment';
 import { GoodService } from '@app/_services';
 import { ProductModel, PagingData } from '@app/_models';
 import { AlertComponent } from '@app/shared/alert/alert.component';
 import { GoodParam } from './../../_models/param/good.param';
+import { ProductImportExcelComponent } from './components/import-excel.component';
 
 declare var $: any;
 
@@ -18,7 +18,6 @@ declare var $: any;
 })
 export class ProductsComponent implements OnInit {
   public bsConfig = { dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-blue' };
-  public modalRef: BsModalRef;
 
   public isSearching = false;
   // expand search
@@ -60,6 +59,12 @@ export class ProductsComponent implements OnInit {
     localStorage.setItem('productsearch', JSON.stringify(this.expandSearch));
   }
 
+  public showImportModal() {
+    this.modalService.show(ProductImportExcelComponent, {
+      animated: false, class: 'modal-md'
+    });
+  }
+
   public openClicked() {
     const goodId = +this.getCheckboxesValue();
     this.productService.retrieveById(goodId).subscribe(data => {
@@ -67,19 +72,19 @@ export class ProductsComponent implements OnInit {
         dataForm: data,
         viewMode: true
       };
-      this.modalRef = this.modalService.show(ProductFormComponent, { animated: false, class: 'modal-lg', initialState });
+      this.modalService.show(ProductFormComponent, { animated: false, class: 'modal-lg', initialState });
     });
 
   }
 
   public openModal(template: TemplateRef<any>) {
-    this.modalRef = this.modalService.show(template, { animated: false, class: 'modal-sm' });
+    this.modalService.show(template, { animated: false, class: 'modal-sm' });
   }
 
   public onSubmit(form: any) { }
 
   public addNewClicked() {
-    this.modalRef = this.modalService.show(ProductFormComponent, { animated: false, class: 'modal-lg' });
+    this.modalService.show(ProductFormComponent, { animated: false, class: 'modal-lg' });
   }
 
   public editClicked() { }
@@ -89,12 +94,12 @@ export class ProductsComponent implements OnInit {
   public onPageChange(page: number) {
   }
 
-  public openRowClicked(){
+  public openRowClicked() {
 
   }
 
-  public resetForm(){
-    
+  public resetForm() {
+
   }
 
   public onSizeChange(sizeObj: any) {
@@ -131,7 +136,7 @@ export class ProductsComponent implements OnInit {
     if (err.error) {
       initialState.message = err.error.message;
     }
-    this.modalRef = this.modalService.show(AlertComponent, { animated: false, class: 'modal-sm', initialState });
+     this.modalService.show(AlertComponent, { animated: false, class: 'modal-sm', initialState });
   }
 
   private getCheckboxesValue() {

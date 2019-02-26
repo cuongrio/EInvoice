@@ -31,11 +31,9 @@ export class HeaderComponent implements OnInit {
           this.name = data.company_name
         }
         if (data.tax_code) {
-          this.name += " | " + data.tax_code;
+          this.name += " - " + data.tax_code;
         }
-        if (data.phone) {
-          this.name += + " | " + data.phone;
-        }
+        this.name += " - " + this.userLogged.name
       } else {
         this.name = this.userLogged.name;
       }

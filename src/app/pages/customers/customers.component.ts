@@ -2,11 +2,11 @@ import { Component, OnInit, AfterViewInit, TemplateRef, ChangeDetectorRef } from
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
-import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import { CustomerFormComponent } from './components/form.component';
 import { CustomerService } from './../../_services/app/customer.service';
-import { CustomerModel, PagingData, CustomerParam } from '@app/_models';
+import { PagingData, CustomerParam } from '@app/_models';
 import { AlertComponent } from '@app/shared/alert/alert.component';
+import { CustomerImportExcelComponent } from './components/import-excel.component';
 
 declare var $: any;
 
@@ -18,7 +18,6 @@ type ArrayObject = Array<{ code: string; value: string }>;
 })
 export class CustomersComponent implements OnInit, AfterViewInit {
   public bsConfig = { dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-blue' };
-  public modalRef: BsModalRef;
 
   public viewMode = false;
 
@@ -35,7 +34,7 @@ export class CustomersComponent implements OnInit, AfterViewInit {
   public totalPages = 0;
 
   public pageSizeList = new Array<any>();
-  public sizeNumber: any;
+  public sizeNumber: any; 
 
   constructor(
     private ref: ChangeDetectorRef,
@@ -94,6 +93,12 @@ export class CustomersComponent implements OnInit, AfterViewInit {
 
   }
 
+  public showImportModal() {
+    this.modalService.show(CustomerImportExcelComponent, {
+      animated: false, class: 'modal-md'
+    });
+  }
+
   public resetForm() {
 
   }
@@ -135,7 +140,7 @@ export class CustomersComponent implements OnInit, AfterViewInit {
     const initialState = {
       viewMode: false
     };
-    this.modalRef = this.modalService.show(CustomerFormComponent, { animated: false, class: 'modal-lg', initialState });
+   this.modalService.show(CustomerFormComponent, { animated: false, class: 'modal-lg', initialState });
   }
 
   public openClicked() {
@@ -151,7 +156,7 @@ export class CustomersComponent implements OnInit, AfterViewInit {
   }
 
   public openModal(template: TemplateRef<any>) {
-    this.modalRef = this.modalService.show(template, { animated: false, class: 'modal-sm' });
+    this.modalService.show(template, { animated: false, class: 'modal-sm' });
   }
 
   public onPageChange(page: number) { }
@@ -166,7 +171,7 @@ export class CustomersComponent implements OnInit, AfterViewInit {
     if (err.error && err.error.message) {
       initialState.message = err.error.message;
     }
-    this.modalRef = this.modalService.show(AlertComponent, { animated: false, class: 'modal-sm', initialState });
+    this.modalService.show(AlertComponent, { animated: false, class: 'modal-sm', initialState });
   }
 
   private getCheckboxesValue() {

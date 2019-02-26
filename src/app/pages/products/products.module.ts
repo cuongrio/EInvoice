@@ -20,15 +20,15 @@ import { HttpClientModule } from '@angular/common/http';
 import { UtilsService } from '@app/_services/utils/utils.service';
 import { ProductsComponent } from './products.component';
 import { ProductFormComponent } from './components/form.component';
-import { ValidationService, GoodService } from '@app/_services';
+import { ValidationService, GoodService, ReferenceService } from '@app/_services';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { NgxCurrencyModule } from 'ngx-currency';
 import { NgxSpinnerModule } from '@hardpool/ngx-spinner';
+import { ProductImportExcelComponent } from './components/import-excel.component';
 
 @NgModule({
   imports: [
     CommonModule,
-
     RouterModule.forChild(ProductsRoutes),
     FormsModule,
     ReactiveFormsModule,
@@ -47,8 +47,8 @@ import { NgxSpinnerModule } from '@hardpool/ngx-spinner';
     ModalModule.forRoot(),
     SharedModule
   ],
-  entryComponents: [ProductFormComponent],
-  declarations: [ProductsComponent, ProductFormComponent],
-  providers: [GoodService, UtilsService, DatePipe, ValidationService]
+  entryComponents: [ProductFormComponent, ProductImportExcelComponent],
+  declarations: [ProductsComponent, ProductFormComponent, ProductImportExcelComponent],
+  providers: [GoodService, UtilsService, DatePipe, ValidationService, ReferenceService]
 })
 export class ProductsModule { }

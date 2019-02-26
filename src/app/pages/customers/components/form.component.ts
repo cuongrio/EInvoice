@@ -1,10 +1,11 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { FormGroup, FormArray, Validators, FormBuilder } from '@angular/forms';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { BsModalRef } from 'ngx-bootstrap/modal';
 import { CustomerModel } from '@app/_models';
 import { CustomerService } from './../../../_services/app/customer.service';
 import { AuthenticationService } from '@app/core/authentication/authentication.service';
 import { AlertComponent } from '@app/shared/alert/alert.component';
+import { BsModalService } from 'ngx-bootstrap/modal';
 
 @Component({
   selector: 'app-customers-form',
@@ -20,14 +21,13 @@ export class CustomerFormComponent implements OnInit {
   // init state
   public dataForm: CustomerModel;
   public viewMode: boolean;
-
   public tenant: string;
 
   constructor(
+    public bsModalRef: BsModalRef,
     private authService: AuthenticationService,
     private customerService: CustomerService,
     private formBuilder: FormBuilder,
-    public bsModalRef: BsModalRef,
     private modalService: BsModalService
   ) { }
   ngOnInit() {
