@@ -1,8 +1,7 @@
 export class GoodParam {
-  goodCode?: string;
-  goodName?: string;
-  goodGroup?: string;
-  unit?: string;
+  goodsCode?: string;
   page?: number;
   size?: number;
+  sort?: string;
+  sortBy?: string;
 }

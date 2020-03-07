@@ -88,8 +88,7 @@ export class InvoicesComponent implements OnInit {
     private datePipe: DatePipe,
     private router: Router,
     private tokenService: TokenService,
-    private referenceService: ReferenceService,
-    private authenticationService: AuthenticationService,
+    private referenceService: ReferenceService, 
     private activeRouter: ActivatedRoute,
     private invoiceService: InvoiceService,
     private formBuilder: FormBuilder
@@ -188,19 +187,10 @@ export class InvoicesComponent implements OnInit {
     invoiceParam.page = +this.page;
     invoiceParam.size = +this.sizeNumber;
 
-    localStorage.setItem('userquery', JSON.stringify(invoiceParam));
+    localStorage.setItem('invQuery', JSON.stringify(invoiceParam));
     this.router.navigate([], { replaceUrl: true, queryParams: invoiceParam });
-    // disabled all button
-    $('#openButton').prop('disabled', true);
-    $('#copyButton').prop('disabled', true);
-    $('#printButton').prop('disabled', true);
-    $('#approveButton').prop('disabled', true);
-    $('#disposeButton').prop('disabled', true);
-    $('#signButton').prop('disabled', true);
-    $('#printTranformButton').prop('disabled', true);
-    $('#adjustButton').prop('disabled', true);
-    $('#replaceButton').prop('disabled', true);
-
+    
+    this.disableAllButton();
     this.callServiceAndBindTable(invoiceParam);
   }
 
@@ -208,10 +198,10 @@ export class InvoicesComponent implements OnInit {
     this.isSearching = true;
     if (this.previousPage !== page) {
       this.previousPage = page;
-      const userquery = localStorage.getItem('userquery');
+      const invQuery = localStorage.getItem('invQuery');
       let invoiceParam: InvoiceParam;
-      if (userquery) {
-        invoiceParam = JSON.parse(userquery);
+      if (invQuery) {
+        invoiceParam = JSON.parse(invQuery);
       } else {
         invoiceParam = {};
       }
@@ -219,7 +209,8 @@ export class InvoicesComponent implements OnInit {
       invoiceParam.page = +this.page;
       invoiceParam.size = this.pageSizeList[0].code;
 
-      localStorage.setItem('userquery', JSON.stringify(invoiceParam));
+      this.disableAllButton();
+      localStorage.setItem('invQuery', JSON.stringify(invoiceParam));
       // call service
       this.router.navigate([], { replaceUrl: true, queryParams: invoiceParam });
       this.callServiceAndBindTable(invoiceParam);
@@ -232,17 +223,17 @@ export class InvoicesComponent implements OnInit {
       size = sizeObj.code;
     }
     this.isSearching = true;
-    const userquery = localStorage.getItem('userquery');
+    const invQuery = localStorage.getItem('invQuery');
     let invoiceParam: InvoiceParam;
-    if (userquery) {
-      invoiceParam = JSON.parse(userquery);
+    if (invQuery) {
+      invoiceParam = JSON.parse(invQuery);
     } else {
       invoiceParam = {};
     }
     invoiceParam.page = 1;
     invoiceParam.size = size;
 
-    localStorage.setItem('userquery', JSON.stringify(invoiceParam));
+    localStorage.setItem('invQuery', JSON.stringify(invoiceParam));
     // call service
     this.router.navigate([], { replaceUrl: true, queryParams: invoiceParam });
     this.callServiceAndBindTable(invoiceParam);
@@ -421,6 +412,19 @@ export class InvoicesComponent implements OnInit {
     }];
   }
 
+  private disableAllButton(){
+    // disabled all button
+    $('#openButton').prop('disabled', true);
+    $('#copyButton').prop('disabled', true);
+    $('#printButton').prop('disabled', true);
+    $('#approveButton').prop('disabled', true);
+    $('#disposeButton').prop('disabled', true);
+    $('#signButton').prop('disabled', true);
+    $('#printTranformButton').prop('disabled', true);
+    $('#adjustButton').prop('disabled', true);
+    $('#replaceButton').prop('disabled', true);
+  }
+
   // END BUTTON ACTION
   private getCheckboxesValue(): any {
     const itemsChecked = new Array<string>();
@@ -465,7 +469,7 @@ export class InvoicesComponent implements OnInit {
           routerParams['toDate'] = this.convertDatetoDisplay(routerParams['toDate']);
         }
 
-        localStorage.setItem('userquery', JSON.stringify(routerParams));
+        localStorage.setItem('invQuery', JSON.stringify(routerParams));
       }
     }
     this.reloadPage();
@@ -502,8 +506,8 @@ export class InvoicesComponent implements OnInit {
 
   private errorHandler(err: any) {
     const initialState = {
-      message: 'Something went wrong',
-      title: 'Đã có lỗi!',
+      message: 'Đã có lỗi xảy ra',
+      title: 'Oop, Rất tiếc!',
       class: 'error'
     };
 
@@ -544,7 +548,7 @@ export class InvoicesComponent implements OnInit {
         this.ref.markForCheck();
       }.bind(this), 200);
     }, err => {
-      this.router.navigate(['/500']);
+      this.router.navigate(['/trang-500']);
     });
   }
 
@@ -737,7 +741,7 @@ export class InvoicesComponent implements OnInit {
             return `
               <span class="lh-medium" title="${org}">${orgFormat}</span>
               <div class="hidden-col">
-                <input type="checkbox" name="stickchoice" value="${row.invoice_id}" class="td-checkbox-hidden">
+                <input type="checkbox" name="stickchoice" value="${row.invoice_id}">
                 <input type="hidden" class="id-hidden" value="${row.invoice_id}">
                 <input type="hidden" class="status-hidden" value="${row.status}">
                 <input type="hidden" class="type-hidden" value="${row.invoice_type}">
@@ -1027,9 +1031,9 @@ export class InvoicesComponent implements OnInit {
   private reloadPage() {
     let invoiceParam: InvoiceParam;
 
-    const userquery = localStorage.getItem('userquery');
-    if (userquery) {
-      invoiceParam = JSON.parse(userquery);
+    const invQuery = localStorage.getItem('invQuery');
+    if (invQuery) {
+      invoiceParam = JSON.parse(invQuery);
       this.page = invoiceParam.page;
       this.sizeNumber = +invoiceParam.size;
 

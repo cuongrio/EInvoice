@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { CustomerFormComponent } from './components/form.component';
 import { CustomerService } from './../../_services/app/customer.service';
-import { PagingData, CustomerParam } from '@app/_models';
+import { PagingData, CustomerParam, GoodParam } from '@app/_models';
 import { AlertComponent } from '@app/shared/alert/alert.component';
 import { CustomerImportExcelComponent } from './components/import-excel.component';
 
@@ -17,6 +17,7 @@ type ArrayObject = Array<{ code: string; value: string }>;
   templateUrl: './customers.component.html'
 })
 export class CustomersComponent implements OnInit, AfterViewInit {
+
   public bsConfig = { dateInputFormat: 'DD/MM/YYYY', containerClass: 'theme-blue' };
 
   public viewMode = false;
@@ -34,8 +35,19 @@ export class CustomersComponent implements OnInit, AfterViewInit {
   public totalPages = 0;
 
   public pageSizeList = new Array<any>();
-  public sizeNumber: any; 
+  public sizeNumber: any;
 
+
+  public sortArr: ArrayObject = [
+    { value: 'Tăng dần', code: 'ASC' },
+    { value: 'Giảm dần', code: 'DESC' }
+  ];
+  public sortByArr: ArrayObject = [
+    { value: 'Mã đối tượng', code: 'customerCode' },
+    { value: 'Mã số thuế', code: 'taxCode' }
+  ];
+
+  private previousPage = 0;
   constructor(
     private ref: ChangeDetectorRef,
     private router: Router,
@@ -49,48 +61,76 @@ export class CustomersComponent implements OnInit, AfterViewInit {
     this.initDefault();
     this.createForm();
     this.initDataTable();
-    this.initPageHandlerInRouter();
+
+    let param: GoodParam = {
+      size: 20,
+      page: 1
+    };
+    this.initPageHandlerInRouter(param);
   }
 
-  ngAfterViewInit() {
-    $('#copyLoading').hide();
-
-    function copyToClipboard(text: string) {
-      const $temp = $('<input>');
-      $('body').append($temp);
-      $temp.val(text).select();
-      document.execCommand('copy');
-      $temp.remove();
-    }
-
-    // handle copy button
-    $('#copyButton').on('click', function (e: any) {
-      e.preventDefault();
-
-      // loading
-      $('#copyLoading').show();
-      $('#copyLoaded').hide();
-
-      const row = $('#customerTable tbody').find('tr.selected')[0];
-      let customerText = '';
-      $(row).find('td').each(function (index: any) {
-        const tdText = $(this).text();
-        if (index > 0 && tdText && tdText.trim().length > 0) {
-          customerText += ',';
-        }
-        customerText += tdText;
-      });
-      copyToClipboard(customerText);
-
-      setTimeout(function () {
-        $('#copyLoading').hide();
-        $('#copyLoaded').show();
-      }, 500);
+  ngAfterViewInit(): void {
+    $('#customerTable tbody').on('click', '.editControl', function () {
+      alert('edit control');
     });
   }
 
-  public onSubmit(form: any) {
+  public onPageChange(page: number) {
+    this.isSearching = true;
+    if (this.previousPage !== page) {
+      this.previousPage = page;
+      const cusQuery = localStorage.getItem('cusQuery');
+      let cusParam: CustomerParam;
+      if (cusQuery) {
+        cusParam = JSON.parse(cusQuery);
+      } else {
+        cusParam = {};
+      }
 
+      cusParam.page = +this.page;
+      cusParam.size = this.pageSizeList[0].code;
+
+      $('#openButton').prop('disabled', true);
+      localStorage.setItem('cusQuery', JSON.stringify(cusParam));
+     
+      this.callServiceAndBindTable(cusParam);
+    }
+  }
+
+  public onSubmit(form: any) {
+    this.page = 1;
+    this.isSearching = true;
+
+    const customerParam: CustomerParam = this.formatForm(form);
+    customerParam.page = +this.page;
+    customerParam.size = +this.sizeNumber;
+    localStorage.setItem('cusQuery', JSON.stringify(customerParam));
+    this.router.navigate([], { replaceUrl: true, queryParams: customerParam });
+    $('#openButton').prop('disabled', true);
+    this.callServiceAndBindTable(customerParam);
+  }
+
+  private formatForm(form: any) {
+    const customerParamsForamat: CustomerParam = {};
+    if (form.sort) {
+      customerParamsForamat.sort = form.sort;
+    }
+    if (form.sortBy) {
+      customerParamsForamat.sortBy = form.sortBy;
+    }
+    if (form.customerCode && form.customerCode.length > 0) {
+      customerParamsForamat.customerCode = form.customerCode.trim();
+    }
+    if (form.taxCode && form.taxCode.length > 0) {
+      customerParamsForamat.taxCode = form.taxCode.trim();
+    }
+    if (form.phone && form.phone.length > 0) {
+      customerParamsForamat.phone = form.phone.trim();
+    }
+    if (form.email) {
+      customerParamsForamat.email = form.email;
+    }
+    return customerParamsForamat;
   }
 
   public showImportModal() {
@@ -140,26 +180,26 @@ export class CustomersComponent implements OnInit, AfterViewInit {
     const initialState = {
       viewMode: false
     };
-   this.modalService.show(CustomerFormComponent, { animated: false, class: 'modal-lg', initialState });
+    this.modalService.show(CustomerFormComponent, { animated: false, class: 'modal-lg', initialState });
   }
 
-  public openClicked() {
-    // const customerId = +this.getCheckboxesValue();
-    // this.customerService.retrieveById(customerId).subscribe(data => {
-    //   const initialState = {
-    //     dataForm: data,
-    //     viewMode: true
-    //   };
-    //   this.modalRef = this.modalService.show(CustomerFormComponent, { animated: false, class: 'modal-lg', initialState });
-    // });
+  public editClicked(){
+    alert('lcick');
+  }
 
+  public downloadExcel() {
+    this.customerService.downloadFile().subscribe(data => {
+      const file = new Blob([data], { type: 'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const fileURL = URL.createObjectURL(file);
+      window.open(fileURL);
+    }, err => {
+      this.errorHandler(err);
+    });
   }
 
   public openModal(template: TemplateRef<any>) {
     this.modalService.show(template, { animated: false, class: 'modal-sm' });
   }
-
-  public onPageChange(page: number) { }
 
   private errorHandler(err: any) {
     const initialState = {
@@ -183,11 +223,14 @@ export class CustomersComponent implements OnInit, AfterViewInit {
     return itemsChecked;
   }
 
-  private initPageHandlerInRouter() {
-    this.callServiceAndBindTable(null);
+  private initPageHandlerInRouter(param: GoodParam) {
+    this.callServiceAndBindTable(param);
   }
 
   private callServiceAndBindTable(param: CustomerParam) {
+     // call service
+     this.router.navigate([], { replaceUrl: true, queryParams: param });
+
     this.isSearching = true;
     this.customerService.queryCustomers(param).subscribe(data => {
       if (data) {
@@ -219,7 +262,7 @@ export class CustomersComponent implements OnInit, AfterViewInit {
       }.bind(this), 200);
 
     }, err => {
-      this.router.navigate(['/500']);
+      this.router.navigate(['/trang-500']);
     });
   }
 
@@ -236,10 +279,17 @@ export class CustomersComponent implements OnInit, AfterViewInit {
 
   private createForm() {
     this.searchForm = this.formBuilder.group({
-      customer_code: '',
-      customer_name: '',
+      customerCode: '',
+      email: '',
       phone: '',
-      tax_code: ''
+      taxCode: '',
+      sort: '',
+      sortBy: ''
+    });
+
+    this.searchForm.patchValue({
+      sort: 'ASC',
+      sortBy: 'customerCode'
     });
   }
 
@@ -284,7 +334,7 @@ export class CustomersComponent implements OnInit, AfterViewInit {
         targets: 3,
         orderable: false,
       }, { // email
-        width: '10%',
+        width: '8%',
         targets: 4,
         orderable: false,
       }, { // cong ty
@@ -314,6 +364,20 @@ export class CustomersComponent implements OnInit, AfterViewInit {
         width: '15%',
         targets: 9,
         orderable: false
+      }, {
+        width: '2%',
+        targets: 10,
+        orderable: false,
+        createdCell: function (td: any, cellData: string) {
+          const htmlButton = `
+          <div class="btn-group" role="group">
+          <a class="editControl pd-3" href="#"><i class="fa fa-edit"></i></a>
+          <a class="trashControl pd-3" href="#"><i class="fa fa-trash text-red"></i></a>
+          </div>
+          `;
+
+          $(td).html(htmlButton);
+        }
       }],
       columns: [{
         className: 'text-bold',
@@ -329,7 +393,7 @@ export class CustomersComponent implements OnInit, AfterViewInit {
             return `
               <span>${row.customer_name}</span>
               <div class="hidden-col">
-              <input type="checkbox" name="stickchoice" value="${row.customer_id}" class="td-checkbox-hidden">
+              <input type="checkbox" name="stickchoice" value="${row.customer_id}">
               </div>
             `;
           } else {
@@ -350,6 +414,8 @@ export class CustomersComponent implements OnInit, AfterViewInit {
         data: 'bank_account'
       }, {
         data: 'bank',
+      }, {
+        data: 'customer_id'
       }],
       select: {
         style: 'single',
@@ -369,15 +435,7 @@ export class CustomersComponent implements OnInit, AfterViewInit {
       table.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell: any, i: number) {
         cell.innerHTML = i + 1;
       });
-    }).draw();
-
-    function bindButtonStatus(status: boolean) {
-      $('#editButton').prop('disabled', status);
-      $('#copyButton').prop('disabled', status);
-      $('#deleteButton').prop('disabled', status);
-    }
-    // disabled all button
-    bindButtonStatus(true);
+    }).draw(); 
 
     // selected row
     $('#customerTable tbody').on('click', 'tr.row-parent', function () {
@@ -390,16 +448,12 @@ export class CustomersComponent implements OnInit, AfterViewInit {
         $(this)
           .find('input:checkbox[name=stickchoice]')
           .prop('checked', false);
-
-        bindButtonStatus(true);
       } else {
         table.$('tr.selected').removeClass('selected');
         $(this).addClass('selected');
         $(this)
           .find('input:checkbox[name=stickchoice]')
           .prop('checked', true);
-
-        bindButtonStatus(false);
       }
       return false;
     });

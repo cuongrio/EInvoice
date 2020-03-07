@@ -15,11 +15,11 @@ import { SelectData, GoodData, InvoiceModel, ProductData, TokenData, ViewNameDat
 import { CustomerService } from './../../../_services/app/customer.service';
 import { GoodService, TokenService } from '@app/_services';
 import { ReferenceService } from './../../../_services/app/reference.service';
-
 import * as moment from 'moment';
 import { NgSelectConfig } from '@ng-select/ng-select';
 import { ISpinnerConfig, SPINNER_PLACEMENT, SPINNER_ANIMATIONS } from '@hardpool/ngx-spinner';
 import { AdjustData } from './../../../_models/data/adjust.data';
+
 declare var $: any;
 @Component({
   selector: 'app-invoice-form',
@@ -1150,7 +1150,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
       if (err.status === 403) {
         this.router.navigate(['/dang-nhap']);
       } else {
-        this.router.navigate(['/500']);
+        this.router.navigate(['/trang-500']);
       }
     });
   }
@@ -1199,7 +1199,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
   private initRouter() {
     const urlSegmentArr: UrlSegment[] = this.activatedRoute.snapshot.url;
-    const segment = urlSegmentArr[0].path;
+    const segment = urlSegmentArr[1].path;
     let subSegment: string;
     // sub segment
     if (urlSegmentArr.length === 3) {
@@ -1238,6 +1238,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
         return this.invoiceService.retrieveInvoiceById(this.invoiceId).subscribe(data => {
           this.invoiceNo = data.invoice_no;
+          console.log('segment: ' + segment);
           if (segment === 'chi-tiet') {
             this.setFormWithDefaultData(data, 'chi-tiet');
             this.adjustForm = data.form;
@@ -1345,6 +1346,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     this.lineAmount = new Array<number>();
     this.lineAmoutWt = new Array<number>();
     this.taxModel = new Array<string>();
+    console.log('data: ' + JSON.stringify(data));
 
     // load serialcombobox
     this.loadSerialByForm(data.form);

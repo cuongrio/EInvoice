@@ -22,60 +22,67 @@
                 <button type="button" (click)="showImportModal()" class="btn btn-md btn-outline-primary">
                   <i class="fas fa-upload"></i> Upload Excel
                 </button>
-                <button id="openButton" type="button" class="btn  btn-md btn-outline-primary">
-                  <i class="fas fa-edit"></i> Mở
+                <button type="button" (click)="downloadExcel()" class="btn btn-md btn-outline-primary">
+                  <i class="fa fa-download"></i> File Mẫu
                 </button>
                 <button (click)="expandSearchClicked()" type="button" class="btn btn-md btn-outline-primary">
                   <i *ngIf="expandSearch" class="fas fa-chevron-down"></i>
                   <i *ngIf="!expandSearch" class="fas fa-chevron-up"></i> Tìm kiếm
-                </button>
-                <button id="copyButton" type="button" class="btn btn-md btn-outline-primary">
-                  <i id="copyLoading" class="fa fa-spinner fa-spin"></i>
-                  <i id="copyLoaded" class="fas fa-copy"></i>
-                  Sao chép
                 </button>
               </div>
 
               <div [hidden]="!expandSearch" class="search-box">
                 <div class="card shadow-nohover">
                   <div class="card-body">
-                    <form class="form-horizontal" #ngSearchForm="ngForm" [formGroup]="searchForm" (ngSubmit)="onSubmit(searchForm.value)">
-                      <div class="row">
-                        <div class="col-md-3 col-lg-3">
-                          <div class="form-group row">
-                            <div class="col-md-4 col-lg-4 col-form-label"><label>Mã đối tượng</label></div>
-                            <div class="col-md-8 col-lg-8">
-                              <input formControlName="customer_code" type="text" class="form-control form-control-sm" />
-                            </div>
+                    <form class="form-horizontal" #ngSearchForm="ngForm" [formGroup]="searchForm"
+                      (ngSubmit)="onSubmit(searchForm.value)">
+                      <div class="row mb-3">
+                        <div class="col-md-2 col-lg-2">
+                          <div class="form-group">
+                            <label>Mã đối tượng</label>
+                            <input formControlName="customerCode" type="text" class="form-control form-control-sm" />
+                          </div>
+                        </div>
+
+                        <div class="col-md-2 col-lg-2">
+                          <div class="form-group">
+                            <label>Mã số thuế</label>
+                            <input formControlName="taxCode" type="text" class="form-control form-control-sm" />
                           </div>
                         </div>
 
                         <div class="col-md-3 col-lg-3">
-                          <div class="form-group row">
-                            <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Tên đối tượng</label></div>
-                            <div class="col-md-8 col-lg-8">
-                              <input formControlName="customer_name" type="text" class="form-control form-control-sm" />
-                            </div>
+                          <div class="form-group">
+                            <label>Số điện thoại</label>
+                            <input formControlName="phone" type="text" class="form-control form-control-sm" />
                           </div>
                         </div>
 
                         <div class="col-md-3 col-lg-3">
-                          <div class="form-group row">
-                            <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Mã số thuế</label></div>
-                            <div class="col-md-8 col-lg-8">
-                              <input formControlName="tax_code" type="text" class="form-control form-control-sm" />
+                          <div class="form-group">
+                            <label>Email</label>
+                            <input formControlName="email" type="text" class="form-control form-control-sm" />
+                          </div>
+                        </div>
+
+                        <div class="col-md-2 col-lg-2">
+                          <div class="form-group">
+                            <label>Sắp xếp</label>
+                            <div class="container-half">
+                              <div class="select-half">
+                                <ng-select formControlName="sortBy" [items]="sortByArr" [clearable]="false"
+                                  [searchable]="false" bindLabel="value" bindValue="code">
+                                </ng-select>
+                              </div>
+                              <div class="select-half">
+                                <ng-select formControlName="sort" [items]="sortArr" [clearable]="false"
+                                  [searchable]="false" bindLabel="value" bindValue="code">
+                                </ng-select>
+                              </div>
                             </div>
                           </div>
                         </div>
 
-                        <div class="col-md-3 col-lg-3">
-                          <div class="form-group row">
-                            <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Số điện thoại</label></div>
-                            <div class="col-md-8 col-lg-8">
-                              <input formControlName="phone" type="text" class="form-control form-control-sm" />
-                            </div>
-                          </div>
-                        </div>
                       </div>
                     </form>
                   </div>
@@ -84,7 +91,8 @@
 
               <div [hidden]="!expandSearch" class="paging-top__group">
                 <div class="btn-group">
-                  <button [disabled]="isSearching" type="button" class="btn btn-md btn-primary btn-search" (click)="ngSearchForm.ngSubmit.emit()">
+                  <button [disabled]="isSearching" type="button" class="btn btn-md btn-primary btn-search"
+                    (click)="ngSearchForm.ngSubmit.emit()">
                     <i *ngIf="!isSearching" class="icon-magnifier"></i>
                     <i *ngIf="isSearching" class="fa fa-spinner fa-spin"></i> Tìm kiếm
                   </button>
@@ -96,7 +104,8 @@
 
                 <div class="ngb-pagination" *ngIf="totalPages > 1">
                   <ngb-pagination class="justify-content-end" [pageSize]="itemsPerPage" [collectionSize]="totalItems"
-                    [(page)]="page" (pageChange)="onPageChange($event)" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"></ngb-pagination>
+                    [(page)]="page" (pageChange)="onPageChange($event)" [maxSize]="5" [rotate]="true"
+                    [boundaryLinks]="true"></ngb-pagination>
                 </div>
               </div>
             </div>
@@ -115,6 +124,7 @@
                     <th>Địa chỉ</th>
                     <th>Tài khoản</th>
                     <th>Ngân hàng</th>
+                    <th>#</th>
                   </tr>
                 </thead>
               </table>
@@ -122,8 +132,9 @@
             <div class="ngb-pagination bottom-pagination">
               <div class="page-info">
                 <div class="form-group pull-left">
-                  <ng-select [items]="pageSizeList" [clearable]="false" [clearOnBackspace]="false" (change)="onSizeChange($event)"
-                    [(ngModel)]="sizeNumber" [searchable]="false" bindLabel="value" bindValue="code">
+                  <ng-select [items]="pageSizeList" [clearable]="false" [clearOnBackspace]="false"
+                    (change)="onSizeChange($event)" [(ngModel)]="sizeNumber" [searchable]="false" bindLabel="value"
+                    bindValue="code">
                   </ng-select>
                 </div>
                 <label class="pull-left pager-footer_info">Trang {{ page }}: {{ totalElements }} dòng | Tổng số: {{
@@ -132,8 +143,9 @@
               </div>
 
               <div *ngIf="totalPages > 1">
-                <ngb-pagination [pageSize]="itemsPerPage" [collectionSize]="totalItems" [(page)]="page" (pageChange)="onPageChange($event)"
-                  [maxSize]="5" [rotate]="true" [boundaryLinks]="true"></ngb-pagination>
+                <ngb-pagination [pageSize]="itemsPerPage" [collectionSize]="totalItems" [(page)]="page"
+                  (pageChange)="onPageChange($event)" [maxSize]="5" [rotate]="true" [boundaryLinks]="true">
+                </ngb-pagination>
               </div>
             </div>
           </div>

@@ -333,6 +333,11 @@
 
           &:last-child {
             border-right: none;
+            .submenu{
+              right: 0 !important;
+              left: unset !important;
+            }
+            
             @include media-breakpoint-up(lg) {
               > .nav-link {
                 padding-right: 0;

@@ -566,19 +566,19 @@
                       </table>
                     </div>
                   </div>
-                </form>
-                <div class="row text-center">
-                  <div *ngIf="!viewMode" class="btn-group btn-form__footer">
-                    <button type="button" (click)="isPreview=false; ngAddForm.ngSubmit.emit()" class="btn btn-md btn-primary">
-                      <i class="fas fa-save"></i> Lưu
-                    </button>
-                    <button (click)="ignoreClicked()" type="button" class="btn btn-md">
-                      <i class="fas fa-times-circle"></i> Bỏ qua
-                    </button>
-                  </div>
+                </form> 
+                <div *ngIf="!viewMode" class="btn-group btn-form__footer">
+                  <button type="button" (click)="isPreview=false; ngAddForm.ngSubmit.emit()" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Lưu
+                  </button>
+                  <button (click)="ignoreClicked()" type="button" class="btn btn-default">
+                    <i class="fas fa-times-circle"></i> Bỏ qua
+                  </button>
                 </div>
+                
               </div>
             </div>
+            
           </div>
         </div>
       </div>

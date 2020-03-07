@@ -14,7 +14,7 @@ export class GoodService {
 
   /**** LIST *** */
   queryGoods(param?: GoodParam) {
-   // return of(this.appConstant.goodList);
+    // return of(this.appConstant.goodList);
     if (param) {
       let httpParams = new HttpParams();
       Object.keys(param).forEach(function (key: any) {
@@ -45,9 +45,11 @@ export class GoodService {
     return this.appService.put(`/goods/`, product);
   }
 
-  uploadFile() { }
+  uploadFile(formData: FormData) {
+    return this.appService.postFormData(`/goods/upload/`, formData);
+  }
 
   downloadFile() {
-    return this.appService.get(`/goods/download`);
+    return this.appService.getByResponseArrayBuffer(`/goods/download`);
   }
 }

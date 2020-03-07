@@ -61,7 +61,7 @@ body.modal-open {
 
     .modal-content {
       border: 0px !important;
-      border-radius: 8px !important;
+      border-radius: 2px !important;
       overflow: hidden;
       background: #fff;
       box-shadow: 0 3px 13px rgba(0, 0, 0, 0.5);
@@ -82,6 +82,7 @@ body.modal-open {
 
         .modal-title {
           margin-top: 10px;
+          font-size: 15px;
           &.error {
             color: #d8000c;
           }

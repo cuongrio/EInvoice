@@ -2,7 +2,6 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ForgotPassService } from './../_services/core/forgot.service';
-import { Subscription } from 'rxjs';
 import { ValidationService } from '@app/_services/core/validator.service';
 
 
@@ -23,7 +22,6 @@ export class ForgotPassComponent implements OnInit {
   public securityForm: FormGroup;
   public confirmPassForm: FormGroup;
 
-  private subscription: Subscription;
   constructor(
     private ref: ChangeDetectorRef,
     private validationService: ValidationService,

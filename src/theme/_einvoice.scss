@@ -423,6 +423,9 @@ legend.scheduler-border {
   }
 }
 
+.hidden{
+  display: none !important;
+}
 .dispose-content{
   padding: 15px;
   .heading{
@@ -430,11 +433,25 @@ legend.scheduler-border {
   }
 }
 
+.customer-form{
+  .form-control{
+    margin-bottom: 12px;
+    background: aliceblue;
+  }
+
+  .ng-select-sm{
+    .ng-select-container{
+      height: 38px !important; 
+      background: aliceblue;
+      border-radius: 2px;
+      min-width: 85px;
+    }
+  }
+}
 
 .dropdown_expand{
   .ng-dropdown-panel{
     &.ng-select-bottom{
-      width: 280px !important;
       margin-top: 0 !important;
       border-top-right-radius: 4px !important;
     }
@@ -462,7 +479,7 @@ legend.scheduler-border {
   
   @media screen and (min-width: 992px) {
     .ein-card-body{
-      padding: 3px 12px 3px !important;
+      padding: 3px 16px 3px !important;
       min-height: calc(100vh - 167px);
   
       &.info-card-body{
@@ -642,6 +659,47 @@ table {
         }
       }
     }
+  }
+}
+.pd-3{
+  padding: 3px;
+}
+.card-body {
+  animation: fadein 1.5s;
+  -moz-animation: fadein 1.5s; /* Firefox */
+  -webkit-animation: fadein 1.5s; /* Safari and Chrome */
+  -o-animation: fadein 1.5s; /* Opera */
+}
+@keyframes fadein {
+  from {
+      opacity:0;
+  }
+  to {
+      opacity:1;
+  }
+}
+@-moz-keyframes fadein { /* Firefox */
+  from {
+      opacity:0;
+  }
+  to {
+      opacity:1;
+  }
+}
+@-webkit-keyframes fadein { /* Safari and Chrome */
+  from {
+      opacity:0;
+  }
+  to {
+      opacity:1;
+  }
+}
+@-o-keyframes fadein { /* Opera */
+  from {
+      opacity:0;
+  }
+  to {
+      opacity: 1;
   }
 }
 
@@ -1133,8 +1191,9 @@ label.error {
 }
 
 .btn-form__footer{
-  text-align: center;
-  margin: 0px auto 10px;
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
   .btn-md{
     height: 26px;
   }
@@ -1147,12 +1206,14 @@ label.error {
 
 /***INVOICE FORM***/
 .invoice__wrapper {
+  position: relative;
   .invoice__form {
     .form-group {
       margin-bottom: 0px !important;
     }
 
     .invoice__body {
+      margin-bottom: 45px;
       .loading {
         .backdrop {
           top: 0 !important;
@@ -1206,7 +1267,7 @@ label.error {
         }
       }
       .sub-title-small__validate{
-        margin: 16px 7px 0px !important;
+        margin: 9px 7px 0px !important;
         display: block;
       }
       .product-line {
@@ -1247,7 +1308,7 @@ label.error {
         .sticky-btn__td {
           position: absolute;
           margin-top: 2px;
-          right: 3px;
+          right: -5px;
           .sticky_btn {
             padding: 0px;
             color: #ccc !important;

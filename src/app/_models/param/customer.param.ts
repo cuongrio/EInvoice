@@ -1,8 +1,10 @@
 export class CustomerParam {
   customerCode?: string;
-  customerName?: string;
+  email?: string;
   phone?: string;
-  tax_code?: string;
+  taxCode?: string;
   page?: number;
   size?: number;
+  sort?: string;
+  sortBy?: string;
 }

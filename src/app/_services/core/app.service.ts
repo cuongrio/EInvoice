@@ -79,6 +79,20 @@ export class AppService {
     });
   }
 
+  public getByResponseArrayBuffer(url: string, httpParams?: HttpParams): Observable<any> {
+    // check url
+    const tenantUrl = this.getTenantUrl(url);
+    if (tenantUrl === '') {
+      this.router.navigate(['/dang-nhap']);
+    }
+
+    return this.httpService.request('GET', tenantUrl, {
+      headers: this.appendHeaderForJson(),
+      params: httpParams ? httpParams : {},
+      responseType: 'arraybuffer'
+    });
+  }
+
   public getTenantInfo(): Observable<any> {
     const credentials: UserModel = this.authenticationService.credentials;
     if (credentials && credentials.tenant) {

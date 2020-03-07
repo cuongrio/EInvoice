@@ -20,17 +20,19 @@
 
                             <h3 class="mr-auto">Đăng nhập tài khoản</h3>
                             <p class="mb-5 mr-auto">Vui lòng nhập thông tin bên dưới.
-                                Hoặc <a routerLink="/public/resetpass">Quên mật khẩu?</a>
+                                Hoặc <a routerLink="/doi-mat-khau">Quên mật khẩu?</a>
                             </p>
                             <div class="form-group">
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="icon-user"></i></span>
                                     </div>
-                                    <input type="text" placeholder="Tài khoản" formControlName="username" class="form-control"
+                                    <input type="text" placeholder="Tài khoản" formControlName="username"
+                                        class="form-control"
                                         [ngClass]="{ 'control-invalid': submitted && loginForm.controls['password'].errors }" />
                                 </div>
-                                <app-control-message *ngIf="submitted" [control]="loginForm.controls['username']"></app-control-message>
+                                <app-control-message *ngIf="submitted" [control]="loginForm.controls['username']">
+                                </app-control-message>
                             </div>
 
                             <div class="form-group">
@@ -38,10 +40,12 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="icon-lock"></i></span>
                                     </div>
-                                    <input type="password" placeholder="Mật khẩu" formControlName="password" class="form-control"
+                                    <input type="password" placeholder="Mật khẩu" formControlName="password"
+                                        class="form-control"
                                         [ngClass]="{ 'control-invalid': submitted && loginForm.controls['password'].errors }" />
                                 </div>
-                                <app-control-message *ngIf="submitted" [control]="loginForm.controls['password']"></app-control-message>
+                                <app-control-message *ngIf="submitted" [control]="loginForm.controls['password']">
+                                </app-control-message>
                             </div>
 
                             <div class="form-group">
@@ -56,13 +60,20 @@
 
                             <div class="form-group">
                                 <button [disabled]="isLoading" type="submit" class="btn btn-primary submit-btn">
-                                    <i *ngIf="isLoading" class="fa fa-spinner fa-spin"></i>  
+                                    <i *ngIf="isLoading" class="fa fa-spinner fa-spin"></i>
                                     <i *ngIf="!isLoading" class="fa fa-sign-in"></i>
                                     {{ isLoading ? 'Vui lòng chờ...' : 'Đăng nhập' }}
-                                </button> 
+                                </button>
                             </div>
                             <div class="wrapper mt-5 text-gray">
-                                <p class="footer-text">Copyright © 2018 EInvoice System. All rights reserved.</p>
+                                <span
+                                    class="footer-text text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright
+                                    © 2018 <a href="#" target="_blank">AHoaDon eInvocie System</a> - CÔNG TY TNHH GIẢI
+                                    PHÁP PHẦN MỀM VÀ TRUYỀN THÔNG THƯƠNG HIỆU
+                                    NOVA.
+                                </span>
+                                <br /> <br />
+                                <span class="footer-text text-muted">All rights reserved.</span>
                             </div>
                         </form>
                     </div>

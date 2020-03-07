@@ -40,4 +40,12 @@ export class CustomerService {
   update(customer: CustomerModel) {
     return this.appService.put(`/customers/`, customer);
   }
+
+  uploadFile(formData: FormData){
+    return this.appService.postFormData(`/customers/upload/`, formData);
+  }
+  
+  downloadFile() {
+    return this.appService.getByResponseArrayBuffer(`/customers/download`);
+  }
 }

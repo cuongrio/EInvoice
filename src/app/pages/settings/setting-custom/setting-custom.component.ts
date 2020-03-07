@@ -26,7 +26,7 @@ export class SettingCustomComponent {
 
   public saveItem(i: number, val: String) {
     if(this.items[i].value === val){
-      this.items[i].errMsg = "Thông tin không thay đổi";
+      this.items[i].errMsg = "Thông tin không thay đổi!";
       this.showMessage = true;
       setTimeout(function () {
         this.showMessage = false;
@@ -38,7 +38,7 @@ export class SettingCustomComponent {
     const urlSeg = `${this.items[i].code}/${val}`;
     this.referenceService.updatePreference(urlSeg).subscribe(data => {
       this.saveButtonArr[i] = false;
-      this.items[i].successMsg = "Đã cập nhật thành công.";
+      this.items[i].successMsg = "Đã cập nhật thành công!";
       this.showMessage = true;
       setTimeout(function () {
         this.showMessage = false;
@@ -46,7 +46,7 @@ export class SettingCustomComponent {
       }.bind(this), 1000);
 
     }, err => {
-      this.items[i].errMsg = "Cập nhật thông tin thất bại.";
+      this.items[i].errMsg = "Cập nhật thông tin thất bại!";
       this.showMessage = true;
       setTimeout(function () {
         this.showMessage = false;
@@ -62,7 +62,7 @@ export class SettingCustomComponent {
       if (err.status === 403) {
         this.router.navigate(['/dang-nhap']);
       } else {
-        this.router.navigate(['/500']);
+        this.router.navigate(['/trang-500']);
       }
     });
   }

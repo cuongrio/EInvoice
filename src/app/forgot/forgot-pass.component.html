@@ -8,7 +8,8 @@
                 </div>
                 <div class="col-12 col-md-8 h-100 bg-white">
                     <div class="auto-form-wrapper d-flex align-items-center justify-content-center flex-column">
-                        <form *ngIf="screen === 1" class="authen-form" [formGroup]="forgotForm" (ngSubmit)="onSendSubmit(forgotForm.value)">
+                        <form *ngIf="screen === 1" class="authen-form" [formGroup]="forgotForm"
+                            (ngSubmit)="onSendSubmit(forgotForm.value)">
                             <div *ngIf="errorMessage" class="alert alert-danger">
                                 <i class="fas fa-exclamation-triangle"></i> {{errorMessage}}
                             </div>
@@ -22,9 +23,11 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-envelope"></i></span>
                                     </div>
-                                    <input type="text" formControlName="email" placeholder="Email" class="form-control" />
+                                    <input type="text" formControlName="email" placeholder="Email"
+                                        class="form-control" />
                                 </div>
-                                <app-control-message *ngIf="submitted" [control]="forgotForm.controls['email']"></app-control-message>
+                                <app-control-message *ngIf="submitted" [control]="forgotForm.controls['email']">
+                                </app-control-message>
                             </div>
                             <div class="form-group">
                                 <button [disabled]="isLoading" type="submit" class="btn btn-primary submit-btn">
@@ -34,10 +37,18 @@
                                 </button>
                             </div>
                             <div class="wrapper mt-5 text-gray">
-                                <p class="footer-text">Copyright © 2018 EInvoice System. All rights reserved.</p>
+                                <span
+                                    class="footer-text text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright
+                                    © 2018 <a href="#" target="_blank">AHoaDon eInvocie System</a> - CÔNG TY TNHH GIẢI
+                                    PHÁP PHẦN MỀM VÀ TRUYỀN THÔNG THƯƠNG HIỆU
+                                    NOVA.
+                                </span>
+                                <br /> <br />
+                                <span class="footer-text text-muted">All rights reserved.</span>
                             </div>
                         </form>
-                        <form *ngIf="screen === 2" class="authen-form" [formGroup]="confirmPassForm" (ngSubmit)="onDoResetSubmit(confirmPassForm.value)">
+                        <form *ngIf="screen === 2" class="authen-form" [formGroup]="confirmPassForm"
+                            (ngSubmit)="onDoResetSubmit(confirmPassForm.value)">
                             <div *ngIf="errorMessage" class="alert alert-danger">
                                 <i class="fas fa-exclamation-triangle"></i> {{errorMessage}}
                             </div>
@@ -51,9 +62,11 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-key"></i></span>
                                     </div>
-                                    <input type="password" formControlName="password" placeholder="Nhập mật khẩu" class="form-control" />
+                                    <input type="password" formControlName="password" placeholder="Nhập mật khẩu"
+                                        class="form-control" />
                                 </div>
-                                <app-control-message *ngIf="submitted" [control]="confirmPassForm.controls['password']"></app-control-message>
+                                <app-control-message *ngIf="submitted" [control]="confirmPassForm.controls['password']">
+                                </app-control-message>
                             </div>
 
                             <div class="form-group">
@@ -76,7 +89,14 @@
                                 </button>
                             </div>
                             <div class="wrapper mt-5 text-gray">
-                                <p class="footer-text">Copyright © 2018 EInvoice System. All rights reserved.</p>
+                                <span
+                                    class="footer-text text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright
+                                    © 2018 <a href="#" target="_blank">AHoaDon eInvocie System</a> - CÔNG TY TNHH GIẢI
+                                    PHÁP PHẦN MỀM VÀ TRUYỀN THÔNG THƯƠNG HIỆU
+                                    NOVA.
+                                </span>
+                                <br /> <br />
+                                <span class="footer-text text-muted">All rights reserved.</span>
                             </div>
                         </form>
 
@@ -92,7 +112,14 @@
                                 </button>
                             </div>
                             <div class="wrapper mt-5 text-gray">
-                                <p class="footer-text">Copyright © 2018 EInvoice System. All rights reserved.</p>
+                                <span
+                                    class="footer-text text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright
+                                    © 2018 <a href="#" target="_blank">AHoaDon eInvocie System</a> - CÔNG TY TNHH GIẢI
+                                    PHÁP PHẦN MỀM VÀ TRUYỀN THÔNG THƯƠNG HIỆU
+                                    NOVA.
+                                </span>
+                                <br /> <br />
+                                <span class="footer-text text-muted">All rights reserved.</span>
                             </div>
                         </form>
 
@@ -107,7 +134,14 @@
                                 </button>
                             </div>
                             <div class="wrapper mt-5 text-gray">
-                                <p class="footer-text">Copyright © 2018 EInvoice System. All rights reserved.</p>
+                                <span
+                                    class="footer-text text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright
+                                    © 2018 <a href="#" target="_blank">AHoaDon eInvocie System</a> - CÔNG TY TNHH GIẢI
+                                    PHÁP PHẦN MỀM VÀ TRUYỀN THÔNG THƯƠNG HIỆU
+                                    NOVA.
+                                </span>
+                                <br /> <br />
+                                <span class="footer-text text-muted">All rights reserved.</span>
                             </div>
                         </div>
                     </div>

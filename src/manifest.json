@@ -1,9 +1,13 @@
 {
-  "name": "aHoaDon-eInvoice-System",
-  "short_name": "AHoaDon eInvoice System",
-  "theme_color": "#488aff",
-  "background_color": "#488aff",
+  "name": "ahoadon-einvoice-system",
+  "short_name": "ahoadon",
+  "description": "AHoaDon eInvoice System PWA APP",
+  "theme_color": "#1976d2",
+  "background_color": "#fafafa",
   "scope": "/",
+  "display": "standalone",
   "start_url": "/",
-  "display": "standalone"
+  "orientation": "any",
+  "related_applications": [],
+  "prefer_related_applications": false
 }

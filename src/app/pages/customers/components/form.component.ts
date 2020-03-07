@@ -46,7 +46,7 @@ export class CustomerFormComponent implements OnInit {
     if (this.addForm.invalid) {
       return;
     }
-
+ 
     // new customer
     const customer = new CustomerModel();
     Object.assign(customer, dataForm);

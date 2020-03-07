@@ -31,13 +31,13 @@
                       </div>
                       <div *ngIf="saveButtonArr[i]">
                         <h6>{{item.code}}
-                          <button (click)="saveItem(i, itemValue.value)"
+                          <a class="pd-3" (click)="saveItem(i, itemValue.value)"
                             class="ml-1 btn btn-icons btn-rounded btn-link ">
-                            <i class="fa fa-check"></i>
-                          </button>
-                          <button (click)="closeItem(i)" class="ml-1 btn btn-icons btn-rounded btn-link ">
-                            <i class="fa fa-times"></i>
-                          </button>
+                            <i class="fa fa-check text-green"></i>
+                          </a>
+                          <a class="pd-3" (click)="closeItem(i)">
+                            <i class="fa fa-times text-red"></i>
+                          </a>
                         </h6>
                         <input [value]="item.value" class="form-control form-control-sm mb-2" #itemValue type="text" />
                       </div>

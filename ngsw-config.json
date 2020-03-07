@@ -23,5 +23,20 @@
         ]
       }
     }
+  ],
+  "dataGroups": [
+    {
+      "name": "ahoadon api",
+      "urls": [
+        "http://206.189.157.11:8080",
+        "https://ahoadonplugin.com:15668"
+      ],
+      "cacheConfig": {
+        "strategy": "freshness",
+        "maxSize": 10000,
+        "maxAge": "6h",
+        "timeout": "5s"
+      }
+    }
   ]
 }

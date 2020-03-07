@@ -3,12 +3,13 @@
   "version": "1.0.0",
   "private": true,
   "engines": {
-    "node": "10.3.0"
+    "node": "12.14.0"
   },
   "scripts": {
     "ng": "ng",
     "build": "ng build --prod",
-    "start": "http-server dist/",
+	"start": "ng serve",
+    "start-server": "http-server dist/",
     "preinstall": "npm install -g http-server",
     "postinstall": "ng build --prod",
     "generate": "ng generate"
@@ -21,10 +22,11 @@
     "@angular/core": "^7.1.0",
     "@angular/forms": "^7.1.0",
     "@angular/http": "^7.1.0",
+    "@angular/pwa": "^0.13.3",
+    "@angular/service-worker": "7.2.7",
     "@angular/platform-browser": "^7.1.0",
     "@angular/platform-browser-dynamic": "^7.1.0",
     "@angular/router": "^7.1.0",
-    "@angular/service-worker": "^7.1.0",
     "@fortawesome/fontawesome-free-webfonts": "^1.0.9",
     "@hardpool/ngx-spinner": "^2.2.1",
     "@ng-select/ng-select": "^2.13.1",

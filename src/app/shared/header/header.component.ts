@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, UrlSegment, ActivatedRoute } from '@angular/router';
 import { UserModel } from '@app/_models';
 import { AuthenticationService } from '@app/core/authentication/authentication.service';
 import { AppService } from '@app/_services/core/app.service';

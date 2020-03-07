@@ -1,9 +1,6 @@
 <div class="form-dialog">
   <div class="modal-header">
-    <h4 class="modal-title pull-left">{{ title }}</h4>
-    <button *ngIf="viewMode" (click)="viewMode = false" type="button" class="btn btn-sm btn-link">
-      <i class="far fa-edit"></i>
-    </button>
+    <h4 class="modal-title pull-left text-uppercase">{{ title }}</h4>
     <button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
       <span aria-hidden="true">&times;</span>
     </button>
@@ -16,60 +13,53 @@
         <div class="col-md-12 col-lg-12 col-sm-12">
           <div class="form-group">
             <label class="required">Mã hàng</label>
-            <input
-              [readonly]="viewMode"
-              appAutofocus
-              formControlName="goods_code"
-              type="text"
-              class="form-control form-control-sm"
-              [ngClass]="{ 'control-invalid': submitted && addForm.controls['goods_code'].errors }"
-            />
+            <input appAutofocus formControlName="goods_code" type="text" class="form-control"
+              [ngClass]="{ 'control-invalid': submitted && addForm.controls['goods_code'].errors }" />
             <app-control-message *ngIf="submitted" [control]="addForm.controls['goods_code']"></app-control-message>
           </div>
         </div>
         <div class="col-md-12 col-lg-12 col-sm-12">
           <div class="form-group">
             <label class="required">Tên hàng</label>
-            <textarea rows="2" [readonly]="viewMode" formControlName="goods_name" class="form-control"></textarea>
+            <input type="text" formControlName="goods_name" class="form-control" />
             <app-control-message *ngIf="submitted" [control]="addForm.controls['goods_name']"></app-control-message>
           </div>
         </div>
         <div class="col-md-6 col-lg-6 col-sm-12">
           <div class="form-group">
             <label>Giá bán</label>
-            <input [readonly]="viewMode" formControlName="price" type="text" class="form-control form-control-sm" />
+            <!-- <input formControlName="price" type="text" class="form-control" /> -->
+            <input formControlName="price" currencyMask
+              [options]="{ prefix: '', allowNegative: false, precision: 0, thousands:'.'}" class="form-control text-left"
+              type="text" />
             <app-control-message *ngIf="submitted" [control]="addForm.controls['price']"></app-control-message>
           </div>
 
           <div class="form-group">
             <label>Mã thuế</label>
-            <ng-select
-              [loading]="taxRateLoading"
-              formControlName="tax_rate_code"
-              [items]="comboTaxRate"
-              [clearable]="false"
-              [searchable]="false"
-              bindLabel="code"
-              bindValue="value"
-            >
-            </ng-select>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <ng-select class="ng-select-sm" (change)="onTaxRateCodeChanged($event)" [loading]="taxRateLoading"
+                  formControlName="tax_rate_code" [items]="comboTaxRate" [(ngModel)]="taxRateCodePicked"
+                  [clearable]="false" [searchable]="false" bindLabel="code" bindValue="value" dropdownPosition="top">
+                </ng-select>
+              </div>
+              <input formControlName="tax_rate" (input)="onTaxRateChanged($event.target.value)" type="text"
+                class="form-control" />
+            </div>
+
             <app-control-message *ngIf="submitted" [control]="addForm.controls['tax_rate_code']"></app-control-message>
           </div>
         </div>
         <div class="col-md-6 col-lg-6 col-sm-12">
           <div class="form-group">
             <label>Đơn vị tính</label>
-            <input [readonly]="viewMode" formControlName="unit" type="text" class="form-control form-control-sm" />
+            <input formControlName="unit" type="text" class="form-control" />
             <app-control-message *ngIf="submitted" [control]="addForm.controls['unit']"></app-control-message>
           </div>
           <div class="form-group">
             <label>Nhóm</label>
-            <input
-              [readonly]="viewMode"
-              formControlName="goods_group"
-              type="text"
-              class="form-control form-control-sm"
-            />
+            <input formControlName="goods_group" type="text" class="form-control" />
             <app-control-message *ngIf="submitted" [control]="addForm.controls['goods_group']"></app-control-message>
           </div>
         </div>
@@ -78,12 +68,7 @@
   </div>
 
   <div class="modal-footer">
-    <button
-      *ngIf="!viewMode"
-      type="button"
-      (click)="ngAddForm.ngSubmit.emit()"
-      class="btn btn-md btn-success pull-right"
-    >
+    <button type="button" (click)="ngAddForm.ngSubmit.emit()" class="btn btn-md btn-success pull-right">
       <i class="fas fa-save"></i> Lưu
     </button>
     <button type="button" (click)="bsModalRef.hide()" class="btn btn-md btn-light pull-right">
