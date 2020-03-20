@@ -1,0 +1,120 @@
+<!-- partial -->
+<div class="page-wrapper">
+  <div class="main-panel">
+    <div class="jumbotron">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a routerLink="/">Trang chủ</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Duyệt theo lô</li>
+        </ol>
+      </nav>
+    </div>
+
+    <div class="content-form">
+      <div class="card">
+        <div class="card-body ein-card-body c-card-body">
+          <div class="row">
+            <div class="container-fluid">
+              <form class="c_form">
+                <div class="c_body">
+                  <div class="row">
+                    <div class="col-md-4 col-lg-4">
+                      <div class="form-group row">
+                        <div class="col-md-4 col-lg-4 col-form-label">
+                          <label>Mã số thuế</label>
+                        </div>
+                        <div class="col-md-6 col-lg-6">
+                          <input formControlName="orgTaxCode" type="text" class="form-control form-control-sm" />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4 col-lg-4">
+                      <div class="form-group row">
+                        <div class="col-md-4 col-lg-4 col-form-label  text-right"><label>Mẫu số</label></div>
+                        <div class="col-md-6 col-lg-6">
+                          <ng-select formControlName="form" [loading]="formLoading" [items]="comboForm"
+                            [searchable]="false" bindLabel="code" bindValue="value">
+                          </ng-select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-4 col-lg-4">
+                      <div class="form-group row">
+                        <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Ký hiệu</label></div>
+                        <div class="col-md-6 col-lg-6">
+                          <ng-select formControlName="serial" [loading]="serialLoading" [items]="comboSerial"
+                            [searchable]="false" bindLabel="code" bindValue="value">
+                          </ng-select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-4 col-lg-4">
+                      <div class="form-group row">
+                        <div class="col-md-4 col-lg-4 col-form-label required"><label>Từ ngày</label></div>
+                        <div class="col-md-6 col-lg-6">
+                          <div class="input-group">
+                            <input formControlName="fromDate" class="form-control form-control-sm"
+                              placeholder="DD/MM/YYYY"
+                              [ngClass]="{ 'control-invalid': submitted && approveForm.controls['fromDate'].errors }"
+                              triggers="dblclick:click" [bsConfig]="bsConfig" #dfromDate="bsDatepicker" bsDatepicker />
+                            <div class="input-group-append">
+                              <button class="btn btn-inverse-light btn-md" (click)="dfromDate.toggle()"
+                                [attr.aria-expanded]="dfromDate.isOpen" type="button">
+                                <i class="fas fa-calendar"></i>
+                              </button>
+                            </div>
+                          </div>
+                          <app-control-message *ngIf="submitted" [control]="approveForm.controls['fromDate']">
+                          </app-control-message>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-4 col-lg-4">
+                      <div class="form-group row">
+                        <div class="col-md-4 col-lg-4 col-form-label text-right required">
+                          <label>Đến ngày</label>
+                        </div>
+                        <div class="col-md-6 col-lg-6">
+                          <div class="input-group">
+                            <input formControlName="toDate" class="form-control form-control-sm"
+                              placeholder="DD/MM/YYYY" triggers="dblclick:click" [bsConfig]="bsConfig"
+                              #dtoDate="bsDatepicker" bsDatepicker />
+                            <div class="input-group-append">
+                              <button class="btn btn-inverse-light btn-md" (click)="dtoDate.toggle()"
+                                [attr.aria-expanded]="dtoDate.isOpen" type="button">
+                                <i class="fas fa-calendar"></i>
+                              </button>
+                            </div>
+                          </div>
+                          <app-control-message *ngIf="submitted" [control]="approveForm.controls['toDate']">
+                          </app-control-message>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4 col-lg-4">
+                      <div class="form-group row">
+                        <div class="col-md-4 col-lg-4 col-form-label text-right"><label>Trạng thái</label></div>
+                        <div class="col-md-6 col-lg-6">
+                          <input type="text" value="Đã ký" readonly="readonly" class="form-control form-control-sm" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+
+              <div class="template-ein">
+                <button type="button" class="btn btn-md btn-primary">
+                  <i class="fas fa-check"></i> Duyệt theo lô
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

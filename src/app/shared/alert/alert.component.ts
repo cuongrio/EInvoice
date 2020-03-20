@@ -1,5 +1,6 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, Input } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-alert',
@@ -7,18 +8,27 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
   encapsulation: ViewEncapsulation.None
 })
 export class AlertComponent implements OnInit {
-  public title: string;
-  public message: string;
-  public class: string;
-  public highlight: string;
-  public list: any[] = [];
 
-  constructor(public bsModalRef: BsModalRef) { }
+  @Input()
+  public data: {
+    title: string;
+    message: string;
+    class: string;
+    highlight: string;
+  };
+
+  constructor(
+    private activeModal: NgbActiveModal
+  ) { }
 
   ngOnInit() {
-    if (!this.message) {
-      this.message = 'Đã có lỗi xảy ra!';
-      this.class = 'error';
+    if (!this.data.message) {
+      this.data.message = 'Đã có lỗi xảy ra!';
+      this.data.class = 'error';
     }
+  }
+
+  close() {
+    this.activeModal.dismiss();
   }
 }

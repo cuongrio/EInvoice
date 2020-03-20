@@ -3,11 +3,11 @@
  * Component-specific style should not go here and be included directly as part of the components.
  */
 // Theme variables, must be included before the libraries to allow overriding defaults
-@import "theme/theme-variables";
+@import "theme/variables";
+@import "theme/bootstrap_variables";
 
 @import url("~@ng-select/ng-select/themes/default.theme.css");
 @import url("~datatables.net-bs4/css/dataTables.bootstrap4");
-@import url("~ngx-bootstrap/datepicker/bs-datepicker");
 @import url("~ngx-select-dropdown/dist/assets/style");
 
 // 3rd party libraries

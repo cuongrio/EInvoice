@@ -1,11 +1,16 @@
 import { Component, OnInit } from '@angular/core';
+import { UtilsService } from '@service/index';
 
 @Component({
   selector: 'app-bad-request',
   templateUrl: './bad-request.component.html'
 })
 export class BadRequestComponent implements OnInit {
-  constructor() {}
+  constructor(
+    private utilsService: UtilsService
+  ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.utilsService.clear();
+  }
 }

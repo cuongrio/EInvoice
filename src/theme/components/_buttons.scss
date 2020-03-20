@@ -2,6 +2,8 @@
 .btn {
   font-size: $btn-font-size;
   font-family: $type-1;
+  border-radius: 2px !important;
+  border: 0px;
 
   &:disabled {
     color: #000 !important;

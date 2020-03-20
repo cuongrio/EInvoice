@@ -2,12 +2,12 @@
 .auth {
   min-height: 100vh;
   &.auth-bg-1 {
-    background: url("./assets/images/auth/login_1.jpg");
+    background: url("./assets/images/auth/login.jpg");
     background-size: cover;
   }
 
   &.register-bg-1 {
-    background: url("./assets/images/auth/register.jpg") center center no-repeat;
+    // background: url("./assets/images/auth/register.jpg") center center no-repeat;
     background-size: cover;
   }
 
@@ -228,20 +228,26 @@
         width: 100%;
 
         &.bg-1 {
-          background: url("./assets/images/auth/login_2.jpg") no-repeat center center;
+          background: url("./assets/images/auth/login.jpg") no-repeat center center;
           background-size: cover;
         }
 
-        &.bg-2 {
-          background: url("./assets/images/auth/register_2.jpg") no-repeat center center;
-          background-size: cover;
-        }
+        // &.bg-2 {
+        //   background: url("./assets/images/auth/register.jpg") no-repeat center center;
+        //   background-size: cover;
+        // }
       }
     }
   }
 }
 
 .lock-full-bg {
-  background: url("./assets/images/auth/login_1.jpg");
+  background: url("./assets/images/auth/login.jpg");
   background-size: cover;
+}
+
+.authen-form{
+  .alert{
+    padding: 12px !important;
+  }
 }

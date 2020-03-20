@@ -1,9 +1,7 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ForgotPassService } from './../_services/core/forgot.service';
-import { ValidationService } from '@app/_services/core/validator.service';
-
+import { ForgotPassService, ValidationService } from '@service/index';
 
 @Component({
   selector: 'app-forgot-pass',
@@ -46,18 +44,19 @@ export class ForgotPassComponent implements OnInit {
       return;
     }
     this.emailRequest = dataForm.email;
-    this.forgotService.sendReset(dataForm.email).subscribe(data => {
-      this.errorMessage = '';
-      this.submitted = false;
-      this.resetLoading();
-      this.screen = 4;
-    }, err => {
-      this.resetLoading();
-      this.submitted = false;
-      if (err.error) {
-        this.errorMessage = err.error.message;
-      }
-    });
+    this.forgotService.sendReset(dataForm.email)
+      .subscribe((data: any) => {
+        this.errorMessage = '';
+        this.submitted = false;
+        this.resetLoading();
+        this.screen = 4;
+      }, (err: any) => {
+        this.resetLoading();
+        this.submitted = false;
+        if (err.error) {
+          this.errorMessage = err.error.message;
+        }
+      });
   }
 
   onCheckSubmit(dataForm: any) {
@@ -74,18 +73,19 @@ export class ForgotPassComponent implements OnInit {
     };
 
     this.secureCode = dataForm.secure_code;
-    this.forgotService.checkReset(body).subscribe(data => {
-      this.errorMessage = '';
-      this.screen = 2;
-      this.submitted = false;
-      this.resetLoading();
-    }, err => {
-      this.resetLoading();
-      this.submitted = false;
-      if (err.error) {
-        this.errorMessage = err.error.message;
-      }
-    });
+    this.forgotService.checkReset(body)
+      .subscribe(() => {
+        this.errorMessage = '';
+        this.screen = 2;
+        this.submitted = false;
+        this.resetLoading();
+      }, (err: any) => {
+        this.resetLoading();
+        this.submitted = false;
+        if (err.error) {
+          this.errorMessage = err.error.message;
+        }
+      });
   }
 
   onDoResetSubmit(dataForm: any) {
@@ -102,58 +102,61 @@ export class ForgotPassComponent implements OnInit {
       new_password: dataForm.password
     };
 
-    this.forgotService.doReset(body).subscribe(data => {
-      this.errorMessage = '';
-      this.screen = 3;
-      this.submitted = false;
-      this.resetLoading();
-    }, err => {
-      this.resetLoading();
-      this.submitted = false;
-      if (err.error) {
-        this.errorMessage = err.error.message;
-      }
-    });
+    this.forgotService.doReset(body)
+      .subscribe(() => {
+        this.errorMessage = '';
+        this.screen = 3;
+        this.submitted = false;
+        this.resetLoading();
+      }, (err: any) => {
+        this.resetLoading();
+        this.submitted = false;
+        if (err.error) {
+          this.errorMessage = err.error.message;
+        }
+      });
   }
 
   private initRouter() {
-    this.activatedRoute.queryParamMap.subscribe(queryParams => {
-      const email = queryParams.get('email');
-      const secure = queryParams.get('secure');
-      if (email && secure) {
-        const body = {
-          email: email,
-          secure_code: secure
-        };
+    this.activatedRoute.queryParamMap
+      .subscribe((data: any) => {
+        const email = data.get('email');
+        const secure = data.get('secure');
+        if (email && secure) {
+          const body = {
+            email: email,
+            secure_code: secure
+          };
 
-        // save to context
-        this.emailRequest = email;
-        this.secureCode = secure;
+          // save to context
+          this.emailRequest = email;
+          this.secureCode = secure;
 
-        this.forgotService.checkReset(body).subscribe(data => {
-          this.errorMessage = '';
-          this.screen = 2;
-          this.submitted = false;
-          this.resetLoading();
-        }, err => {
+          this.forgotService.checkReset(body)
+            .subscribe(() => {
+              this.errorMessage = '';
+              this.screen = 2;
+              this.submitted = false;
+              this.resetLoading();
+            }, (err: any) => {
+              this.initFirstScreenDefault();
+              this.forgotForm.patchValue({
+                email: email
+              });
+
+              if (err.error) {
+                this.errorMessage = err.error.message;
+              } else {
+                this.errorMessage = 'Yêu cầu reset mật khẩu không đúng hoặc hết hạn';
+              }
+              this.ref.markForCheck();
+            });
+        } else {
           this.initFirstScreenDefault();
-          this.forgotForm.patchValue({
-            email: email
-          });
-
-          if (err.error) {
-            this.errorMessage = err.error.message;
-          } else {
-            this.errorMessage = 'Yêu cầu reset mật khẩu không đúng hoặc hết hạn';
-          }
-          this.ref.markForCheck();
-        });
-      } else {
+        }
+      }, () => {
         this.initFirstScreenDefault();
-      }
-    }, err => {
-      this.initFirstScreenDefault();
-    });
+      });
   }
 
   private initFirstScreenDefault() {

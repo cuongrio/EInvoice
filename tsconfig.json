@@ -15,8 +15,14 @@
     "lib": ["es2018", "dom"],
     "baseUrl": "src",
     "paths": {
-      "@app/*": ["app/*"],
-      "@env/*": ["environments/*"]
+      "@directive/*": ["app/directives/*"],
+      "@service/*": ["app/services/*"],
+      "@model/*": ["app/models/*"],
+      "@core/*": ["app/core/*"],
+      "@pages/*": ["app/pages/*"],
+      "@shared/*": ["app/shared/*"],
+      "@env/*": ["environments/*"],
+      
     }
   }
 }

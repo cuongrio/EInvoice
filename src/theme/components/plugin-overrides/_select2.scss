@@ -105,3 +105,9 @@
     }
   }
 }
+
+.ng-select.disable-arrow { 
+  .ng-arrow-wrapper {
+    display: none;
+  }
+}

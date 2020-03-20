@@ -33,8 +33,7 @@
               "src/main.scss"
             ],
             "scripts": [
-              "./node_modules/jquery/dist/jquery.js",
-              "./node_modules/jquery.cookie/jquery.cookie.js",
+              "./node_modules/jquery/dist/jquery.js", 
               "./node_modules/bootstrap/dist/js/bootstrap.min.js",
               "./node_modules/moment/moment.js",
               "./node_modules/datatables/media/js/jquery.dataTables.min.js"
@@ -51,13 +50,7 @@
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
-              "serviceWorker": true,
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
-                }
-              ]
+              "serviceWorker": true, 
             }
           }
         },
@@ -137,5 +130,8 @@
       }
     }
   },
-  "defaultProject": "einvoice"
+  "defaultProject": "einvoice",
+  "cli": {
+    "analytics": false
+  }
 }

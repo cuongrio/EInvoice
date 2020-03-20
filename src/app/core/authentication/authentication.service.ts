@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { environment } from '@env/environment';
-import { CookieService } from 'ngx-cookie-service';
-import { UserModel } from '@app/_models';
-import { HttpService } from '..';
-const credentialsKey = 'credentials';
-const serverUrlKey = 'serverUrl';
+import { UserModel } from '@model/user.model';
+import { HttpService } from '@core/http/http.service';
+import { CookieService } from '@service/core/cookie.service';
+import { COOKIE_KEY } from 'app/constant';
+ 
 /**
  * Provides a base for authentication workflow.
  * The Credentials interface as well as login/logout methods should be replaced with proper implementation.
@@ -13,9 +13,12 @@ const serverUrlKey = 'serverUrl';
 export class AuthenticationService {
   private _credentials: UserModel | null;
 
-  constructor(private httpService: HttpService, private cookieService: CookieService) {
+  constructor(
+    private httpService: HttpService,
+    private cookieService: CookieService
+  ) {
     // check on cookie
-    const savedCredentials = cookieService.get(credentialsKey);
+    const savedCredentials = cookieService.get(COOKIE_KEY.token);
     if (savedCredentials) {
       this._credentials = JSON.parse(savedCredentials);
     }
@@ -58,28 +61,31 @@ export class AuthenticationService {
     if (this._credentials) {
       return this._credentials;
     }
-    const userCookie = this.cookieService.get(credentialsKey);
+    const userCookie = this.cookieService.get(COOKIE_KEY.token);
     if (userCookie) {
       const user = JSON.parse(userCookie) as UserModel;
       return user;
     }
   }
 
-  public setCredentials(userLogged?: UserModel, remember?: boolean) {
+  public setCredentials(
+    userLogged?: UserModel,
+    remember?: boolean
+  ) {
     this._credentials = userLogged || null;
 
     if (userLogged) {
-      const serverUrl = `${environment.serverUrl}/${userLogged.tenant}`;
+      const serverUrl = `${environment.serverUrl}/api/${userLogged.tenant}`;
       if (remember) {
-        this.cookieService.set(credentialsKey, JSON.stringify(userLogged), 7);
-        this.cookieService.set(serverUrlKey, serverUrl, 7);
+        this.cookieService.set(COOKIE_KEY.token, JSON.stringify(userLogged), 7);
+        this.cookieService.set(COOKIE_KEY.tenant, serverUrl, 7);
       } else {
-        this.cookieService.set(credentialsKey, JSON.stringify(userLogged));
-        this.cookieService.set(serverUrlKey, serverUrl);
+        this.cookieService.set(COOKIE_KEY.token, JSON.stringify(userLogged));
+        this.cookieService.set(COOKIE_KEY.tenant, serverUrl);
       }
     } else {
-      this.cookieService.delete(credentialsKey);
-      this.cookieService.delete(serverUrlKey);
+      this.cookieService.delete(COOKIE_KEY.token);
+      this.cookieService.delete(COOKIE_KEY.tenant);
     }
   }
 }

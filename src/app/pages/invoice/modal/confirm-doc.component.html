@@ -1,0 +1,54 @@
+<div class="modal-header">
+    <h4 class="modal-title pull-left">Xác nhận</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="close()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<form class="modal-body text-center">
+    <form class="dispose-content">
+        <p class="heading">Bạn chắc chắn muốn lập hóa đơn điều chỉnh?</p>
+        <form #ngDocForm="ngForm" [formGroup]="docForm" (ngSubmit)="onSubmit(docForm.value)">
+
+            <div class="form-group row">
+                <div class="col-md-4 col-lg-4 col-form-label text-right">
+                    <label class="required">Mã biên bản</label>
+                </div>
+                <div class="col-md-8 col-lg-8">
+                    <input formControlName="note_id" type="text" class="form-control form-control-sm"
+                        placeholder="Mã biên bản" />
+                    <app-control-message *ngIf="submitted" [control]="docForm.controls['note_id']" class="text-left">
+                    </app-control-message>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-md-4 col-lg-4 col-form-label">
+                    <label class="required">Ngày biên bản</label>
+                </div>
+                <div class="col-md-8 col-lg-8">
+                    <div class="input-group">
+                        <input appAutofocus formControlName="note_date" class="form-control form-control-sm text-bold"
+                            [ngClass]="{ 'control-invalid': submitted && docForm.controls['note_date'].errors }"
+                            placeholder="DD/MM/YYYY" [bsConfig]="bsConfig" triggers="none" #dinvoiceDate="bsDatepicker"
+                            bsDatepicker />
+                        <div class="input-group-append">
+                            <button class="btn btn-icons btn-inverse-light btn-md" (click)="dinvoiceDate.toggle()"
+                                [attr.aria-expanded]="dinvoiceDate.isOpen" type="button">
+                                <i class="fas fa-calendar"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <app-control-message *ngIf="submitted" class="text-left" [control]="docForm.controls['note_date']">
+                    </app-control-message>
+                </div>
+            </div>
+        </form>
+    </form>
+</form>
+
+<div class="modal-footer">
+    <button type="button" (click)="ngDocForm.ngSubmit.emit()" class="btn btn-primary mr-1 no-br">
+        <i class="fas fa-check"></i> Đồng ý
+    </button>
+    <button type="button" class="btn btn-default" (click)="close()">Bỏ qua</button>
+</div>

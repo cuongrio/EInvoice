@@ -1,6 +1,6 @@
-import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
-import { ValidationService } from '../../_services/core/validator.service';
+import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
+import { ValidationService } from '@service/index';
 
 @Component({
   selector: 'app-control-message',
@@ -10,14 +10,19 @@ import { ValidationService } from '../../_services/core/validator.service';
 export class ControlMessageComponent implements OnInit {
   @Input() control: FormControl;
 
-  constructor(private validationService: ValidationService) {}
+  constructor(
+    private validationService: ValidationService
+  ) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   get errorMessage() {
     for (const propertyName in this.control.errors) {
       if (this.control.errors.hasOwnProperty(propertyName)) {
-        return this.validationService.getValidatorErrorMessage(propertyName, this.control.errors[propertyName]);
+        return this.validationService.getValidatorErrorMessage(
+          propertyName,
+          this.control.errors[propertyName]
+        );
       }
     }
 

@@ -1,0 +1,22 @@
+<div class="modal-header">
+    <h4 class="modal-title pull-left">Xác nhận</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="close()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body text-center">
+    <div class="d-block text-center">
+        <img src="./assets/images/confirm.png" class="img-sm" alt="confirm image">
+        <div class="ml-1 mt-2"> 
+            <p class="heading p-0">Xác nhận duyệt hóa đơn?</p>
+        </div>
+    </div> 
+</div>
+
+
+<div class="modal-footer">
+    <button type="button" (click)="onSubmit()" class="btn btn-primary mr-1 no-br">
+        <i class="fas fa-check"></i> Đồng ý
+    </button>
+    <button type="button" class="btn btn-default" (click)="close()">Bỏ qua</button>
+</div>

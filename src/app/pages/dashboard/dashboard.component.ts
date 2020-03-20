@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { StatisticData } from './../../_models/data/statistic.data';
-import { InvoiceRangeData } from '@app/_models';
-import { DashboardService } from './../../_services/app/dashboard.service';
+import { InvoiceRangeData, StatisticData } from '@model/index';
+import { DashboardService } from '@service/index';
 
 @Component({
   selector: 'app-dashboard',
@@ -23,19 +22,27 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.dashboardService.statistics().subscribe(data => {
-      this.statisticData = data;
-      if (data._links && data._links.pendingApprove && data._links.pendingApprove.href) {
-        this.linkApprove = data._links.pendingApprove.href;
-      }
-      if (data._links && data._links.pendingSign && data._links.pendingSign.href) {
-        this.linkSign = data._links.pendingSign.href;
-      }
-    });
+    this.dashboardService.statistics()
+      .subscribe((data: any) => {
+        this.statisticData = data;
+        if (data._links
+          && data._links.pendingApprove
+          && data._links.pendingApprove.href
+        ) {
+          this.linkApprove = data._links.pendingApprove.href;
+        }
+        if (data._links
+          && data._links.pendingSign
+          && data._links.pendingSign.href
+        ) {
+          this.linkSign = data._links.pendingSign.href;
+        }
+      });
 
-    this.dashboardService.invoiceRanges().subscribe(data => {
-      this.invoiceRangeData = data as InvoiceRangeData[];
-    });
+    this.dashboardService.invoiceRanges()
+      .subscribe((data: any) => {
+        this.invoiceRangeData = data as InvoiceRangeData[];
+      });
   }
 
   public formatCurrency(priceStr: string) {

@@ -1,6 +1,6 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { AppService } from './../../_services/core/app.service';
+import { ChangeDetectorRef, Component } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AppService } from '@service/index';
 
 @Component({
   selector: 'app-info',
@@ -21,11 +21,12 @@ export class InfoComponent {
   }
   public onSubmit(dataForm: any) {
     this.submitted = true;
-    this.appService.updateTenantInfo(dataForm).subscribe(data=>{
-      this.successMessage = "Đã cập nhật thành công.";
-    }, err=>{
-      this.errMessage = "Đã xảy ra lỗi. " + err.message;
-    });
+    this.appService.updateTenantInfo(dataForm)
+      .subscribe(() => {
+        this.successMessage = "Đã cập nhật thành công.";
+      }, (err: any) => {
+        this.errMessage = "Đã xảy ra lỗi. " + err.message;
+      });
   }
 
   private initForm() {
@@ -41,11 +42,12 @@ export class InfoComponent {
     this.predefineValue();
   }
 
-  private predefineValue(){
-    this.appService.getTenantInfo().subscribe(data=>{
-      this.infoForm.patchValue(data);
-    }, err=>{
-      this.errMessage = "Đã xảy ra lỗi. " + err.message;
-    });
+  private predefineValue() {
+    this.appService.getTenantInfo()
+      .subscribe(data => {
+        this.infoForm.patchValue(data);
+      }, err => {
+        this.errMessage = "Đã xảy ra lỗi. " + err.message;
+      });
   }
 }

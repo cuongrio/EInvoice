@@ -1,9 +1,10 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
-import { AuthenticationService } from '@app/core/authentication/authentication.service';
-import { UserModel } from '@app/_models';
+
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AuthenticationService } from '@core/authentication/authentication.service';
+import { UserModel } from '@model/user.model';
 
 @Component({
   selector: 'app-login',
@@ -44,8 +45,7 @@ export class LoginComponent implements OnInit {
       .subscribe(
         credentials => {
           this.submitted = false;
-          const userLogged = credentials as UserModel;
-          console.log(userLogged.token);
+          const userLogged = credentials as UserModel; 
           this.authenticationService.setCredentials(userLogged, remember);
           this.route.queryParams.subscribe(params =>
             this.router.navigate([params.redirect || '/'], { replaceUrl: true })

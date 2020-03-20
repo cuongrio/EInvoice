@@ -1,0 +1,10 @@
+/* === Boostrap Main SCSS === */
+@import "~bootstrap/scss/bootstrap";
+@import "~ngx-bootstrap/datepicker/bs-datepicker";
+
+@import "lib/index.scss";
+@import "mixins/index.scss";
+@import "core/index.scss";
+
+@import "components/index.scss";
+@import "screens/index.scss";
