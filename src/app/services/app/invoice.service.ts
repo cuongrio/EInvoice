@@ -28,9 +28,11 @@ export class InvoiceService {
     );
   }
 
-  download(id: number) {
-    return this.appService.get(
-      `/invoices/${id}/einv-download`
+  downloadInv(id: number) {
+    return this.appService.postFormData(
+      `/invoices/${id}/einv-download`,
+      {},
+      true
     );
   }
 

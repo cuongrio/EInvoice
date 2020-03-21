@@ -264,7 +264,7 @@ export class InvoiceFormComponent extends InvoiceAbstract
   }
 
   downloadClicked() {
-    this.downloadFile(this.curInvoice.id);
+    this.downloadInv(this.curInvoice);
   }
 
   printClicked() {
@@ -876,18 +876,25 @@ export class InvoiceFormComponent extends InvoiceAbstract
       invoiceDate: dateFormate
     });
 
-    if (this.comboForm
-      && this.comboSerial
-      && this.comboHTTT
-      && this.comboTaxRate
-      && this.comboStatus) {
+    this.checkCbFormLoaded();
+  }
+
+  private checkCbFormLoaded(): boolean{
+    if (this.isNotEmpty(this.comboForm)
+      && this.isNotEmpty(this.comboSerial)
+      && this.isNotEmpty(this.comboHTTT)
+      && this.isNotEmpty(this.comboTaxRate)
+      && this.isNotEmpty(this.comboStatus)) {
       const firstForm = this.comboForm[0].code;
       this.loadSerialByForm(firstForm);
       this.addForm.patchValue({
         form: firstForm,
         payment_method: this.comboHTTT[0].code
       });
+      return true;
     }
+
+    return false;
   }
 
   private loadSerialByForm(form: string) {
@@ -992,18 +999,8 @@ export class InvoiceFormComponent extends InvoiceAbstract
     // check in session 
     this.loadComboFromStorage();
 
-    if (this.comboStatus
-      && this.comboForm
-      && this.comboHTTT
-      && this.comboSerial
-      && this.comboTaxRate
-    ) {
-      const firstForm = this.comboForm[0].code;
-      this.loadSerialByForm(firstForm);
-      this.addForm.patchValue({
-        form: firstForm,
-        payment_method: this.comboHTTT[0].code
-      });
+    const cbLoaded = this.checkCbFormLoaded();
+    if(cbLoaded){
       return;
     }
 
@@ -1025,10 +1022,7 @@ export class InvoiceFormComponent extends InvoiceAbstract
       }
       this.ref.markForCheck();
     });
-
-
   }
-
 
   private initDataForm(customer: CustomerData) {
     if (customer && customer.customer_id) {
@@ -1214,17 +1208,17 @@ export class InvoiceFormComponent extends InvoiceAbstract
 
       // get data for adjust
       if (data.ref_invoice_id) {
-        const refs = new Array<any>();
-        
-        // ref_invoice_id: data.ref_invoice_id,
-        // ref_invoice_form: data.ref_invoice_form,
-        // ref_invoice_serial: data.ref_invoice_serial,
-        // ref_invoice_no: data.ref_invoice_no,
-        // ref_invoice_date: data.ref_invoice_date,
+        const refs = this.getOriginRefs(
+          data.ref_invoice_id,
+          data.ref_invoice_form,
+          data.ref_invoice_serial,
+          data.ref_invoice_no,
+          data.ref_invoice_date
+        );
 
         this.curAdjust = {
           invoice_type: data.invoice_type,
-          refs: refs,
+          refs,
           secure_id: data.secure_id
         };
 
@@ -1270,6 +1264,46 @@ export class InvoiceFormComponent extends InvoiceAbstract
         this.discountArray[idx] = (this.amountBeforeTaxArray[idx] * item.discount_rate) / 100;
       });
     }
+  }
+
+  private getOriginRefs(
+    id: string,
+    form: string,
+    serial: string,
+    no: string,
+    date: string
+  ): Array<any> {
+    const refList = new Array<any>();
+
+    const refIds = id ? id.split(',') : [];
+    const forms = form ? form.split(',') : [];
+    const serials = serial ? serial.split(',') : [];
+    const nso = no ? no.split(',') : [];
+    const dates = date ? date.split(',') : [];
+
+    if (refIds.length > 0) {
+      refIds.forEach((id, index) => {
+        if (id) {
+          refList.push({
+            id: id,
+            form: forms.length > 0 && forms[index]
+              ? forms[index]
+              : '',
+            serial: serials.length > 0 && serials[index]
+              ? serials[index]
+              : '',
+            no: nso.length > 0 && nso[index]
+              ? nso[index]
+              : '',
+            date: dates.length > 0 && dates[index]
+              ? dates[index]
+              : ''
+          });
+        }
+      });
+    }
+
+    return refList;
   }
 
   private existCustomerCodeComplete(): boolean {

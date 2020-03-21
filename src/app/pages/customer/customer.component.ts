@@ -283,12 +283,9 @@ export class CustomerComponent implements OnInit, AfterViewInit {
           }
         }
 
-        setTimeout(function () {
-          this.isSearching = false;
-          this.ref.markForCheck();
-        }.bind(this), 200);
+        this.isSearching = false;
 
-      }, (err: any) => {
+      }, () => {
         this.router.navigate(['/trang-500']);
       });
   }

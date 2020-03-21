@@ -41,11 +41,23 @@ export class AppService {
   }
 
 
-  postFormData(url: string, body: Object): Observable<any> {
+  postFormData(
+    url: string,
+    body: Object,
+    isHttpResponse?: boolean
+  ): Observable<any> {
     // check url
     const tenantUrl = this.getTenantUrl(url);
     if (tenantUrl === '') {
       this.router.navigate(['/dang-nhap']);
+    }
+    if (isHttpResponse) {
+      return this.httpService.request('POST', tenantUrl, {
+        headers: this.appendHeaderFormData(),
+        body: body,
+        responseType: 'arraybuffer',
+        observe: 'response'
+      });
     }
     return this.httpService.request('POST', tenantUrl, {
       headers: this.appendHeaderFormData(),

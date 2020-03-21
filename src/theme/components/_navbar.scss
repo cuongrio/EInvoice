@@ -320,6 +320,7 @@
           line-height: 1;
           text-align: left;
           padding: 0px 12px; 
+          cursor: pointer;
 
           @include media-breakpoint-down(md) {
             display: block;
@@ -383,8 +384,7 @@
 
               &:before {
                 font-family: "simple-line-icons";
-                content: "\e604";
-                speak: none;
+                content: "\e604"; 
                 font-size: 0.625rem;
                 font-style: normal;
                 font-weight: 600;
@@ -410,6 +410,7 @@
           }
 
           &.active {
+            cursor: context-menu;
             > .nav-link {
               position: relative;
               &:before {

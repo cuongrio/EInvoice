@@ -26,69 +26,33 @@
 
   <div class="nav-bottom">
     <ul class="nav page-navigation">
-      <li routerLinkActive="active" class="nav-item">
-        <a class="nav-link" routerLink="/trang-chu">
-          <i class="link-icon icon-screen-desktop"></i> <span>Trang chủ</span>
-        </a>
-      </li>
-
-      <li routerLinkActive="active" class="nav-item">
-        <a class="nav-link" routerLink="/hoa-don">
-          <i class="link-icon icon-docs"></i> <span>Danh sách hóa đơn</span>
-        </a>
-      </li>
-
-      <li routerLinkActive="active" class="nav-item">
-        <a class="nav-link" routerLink="/hang-hoa"> <i class="link-icon icon-disc"></i> <span>Hàng hóa</span> </a>
-      </li>
-
-      <li routerLinkActive="active" class="nav-item">
-        <a class="nav-link" routerLink="/khach-hang">
-          <i class="link-icon fa fa-user-circle"></i> <span>Khách hàng</span>
-        </a>
-      </li>
-
-      <li routerLinkActive="active" class="nav-item">
-        <div class="nav-link">
-          <i class="link-icon icon-book-open"></i>
-          <span class="menu-title">Báo cáo </span><i class="menu-arrow"></i>
-        </div>
-
-        <div class="submenu">
-          <ul routerLinkActive="active" class="submenu-item">
-            <li class="nav-item"><a class="nav-link" routerLink="/bao-cao/thong-ke">Thống kê</a></li>
-            <li class="nav-item"><a class="nav-link" routerLink="/bao-cao/bang-ke">Bảng kê manifest</a></li>
-          </ul>
-        </div>
-      </li>
-
-      <li routerLinkActive="active" class="nav-item">
-        <a class="nav-link" routerLink="/danh-muc">
-          <i class="link-icon fa fa-th-list"></i>
-          <span class="menu-title"> Danh mục </span><i class="menu-arrow"></i>
-        </a>
-
-        <div class="submenu">
-          <ul routerLinkActive="active" class="submenu-item">
-            <li class="nav-item"><a class="nav-link" routerLink="/thong-tin">Công ty</a></li>
-            <li class="nav-item"><a class="nav-link" routerLink="/thiet-lap/hoa-don">Thiết lập hóa đơn</a></li>
-            <li class="nav-item"><a class="nav-link" routerLink="/thiet-lap/tuy-chinh">Tùy chỉnh</a></li>
-          </ul>
-        </div>
-      </li>
-
-      <li routerLinkActive="active" class="nav-item">
-        <div class="nav-link">
-          <i class="link-icon fa fa-wrench"></i>
-          <span class="menu-title"> Tiện ích </span><i class="menu-arrow"></i>
-        </div>
-
-        <div class="submenu">
-          <ul routerLinkActive="active" class="submenu-item">
-            <li class="nav-item"><a class="nav-link" routerLink="/tien-ich/duyet-theo-lo">Duyệt theo lô</a></li>
-          </ul>
-        </div>
-      </li>
+      <ng-container *ngFor="let route of menuItems">
+        <li class="nav-item active" *ngIf="isActiveNav(route); else presentLink">
+          <div class="nav-link">
+            <i class="link-icon" [ngClass]="route.icon"></i>
+            {{ route.label }}
+            <i *ngIf="route.sub" class="menu-arrow"></i>
+          </div>
+        </li>
+        <ng-template #presentLink>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/{{ route.navigate }}">
+              <i class="link-icon" [ngClass]="route.icon"></i>
+              {{ route.label }}
+              <i *ngIf="route.sub" class="menu-arrow"></i>
+            </a>
+            <div *ngIf="route.sub" class="submenu">
+              <ul class="submenu-item">
+                <li *ngFor="let sub of route.sub" class="nav-item">
+                  <a class="nav-link" routerLink="/{{ sub.navigate }}">
+                    {{ sub.label }}
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+        </ng-template>
+      </ng-container>
     </ul>
   </div>
 </nav>

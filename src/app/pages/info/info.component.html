@@ -15,123 +15,118 @@
       <div class="card">
         <div class="card-body ein-card-body info-card-body">
           <div class="row">
-            <div class="container-fluid">
-              <div class="row">
-                <div class="col-md-8 col-lg-8">
-                  <form class="c_form" #ngInfoForm="ngForm" [formGroup]="infoForm"
-                    (ngSubmit)="onSubmit(infoForm.value)">
-                    <div class="c__body">
-                      <div class="row">
-                        <div class="col-md-12 col-lg-12">
-                          <div class="form-group row">
-                            <div class="col-md-2 col-lg-2 col-form-label required">
-                              <label>Tên công ty</label>
-                            </div>
-                            <div class="col-md-10 col-lg-10">
-                              <input appAutofocus formControlName="company_name" type="text"
-                                class="form-control form-control-sm" />
-                              <app-control-message *ngIf="submitted" [control]="infoForm.controls['company_name']">
-                              </app-control-message>
-                            </div>
-                          </div>
-
+            <div class="col-md-8 col-lg-8">
+              <form class="c_form" #ngInfoForm="ngForm" [formGroup]="infoForm" (ngSubmit)="onSubmit(infoForm.value)">
+                <div class="c__body">
+                  <div class="row">
+                    <div class="col-md-12 col-lg-12">
+                      <div class="form-group row">
+                        <div class="col-md-2 col-lg-2 col-form-label required">
+                          <label>Tên công ty</label>
                         </div>
-                      </div>
-                      <div class="row">
-                        <div class="col-md-6 col-lg-6">
-                          <div class="form-group row">
-                            <div class="col-md-4 col-lg-4 col-form-label required">
-                              <label>Mã số thuế</label>
-                            </div>
-                            <div class="col-md-8 col-lg-8">
-                              <input type="text" formControlName="tax_code" class="form-control form-control-sm" />
-                              <app-control-message *ngIf="submitted" [control]="infoForm.controls['tax_code']">
-                              </app-control-message>
-                            </div>
-                          </div>
-
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col-md-6 col-lg-6">
-                          <div class="form-group row">
-                            <div class="col-md-4 col-lg-4 col-form-label required">
-                              <label>Điện thoại</label>
-                            </div>
-                            <div class="col-md-8 col-lg-8">
-                              <input type="text" formControlName="phone" class="form-control form-control-sm" />
-                              <app-control-message *ngIf="submitted" [control]="infoForm.controls['phone']">
-                              </app-control-message>
-                            </div>
-                          </div>
-
-                        </div>
-
-                        <div class="col-md-6 col-lg-6">
-                          <div class="form-group row">
-                            <div class="col-md-4 col-lg-4 col-form-label required text-right">
-                              <label>Email</label>
-                            </div>
-                            <div class="col-md-8 col-lg-8">
-                              <input type="text" formControlName="email" class="form-control form-control-sm" />
-                              <app-control-message *ngIf="submitted" [control]="infoForm.controls['email']">
-                              </app-control-message>
-                            </div>
-                          </div>
-
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col-md-6 col-lg-6">
-                          <div class="form-group row">
-                            <div class="col-md-4 col-lg-4 col-form-label">
-                              <label>Số tài khoản</label>
-                            </div>
-                            <div class="col-md-8 col-lg-8">
-                              <input type="text" formControlName="bank_account" class="form-control form-control-sm" />
-                            </div>
-                          </div>
-                        </div>
-
-                        <div class="col-md-6 col-lg-6">
-                          <div class="form-group row">
-                            <div class="col-md-4 col-lg-4 col-form-label  text-right">
-                              <label>Ngân hàng</label>
-                            </div>
-                            <div class="col-md-8 col-lg-8">
-                              <input type="text" formControlName="bank" class="form-control form-control-sm" />
-                            </div>
-                          </div>
+                        <div class="col-md-10 col-lg-10">
+                          <input appAutofocus formControlName="company_name" type="text"
+                            class="form-control form-control-sm" />
+                          <app-control-message *ngIf="submitted" [control]="infoForm.controls['company_name']">
+                          </app-control-message>
                         </div>
                       </div>
 
-                      <div class="row">
-                        <div class="col-md-12 col-lg-12">
-                          <div class="form-group row">
-                            <div class="col-md-2 col-lg-2 col-form-label">
-                              <label>Địa chỉ</label>
-                            </div>
-                            <div class="col-md-10 col-lg-10">
-                              <input type="text" formControlName="address" class="form-control form-control-sm" />
-                            </div>
-                          </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6 col-lg-6">
+                      <div class="form-group row">
+                        <div class="col-md-4 col-lg-4 col-form-label required">
+                          <label>Mã số thuế</label>
+                        </div>
+                        <div class="col-md-8 col-lg-8">
+                          <input type="text" formControlName="tax_code" class="form-control form-control-sm" />
+                          <app-control-message *ngIf="submitted" [control]="infoForm.controls['tax_code']">
+                          </app-control-message>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6 col-lg-6">
+                      <div class="form-group row">
+                        <div class="col-md-4 col-lg-4 col-form-label required">
+                          <label>Điện thoại</label>
+                        </div>
+                        <div class="col-md-8 col-lg-8">
+                          <input type="text" formControlName="phone" class="form-control form-control-sm" />
+                          <app-control-message *ngIf="submitted" [control]="infoForm.controls['phone']">
+                          </app-control-message>
+                        </div>
+                      </div>
+
+                    </div>
+
+                    <div class="col-md-6 col-lg-6">
+                      <div class="form-group row">
+                        <div class="col-md-4 col-lg-4 col-form-label required text-right">
+                          <label>Email</label>
+                        </div>
+                        <div class="col-md-8 col-lg-8">
+                          <input type="text" formControlName="email" class="form-control form-control-sm" />
+                          <app-control-message *ngIf="submitted" [control]="infoForm.controls['email']">
+                          </app-control-message>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6 col-lg-6">
+                      <div class="form-group row">
+                        <div class="col-md-4 col-lg-4 col-form-label">
+                          <label>Số tài khoản</label>
+                        </div>
+                        <div class="col-md-8 col-lg-8">
+                          <input type="text" formControlName="bank_account" class="form-control form-control-sm" />
                         </div>
                       </div>
                     </div>
-                  </form>
+
+                    <div class="col-md-6 col-lg-6">
+                      <div class="form-group row">
+                        <div class="col-md-4 col-lg-4 col-form-label  text-right">
+                          <label>Ngân hàng</label>
+                        </div>
+                        <div class="col-md-8 col-lg-8">
+                          <input type="text" formControlName="bank" class="form-control form-control-sm" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-12 col-lg-12">
+                      <div class="form-group row">
+                        <div class="col-md-2 col-lg-2 col-form-label">
+                          <label>Địa chỉ</label>
+                        </div>
+                        <div class="col-md-10 col-lg-10">
+                          <input type="text" formControlName="address" class="form-control form-control-sm" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div class="col-md-4 col-lg-4 bg-company-info"></div>
-                <div class="template-ein">
-                  <button type="button" (click)="ngInfoForm.ngSubmit.emit()" class="btn btn-md btn-primary">
-                    <i class="fas fa-save"></i> Lưu thông tin
-                  </button>
-                </div>
-              </div>
+              </form>
             </div>
-            <div class="mt-2">
-              <p class="text-green" *ngIf="successMessage">{{successMessage}}</p>
-              <p class="text-red" *ngIf="errMessage">{{errMessage}}</p>
+            <div class="col-md-4 col-lg-4 bg-company-info"></div>
+            <div class="template-ein">
+              <button type="button" (click)="ngInfoForm.ngSubmit.emit()" class="btn btn-md btn-primary">
+                <i class="fas fa-save"></i> Lưu thông tin
+              </button>
             </div>
+          </div>
+          <div class="mt-2">
+            <p class="text-green" *ngIf="successMessage">{{successMessage}}</p>
+            <p class="text-red" *ngIf="errMessage">{{errMessage}}</p>
           </div>
         </div>
       </div>

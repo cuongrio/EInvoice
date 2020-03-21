@@ -75,12 +75,18 @@
   }
 }
 
-.d-col{
+.d-overflow {
   display: block;
   min-height: 28px;
   line-height: 28px;
+
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
  
+
 .word-break {
   word-break: break-word !important;
 }
@@ -417,11 +423,16 @@ legend.scheduler-border {
 .hidden {
   display: none !important;
 }
+
 .dispose-content {
   padding: 15px;
   .heading {
     font-size: 15px;
   }
+}
+
+.ref-ul {
+  list-style: decimal;
 }
 
 .customer-form {
@@ -772,6 +783,7 @@ table {
 
 .template-ein {
   &.navbar-action {
+    width: 100%;
     margin-bottom: 10px;
 
     @media (min-width: 576px) {
@@ -1165,7 +1177,7 @@ label.error {
     }
   }
 }
- 
+
 .adjustlink {
   text-transform: uppercase;
   font-weight: 600;
@@ -1187,6 +1199,11 @@ label.error {
 /***INVOICE FORM***/
 .invoice__wrapper {
   position: relative;
+
+  .alert { 
+    padding: 4px 0px !important;
+  }
+
   .invoice__form {
     .form-group {
       margin-bottom: 0px !important;

@@ -133,7 +133,7 @@ export const INIT = {
         { value: 'Số hóa đơn', code: SORT.inNo },
         { value: 'Ngày hóa đơn', code: SORT.inDate },
         { value: 'Mẫu số', code: SORT.form }
-    ], 
+    ],
     cSortBy: [
         { value: 'Mã đối tượng', code: SORT.cusCode },
         { value: 'Mã số thuế', code: SORT.tax }
@@ -145,6 +145,9 @@ export const INIT = {
 
 export const PAGE = {
     box: [{
+        "code": 10,
+        "value": '10'
+    }, {
         "code": 25,
         "value": '25'
     }, {
@@ -160,7 +163,11 @@ export const PAGE = {
 
 export const CONTENT_TYPE = {
     html: 'text/html',
-    excel: 'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    zip: 'application/zip',
+    excel: 'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ahoadon: 'AHOADON.VN',
+    headerDispose: 'Content-Disposition',
+    afterChar: 'filename='
 };
 
 export const ID = {
@@ -184,3 +191,55 @@ export const ID = {
     combobox: 'input[role="combobox"]',
     taxCode: '#tax_code'
 };
+
+export const DEFAULT_ROUTER = [
+    {
+        navigate: 'trang-chu',
+        icon: 'icon-screen-desktop',
+        label: 'Trang chủ'
+    }, {
+        navigate: 'hoa-don',
+        icon: 'icon-docs',
+        label: 'Danh sách hóa đơn'
+    }, {
+        navigate: 'hang-hoa',
+        icon: 'icon-disc',
+        label: 'Hàng hóa'
+    }, {
+        navigate: 'khach-hang',
+        icon: 'fa fa-user-circle',
+        label: 'Khách hàng'
+    }, {
+        navigate: 'bao-cao',
+        icon: 'icon-book-open',
+        label: 'Báo cáo',
+        sub: [{
+            navigate: 'bao-cao/thong-ke',
+            label: 'Thống kê'
+        }, {
+            navigate: 'bao-cao/bang-ke',
+            label: 'Bảng kê manifest'
+        }]
+    }, {
+        navigate: 'danh-muc',
+        icon: 'fa fa-th-list',
+        label: 'Danh mục',
+        sub: [{
+            navigate: 'thong-tin',
+            label: 'Công ty'
+        }, {
+            navigate: 'thiet-lap/hoa-don',
+            label: 'Thiết lập hóa đơn'
+        }, {
+            navigate: 'thiet-lap/tuy-chinh',
+            label: 'Tùy chỉnh'
+        }]
+    }, {
+        icon: 'fa fa-wrench',
+        label: 'Tiện ích',
+        sub: [{
+            navigate: 'tien-ich/duyet-theo-lo',
+            label: 'Duyệt theo lô'
+        }]
+    }
+];

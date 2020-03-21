@@ -23,75 +23,73 @@
       <div class="card">
         <div class="card-body ein-card-body">
           <div class="row">
-            <div class="container-fluid">
-              <div class="template-ein navbar-action">
-                <button type="button" [disabled]="disabledAdd" (click)="createClicked()" class="btn btn-md btn-primary">
-                  <i class="fas fa-plus"></i> Thêm
-                </button>
-                <button type="button" (click)="editClicked()" [disabled]="disabledEdit"
+            <div class="template-ein navbar-action">
+              <button type="button" [disabled]="disabledAdd" (click)="createClicked()" class="btn btn-md btn-primary">
+                <i class="fas fa-plus"></i> Thêm
+              </button>
+              <button type="button" (click)="editClicked()" [disabled]="disabledEdit"
+                class="btn btn-md btn-outline-primary"><i class="fas fa-edit"></i>
+                Sửa</button>
+              <button [disabled]="disabledCopy" (click)="copyClicked()" type="button"
+                class="btn btn-md btn-outline-primary">
+                <i class="fas fa-copy"></i> Sao chép
+              </button>
+              <button *ngIf="canPreview" type="button" [disabled]="previewLoading || viewMode"
+                (click)="isPreview=true; ngAddForm.ngSubmit.emit()" class="btn btn-md btn-outline-primary">
+                <i *ngIf="previewLoading" class="fa fa-spinner fa-spin"></i>
+                <i *ngIf="!previewLoading" class="fas fa-info"></i>
+                Xem trước
+              </button>
+
+              <button *ngIf="!canPreview" type="button" (click)="printClicked()" [disabled]="printLoading"
+                class="btn btn-md btn-outline-primary">
+                <i *ngIf="printLoading" class="fa fa-spinner fa-spin"></i>
+                <i *ngIf="!printLoading" class="fas fa-print"></i>
+                In
+              </button>
+
+              <button id="signButton" [disabled]="disabledSign" type="button" (click)="signClicked()"
+                class="btn btn-md btn-outline-primary">
+                <i class="fas fa-key"></i> Ký
+              </button>
+
+              <button [disabled]="disabledApproved" type="button" (click)="approveClicked()"
+                class="btn btn-md btn-success">
+                <i class="fas fa-check"></i> Duyệt
+              </button>
+
+              <button [disabled]="disabledDownload" type="button" (click)="downloadClicked()"
+                class="btn btn-md btn-outline-primary">
+                <i class="fas fa-download"></i> Tải
+              </button>
+
+              <button [disabled]="disabledExit" routerLink="/hoa-don/rf" type="button" class="btn btn-md btn-light">
+                <i class="fas fa-share-square"></i> Thoát
+              </button>
+
+              <div class="pull-right mt-2">
+                <button [disabled]="disabledInCD" (click)="printTransfClicked()" type="button"
+                  class="btn btn-md btn-outline-primary"><i class="fas fa-print"></i>
+                  In chuyển đổi</button>
+
+                <button type="button" (click)="redirectToAdjust()" *ngIf="!isChangeInvoice" [disabled]="disabledAdjust"
                   class="btn btn-md btn-outline-primary"><i class="fas fa-edit"></i>
-                  Sửa</button>
-                <button [disabled]="disabledCopy" (click)="copyClicked()" type="button"
-                  class="btn btn-md btn-outline-primary">
-                  <i class="fas fa-copy"></i> Sao chép
+                  Điều chỉnh
                 </button>
-                <button *ngIf="canPreview" type="button" [disabled]="previewLoading || viewMode"
-                  (click)="isPreview=true; ngAddForm.ngSubmit.emit()" class="btn btn-md btn-outline-primary">
-                  <i *ngIf="previewLoading" class="fa fa-spinner fa-spin"></i>
-                  <i *ngIf="!previewLoading" class="fas fa-info"></i>
-                  Xem trước
+                <button type="button" (click)="redirectToReplace()" *ngIf="!isChangeInvoice"
+                  [disabled]="disabledReplace" class="btn btn-md btn-outline-primary">
+                  <i class="fa fa-retweet"></i> Thay thế
                 </button>
 
-                <button *ngIf="!canPreview" type="button" (click)="printClicked()" [disabled]="printLoading"
-                  class="btn btn-md btn-outline-primary">
-                  <i *ngIf="printLoading" class="fa fa-spinner fa-spin"></i>
-                  <i *ngIf="!printLoading" class="fas fa-print"></i>
-                  In
+                <button [disabled]="disabledDisposed" type="button" (click)="disposeClicked()"
+                  class="btn btn-md btn-outline-danger">
+                  <i class="fas fa-trash"></i> Hủy hóa đơn
                 </button>
-
-                <button id="signButton" [disabled]="disabledSign" type="button" (click)="signClicked()"
-                  class="btn btn-md btn-outline-primary">
-                  <i class="fas fa-key"></i> Ký
-                </button>
-
-                <button [disabled]="disabledApproved" type="button" (click)="approveClicked()"
-                  class="btn btn-md btn-success">
-                  <i class="fas fa-check"></i> Duyệt
-                </button>
-
-                <button [disabled]="disabledDownload"  type="button" (click)="downloadClicked()"
-                  class="btn btn-md btn-outline-primary">
-                  <i class="fas fa-download"></i> Tải
-                </button>
-
-                <button [disabled]="disabledExit" routerLink="/hoa-don/rf" type="button" class="btn btn-md btn-light">
-                  <i class="fas fa-share-square"></i> Thoát
-                </button>
-
-                <div class="pull-right mt-2">
-                  <button [disabled]="disabledInCD" (click)="printTransfClicked()" type="button"
-                    class="btn btn-md btn-outline-primary"><i class="fas fa-print"></i>
-                    In chuyển đổi</button>
-
-                  <button type="button" (click)="redirectToAdjust()" *ngIf="!isChangeInvoice"
-                    [disabled]="disabledAdjust" class="btn btn-md btn-outline-primary"><i class="fas fa-edit"></i>
-                    Điều chỉnh
-                  </button>
-                  <button type="button" (click)="redirectToReplace()" *ngIf="!isChangeInvoice"
-                    [disabled]="disabledReplace" class="btn btn-md btn-outline-primary">
-                    <i class="fa fa-retweet"></i> Thay thế
-                  </button>
-
-                  <button [disabled]="disabledDisposed" type="button" (click)="disposeClicked()"
-                    class="btn btn-md btn-outline-danger">
-                    <i class="fas fa-trash"></i> Hủy hóa đơn
-                  </button>
-                </div>
               </div>
             </div>
           </div>
           <div class="row">
-            <div class="container-fluid invoice__wrapper">
+            <div class="invoice__wrapper">
               <!-- <div class="card ">
           <div class="card-body invoice__wrapper"> -->
               <div *ngIf="isAdjust || isReplace" class="alert alert-danger">
@@ -106,7 +104,7 @@
                 </a>
               </div>
 
-              <div *ngIf="curAdjust" class="alert alert-info">
+              <div *ngIf="curAdjust" class="alert">
                 <span *ngIf="curAdjust.invoice_type == statusConst.adjed">
                   Hóa đơn này <strong>ĐƯỢC ĐIỀU CHỈNH</strong> bởi hóa đơn số:
                 </span>
@@ -119,10 +117,25 @@
                 <span *ngIf="curAdjust.invoice_type == statusConst.replaced">
                   Hóa đơn này <strong>BỊ THAY THẾ</strong> bởi hóa đơn số:
                 </span>
-                <!-- <a class="adjustlink" target="_blank" routerLink="/hoa-don/chi-tiet/{{curAdjust.ref_invoice_id}}">
-                  #{{curAdjust.ref_invoice_no}} | mẫu: {{curAdjust.ref_invoice_form}} | ký
-                  hiệu:{{curAdjust.ref_invoice_serial}}
-                </a> -->
+
+                <ng-container *ngIf="curAdjust.refs.length === 1; else refList">
+                  <a class="adjustlink" target="_blank" routerLink="/hoa-don/chi-tiet/{{curAdjust.refs[0].id}}">
+                    #{{curAdjust.refs[0].no}} | mẫu: {{curAdjust.refs[0].form}} | ký hiệu:{{curAdjust.refs[0].serial}}
+                  </a>
+                </ng-container>
+                <ng-template #refList>
+                  <ul class="ref-ul">
+                    <li *ngFor="let ref of curAdjust.refs">
+                      <a class="adjustlink" target="_blank" routerLink="/hoa-don/chi-tiet/{{ref.id}}">
+                        <ng-container *ngIf="ref.no">#{{ref.no}}</ng-container>
+                        <ng-container *ngIf="ref.form && ref.serial">
+                          mẫu: {{ref.form}} | ký hiệu:{{ref.serial}}
+                        </ng-container>
+                      </a>
+                    </li>
+                  </ul>
+                </ng-template>
+
               </div>
 
               <form class="invoice__form" #ngAddForm="ngForm" [formGroup]="addForm"
@@ -403,17 +416,17 @@
                       <thead>
                         <tr>
                           <th class="bg-smoke no-wrap" style="width: 20px;">#</th>
-                          <th style="width: 8%" class="no-wrap text-right">Mã HH</th>
+                          <th style="width: 8%">Mã HH</th>
                           <th>Nội dung</th>
-                          <th style="width: 5%" class="no-wrap text-right">ĐV</th>
-                          <th style="width: 5%" class="no-wrap text-right">Số lượng</th>
-                          <th style="width: 10%" class="no-wrap text-right">Đơn giá</th>
-                          <th style="width: 10%" class="no-wrap text-right">Tiền chưa thuế</th>
-                          <th style="width: 5%" [hidden]="hiddenExColumn" class="no-wrap text-right">% CK</th>
-                          <th style="width: 10%" lass="no-wrap text-right" [hidden]="hiddenExColumn">Tiền CK</th>
-                          <th style="width: 5%" class="no-wrap text-right">% Thuế</th>
-                          <th style="width: 10%" class="no-wrap text-right">Tiền thuế</th>
-                          <th style="width: 10%" class="no-wrap text-right">Thành tiền</th>
+                          <th style="width: 5%">ĐV</th>
+                          <th style="width: 5%" class="text-right">Số lượng</th>
+                          <th style="width: 10%" class="text-right">Đơn giá</th>
+                          <th style="width: 10%" class="text-right">Tiền chưa thuế</th>
+                          <th style="width: 5%" [hidden]="hiddenExColumn" class="text-right">% CK</th>
+                          <th style="width: 10%" class="text-right" [hidden]="hiddenExColumn">Tiền CK</th>
+                          <th style="width: 5%" class="text-right">% Thuế</th>
+                          <th style="width: 10%" class="text-right">Tiền thuế</th>
+                          <th style="width: 10%" class="text-right">Thành tiền</th>
                         </tr>
                       </thead>
                       <tbody formArrayName="items">

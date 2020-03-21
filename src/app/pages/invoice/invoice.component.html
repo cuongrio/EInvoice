@@ -6,7 +6,7 @@
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a routerLink="/">Trang chủ</a></li>
-          <li class="breadcrumb-item active"><a routerLink="/hoa-don">Danh sách hóa đơn</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Danh sách hóa đơn</li>
         </ol>
       </nav>
     </div>
@@ -212,17 +212,18 @@
         </div>
 
         <div class="table-wrapper">
-          <table id="invoiceTable" class="table display dataTable table-bordered invoiceTable">
+          <table id="invoiceTable" class="table dataTable table-bordered invoiceTable">
             <thead>
               <tr>
-                <th>#</th>
+                <th class="bg-smoke">#</th>
                 <th>T.Thái</th>
                 <th>Loại HĐ</th>
+                <th>Mẫu số</th>
+                <th>Ký hiệu</th>
                 <th>Số HĐ</th>
                 <th>Ngày HĐ</th>
                 <th>Đơn vị</th>
-                <th>MST</th>
-
+                <th>MST</th> 
                 <th>Tiền</th>
                 <th>Tiền thuế</th>
                 <th>Tổng tiền</th>

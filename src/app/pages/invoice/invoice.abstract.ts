@@ -104,7 +104,7 @@ export class InvoiceAbstract {
         this.invoiceService
             .print(invoice_id)
             .subscribe(data => {
-                const file = new Blob([data], { type: 'text/html' });
+                const file = new Blob([data], { type: CONTENT_TYPE.html });
                 const fileURL = URL.createObjectURL(file);
 
                 window.open(fileURL, '_blank');
@@ -195,18 +195,34 @@ export class InvoiceAbstract {
         }
     }
 
-    downloadFile(invoiceId: number){
-        this.invoiceService.download(invoiceId)
-        .subscribe(data => {
-            const file = new Blob(
-                [data], {
-                type: CONTENT_TYPE.excel
-              });
-              const fileURL = URL.createObjectURL(file);
-              window.open(fileURL);
-        }, err => {
-            this.alertError(err);
-        });
+    downloadInv(invoice: InvoiceRequest) {
+        this.invoiceService.downloadInv(invoice.id)
+            .subscribe(res => {
+                // let fileName = res.headers.get(CONTENT_TYPE.headerDispose);
+                // if (fileName) {
+                //     fileName = fileName.slice(fileName.lastIndexOf(CONTENT_TYPE.afterChar) + 1);
+                // }
+
+                // if (!fileName) {
+
+                // }
+                const fileName = `${CONTENT_TYPE.ahoadon}_${invoice.no}.zip`;
+                const blob = new Blob([res.body], {
+                    type: CONTENT_TYPE.zip
+                });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                document.body.appendChild(a);
+                a.href = url;
+                a.download = fileName;
+                a.click();
+                setTimeout(() => {
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                }, 0);
+            }, err => {
+                this.alertError(err);
+            });
     }
 
     dispose(
@@ -377,6 +393,11 @@ export class InvoiceAbstract {
         }
     }
 
+    isNotEmpty(selects: SelectData[]): boolean {
+        return selects && selects.length > 0;
+    }
+
+
     alertError(err: any) {
         let msg = '';
         if (err.message) {
@@ -498,29 +519,41 @@ export class InvoiceAbstract {
     }
 
     private storeDataSession(
-        comboHTTT: any,
-        comboTaxRate: any,
-        comboSerial: any,
-        comboForm: any,
-        comboStatus: any,
-        comboInvoiceType: any) {
-        // set default value 
-        this.comboForm = this.clean(comboForm);
-        this.putKey(STORE_KEY.formCb, comboForm);
+        cbHTTT: any,
+        cbTaxRate: any,
+        cbSerial: any,
+        cbForm: any,
+        cbStatus: any,
+        cbInvoiceType: any) {
+        // set default value  
+        if (this.isNotEmpty(cbForm)) {
+            this.putKey(STORE_KEY.formCb, cbForm);
+            this.comboForm = this.clean(cbForm);
+        }
 
-        this.putKey(STORE_KEY.htttCb, comboHTTT);
-        this.comboHTTT = this.clean(comboHTTT);
+        if (this.isNotEmpty(cbHTTT)) {
+            this.putKey(STORE_KEY.htttCb, cbHTTT);
+            this.comboHTTT = this.clean(cbHTTT);
+        }
 
-        this.putKey(STORE_KEY.taxRateCb, comboTaxRate);
-        this.comboTaxRate = this.clean(comboTaxRate);
+        if(this.isNotEmpty(cbTaxRate)){
+            this.putKey(STORE_KEY.taxRateCb, cbTaxRate);
+            this.comboTaxRate = this.clean(cbTaxRate);
+        }
 
-        this.putKey(STORE_KEY.statusCb, comboStatus);
-        this.comboStatus = this.clean(comboStatus);
+        if(this.isNotEmpty(cbStatus)){
+            this.putKey(STORE_KEY.statusCb, cbStatus);
+            this.comboStatus = this.clean(cbStatus);
+        }
+       
+        if(this.isNotEmpty(cbSerial)){
+            this.putKey(STORE_KEY.serialCb, cbSerial);
+            this.comboSerial = this.clean(cbSerial);
+        }
 
-        this.putKey(STORE_KEY.serialCb, comboSerial);
-        this.comboSerial = this.clean(comboSerial);
-
-        this.putKey(STORE_KEY.typeCb, comboInvoiceType);
-        this.comboInvoiceType = this.clean(comboInvoiceType);
+        if(this.isNotEmpty(cbInvoiceType)){
+            this.putKey(STORE_KEY.typeCb, cbInvoiceType);
+            this.comboInvoiceType = this.clean(cbInvoiceType);
+        }    
     }
 }

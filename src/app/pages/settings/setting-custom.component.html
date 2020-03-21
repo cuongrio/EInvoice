@@ -14,35 +14,32 @@
     <div class="content-form">
       <div class="card ">
         <div class="card-body ein-card-body info-card-body">
+
           <div class="row">
-            <div class="container-fluid">
-              <div class="row">
-                <div *ngFor="let item of items;let i = index;" class="col-sm-4 col-md-4">
-                  <div class="preference-item">
-                    <div *ngIf="!saveButtonArr[i]">
-                      <h6>{{item.code}} <span class="badge badge-primary">{{item.value}}</span>
-                        <button (click)="editItem(i)" class="ml-1 btn btn-icons btn-rounded btn-link ">
-                          <i class="fa fa-edit"></i>
-                        </button>
-                      </h6>
-                    </div>
-                    <div *ngIf="saveButtonArr[i]">
-                      <h6>{{item.code}}
-                        <a class="pd-3" (click)="saveItem(i, itemValue.value)"
-                          class="ml-1 btn btn-icons btn-rounded btn-link ">
-                          <i class="fa fa-check text-green"></i>
-                        </a>
-                        <a class="pd-3" (click)="closeItem(i)">
-                          <i class="fa fa-times text-red"></i>
-                        </a>
-                      </h6>
-                      <input [value]="item.value" class="form-control form-control-sm mb-2" #itemValue type="text" />
-                    </div>
-                    <p class="text-gray no-margin">{{item.description}}</p>
-                    <p class="text-green no-margin" *ngIf="showMessage && item.successMsg">{{item.successMsg}}</p>
-                    <p class="text-red no-margin" *ngIf="showMessage && item.errMsg">{{item.errMsg}}</p>
-                  </div>
+            <div *ngFor="let item of items;let i = index;" class="col-sm-4 col-md-4">
+              <div class="preference-item">
+                <div *ngIf="!saveButtonArr[i]">
+                  <h6>{{item.code}} <span class="badge badge-primary">{{item.value}}</span>
+                    <button (click)="editItem(i)" class="ml-1 btn btn-icons btn-rounded btn-link ">
+                      <i class="fa fa-edit"></i>
+                    </button>
+                  </h6>
                 </div>
+                <div *ngIf="saveButtonArr[i]">
+                  <h6>{{item.code}}
+                    <a class="pd-3" (click)="saveItem(i, itemValue.value)"
+                      class="ml-1 btn btn-icons btn-rounded btn-link ">
+                      <i class="fa fa-check text-green"></i>
+                    </a>
+                    <a class="pd-3" (click)="closeItem(i)">
+                      <i class="fa fa-times text-red"></i>
+                    </a>
+                  </h6>
+                  <input [value]="item.value" class="form-control form-control-sm mb-2" #itemValue type="text" />
+                </div>
+                <p class="text-gray no-margin">{{item.description}}</p>
+                <p class="text-green no-margin" *ngIf="showMessage && item.successMsg">{{item.successMsg}}</p>
+                <p class="text-red no-margin" *ngIf="showMessage && item.errMsg">{{item.errMsg}}</p>
               </div>
             </div>
           </div>

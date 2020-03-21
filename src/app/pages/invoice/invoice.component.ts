@@ -152,7 +152,8 @@ export class InvoiceComponent extends InvoiceAbstract
     this.page = 1;
     this.isSearching = true;
 
-    const param: InvoiceParam = this.formatForm(form);
+    const param: InvoiceParam =
+      this.formatForm(form);
     param.page = +this.page;
     param.size = +this.itemPerPage;
     this.putKey(STORE_KEY.inQ, param);
@@ -180,6 +181,9 @@ export class InvoiceComponent extends InvoiceAbstract
       }
 
       param.page = +this.page;
+      if (!param.size) {
+        param.size = this.itemPerPage;
+      }
 
       this.disableAllButton();
 
@@ -217,13 +221,15 @@ export class InvoiceComponent extends InvoiceAbstract
     this.putKey(STORE_KEY.inQ, param);
 
     // call service
-    this.router.navigate([], { replaceUrl: true, queryParams: param });
+    this.router.navigate([], {
+      replaceUrl: true,
+      queryParams: param
+    });
     this.callServiceAndBindTable(param);
 
     $(ID.invoiceTable).DataTable().page.len(size).draw();
   }
 
-  /////////////////////
   // BUTTON ACTION/////
   openClicked() {
     this.queryRowSelected();
@@ -295,7 +301,7 @@ export class InvoiceComponent extends InvoiceAbstract
 
   downloadClicked() {
     this.queryRowSelected();
-    this.downloadFile(this.curInvoice.id);
+    this.downloadInv(this.curInvoice);
   }
 
   disposeClicked() {
@@ -306,9 +312,10 @@ export class InvoiceComponent extends InvoiceAbstract
     });
   }
 
-  private disableAllButton() { 
+  private disableAllButton() {
     $(ID.open).prop(DISABLED, true);
     $(ID.copy).prop(DISABLED, true);
+    $(ID.download).prop(DISABLED, true);
     $(ID.print).prop(DISABLED, true);
     $(ID.approve).prop(DISABLED, true);
     $(ID.dispose).prop(DISABLED, true);
@@ -377,13 +384,11 @@ export class InvoiceComponent extends InvoiceAbstract
             this.totalPages = paging.total_pages;
             this.totalItems = paging.total_pages * size;
 
-            $(ID.invoiceTable)
-              .dataTable()
-              .fnClearTable();
+            const table = $(ID.invoiceTable).dataTable();
 
-            $(ID.invoiceTable)
-              .dataTable()
-              .fnAddData(dataList);
+            table.fnClearTable();
+            table.fnSort([]);
+            table.fnAddData(dataList);
 
           } else {
             this.totalElements = 0;
@@ -441,154 +446,159 @@ export class InvoiceComponent extends InvoiceAbstract
   private initDataTable() {
     const statuses = this.getDataStatus();
     const invoiceTypeArr = this.getDataInvoiceType();
-
-    let table: any;
-    if ($.fn.dataTable.isDataTable(ID.invoiceTable)) {
-      table = $(ID.invoiceTable).DataTable();
-    } else {
-      table = $(ID.invoiceTable)
-        .DataTable({
-          paging: false,
-          searching: false,
-          retrieve: false,
-          serverSide: false,
-          bLengthChange: false,
-          info: false,
-          scrollX: true,
-          iDisplayLength: PAGE.size,
-          language: {
-            emptyTable: MSG.empty
-          },
-          createdRow: function (row: any) {
-            $(row).addClass('row-parent');
-          },
-          columnDefs: [{
-            width: '12px',
-            searchable: false,
-            orderable: false,
-            targets: 0
-          }, {
-            width: '50px',
-            targets: 1,
-            createdCell: function (td: any, cellData: string) {
-              if (cellData && cellData.length > 0) {
-                $(td).attr('data-order', cellData);
-                $(td).attr('data-sort', cellData);
-                if (statuses) {
-                  const status = statuses.find((i: SelectData) => (i.code === cellData));
-                  if (status) {
-                    $(td).html(`<span class="text-bold">${status.value}</span>`);
-                  } else {
-                    $(td).html(`<span class="text-bold">${cellData}</span>`);
-                  }
+    
+    const table = $(ID.invoiceTable)
+      .DataTable({
+        paging: false,
+        searching: false,
+        retrieve: false,
+        serverSide: false,
+        bLengthChange: false,
+        info: false,
+        iDisplayLength: PAGE.size,
+        destroy: true,
+        order: [],
+        responsive: true,
+        nowrap: true,
+        scrollX: true,
+        scrollCollapse: true,
+        language: {
+          emptyTable: MSG.empty
+        },
+        createdRow: function (row: any) {
+          $(row).addClass('row-parent');
+        },
+        columnDefs: [{
+          width: '20px',
+          orderable: false,
+          targets: 0
+        }, {
+          width: '50px',
+          targets: 1,
+          createdCell: function (td: any, cellData: string) {
+            if (cellData && cellData.length > 0) {
+              $(td).attr('data-order', cellData);
+              $(td).attr('data-sort', cellData);
+              if (statuses) {
+                const status = statuses.find((i: SelectData) => (i.code === cellData));
+                if (status) {
+                  $(td).html(`<span class="text-bold">${status.value}</span>`);
                 } else {
                   $(td).html(`<span class="text-bold">${cellData}</span>`);
                 }
-              }
-            }
-          }, {
-            width: '50px',
-            targets: 2,
-            createdCell: function (td: any, cellData: string) {
-              if (cellData && cellData.length > 0) {
-                $(td).attr('data-order', cellData);
-                $(td).attr('data-sort', cellData);
-                if (invoiceTypeArr) {
-                  const invoiceType = invoiceTypeArr
-                    .find((i: SelectData) => (i.code === cellData));
-
-                  $(td).html(invoiceType.value);
-                }
-              }
-            }
-          }, {
-            width: '50px',
-            targets: 3,
-            createdCell: function (td: any, cellData: string) {
-              $(td).html(`<span class="text-bold">${cellData}</span>`);
-              if (cellData && cellData.length > 0) {
-                $(td).attr('data-order', cellData);
-                $(td).attr('data-sort', cellData);
-              }
-            }
-          }, {
-            width: '60px',
-            targets: 4,
-            createdCell: function (td: any, cellData: string) {
-              if (cellData && cellData.length > 0) {
-                $(td).attr('data-order', cellData);
-                $(td).attr('data-sort', cellData);
-                $(td).html(moment(cellData).format(DATE.vi2));
-              }
-            }
-          }, {
-            targets: 5,
-            orderable: false,
-          }, {
-            width: '60px',
-            targets: 6,
-            createdCell: function (td: any, cellData: string) {
-              if (cellData && cellData.length > 0) {
-                $(td).attr('data-order', cellData);
-                $(td).attr('data-sort', cellData);
-              }
-            }
-          }, {
-            width: '70px',
-            targets: 7,
-            createdCell: function (td: any, cellData: number) {
-              if (cellData && cellData > 0) {
-                $(td).attr('data-order', cellData);
-                $(td).attr('data-sort', cellData);
-                $(td).html(formatCurrency(cellData));
-              }
-            }
-          },
-          {
-            width: '70px',
-            targets: 8,
-            createdCell: function (td: any, cellData: number) {
-              if (cellData && cellData > 0) {
-                $(td).attr('data-order', cellData);
-                $(td).attr('data-sort', cellData);
-                $(td).html(formatCurrency(cellData));
-              }
-            }
-          },
-          {
-            width: '70px',
-            targets: 9,
-            createdCell: function (td: any, cellData: number) {
-              if (cellData && cellData > 0) {
-                $(td).attr('data-order', cellData);
-                $(td).attr('data-sort', cellData);
-                $(td).html(formatCurrency(cellData));
+              } else {
+                $(td).html(`<span class="text-bold">${cellData}</span>`);
               }
             }
           }
-          ],
-          columns: [{
-            className: 'no-wrap text-bold',
-            data: 'invoice_id'
-          }, {
-            className: 'no-wrap',
-            data: 'status'
-          }, {
-            className: 'no-wrap',
-            data: 'invoice_type'
-          },
-          {
-            className: 'no-wrap',
-            data: 'invoice_no'
-          },
-          {
-            className: 'no-wrap',
-            data: 'invoice_date'
-          },
-          {
-            className: 'cbox',
-            data: function (row: any, type: any) {
-              const hiddenFields = `
+        }, {
+          width: '50px',
+          targets: 2,
+          createdCell: function (td: any, cellData: string) {
+            if (cellData && cellData.length > 0) {
+              $(td).attr('data-order', cellData);
+              $(td).attr('data-sort', cellData);
+              if (invoiceTypeArr) {
+                const invoiceType = invoiceTypeArr
+                  .find((i: SelectData) => (i.code === cellData));
+
+                $(td).html(invoiceType?.value);
+              }
+            }
+          }
+        }, {
+          width: '70px',
+          targets: 3
+        }, {
+          width: '70px',
+          targets: 4
+        }, {
+          width: '50px',
+          targets: 5,
+          createdCell: function (td: any, cellData: string) {
+            $(td).html(`<span class="text-bold">${cellData}</span>`);
+            if (cellData && cellData.length > 0) {
+              $(td).attr('data-order', cellData);
+              $(td).attr('data-sort', cellData);
+            }
+          }
+        }, {
+          width: '60px',
+          targets: 6,
+          createdCell: function (td: any, cellData: string) {
+            if (cellData && cellData.length > 0) {
+              $(td).attr('data-order', cellData);
+              $(td).attr('data-sort', cellData);
+              $(td).html(moment(cellData).format(DATE.vi2));
+            }
+          }
+        }, {
+          targets: 7,
+          orderable: false,
+        }, {
+          width: '60px',
+          targets: 8,
+          createdCell: function (td: any, cellData: string) {
+            if (cellData && cellData.length > 0) {
+              $(td).attr('data-order', cellData);
+              $(td).attr('data-sort', cellData);
+            }
+          }
+        }, {
+          width: '70px',
+          targets: 9,
+          createdCell: function (td: any, cellData: number) {
+            if (cellData && cellData > 0) {
+              $(td).attr('data-order', cellData);
+              $(td).attr('data-sort', cellData);
+              $(td).html(formatCurrency(cellData));
+            }
+          }
+        },
+        {
+          width: '70px',
+          targets: 10,
+          createdCell: function (td: any, cellData: number) {
+            if (cellData && cellData > 0) {
+              $(td).attr('data-order', cellData);
+              $(td).attr('data-sort', cellData);
+              $(td).html(formatCurrency(cellData));
+            }
+          }
+        },
+        {
+          width: '70px',
+          targets: 11,
+          createdCell: function (td: any, cellData: number) {
+            if (cellData && cellData > 0) {
+              $(td).attr('data-order', cellData);
+              $(td).attr('data-sort', cellData);
+              $(td).html(formatCurrency(cellData));
+            }
+          }
+        }],
+        columns: [{
+          className: 'no-padding bg-smoke',
+          data: null
+        }, {
+          data: 'status'
+        }, {
+          data: 'invoice_type'
+        }, {
+          data: 'form'
+        }, {
+          data: 'serial'
+        },
+        {
+          data: 'invoice_no'
+        },
+        {
+          data: 'invoice_date'
+        },
+        {
+          className: 'cbox',
+          data: function (row: any, type: any) {
+            const hiddenFields = `
               <div class="hidden-col">
                 <input type="checkbox" name="stickchoice" value="${row.invoice_id}">
                 <input type="hidden" class="no-hidden" value="${row.invoice_no}">
@@ -597,52 +607,50 @@ export class InvoiceComponent extends InvoiceAbstract
                 <input type="hidden" class="state-hidden" value="${row.invoice_state}">
               </div>`;
 
-              if (type === 'display'
-                && row.customer
-                && row.customer.org
-              ) {
-                const org: string = row.customer.org;
+            if (type === 'display'
+              && row.customer
+              && row.customer.org
+            ) {
+              const org: string = row.customer.org;
 
-                return `
-                <span class="d-col" title="${org}">${org}</span>
+              return `
+                <span class="d-overflow" title="${org}">${org}</span>
                 ${hiddenFields}
               `;
-              } else {
-                return `
-                <span class="d-col"></span>
+            } else {
+              return `
+                <span class="d-overflow"></span>
                 ${hiddenFields}
               `;
-              }
             }
-          }, {
-            className: 'no-wrap',
-            data: 'customer.tax_code'
-          }, {
-            className: 'no-wrap text-right',
-            data: 'total_before_tax'
-          },
-          {
-            className: 'no-wrap text-right',
-            data: 'total_tax'
-          },
-          {
-            className: 'no-wrap text-right',
-            data: 'total'
-          }],
-          select: {
-            style: 'single',
-            items: 'cells',
-            info: false
-          },
-          order: [[2, 'desc']],
-          drawCallback: function () {
-            const pagination = $(this)
-              .closest('.dataTables_wrapper')
-              .find('.dataTables_paginate');
-            pagination.toggle(this.api().page.info().pages > 1);
           }
-        });
-    }
+        }, {
+          data: 'customer.tax_code'
+        }, {
+          className: 'text-right',
+          data: 'total_before_tax'
+        },
+        {
+          className: 'text-right',
+          data: 'total_tax'
+        },
+        {
+          className: 'text-right',
+          data: 'total'
+        }],
+        select: {
+          style: 'single',
+          items: 'cells',
+          info: false
+        },
+        drawCallback: function () {
+          const pagination = $(this)
+            .closest('.dataTables_wrapper')
+            .find('.dataTables_paginate');
+          pagination.toggle(this.api().page.info().pages > 1);
+        }
+      });
+
     table.on('order.dt search.dt', function () {
       let page = getUrlParameter('page');
       page = page > 0 ? page : PAGE.firstPage;
@@ -651,11 +659,12 @@ export class InvoiceComponent extends InvoiceAbstract
       size = size > 0 ? size : PAGE.size;
       const startIndex = (page - 1) * size + 1;
 
-      table.column(0, { search: 'applied', order: 'applied' })
-        .nodes()
+      table.column(0).nodes({ search: 'applied', order: 'applied' })
         .each(function (cell: any, i: number) {
           cell.innerHTML = (startIndex + i);
         });
+
+      $('invIndx').css("width", "20");
     }).draw();
 
     // disabled all button
@@ -696,7 +705,7 @@ export class InvoiceComponent extends InvoiceAbstract
             $(ID.sign).prop(DISABLED, true);
             $(ID.download).prop(DISABLED, true);
             $(ID.printTranform).prop(DISABLED, true);
-            $(ID.approve).prop(DISABLED, true); 
+            $(ID.approve).prop(DISABLED, true);
             $(ID.adjust).prop(DISABLED, true);
             $(ID.replace).prop(DISABLED, false);
 
@@ -721,19 +730,20 @@ export class InvoiceComponent extends InvoiceAbstract
               $(ID.open).prop(DISABLED, false);
               $(ID.copy).prop(DISABLED, true);
               $(ID.print).prop(DISABLED, false);
-              
+
               $(ID.dispose).prop(DISABLED, true);
               $(ID.adjust).prop(DISABLED, true);
               $(ID.replace).prop(DISABLED, true);
             } else {
 
-              // init othercase
+              // enable init othercase
               $(ID.open).prop(DISABLED, false);
               $(ID.copy).prop(DISABLED, false);
               $(ID.print).prop(DISABLED, false);
               $(ID.approve).prop(DISABLED, false);
               $(ID.dispose).prop(DISABLED, false);
               $(ID.printTranform).prop(DISABLED, false);
+              $(ID.adjust).prop(DISABLED, false);
 
               if (status === STATUS.created) {
                 $(ID.sign).prop(DISABLED, false);
@@ -741,7 +751,7 @@ export class InvoiceComponent extends InvoiceAbstract
                 $(ID.replace).prop(DISABLED, true);
                 $(ID.printTranform).prop(DISABLED, true);
                 $(ID.approve).prop(DISABLED, true);
-                
+
               } else if (status === STATUS.signed) {
                 $(ID.approve).prop(DISABLED, false);
                 $(ID.sign).prop(DISABLED, true);
@@ -763,7 +773,7 @@ export class InvoiceComponent extends InvoiceAbstract
           }
         }
       });
- 
+
     function formatCurrency(price: number) {
       if (price > 0) {
         return price.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
@@ -833,10 +843,11 @@ export class InvoiceComponent extends InvoiceAbstract
 
     this.loadComboFromStorage();
 
-    if (this.comboStatus
-      && this.comboForm
-      && this.comboInvoiceType
-      && this.comboSerial) {
+    if (this.isNotEmpty(this.comboStatus)
+      && this.isNotEmpty(this.comboForm)
+      && this.isNotEmpty(this.comboInvoiceType)
+      && this.isNotEmpty(this.comboSerial)
+    ) {
       this.initDataTable();
       this.initRouter();
       this.ref.markForCheck();
@@ -893,9 +904,10 @@ export class InvoiceComponent extends InvoiceAbstract
       );
 
     } else {
+      this.itemPerPage = PAGE.size;
       param = {
         page: +this.page,
-        size: this.pageSizeList[0].code
+        size: PAGE.size
       };
     }
     // call service

@@ -20,6 +20,33 @@ body {
   box-shadow: none;
 }
 
+ul {
+  list-style: none;
+  margin: 0 !important;
+}
+
+.alert {
+  margin-bottom: 0 !important;
+  padding: 5px 0px !important;
+}
+
+th,
+td {
+  white-space: nowrap;
+}
+
+table{
+  margin: 0 auto;
+  width: 100%;
+  clear: both;
+  table-layout: fixed;
+  word-wrap: break-word;
+}
+
+div.dataTables_wrapper {
+  margin: 0 auto;
+}
+
 a,
 div,
 h1,

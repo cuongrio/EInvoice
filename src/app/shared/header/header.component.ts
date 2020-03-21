@@ -1,29 +1,31 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { UserModel } from '@model/index';
 import { AuthenticationService } from '@core/index';
-import { AppService, CookieService, UtilsService } from '@service/index'; 
+import { AppService, CookieService, UtilsService } from '@service/index';
 import { COOKIE_KEY } from 'app/constant';
-import { ThrowStmt } from '@angular/compiler';
+import { DEFAULT_ROUTER } from './../../constant';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html'
 })
 export class HeaderComponent implements OnInit {
-  menuItems: any[];
+  menuItems = DEFAULT_ROUTER;
   userLogged: UserModel;
   name: String;
-
+  activeClass: string; 
   constructor(
     private router: Router,
     private authenticationService: AuthenticationService,
     private appService: AppService,
     private cookieService: CookieService,
-    private utilsService: UtilsService) { }
+    private utilsService: UtilsService
+  ) { }
 
-  ngOnInit() {
-    this.userLogged = this.authenticationService.credentials;
+  ngOnInit() {  
+    this.userLogged =
+      this.authenticationService.credentials;
 
     if (!this.userLogged) {
       this.router.navigate(['/dang-nhap']);
@@ -39,7 +41,7 @@ export class HeaderComponent implements OnInit {
             this.name += " - " + data.tax_code;
           }
           this.name += " - " + this.userLogged.name
-          if(data.signature_type){
+          if (data.signature_type) {
             this.cookieService.set(COOKIE_KEY.signatureType, data.signature_type);
           }
         } else {
@@ -50,6 +52,7 @@ export class HeaderComponent implements OnInit {
       });
   }
 
+
   logoutClicked() {
     this.authenticationService.logout();
     this.utilsService.clear();
@@ -57,5 +60,16 @@ export class HeaderComponent implements OnInit {
     this.cookieService.delete(COOKIE_KEY.tenant);
     this.cookieService.delete(COOKIE_KEY.token);
     this.router.navigate(['/dang-nhap']);
+  }
+
+  isActiveNav(route: any): boolean {
+    if (route.sub) {
+      return false;
+    } 
+
+    if (this.router.url.includes(route.navigate)) {
+      return true;
+    }
+    return false;
   }
 }
