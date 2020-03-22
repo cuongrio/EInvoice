@@ -15,7 +15,7 @@
         <div class="search-box_wapper">
           <div class="template-ein navbar-action">
             <button type="button" routerLink="/hoa-don/tao-moi" class="btn btn-md btn-primary">
-              <i class="fas fa-plus"></i> Thêm
+              <i class="fas fa-plus"></i> Lập HĐ
             </button>
             <button id="openButton" type="button" (click)="openClicked()" class="btn  btn-md btn-outline-primary">
               <i class="fas fa-edit"></i> Mở
@@ -48,7 +48,7 @@
               <i class="fas fa-download"></i> Tải
             </button>
 
-            <div class="pull-right mt-2">
+            <div class="nav-right mt-2">
               <button id="printTranformButton" (click)="printTransfClicked()" type="button"
                 class="btn btn-md btn-outline-primary">
                 <i class="fas fa-retweet"></i> In chuyển đổi
@@ -212,7 +212,7 @@
         </div>
 
         <div class="table-wrapper">
-          <table id="invoiceTable" class="table dataTable table-bordered invoiceTable">
+          <table id="invoiceTable" class="table dataTable table-bordered table-invoice nowrap">
             <thead>
               <tr>
                 <th class="bg-smoke">#</th>
@@ -222,8 +222,8 @@
                 <th>Ký hiệu</th>
                 <th>Số HĐ</th>
                 <th>Ngày HĐ</th>
-                <th>Đơn vị</th>
-                <th>MST</th> 
+                <th class="mw-md-300">Đơn vị</th>
+                <th>MST</th>
                 <th>Tiền</th>
                 <th>Tiền thuế</th>
                 <th>Tổng tiền</th>

@@ -342,10 +342,12 @@ export class InvoiceComponent extends InvoiceAbstract
   }
 
   private initRouter() {
-    if (this.activeRouter.snapshot.queryParams) {
-      let params =
-        this.activeRouter.snapshot.queryParams;
+    let params: InvoiceParam;
 
+    if (this.activeRouter.snapshot.queryParams) {
+      params =
+        this.activeRouter.snapshot.queryParams;
+ 
       if (Object.keys(params).length !== 0) {
         if (params['page']) {
           this.page = +params['page'];
@@ -356,7 +358,8 @@ export class InvoiceComponent extends InvoiceAbstract
         }
       }
     }
-    this.refresh();
+
+    this.refresh(params);
   }
 
   private initDefault() {
@@ -446,7 +449,7 @@ export class InvoiceComponent extends InvoiceAbstract
   private initDataTable() {
     const statuses = this.getDataStatus();
     const invoiceTypeArr = this.getDataInvoiceType();
-    
+
     const table = $(ID.invoiceTable)
       .DataTable({
         paging: false,
@@ -473,7 +476,7 @@ export class InvoiceComponent extends InvoiceAbstract
           orderable: false,
           targets: 0
         }, {
-          width: '50px',
+          width: '30px',
           targets: 1,
           createdCell: function (td: any, cellData: string) {
             if (cellData && cellData.length > 0) {
@@ -492,7 +495,7 @@ export class InvoiceComponent extends InvoiceAbstract
             }
           }
         }, {
-          width: '50px',
+          width: '48px',
           targets: 2,
           createdCell: function (td: any, cellData: string) {
             if (cellData && cellData.length > 0) {
@@ -507,13 +510,13 @@ export class InvoiceComponent extends InvoiceAbstract
             }
           }
         }, {
-          width: '70px',
+          width: '50px',
           targets: 3
         }, {
-          width: '70px',
+          width: '38px',
           targets: 4
         }, {
-          width: '50px',
+          width: '38px',
           targets: 5,
           createdCell: function (td: any, cellData: string) {
             $(td).html(`<span class="text-bold">${cellData}</span>`);
@@ -523,7 +526,7 @@ export class InvoiceComponent extends InvoiceAbstract
             }
           }
         }, {
-          width: '60px',
+          width: '40px',
           targets: 6,
           createdCell: function (td: any, cellData: string) {
             if (cellData && cellData.length > 0) {
@@ -536,7 +539,7 @@ export class InvoiceComponent extends InvoiceAbstract
           targets: 7,
           orderable: false,
         }, {
-          width: '60px',
+          width: '70px',
           targets: 8,
           createdCell: function (td: any, cellData: string) {
             if (cellData && cellData.length > 0) {
@@ -545,7 +548,7 @@ export class InvoiceComponent extends InvoiceAbstract
             }
           }
         }, {
-          width: '70px',
+          width: '50px',
           targets: 9,
           createdCell: function (td: any, cellData: number) {
             if (cellData && cellData > 0) {
@@ -556,7 +559,7 @@ export class InvoiceComponent extends InvoiceAbstract
           }
         },
         {
-          width: '70px',
+          width: '50px',
           targets: 10,
           createdCell: function (td: any, cellData: number) {
             if (cellData && cellData > 0) {
@@ -567,7 +570,7 @@ export class InvoiceComponent extends InvoiceAbstract
           }
         },
         {
-          width: '70px',
+          width: '50px',
           targets: 11,
           createdCell: function (td: any, cellData: number) {
             if (cellData && cellData > 0) {
@@ -863,60 +866,73 @@ export class InvoiceComponent extends InvoiceAbstract
     });
   }
 
-  private refresh() {
-    let param: InvoiceParam;
+  private refresh(
+    param?: InvoiceParam
+  ) {
+    let invParam: InvoiceParam;
 
-    const invQuery = this.getKey(STORE_KEY.inQ);
-
-    if (invQuery) {
-      param = JSON.parse(invQuery);
-      this.page = param.page
-        ? +param.page
-        : PAGE.firstPage;
-
-      this.itemPerPage = param.size
-        ? +param.size
-        : PAGE.size;
-
-      this.searchForm.patchValue(
-        param, { onlySelf: true }
-      );
-
-      if (param.fromDate) {
-        const fromDate = moment(
-          param.fromDate,
-          DATE.en
-        ).toDate();
-
-        this.bsFromDate = fromDate;
-      }
-
-      if (param.toDate) {
-        this.bsToDate = moment(
-          param.toDate,
-          DATE.en
-        ).toDate();
-      }
-
-      // set default value form
-      this.searchForm.patchValue(
-        param, { onlySelf: true }
-      );
-
+    if (param) {
+      invParam = {
+        ...param,
+        ...{
+          page: PAGE.firstPage,
+          size: PAGE.size
+        }
+      }; 
+      this.expandSearch = true;
     } else {
-      this.itemPerPage = PAGE.size;
-      param = {
-        page: +this.page,
-        size: PAGE.size
-      };
+      const invQuery = this.getKey(STORE_KEY.inQ);
+      if (invQuery) {
+        invParam = JSON.parse(invQuery);
+      } else {
+        this.itemPerPage = PAGE.size;
+        invParam = {
+          page: +this.page,
+          size: PAGE.size
+        };
+      }
     }
+
+    this.page = invParam.page
+      ? +invParam.page
+      : PAGE.firstPage;
+
+    this.itemPerPage = invParam.size
+      ? +invParam.size
+      : PAGE.size;
+
+    this.searchForm.patchValue(
+      invParam, { onlySelf: true }
+    );
+
+    if (invParam.fromDate) {
+      const fromDate = moment(
+        invParam.fromDate,
+        DATE.en
+      ).toDate();
+
+      this.bsFromDate = fromDate;
+    }
+
+    if (invParam.toDate) {
+      this.bsToDate = moment(
+        invParam.toDate,
+        DATE.en
+      ).toDate();
+    }
+
+    // set default value form
+    this.searchForm.patchValue(
+      invParam, { onlySelf: true }
+    );
+
     // call service
     this.router.navigate([], {
       replaceUrl: true,
-      queryParams: param
+      queryParams: invParam
     });
 
-    this.callServiceAndBindTable(param);
+    this.callServiceAndBindTable(invParam);
   }
 
   private loadSerialByForm(form: string) {

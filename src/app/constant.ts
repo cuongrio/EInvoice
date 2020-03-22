@@ -200,7 +200,7 @@ export const DEFAULT_ROUTER = [
     }, {
         navigate: 'hoa-don',
         icon: 'icon-docs',
-        label: 'Danh sách hóa đơn'
+        label: 'Quản lý hóa đơn'
     }, {
         navigate: 'hang-hoa',
         icon: 'icon-disc',
@@ -210,7 +210,6 @@ export const DEFAULT_ROUTER = [
         icon: 'fa fa-user-circle',
         label: 'Khách hàng'
     }, {
-        navigate: 'bao-cao',
         icon: 'icon-book-open',
         label: 'Báo cáo',
         sub: [{
@@ -218,7 +217,7 @@ export const DEFAULT_ROUTER = [
             label: 'Thống kê'
         }, {
             navigate: 'bao-cao/bang-ke',
-            label: 'Bảng kê manifest'
+            label: 'Bảng kê hóa đơn'
         }]
     }, {
         navigate: 'danh-muc',
@@ -227,13 +226,14 @@ export const DEFAULT_ROUTER = [
         sub: [{
             navigate: 'thong-tin',
             label: 'Công ty'
-        }, {
-            navigate: 'thiet-lap/hoa-don',
-            label: 'Thiết lập hóa đơn'
-        }, {
-            navigate: 'thiet-lap/tuy-chinh',
-            label: 'Tùy chỉnh'
         }]
+            // {
+            //     navigate: 'thiet-lap/hoa-don',
+            //     label: 'Thiết lập hóa đơn'
+            // }, {
+            //     navigate: 'thiet-lap/tuy-chinh',
+            //     label: 'Tùy chỉnh'
+            // }]
     }, {
         icon: 'fa fa-wrench',
         label: 'Tiện ích',

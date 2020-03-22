@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, TemplateRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, TemplateRef, Input } from '@angular/core';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Router } from '@angular/router';
@@ -12,16 +12,18 @@ import { STORE_KEY, CB } from 'app/constant';
   templateUrl: './form.component.html'
 })
 export class ProductFormComponent implements OnInit {
-  public addForm: FormGroup;
-  public submitted = false;
-  public errorMessage: string;
-  public title: string;
-  public comboTaxRate: SelectData[];
-  public taxRateCodePicked: string;
+  addForm: FormGroup;
+  submitted = false;
+  errorMessage: string;
+  title: string;
+  comboTaxRate: SelectData[];
+  taxRateCodePicked: string;
 
   // init state
-  public dataForm: ProductModel;
-  public taxRateLoading = false;
+  @Input()
+  product: ProductModel;
+
+  taxRateLoading = false;
 
   constructor(
     private router: Router,
@@ -30,29 +32,28 @@ export class ProductFormComponent implements OnInit {
     private goodService: GoodService,
     private modalService: BsModalService,
     private referenceService: ReferenceService,
-    private formBuilder: FormBuilder,
-    public bsModalRef: BsModalRef) { }
+    private formBuilder: FormBuilder) { }
   ngOnInit() {
     this.initForm();
     this.loadReferences();
 
-    if (this.dataForm) {
-      this.addForm.patchValue(this.dataForm);
+    if (this.product) {
+      this.addForm.patchValue(this.product);
 
-      this.taxRateCodePicked = this.dataForm.tax_rate_code;
+      this.taxRateCodePicked = this.product.tax_rate_code;
       this.title = 'Cập nhật thông tin hàng hóa';
     } else {
       this.title = 'Tạo mới thông tin hàng hóa';
     }
   }
 
-  public onTaxRateCodeChanged(tax: any) {
+  onTaxRateCodeChanged(tax: any) {
     this.addForm.patchValue({
       tax_rate: tax.value
     });
   }
 
-  public onTaxRateChanged(taxRate: any) {
+  onTaxRateChanged(taxRate: any) {
     this.taxRateCodePicked = '';
     this.comboTaxRate.forEach((item: SelectData) => {
       if (item.value == taxRate) {
@@ -63,7 +64,7 @@ export class ProductFormComponent implements OnInit {
     });
   }
 
-  public onSubmit(dataForm: any) {
+  onSubmit(dataForm: any) {
     this.submitted = true;
     if (this.addForm.invalid) {
       return;
@@ -75,15 +76,14 @@ export class ProductFormComponent implements OnInit {
     if (product.goods_id) {
       this.goodService.update(product)
         .subscribe(
-          (data: any) => {
-            this.bsModalRef.hide();
+          (data: any) => { 
             const initialState = {
               message: 'Đã cập nhật hàng hóa!',
               title: 'Thành công!',
               class: 'success',
               highlight: `Mã hàng: #${data.goods_code}`
             };
-            this.bsModalRef = this.modalService.show(
+            this.modalService.show(
               AlertComponent, {
               animated: false,
               class: 'modal-sm',
@@ -99,20 +99,21 @@ export class ProductFormComponent implements OnInit {
         );
     } else {
       this.goodService.create(product).subscribe(
-        data => {
-          this.bsModalRef.hide();
+        data => { 
           const initialState = {
             message: 'Đã tạo mới hàng hóa!',
             title: 'Thành công!',
             class: 'success',
             highlight: `Mã hàng: #${data.code}`
           };
-          this.bsModalRef = this.modalService.show(
+          
+          this.modalService.show(
             AlertComponent, {
             animated: false,
             class: 'modal-sm',
             initialState
           });
+
         }, (err: any) => {
           if (err.error.message) {
             this.errorMessage = err.error.message;
@@ -154,8 +155,8 @@ export class ProductFormComponent implements OnInit {
           comboTaxRate
         );
 
-        if (this.dataForm) {
-          this.taxRateCodePicked = this.dataForm.tax_rate_code;
+        if (this.product) {
+          this.taxRateCodePicked = this.product.tax_rate_code;
         }
         setTimeout(function () {
           this.taxRateLoading = false;

@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthenticationService, HttpService } from '@core/index';
+import { AuthService, HttpService } from '@core/index';
 import { environment } from '@env/environment';
 import { UserModel } from '@model/index';
 
@@ -12,22 +12,26 @@ export class AppService {
   constructor(
     private router: Router,
     private httpService: HttpService,
-    private authenticationService: AuthenticationService
+    private authService: AuthService
   ) { }
 
   getTenantUrl(url: string) {
-    if (url.indexOf('ahoadonplugin') === -1) {
-      const credentials: UserModel = this.authenticationService.credentials;
-      if (credentials && credentials.tenant) {
-        return `${environment.serverUrl}/api/${credentials.tenant}${url}`;
-      } else {
-        this.router.navigate(['/dang-nhap']);
-      }
+    const credentials: UserModel = this.authService.credentials;
+    if (credentials
+      && credentials.tenant
+    ) {
+      return `${environment.serverUrl}/api/${credentials.tenant}${url}`;
+    } else {
+      this.router.navigate(['/dang-nhap']);
+      return '';
     }
-    return url;
   }
 
-  postForPreview(url: string, body: Object): Observable<any> {
+  postForPreview(
+    url: string,
+    body: Object
+  ): Observable<any> {
+
     // check url
     const tenantUrl = this.getTenantUrl(url);
     if (tenantUrl === '') {
@@ -40,7 +44,6 @@ export class AppService {
     });
   }
 
-
   postFormData(
     url: string,
     body: Object,
@@ -51,6 +54,7 @@ export class AppService {
     if (tenantUrl === '') {
       this.router.navigate(['/dang-nhap']);
     }
+
     if (isHttpResponse) {
       return this.httpService.request('POST', tenantUrl, {
         headers: this.appendHeaderFormData(),
@@ -109,7 +113,7 @@ export class AppService {
   }
 
   getTenantInfo(): Observable<any> {
-    const credentials: UserModel = this.authenticationService.credentials;
+    const credentials: UserModel = this.authService.credentials;
     if (credentials && credentials.tenant) {
       return this.httpService.request(
         'GET',
@@ -123,7 +127,7 @@ export class AppService {
   }
 
   updateTenantInfo(body: Object): Observable<any> {
-    const credentials: UserModel = this.authenticationService.credentials;
+    const credentials: UserModel = this.authService.credentials;
     if (credentials && credentials.tenant) {
       const tenantUrl = `${environment.serverUrl}/${credentials.tenant}`;
       return this.httpService.request('PUT', tenantUrl, {
@@ -173,7 +177,7 @@ export class AppService {
   }
 
   private appendHeaderForJson(): HttpHeaders {
-    const credentials: UserModel = this.authenticationService.credentials;
+    const credentials: UserModel = this.authService.credentials;
     if (credentials) {
       const token = credentials.token;
       if (token !== null) {
@@ -189,7 +193,7 @@ export class AppService {
   }
 
   private appendHeaderFormData(): HttpHeaders {
-    const credentials: UserModel = this.authenticationService.credentials;
+    const credentials: UserModel = this.authService.credentials;
     if (credentials) {
       const token = credentials.token;
       if (token !== null) {
@@ -205,7 +209,7 @@ export class AppService {
 
 
   private appendHeaderForText(): HttpHeaders {
-    const credentials: UserModel = this.authenticationService.credentials;
+    const credentials: UserModel = this.authService.credentials;
     if (credentials) {
       const token = credentials.token;
       if (token !== null) {

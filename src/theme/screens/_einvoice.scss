@@ -41,7 +41,7 @@
   background: #e9ecef;
   &.is-viewable {
     th {
-      padding: 5px 10px !important;
+      padding: 5px !important;
     }
   }
 }
@@ -85,7 +85,6 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
- 
 
 .word-break {
   word-break: break-word !important;
@@ -482,7 +481,7 @@ legend.scheduler-border {
   @media screen and (min-width: 992px) {
     .ein-card-body {
       padding: 3px 16px 3px !important;
-      min-height: calc(100vh - 167px);
+      min-height: calc(100vh - 150px);
 
       &.info-card-body {
         padding: 24px !important;
@@ -613,29 +612,73 @@ table {
     border-bottom: 2px solid #dedede !important;
   }
 
-  .dataTables_scrollBody {
-    overflow: hidden !important;
-    .dataTable {
-      width: 100% !important;
-      td.cbox {
-        position: relative !important;
-        .hidden-col {
-          opacity: 0 !important;
-          position: absolute !important;
-          left: 9999px !important;
+  @media screen and (min-width: 1200px) {
+    .dataTables_scrollBody {
+      overflow: hidden !important;
+      .dataTable {
+        width: 100% !important;
+        td.cbox {
+          position: relative !important;
+          .hidden-col {
+            opacity: 0 !important;
+            position: absolute !important;
+            left: 9999px !important;
+          }
         }
       }
-    }
-    &::-webkit-scrollbar {
-      width: 6px;
-      opacity: 0.7;
-    }
 
-    &::-webkit-scrollbar-thumb {
-      -webkit-box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.3);
-      background-color: #439aff;
+      &::-webkit-scrollbar {
+        width: 4px;
+        opacity: 0.7;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        -webkit-box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.3);
+        background-color: #439aff;
+      }
     }
   }
+
+  @media screen and (max-width: 1200px) {
+    .dataTables_scrollBody {
+      overflow-x: auto !important;
+
+      .dataTable {
+        overflow: hidden;
+        th.mw-md-300 {
+          min-width: 300px;
+        }
+
+        td.cbox {
+          position: relative !important;
+
+          .hidden-col {
+            opacity: 0 !important;
+            position: absolute !important;
+            left: 9999px !important;
+          }
+        }
+      }
+
+      &::-webkit-scrollbar {
+        width: 4px;
+        opacity: 0.7;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        -webkit-box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.3);
+        background-color: #439aff;
+      }
+    }
+  }
+
+  ::-webkit-scrollbar {
+    opacity: 0.7;
+    height: 4px; /* height of horizontal scrollbar ← You're missing this */
+    width: 4px; /* width of vertical scrollbar */
+    border: 1px solid #e9ecef;
+  }
+
   .dataTable {
     td.details-control {
       background: url("./assets/images/details_open.png") no-repeat center center;
@@ -989,9 +1032,20 @@ table {
 
 /***INVOICE SCREEN**/
 .table.dataTable {
-  &.invoiceTable {
+  &.table-item {
+    table-layout: auto;
+  }
+  &.table-invoice {
+    table-layout: fixed;
+
     td {
       padding: 0px 5px !important;
+
+      .td-overflow {
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
       &.dataTables_empty {
         padding: 5px !important;
       }
@@ -1200,7 +1254,7 @@ label.error {
 .invoice__wrapper {
   position: relative;
 
-  .alert { 
+  .alert {
     padding: 4px 0px !important;
   }
 
@@ -1269,6 +1323,11 @@ label.error {
       }
       .product-line {
         position: relative;
+
+        .ng-dropdown-panel {
+          min-width: 292px;
+          border-top: 2px solid #eee;
+        }
         .form-control {
           border-radius: 0 !important;
         }
@@ -1290,6 +1349,7 @@ label.error {
 
         td {
           position: relative;
+          padding: 0px 5px !important;
 
           .popover {
             width: 100%;
@@ -1305,7 +1365,8 @@ label.error {
         .sticky-btn__td {
           position: absolute;
           margin-top: 2px;
-          right: -5px;
+          right: -8px;
+
           .sticky_btn {
             padding: 0px;
             color: #ccc !important;
@@ -1385,5 +1446,11 @@ label.error {
         cursor: pointer;
       }
     }
+  }
+}
+
+@media screen and (min-width: 992px) {
+  .nav-right {
+    float: right;
   }
 }

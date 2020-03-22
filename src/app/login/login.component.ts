@@ -3,7 +3,7 @@ import { finalize } from 'rxjs/operators';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AuthenticationService } from '@core/authentication/authentication.service';
+import { AuthService } from '@core/auth/auth.service';
 import { UserModel } from '@model/user.model';
 
 @Component({
@@ -21,20 +21,25 @@ export class LoginComponent implements OnInit {
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private authenticationService: AuthenticationService
+    private authService: AuthService
   ) { }
 
-  ngOnInit() {
+  ngOnInit() { 
+    this.isHasToken();
     this.createForm();
   }
 
   onSubmit(dataForm: UserModel) {
+    if(this.isHasToken()){
+      return;
+    }
+
     this.submitted = true;
     this.isLoading = true;
 
     const remember = dataForm.remember;
 
-    this.authenticationService
+    this.authService
       .login(dataForm)
       .pipe(
         finalize(() => {
@@ -46,7 +51,7 @@ export class LoginComponent implements OnInit {
         credentials => {
           this.submitted = false;
           const userLogged = credentials as UserModel; 
-          this.authenticationService.setCredentials(userLogged, remember);
+          this.authService.setCredentials(userLogged, remember);
           this.route.queryParams.subscribe(params =>
             this.router.navigate([params.redirect || '/'], { replaceUrl: true })
           );
@@ -57,6 +62,17 @@ export class LoginComponent implements OnInit {
           this.ref.markForCheck();
         }
       );
+  }
+
+  private isHasToken(){
+    const currentUser =
+      this.authService.credentials;
+
+    if (currentUser) {
+      this.router.navigate(['/']);
+      return true;
+    }
+    return false;
   }
 
   private createForm() {

@@ -8,7 +8,7 @@
             <div class="card-body p-0">
               <div class="row">
                 <div class="col-md-6 col-lg-4 ">
-                  <a href="{{linkApprove}}" target="_blank">
+                  <a [routerLink]="['/hoa-don']" [queryParams]="{status: 'SIGNED'}" target="_blank">
                     <div class="d-flex justify-content-between border-right card-statistics-item">
                       <i class="fa fa-file text-primary icon-lg"></i>
                       <div>
@@ -21,7 +21,7 @@
                   </a>
                 </div>
                 <div class="col-md-6 col-lg-4">
-                  <a href="{{linkSign}}" target="_blank">
+                  <a [routerLink]="['/hoa-don']" [queryParams]="{status: 'CREATED'}" target="_blank">
                     <div class="d-flex justify-content-between border-right card-statistics-item">
                       <i class="fa fa-file text-warning icon-lg"></i>
                       <div>
@@ -55,26 +55,26 @@
                 <table class="table table-bordered">
                   <thead>
                     <tr>
-                      <th class="text-bold">
+                      <th class="w-120 text-bold">
                         Mẫu hóa đơn
                       </th>
-                      <th class="text-bold">
+                      <th class="w-120 text-bold">
                         Ký hiệu
                       </th>
                       <th class="text-bold">
                         Ngày sử dụng
                       </th>
-                      <th class="text-right text-bold">
+                      <th class="w-120 text-right text-bold">
                         Số lượng
                       </th>
-                      <th class="text-right text-bold">
+                      <th class="w-120 text-right text-bold">
                         Đã xuất
                       </th>
-                      <th class="text-right text-bold">
+                      <th class="w-120 text-right text-bold">
                         Còn lại
                       </th>
-                      <th class="text-right text-bold">
-                        Trung bình
+                      <th class="text-right text-bold w-120">
+                        #
                       </th>
                     </tr>
                   </thead>
@@ -98,8 +98,13 @@
                       <td class="text-right text-bold">
                         {{item.remaining_count}}
                       </td>
-                      <td class="text-right text-bold">
-                        0
+                      <td class="text-right">
+                        <button type="button" class="btn btn-xs btn-primary">
+                          <i class="fas fa-plus"></i> Lập HĐ
+                        </button>
+                        <button type="button" class="btn btn-xs ml-16">
+                          <i class="icon-magnifier"></i> Xem
+                        </button>
                       </td>
                     </tr>
                   </tbody>

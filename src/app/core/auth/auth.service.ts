@@ -1,27 +1,23 @@
+import { COOKIE_KEY } from 'app/constant';
+
 import { Injectable } from '@angular/core';
+import { HttpService } from '@core/http/http.service';
 import { environment } from '@env/environment';
 import { UserModel } from '@model/user.model';
-import { HttpService } from '@core/http/http.service';
 import { CookieService } from '@service/core/cookie.service';
-import { COOKIE_KEY } from 'app/constant';
- 
+
 /**
  * Provides a base for authentication workflow.
  * The Credentials interface as well as login/logout methods should be replaced with proper implementation.
  */
 @Injectable()
-export class AuthenticationService {
-  private _credentials: UserModel | null;
+export class AuthService { 
 
   constructor(
     private httpService: HttpService,
     private cookieService: CookieService
   ) {
-    // check on cookie
-    const savedCredentials = cookieService.get(COOKIE_KEY.token);
-    if (savedCredentials) {
-      this._credentials = JSON.parse(savedCredentials);
-    }
+    
   }
 
   /**
@@ -40,8 +36,7 @@ export class AuthenticationService {
    * Logs out the user and clear credentials.
    * @return True if the user was logged out successfully.
    */
-  logout() {
-    this._credentials = null;
+  logout() { 
     this.setCredentials(null);
   }
 
@@ -57,10 +52,7 @@ export class AuthenticationService {
    * Gets the user credentials.
    * @return The user credentials or null if the user is not authenticated.
    */
-  get credentials(): UserModel | null {
-    if (this._credentials) {
-      return this._credentials;
-    }
+  get credentials(): UserModel | null { 
     const userCookie = this.cookieService.get(COOKIE_KEY.token);
     if (userCookie) {
       const user = JSON.parse(userCookie) as UserModel;
@@ -71,9 +63,7 @@ export class AuthenticationService {
   public setCredentials(
     userLogged?: UserModel,
     remember?: boolean
-  ) {
-    this._credentials = userLogged || null;
-
+  ) {  
     if (userLogged) {
       const serverUrl = `${environment.serverUrl}/api/${userLogged.tenant}`;
       if (remember) {

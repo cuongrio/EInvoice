@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { RouteReuseStrategy, RouterModule } from '@angular/router';
 import { RouteReusableStrategy } from './route-reusable-strategy';
-import { AuthenticationService } from './authentication/authentication.service';
-import { AuthenticationGuard } from './authentication/authentication.guard';
+import { AuthService } from './auth/auth.service';
+import { AuthGuard } from './auth/auth.guard';
 import { HttpService } from './http/http.service';
 import { HttpCacheService } from './http/http-cache.service';
 import { ApiPrefixInterceptor } from './http/api-prefix.interceptor';
@@ -12,10 +12,14 @@ import { ErrorHandlerInterceptor } from './http/error-handler.interceptor';
 import { CacheInterceptor } from './http/cache.interceptor';
 
 @NgModule({
-  imports: [CommonModule, HttpClientModule, RouterModule],
+  imports: [
+    CommonModule,
+    HttpClientModule,
+    RouterModule
+  ],
   providers: [
-    AuthenticationService,
-    AuthenticationGuard,
+    AuthService,
+    AuthGuard,
     HttpCacheService,
     ApiPrefixInterceptor,
     ErrorHandlerInterceptor,

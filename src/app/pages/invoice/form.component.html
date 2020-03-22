@@ -25,7 +25,7 @@
           <div class="row">
             <div class="template-ein navbar-action">
               <button type="button" [disabled]="disabledAdd" (click)="createClicked()" class="btn btn-md btn-primary">
-                <i class="fas fa-plus"></i> Thêm
+                <i class="fas fa-plus"></i> Lập HĐ
               </button>
               <button type="button" (click)="editClicked()" [disabled]="disabledEdit"
                 class="btn btn-md btn-outline-primary"><i class="fas fa-edit"></i>
@@ -412,10 +412,10 @@
                         </button>
                       </div>
                     </div>
-                    <table class="table table-bordered border-right-0">
+                    <table class="table table-bordered border-right-0 table-item">
                       <thead>
                         <tr>
-                          <th class="bg-smoke no-wrap" style="width: 20px;">#</th>
+                          <th class="bg-smoke" style="width: 40px;">#</th>
                           <th style="width: 8%">Mã HH</th>
                           <th>Nội dung</th>
                           <th style="width: 5%">ĐV</th>
@@ -432,7 +432,7 @@
                       <tbody formArrayName="items">
                         <tr class="product-line" *ngFor="let pItem of itemFormArray.controls;let idx = index"
                           [formGroupName]="idx">
-                          <td class="no-padding bg-smoke text-center">
+                          <td class="bg-smoke">
                             {{idx + 1}}
                           </td>
 
@@ -441,7 +441,9 @@
                               [items]="goodArr" (change)="onGoodlineChange($event, idx)" [virtualScroll]="true"
                               bindLabel="goods_code" bindValue="goods_code">
                               <ng-template ng-option-tmp let-item="item" let-index="index">
-                                <b>{{item.goods_code}}</b> {{item.goods_name}}
+                                <span [title]="item.goods_name">
+                                  <b>{{item.goods_code}}</b> {{item.goods_name}}
+                                </span>
                               </ng-template>
                             </ng-select>
                             <input *ngIf="viewMode" readonly="readonly" formControlName="item_code"

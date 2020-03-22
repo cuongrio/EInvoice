@@ -1,7 +1,7 @@
 <div class="form-dialog">
   <div class="modal-header">
     <h4 class="modal-title pull-left text-uppercase">{{ title }}</h4>
-    <button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+    <button type="button" class="close pull-right" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -71,7 +71,7 @@
     <button type="button" (click)="ngAddForm.ngSubmit.emit()" class="btn btn-md btn-success pull-right">
       <i class="fas fa-save"></i> Lưu
     </button>
-    <button type="button" (click)="bsModalRef.hide()" class="btn btn-md btn-light pull-right">
+    <button type="button" class="btn btn-md btn-light pull-right">
       <i class="fas fa-share-square"></i> Bỏ qua
     </button>
   </div>

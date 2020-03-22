@@ -123,7 +123,7 @@ export class TokensComponent implements OnInit {
                         this.invoiceService.saveXmlDocument(
                             this.invoice.id,
                             receiver.signed_xml
-                        ).subscribe(() => { 
+                        ).subscribe(() => {
                             this.closeModal({
                                 error: false,
                                 type: this.invoice.type
@@ -204,21 +204,26 @@ export class TokensComponent implements OnInit {
         this.tokenService.messages$
             .asObservable()
             .subscribe((data: any) => {
-                if (data) {
-                    this.tokens = JSON.parse(data) as Array<TokenData>;
-                    this.ref.markForCheck();
+                try {
+                    if (data) {
+                        this.tokens = JSON.parse(data) as Array<TokenData>;
+                    }
+                    if (!this.tokens) {
+                        this.closeModal({
+                            error: true
+                        });
+                    }
+                } catch (e) {
+                    this.closeModal({
+                        error: true
+                    });
                 }
 
-                setTimeout(function () {
-                    this.spinnerService.hide();
-                    this.ref.markForCheck();
-                }.bind(this), 200);
+                this.spinnerService.hide();
+                this.ref.markForCheck();
             }, () => {
-
-                setTimeout(function () {
-                    this.spinnerService.hide();
-                    this.ref.markForCheck();
-                }.bind(this), 200);
+                this.spinnerService.hide();
+                this.ref.markForCheck();
             });
     }
 }

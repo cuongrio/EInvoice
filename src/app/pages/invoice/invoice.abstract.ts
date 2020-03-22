@@ -160,6 +160,14 @@ export class InvoiceAbstract {
     }
 
     sign(invoice: InvoiceRequest) {
+        if(this.tokenService.error){
+            this.modalService.open(WsErrComponent, {
+                windowClass: MODAL.w_sm,
+                centered: true
+            });
+            return;
+        }
+
         // online ws
         if (this.tokenService.connected) {
             const modalTokenRef = this.modalService.open(TokensComponent, {
@@ -190,22 +198,15 @@ export class InvoiceAbstract {
 
         } else {
             this.modalService.open(WsErrComponent, {
-                windowClass: MODAL.w_sm
+                windowClass: MODAL.w_sm,
+                centered: true
             });
         }
     }
 
     downloadInv(invoice: InvoiceRequest) {
         this.invoiceService.downloadInv(invoice.id)
-            .subscribe(res => {
-                // let fileName = res.headers.get(CONTENT_TYPE.headerDispose);
-                // if (fileName) {
-                //     fileName = fileName.slice(fileName.lastIndexOf(CONTENT_TYPE.afterChar) + 1);
-                // }
-
-                // if (!fileName) {
-
-                // }
+            .subscribe(res => { 
                 const fileName = `${CONTENT_TYPE.ahoadon}_${invoice.no}.zip`;
                 const blob = new Blob([res.body], {
                     type: CONTENT_TYPE.zip

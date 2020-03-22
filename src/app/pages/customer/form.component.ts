@@ -2,7 +2,7 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthenticationService } from '@core/authentication/authentication.service';
+import { AuthService } from '@core/auth/auth.service';
 import { CustomerModel } from '@model/customer.model';
 import { CustomerService } from '@service/app/customer.service';
 import { AlertComponent } from '@shared/alert/alert.component';
@@ -25,7 +25,7 @@ export class CustomerFormComponent implements OnInit {
 
   constructor(
     public bsModalRef: BsModalRef,
-    private authService: AuthenticationService,
+    private authService: AuthService,
     private customerService: CustomerService,
     private formBuilder: FormBuilder,
     private modalService: BsModalService

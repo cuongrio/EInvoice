@@ -1,15 +1,15 @@
-import { CONTENT_TYPE, DATE, ID, INIT, MSG, PAGE, SORT, STORE_KEY } from 'app/constant';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { CONTENT_TYPE, DATE, ID, INIT, MODAL, MSG, PAGE, SORT, STORE_KEY } from 'app/constant';
 
 import { AfterViewInit, Component, NgZone, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { GoodParam, PagingData, ProductModel } from '@model/index';
-import { GoodService, UtilsService } from '@service/index';
+import { GoodService, ModalService, UtilsService } from '@service/index';
 import { AlertComponent } from '@shared/alert/alert.component';
 
 import { ProductFormComponent } from './form.component';
 import { ProductImportExcelComponent } from './import-excel.component';
+import { ProductAbstract } from './product.abstract';
 
 declare var $: any;
 
@@ -17,7 +17,8 @@ declare var $: any;
   selector: 'app-product',
   templateUrl: './product.component.html'
 })
-export class ProductComponent implements OnInit, AfterViewInit {
+export class ProductComponent extends ProductAbstract
+  implements OnInit, AfterViewInit {
   bsConfig = DATE.bsConfig;
 
   isSearching = false;
@@ -36,7 +37,6 @@ export class ProductComponent implements OnInit, AfterViewInit {
   totalItems = 0;
   totalElements = 0;
   totalPages = 0;
-  modalRef: BsModalRef;
   pageSizeList = new Array<any>();
 
 
@@ -45,13 +45,15 @@ export class ProductComponent implements OnInit, AfterViewInit {
 
   private previousPage = 0;
   constructor(
+    protected modalService: ModalService,
     private zone: NgZone,
     private router: Router,
     private utilsService: UtilsService,
     private goodService: GoodService,
-    private formBuilder: FormBuilder,
-    private modalService: BsModalService
-  ) { }
+    private formBuilder: FormBuilder
+  ) {
+    super(modalService);
+   }
 
   ngOnInit() {
     this.initForm();
@@ -118,9 +120,10 @@ export class ProductComponent implements OnInit, AfterViewInit {
   }
 
   showImportModal() {
-    this.modalService.show(
+    this.modalService.open(
       ProductImportExcelComponent, {
-      animated: false, class: 'modal-md'
+      windowClass: MODAL.w_md,
+      centered: true
     });
   }
 
@@ -129,12 +132,12 @@ export class ProductComponent implements OnInit, AfterViewInit {
     initialState: any
   ) {
 
-    this.modalRef = this.modalService.show(
-      template, {
-      animated: false,
-      class: 'modal-sm',
-      initialState
-    });
+    // this.modalRef = this.modalService.show(
+    //   template, {
+    //   animated: false,
+    //   class: 'modal-sm',
+    //   initialState
+    // });
   }
 
   onPageChange(page: number) {
@@ -150,7 +153,7 @@ export class ProductComponent implements OnInit, AfterViewInit {
         goodParam = {};
       }
 
-      goodParam.page = +this.page; 
+      goodParam.page = +this.page;
 
       $(ID.open).prop('disabled', true);
       this.utilsService.putKey(
@@ -189,10 +192,10 @@ export class ProductComponent implements OnInit, AfterViewInit {
   }
 
   addNewClicked() {
-    this.modalService.show(
+    this.modalService.open(
       ProductFormComponent, {
-      animated: false,
-      class: 'modal-lg'
+      windowClass: MODAL.w_md,
+      centered: true
     });
   }
 
@@ -210,7 +213,7 @@ export class ProductComponent implements OnInit, AfterViewInit {
         const fileURL = URL.createObjectURL(file);
         window.open(fileURL);
       }, (err: any) => {
-        this.errorHandler(err);
+        this.showAlertError(err);
       });
   }
 
@@ -260,39 +263,19 @@ export class ProductComponent implements OnInit, AfterViewInit {
 
     return goodParamsForamat;
   }
-
-  private errorHandler(err: any) {
-    const initialState = {
-      message: 'Something went wrong',
-      title: 'Đã có lỗi!',
-      class: 'error'
-    };
-
-    if (err.error) {
-      initialState.message = err.error.message;
-    }
-    this.modalService.show(
-      AlertComponent, {
-      animated: false,
-      class: 'modal-sm',
-      initialState
-    });
-  }
-
+  
   private initPageHandlerInRouter(goodParam: GoodParam) {
     this.callServiceAndBindTable(goodParam);
   }
 
   private openPopupForUpdate(product: ProductModel) {
-    const initialState = {
-      dataForm: product
-    };
-    this.modalService.show(
+    const modalRef = this.modalService.open(
       ProductFormComponent, {
-      animated: false,
-      class: 'modal-md',
-      initialState
+      windowClass: MODAL.w_md,
+      centered: true
     });
+    modalRef.componentInstance.product = product;
+
   }
 
   private initDefault() {
