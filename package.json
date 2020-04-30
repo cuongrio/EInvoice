@@ -43,7 +43,7 @@
     "datatables.net-bs4": "^1.10.19",
     "datatables.net-responsive": "^2.2.3",
     "font-awesome": "4.7.0",
-    "jquery": "3.3.1",
+    "jquery": "3.5.0",
     "moment": "2.22.2",
     "ngx-bootstrap": "^5.5.0",
     "ngx-currency": "^1.5.1",
